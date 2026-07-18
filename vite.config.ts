@@ -11,6 +11,11 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        // Default glob omits woff2 — the self-hosted Fraunces display font
+        // would silently fall back to a system serif on a repeat offline visit.
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+      },
       manifest: {
         name: PRODUCT_NAME,
         short_name: PRODUCT_NAME,

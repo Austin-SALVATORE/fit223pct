@@ -382,7 +382,7 @@ function DoneToday({ workout }: { workout: Workout }) {
     <Hero
       eyebrow="Session complete"
       title="Done for today"
-      subtitle={`${summary.totalSets} sets${minutes !== null ? ` in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}` : ''} · ${Math.round(summary.volumeKg)} kg moved. Rest well — that's part of the plan.`}
+      subtitle={`${summary.totalSets} ${summary.totalSets === 1 ? 'set' : 'sets'}${minutes !== null ? ` in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}` : ''} · ${Math.round(summary.volumeKg)} kg moved. Rest well — that's part of the plan.`}
     />
   )
 }
