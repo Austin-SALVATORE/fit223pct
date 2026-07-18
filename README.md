@@ -1,6 +1,8 @@
-# Fit 2 23%
+# fit223pct
 
-A premium personal training operating system. Local-first, offline-capable,
+A premium personal training operating system. Displayed under the restrained
+working label "Training" until branding is intentionally designed
+(`src/lib/brand.ts` is the single source of truth). Local-first, offline-capable,
 mobile-first PWA — calm, editorial, and built for years of daily use.
 
 ## Docs

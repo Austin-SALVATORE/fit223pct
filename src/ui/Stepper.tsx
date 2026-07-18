@@ -53,7 +53,7 @@ export function Stepper({ label, value, step, min, max, unit, onChange }: Steppe
         <output
           data-numeric
           aria-label={label}
-          className="min-w-20 text-center text-4xl font-semibold text-ink"
+          className="min-w-14 text-center text-3xl font-semibold text-ink"
         >
           {formatNumber(value)}
           {unit && <span className="ml-0.5 text-lg font-normal text-ink-tertiary">{unit}</span>}
@@ -81,7 +81,7 @@ function StepButton({ symbol, ariaLabel, onPress, onRelease }: StepButtonProps) 
     <button
       type="button"
       aria-label={ariaLabel}
-      className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-surface text-xl text-ink-secondary transition-colors active:bg-raised active:text-ink"
+      className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-xl text-ink-secondary transition-colors active:bg-raised active:text-ink"
       onPointerDown={(event) => {
         event.currentTarget.setPointerCapture(event.pointerId)
         onPress()

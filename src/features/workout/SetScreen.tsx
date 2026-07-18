@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
 import { Stepper } from '@/ui/Stepper'
 import { suggestProgression } from '@/domain/progression'
 import type { Exercise, LoggedSet, WorkoutExercise } from '@/domain/types'
@@ -72,7 +73,7 @@ export function SetScreen({
       </div>
 
       <div className="mt-auto pt-8">
-        <div className="flex items-start justify-center gap-8">
+        <div className="flex items-start justify-center gap-4">
           {weightKg !== null && (
             <Stepper
               label="Weight"
@@ -104,13 +105,22 @@ export function SetScreen({
           {isSeconds ? 'Log hold' : 'Log set'}
         </button>
 
-        <button
-          type="button"
-          onClick={() => setSwapOpen(true)}
-          className="mt-4 w-full text-center text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
-        >
-          Swap exercise
-        </button>
+        <div className="mt-4 flex items-center justify-center gap-6">
+          <Link
+            to={`/library/${exercise.id}`}
+            state={{ from: 'workout' }}
+            className="text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
+          >
+            Technique
+          </Link>
+          <button
+            type="button"
+            onClick={() => setSwapOpen(true)}
+            className="text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
+          >
+            Swap exercise
+          </button>
+        </div>
       </div>
 
       <SwapSheet

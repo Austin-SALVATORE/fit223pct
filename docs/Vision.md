@@ -1,7 +1,10 @@
 # Vision
 
-Fit 2 23% is a premium personal training operating system for one user: Austin.
-The name is the goal: fit, down to 23% body fat.
+This is a premium personal training operating system for one user: Austin.
+The repository name (`fit223pct`) encodes the goal — fit, down to 23% body
+fat — but product branding is a separate, still-open design decision. Until
+it is made intentionally, the app presents itself under the quiet working
+label "Training" (`src/lib/brand.ts`).
 It is not a workout tracker. It is the calm, intelligent layer between Austin
 and his training — it already knows what today looks like.
 

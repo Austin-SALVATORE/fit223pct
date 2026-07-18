@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import type { Exercise, ExercisePrescription, SessionTemplate } from '@/domain/types'
 
 interface SessionPreviewProps {
@@ -11,15 +11,16 @@ export function SessionPreview({ session, exerciseById, heading }: SessionPrevie
   return (
     <section className="mt-10" aria-label={`${heading}: ${session.name}`}>
       <h2 className="eyebrow">{heading}</h2>
-      <ul className="mt-3 divide-y divide-border rounded-card border border-border bg-surface">
-        {session.items.map((item) => {
-          const exercise = exerciseById.get(item.exerciseId)
-          if (!exercise) return null
-          return (
-            <li key={item.exerciseId}>
-              <Link
+      <div className="mt-3">
+        <GroupedList>
+          {session.items.map((item) => {
+            const exercise = exerciseById.get(item.exerciseId)
+            if (!exercise) return null
+            return (
+              <GroupedRow
+                key={item.exerciseId}
                 to={`/library/${exercise.id}`}
-                className="flex items-baseline justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-raised"
+                state={{ from: 'today' }}
               >
                 <div className="min-w-0">
                   <p className="font-medium text-ink">{exercise.name}</p>
@@ -27,17 +28,14 @@ export function SessionPreview({ session, exerciseById, heading }: SessionPrevie
                     <p className="mt-0.5 text-sm text-ink-tertiary">{item.note}</p>
                   )}
                 </div>
-                <p
-                  className="shrink-0 text-sm text-ink-secondary"
-                  data-numeric
-                >
+                <p className="shrink-0 text-sm text-ink-secondary" data-numeric>
                   {formatPrescription(item)}
                 </p>
-              </Link>
-            </li>
-          )
-        })}
-      </ul>
+              </GroupedRow>
+            )
+          })}
+        </GroupedList>
+      </div>
     </section>
   )
 }

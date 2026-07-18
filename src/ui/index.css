@@ -81,6 +81,14 @@
   line-height: 1.05;
 }
 
+/* Focus ring drawn inside the element — for rows inside clipped containers */
+@utility focus-inset {
+  &:focus-visible {
+    outline: 2px solid var(--color-amber);
+    outline-offset: -2px;
+  }
+}
+
 @utility eyebrow {
   font-size: 0.75rem;
   font-weight: 600;

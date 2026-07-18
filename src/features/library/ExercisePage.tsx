@@ -1,9 +1,11 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { Link, useParams } from 'react-router'
+import { Link, useLocation, useParams } from 'react-router'
 import { exerciseRepo } from '@/data/repositories'
+import { originTarget, resolveOrigin, type NavigationOrigin } from './navigationOrigin'
 
 export function ExercisePage() {
   const { exerciseId } = useParams<{ exerciseId: string }>()
+  const origin = resolveOrigin(useLocation().state)
 
   const data = useLiveQuery(async () => {
     if (!exerciseId) return null
@@ -22,7 +24,7 @@ export function ExercisePage() {
   if (data === null) {
     return (
       <div>
-        <BackLink />
+        <BackLink origin={origin} />
         <p className="mt-10 text-ink-secondary">
           This exercise isn't in the library. It may have been renamed.
         </p>
@@ -34,7 +36,7 @@ export function ExercisePage() {
 
   return (
     <div>
-      <BackLink />
+      <BackLink origin={origin} />
       <header className="mt-6">
         <p className="eyebrow">
           {exercise.muscles.join(' · ')}
@@ -75,6 +77,7 @@ export function ExercisePage() {
               <li key={sub.id}>
                 <Link
                   to={`/library/${sub.id}`}
+                  state={{ from: origin }}
                   className="inline-block rounded-full border border-border bg-surface px-4 py-2 text-sm text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
                 >
                   {sub.name}
@@ -88,13 +91,14 @@ export function ExercisePage() {
   )
 }
 
-function BackLink() {
+function BackLink({ origin }: { origin: NavigationOrigin }) {
+  const target = originTarget(origin)
   return (
     <Link
-      to="/library"
+      to={target.path}
       className="inline-flex items-center gap-1.5 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
     >
-      <span aria-hidden="true">←</span> Library
+      <span aria-hidden="true">←</span> {target.label}
     </Link>
   )
 }

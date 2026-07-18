@@ -40,7 +40,7 @@ export function WorkoutPage() {
   const { workout, exerciseById, completed } = data
 
   if (phase.kind === 'summary' && finished) {
-    return <SessionSummary workout={finished} exerciseById={exerciseById} />
+    return <SessionSummary workout={finished} exerciseById={exerciseById} history={completed} />
   }
 
   if (!workout) {
@@ -58,7 +58,7 @@ export function WorkoutPage() {
   if (position === 'complete') {
     // Defensive: shouldn't happen because logging the last set finishes the
     // workout, but never trap the user on a dead screen.
-    return <SessionSummary workout={workout} exerciseById={exerciseById} />
+    return <SessionSummary workout={workout} exerciseById={exerciseById} history={completed} />
   }
 
   const workoutExercise = workout.exercises[position.exerciseIndex]

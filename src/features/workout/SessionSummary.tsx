@@ -1,16 +1,21 @@
 import { Link } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
 import { summarizeWorkout } from '@/domain/workout'
+import { coachInsight, workoutHighlights, type Highlight } from '@/domain/highlights'
 import type { Exercise, Workout, WorkoutExercise } from '@/domain/types'
 
 interface SessionSummaryProps {
   workout: Workout
   exerciseById: Map<string, Exercise>
+  /** Completed workouts for comparison — may safely include this workout */
+  history: readonly Workout[]
 }
 
-export function SessionSummary({ workout, exerciseById }: SessionSummaryProps) {
+export function SessionSummary({ workout, exerciseById, history }: SessionSummaryProps) {
   const reducedMotion = useReducedMotion()
   const summary = summarizeWorkout(workout)
+  const highlights = workoutHighlights(workout, history)
+  const highlightById = new Map(highlights.map((h) => [h.exerciseId, h]))
 
   return (
     <motion.div
@@ -21,6 +26,9 @@ export function SessionSummary({ workout, exerciseById }: SessionSummaryProps) {
     >
       <p className="text-sm font-medium text-sage">Session complete</p>
       <h1 className="text-display mt-2 text-5xl text-ink">Nice work.</h1>
+      <p className="mt-4 max-w-[36ch] leading-relaxed text-ink-secondary">
+        {coachInsight(highlights)}
+      </p>
 
       <dl className="mt-8 flex gap-8">
         {summary.durationMinutes !== null && (
@@ -38,6 +46,7 @@ export function SessionSummary({ workout, exerciseById }: SessionSummaryProps) {
               key={workoutExercise.exerciseId}
               workoutExercise={workoutExercise}
               exercise={exerciseById.get(workoutExercise.exerciseId)}
+              highlight={highlightById.get(workoutExercise.exerciseId)}
             />
           ))}
       </ul>
@@ -66,31 +75,49 @@ function Stat({ label, value }: { label: string; value: string }) {
 function ExerciseLine({
   workoutExercise,
   exercise,
+  highlight,
 }: {
   workoutExercise: WorkoutExercise
   exercise: Exercise | undefined
+  highlight: Highlight | undefined
 }) {
-  const best = workoutExercise.sets.reduce((top, set) => {
+  return (
+    <li className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
+      <div className="min-w-0">
+        <p className="text-ink">{exercise?.name ?? workoutExercise.exerciseId}</p>
+        <p className="mt-0.5 text-sm text-ink-tertiary" data-numeric>
+          {topSetLabel(workoutExercise)}
+        </p>
+      </div>
+      {highlight && (
+        <span
+          className={`shrink-0 text-sm font-medium ${
+            highlight.kind === 'load' || highlight.kind === 'effort'
+              ? 'text-amber'
+              : 'text-ink-tertiary'
+          }`}
+          data-numeric
+        >
+          {highlight.label}
+        </span>
+      )}
+    </li>
+  )
+}
+
+function topSetLabel(workoutExercise: WorkoutExercise): string {
+  const sets = workoutExercise.sets
+  const best = sets.reduce((top, set) => {
     const effort = (set.weightKg ?? 0) * (set.reps ?? 0)
     const topEffort = (top.weightKg ?? 0) * (top.reps ?? 0)
     return effort > topEffort ? set : top
   })
-
-  const bestLabel =
-    best.weightKg !== null && best.reps !== null
-      ? `top ${best.reps} × ${best.weightKg} kg`
-      : best.seconds !== null
-        ? `top ${best.seconds}s hold`
-        : `${best.reps ?? 0} reps`
-
-  return (
-    <li className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
-      <span className="text-ink">{exercise?.name ?? workoutExercise.exerciseId}</span>
-      <span className="shrink-0 text-sm text-ink-secondary" data-numeric>
-        {workoutExercise.sets.length} {workoutExercise.sets.length === 1 ? 'set' : 'sets'} · {bestLabel}
-      </span>
-    </li>
-  )
+  const count = `${sets.length} ${sets.length === 1 ? 'set' : 'sets'}`
+  if (best.weightKg !== null && best.reps !== null) {
+    return `${count} · top ${best.reps} × ${best.weightKg} kg`
+  }
+  if (best.seconds !== null) return `${count} · top ${best.seconds}s hold`
+  return `${count} · top ${best.reps ?? 0} reps`
 }
 
 function formatVolume(volume: number): string {

@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { fileURLToPath } from 'node:url'
+import { PRODUCT_NAME } from './src/lib/brand.ts'
 
 export default defineConfig({
   plugins: [
@@ -11,8 +12,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Fit 2 23%',
-        short_name: 'Fit 2 23%',
+        name: PRODUCT_NAME,
+        short_name: PRODUCT_NAME,
         description: 'Your personal training operating system',
         display: 'standalone',
         orientation: 'portrait',
