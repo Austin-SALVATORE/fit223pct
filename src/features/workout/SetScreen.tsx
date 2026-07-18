@@ -5,6 +5,7 @@ import { RatingPicker } from '@/ui/RatingPicker'
 import { suggestProgression } from '@/domain/progression'
 import type { ReadinessTier } from '@/domain/readiness'
 import type { Exercise, LoggedSet, WorkoutExercise } from '@/domain/types'
+import { HoldTimer } from './HoldTimer'
 import { SwapSheet } from './SwapSheet'
 
 interface SetScreenProps {
@@ -77,6 +78,12 @@ export function SetScreen({
       </div>
 
       <div className="mt-auto pt-8">
+        {isSeconds && (
+          <div className="mb-6 flex justify-center">
+            <HoldTimer onComplete={setEffort} />
+          </div>
+        )}
+
         <div className="flex items-start justify-center gap-4">
           {weightKg !== null && (
             <Stepper
