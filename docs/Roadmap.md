@@ -47,6 +47,16 @@ longer Monday-only. See docs/Progress.md.
 PWA install/offline hardening, motion polish pass, accessibility audit,
 Fitness Park (gym equipment) program for Phase 2, program transition UX.
 
+Pre-flight (real-device pass ahead of Phase 1's 21 Jul start): offline font
+caching, iOS home-screen install meta tags, safe-area padding so the status
+bar no longer overlaps installed-PWA headers. Landed early, ahead of the
+rest of the milestone: an early-start affordance — rest days and
+pre-program days offer a quiet "Start this session now" action below the
+session preview, so training ahead of schedule is always possible without
+being the recommendation — and a tap-to-start hold timer for seconds-mode
+sets (side plank and similar), which pre-fills the manual seconds Stepper
+on stop rather than replacing it.
+
 ## Later (architecture-ready, not scheduled)
 
 Cloud sync · Apple Watch · nutrition · wearables · advanced analytics.

@@ -39,7 +39,9 @@ export function TodayPage() {
         workoutRepo.getActive(),
         workoutRepo.getByDate(todayKey),
         checkinRepo.getByDate(todayKey),
-        checkinRepo.getRecent(),
+        // readinessFrom's consecutive-day walk can run well past 14 days —
+        // the default window undercounts any streak longer than that.
+        checkinRepo.getRecent(60),
         settingsRepo.get(),
       ])
     const completedCount = program ? await workoutRepo.countCompleted(program.id) : 0
@@ -369,8 +371,11 @@ function StartButton({
   variant?: 'primary' | 'quiet'
 }) {
   const navigate = useNavigate()
+  const [starting, setStarting] = useState(false)
 
   async function start() {
+    if (starting) return
+    setStarting(true)
     const workout = {
       ...createWorkout({
         id: crypto.randomUUID(),
@@ -392,8 +397,9 @@ function StartButton({
     return (
       <button
         type="button"
+        disabled={starting}
         onClick={() => void start()}
-        className="mt-6 w-full rounded-card border border-border py-3.5 text-center text-base font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
+        className="mt-6 w-full rounded-card border border-border py-3.5 text-center text-base font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink disabled:opacity-60"
       >
         Start this session now
       </button>
@@ -403,8 +409,9 @@ function StartButton({
   return (
     <button
       type="button"
+      disabled={starting}
       onClick={() => void start()}
-      className="mt-8 w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg transition-transform active:scale-[0.98]"
+      className="mt-8 w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg transition-transform active:scale-[0.98] disabled:opacity-60"
     >
       Start session
     </button>
