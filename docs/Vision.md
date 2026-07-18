@@ -1,6 +1,7 @@
 # Vision
 
-Atlas is a premium personal training operating system for one user: Austin.
+Fit 2 23% is a premium personal training operating system for one user: Austin.
+The name is the goal: fit, down to 23% body fat.
 It is not a workout tracker. It is the calm, intelligent layer between Austin
 and his training — it already knows what today looks like.
 

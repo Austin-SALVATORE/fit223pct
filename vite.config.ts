@@ -11,8 +11,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Atlas',
-        short_name: 'Atlas',
+        name: 'Fit 2 23%',
+        short_name: 'Fit 2 23%',
         description: 'Your personal training operating system',
         display: 'standalone',
         orientation: 'portrait',

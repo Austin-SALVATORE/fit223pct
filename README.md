@@ -1,4 +1,4 @@
-# Atlas (fit223pct)
+# Fit 2 23%
 
 A premium personal training operating system. Local-first, offline-capable,
 mobile-first PWA — calm, editorial, and built for years of daily use.

@@ -11,7 +11,7 @@ import type {
  * Local-first store. Schema changes must always be additive Dexie
  * migrations — workout history is never dropped.
  */
-export class AtlasDatabase extends Dexie {
+export class Fit223Database extends Dexie {
   exercises!: EntityTable<Exercise, 'id'>
   programs!: EntityTable<Program, 'id'>
   workouts!: EntityTable<Workout, 'id'>
@@ -19,7 +19,7 @@ export class AtlasDatabase extends Dexie {
   settings!: EntityTable<UserSettings, 'id'>
 
   constructor() {
-    super('atlas')
+    super('fit223pct')
     this.version(1).stores({
       exercises: 'id, name',
       programs: 'id, phase, startDate',
@@ -30,4 +30,4 @@ export class AtlasDatabase extends Dexie {
   }
 }
 
-export const db = new AtlasDatabase()
+export const db = new Fit223Database()

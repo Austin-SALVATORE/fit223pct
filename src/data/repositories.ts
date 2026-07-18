@@ -30,4 +30,17 @@ export const workoutRepo = {
     db.workouts
       .filter((w) => w.programId === programId && w.completedAt !== null)
       .count(),
+
+  /** The in-progress workout, if any — at most one exists by design. */
+  getActive: async (): Promise<Workout | undefined> => {
+    const open = await db.workouts.filter((w) => w.completedAt === null).toArray()
+    return open.sort((a, b) => b.startedAt.localeCompare(a.startedAt))[0]
+  },
+
+  getCompleted: (): Promise<Workout[]> =>
+    db.workouts.filter((w) => w.completedAt !== null).toArray(),
+
+  put: (workout: Workout): Promise<string> => db.workouts.put(workout),
+
+  remove: (id: string): Promise<void> => db.workouts.delete(id),
 }

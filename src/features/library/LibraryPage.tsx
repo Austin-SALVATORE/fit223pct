@@ -42,8 +42,13 @@ export function LibraryPage() {
 function Heading() {
   return (
     <header>
-      <p className="eyebrow">Library</p>
-      <h1 className="text-display mt-2 text-4xl text-ink">Exercises</h1>
+      <Link
+        to="/"
+        className="inline-flex items-center gap-1.5 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
+      >
+        <span aria-hidden="true">←</span> Today
+      </Link>
+      <h1 className="text-display mt-6 text-4xl text-ink">Exercises</h1>
     </header>
   )
 }
