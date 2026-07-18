@@ -127,6 +127,37 @@ describe('detectStagnation', () => {
     }
   })
 
+  it('never flags double progression as stagnant — flat weight with climbing reps is the program working as designed', () => {
+    // Exactly the fill-the-rep-range stage docs/Training.md describes:
+    // weight holds at 16 kg for weeks while reps climb toward the top of range.
+    const result = detectStagnation(squat, [
+      workout('2026-07-06', 16, 9),
+      workout('2026-07-08', 16, 11),
+      workout('2026-07-10', 16, 12),
+    ])
+    expect(result.status).toBe('progressing')
+  })
+
+  it('still flags a genuine plateau where weight AND reps both hold flat', () => {
+    const result = detectStagnation(squat, [
+      workout('2026-07-06', 16, 10),
+      workout('2026-07-08', 16, 10),
+      workout('2026-07-10', 16, 10),
+    ])
+    expect(result.status).toBe('stagnant')
+  })
+
+  it('counts a reps improvement even on the transition where weight also happens to be flat', () => {
+    // Weight flat 06→08, but reps climbed — that transition alone should
+    // be enough to call it progressing, regardless of what 08→10 does.
+    const result = detectStagnation(squat, [
+      workout('2026-07-06', 16, 8),
+      workout('2026-07-08', 16, 12),
+      workout('2026-07-10', 16, 10),
+    ])
+    expect(result.status).toBe('progressing')
+  })
+
   it('ignores sessions for other exercises', () => {
     const result = detectStagnation(squat, [
       workout('2026-07-06', 16, 10),

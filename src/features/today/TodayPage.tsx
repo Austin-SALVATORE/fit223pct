@@ -2,12 +2,12 @@ import { useState, type ReactNode } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Link, useNavigate } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
-import { checkinRepo, exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
+import { checkinRepo, exerciseRepo, programRepo, settingsRepo, workoutRepo } from '@/data/repositories'
 import { resolveDayPlan } from '@/domain/schedule'
 import { createWorkout, summarizeWorkout } from '@/domain/workout'
 import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readiness'
 import { applyReadiness } from '@/domain/adjustments'
-import { buildWeeklyReview, shouldShowWeeklyReview, type WeeklyReview } from '@/domain/weeklyReview'
+import { buildWeeklyReview, reviewIsUnseen, type WeeklyReview } from '@/domain/weeklyReview'
 import { formatLongDate, toDateKey } from '@/lib/dates'
 import type { CheckIn, Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
 import { CheckInCard } from '@/features/checkin/CheckInCard'
@@ -23,6 +23,7 @@ interface TodayData {
   recentCheckIns: CheckIn[]
   completedCount: number
   weeklyReview: WeeklyReview | null
+  lastSeenWeeklyReviewWeekStart: string | null
 }
 
 export function TodayPage() {
@@ -31,7 +32,7 @@ export function TodayPage() {
   const reducedMotion = useReducedMotion()
 
   const data = useLiveQuery(async (): Promise<TodayData> => {
-    const [program, exercises, activeWorkout, todayWorkout, todayCheckIn, recentCheckIns] =
+    const [program, exercises, activeWorkout, todayWorkout, todayCheckIn, recentCheckIns, settings] =
       await Promise.all([
         programRepo.getActive(todayKey),
         exerciseRepo.getAll(),
@@ -39,13 +40,15 @@ export function TodayPage() {
         workoutRepo.getByDate(todayKey),
         checkinRepo.getByDate(todayKey),
         checkinRepo.getRecent(),
+        settingsRepo.get(),
       ])
     const completedCount = program ? await workoutRepo.countCompleted(program.id) : 0
-    // Weekly review only matters on its one day — skip the extra read otherwise.
-    const weeklyReview =
-      program && shouldShowWeeklyReview(today)
-        ? buildWeeklyReview(program, await workoutRepo.getCompleted(), today)
-        : null
+    // Not gated to Monday — a review the user hasn't seen yet stays
+    // available on every open of the week it covers, never tied to
+    // whether they happened to open the app on any one particular day.
+    const weeklyReview = program
+      ? buildWeeklyReview(program, await workoutRepo.getCompleted(), today)
+      : null
     return {
       program,
       exercises,
@@ -55,6 +58,7 @@ export function TodayPage() {
       recentCheckIns,
       completedCount,
       weeklyReview,
+      lastSeenWeeklyReviewWeekStart: settings?.lastSeenWeeklyReviewWeekStart ?? null,
     }
   }, [todayKey])
 
@@ -91,7 +95,15 @@ function TodayBody({
     recentCheckIns,
     completedCount,
     weeklyReview,
+    lastSeenWeeklyReviewWeekStart,
   } = data
+  // Decided once, at this component instance's first render, and never
+  // re-derived — marking the review "seen" writes to settings, which would
+  // otherwise make this card vanish out from under the user moments after
+  // it appeared, in the very session that's supposed to show it.
+  const [showWeeklyReview] = useState(() =>
+    reviewIsUnseen(weeklyReview, lastSeenWeeklyReviewWeekStart),
+  )
   const exerciseById = new Map(exercises.map((e) => [e.id, e]))
   const doneToday = todayWorkout !== undefined && todayWorkout.completedAt !== null
   const readiness = readinessFrom(todayCheckIn ?? null, recentCheckIns)
@@ -109,7 +121,7 @@ function TodayBody({
 
   return (
     <>
-      {weeklyReview && <WeeklyReviewCard review={weeklyReview} />}
+      {showWeeklyReview && weeklyReview && <WeeklyReviewCard review={weeklyReview} />}
 
       {activeWorkout ? (
         <>

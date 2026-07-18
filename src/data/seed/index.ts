@@ -18,6 +18,7 @@ export async function seedDatabase(): Promise<void> {
         name: 'Austin',
         heightCm: 180,
         weeklyGoal: 3,
+        lastSeenWeeklyReviewWeekStart: null,
       })
     }
   })

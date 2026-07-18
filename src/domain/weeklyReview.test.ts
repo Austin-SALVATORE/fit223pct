@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildWeeklyReview, shouldShowWeeklyReview } from './weeklyReview'
+import { buildWeeklyReview, reviewIsUnseen } from './weeklyReview'
 import type { Program, Workout } from './types'
 
 const program: Program = {
@@ -52,11 +52,29 @@ function workout(
   }
 }
 
-describe('shouldShowWeeklyReview', () => {
-  it('is true only on Monday', () => {
-    expect(shouldShowWeeklyReview(new Date(2026, 6, 13, 9, 0, 0))).toBe(true) // Monday
-    expect(shouldShowWeeklyReview(new Date(2026, 6, 14, 9, 0, 0))).toBe(false) // Tuesday
-    expect(shouldShowWeeklyReview(new Date(2026, 6, 19, 9, 0, 0))).toBe(false) // Sunday
+describe('reviewIsUnseen', () => {
+  it('is true for a real review that has never been marked seen', () => {
+    const review = buildWeeklyReview(program, [], new Date(2026, 6, 13, 9, 0, 0))
+    expect(reviewIsUnseen(review, null)).toBe(true)
+  })
+
+  it('is true any day of the week, not just Monday — attendance should not gate it', () => {
+    const review = buildWeeklyReview(program, [], new Date(2026, 6, 16, 9, 0, 0)) // Thursday
+    expect(reviewIsUnseen(review, null)).toBe(true)
+  })
+
+  it('is false once that exact week has been marked seen', () => {
+    const review = buildWeeklyReview(program, [], new Date(2026, 6, 13, 9, 0, 0))
+    expect(reviewIsUnseen(review, review?.weekStart ?? null)).toBe(false)
+  })
+
+  it('is true again for a new week even if a previous week was seen', () => {
+    const review = buildWeeklyReview(program, [], new Date(2026, 6, 20, 9, 0, 0)) // the following Monday
+    expect(reviewIsUnseen(review, '2026-07-06')).toBe(true)
+  })
+
+  it('is false when there is no review to show', () => {
+    expect(reviewIsUnseen(null, null)).toBe(false)
   })
 })
 

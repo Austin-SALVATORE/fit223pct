@@ -63,7 +63,12 @@ export function StrengthCard({ exercise, trend, stagnation, substitution }: Stre
   )
 }
 
+/** Shows both dimensions when weight is present — a session's reps still
+ * moved even when its weight didn't, and hiding that is exactly what let
+ * double progression read as a plateau. */
 function formatEvidence(point: StagnationEvidencePoint): string {
-  if (point.weightKg !== null) return formatValue(point.weightKg, 'kg')
+  if (point.weightKg !== null) {
+    return `${formatValue(point.weightKg, 'kg')} × ${formatValue(point.effort, point.effortMode)}`
+  }
   return formatValue(point.effort, point.effortMode)
 }

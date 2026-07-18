@@ -1,12 +1,22 @@
+import { useEffect } from 'react'
+import { settingsRepo } from '@/data/repositories'
 import type { WeeklyReview } from '@/domain/weeklyReview'
 
 /**
- * Appears only on Monday, reviewing the week just finished — a moment, not
- * a permanent dashboard tile (see docs/Progress.md). Reports only what was
- * observed that week; never extrapolates a claim from it.
+ * Reviewing the week just finished — a moment, not a permanent dashboard
+ * tile (see docs/Progress.md). Reports only what was observed that week;
+ * never extrapolates a claim from it. Shown on the first open after the
+ * week ends, any day of the week — marks itself seen once displayed, so it
+ * never reappears for this same week (TodayPage locks the decision to show
+ * it for the rest of this session, so it won't vanish the moment that write commits).
  */
 export function WeeklyReviewCard({ review }: { review: WeeklyReview }) {
-  const { scheduledCount, completedCount, totalSets, volumeKg, readinessTierCounts } = review
+  const { weekStart, scheduledCount, completedCount, totalSets, volumeKg, readinessTierCounts } =
+    review
+
+  useEffect(() => {
+    void settingsRepo.markWeeklyReviewSeen(weekStart)
+  }, [weekStart])
 
   return (
     <section

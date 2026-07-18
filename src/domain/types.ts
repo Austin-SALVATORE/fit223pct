@@ -132,4 +132,6 @@ export interface UserSettings {
   name: string
   heightCm: number
   weeklyGoal: number
+  /** weekStart (Monday date key) of the last weekly review shown — null if none has been */
+  lastSeenWeeklyReviewWeekStart: string | null
 }

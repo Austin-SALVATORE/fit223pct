@@ -65,12 +65,14 @@ export function detectStagnation(
   }
 
   const recent = qualifying.slice(-REQUIRED_QUALIFYING_SESSIONS)
-  const scoreOf = (s: (typeof recent)[number]) => s.weightKg ?? s.effort
 
-  const noIncrease =
-    scoreOf(recent[1]) <= scoreOf(recent[0]) && scoreOf(recent[2]) <= scoreOf(recent[1])
+  // Double progression (docs/Training.md) means weight is EXPECTED to hold
+  // flat for weeks while reps climb — that is the program working, not a
+  // plateau. Progress on either dimension counts; only when neither weight
+  // nor effort moved across the whole window is it a genuine stall.
+  const progressed = improved(recent[0], recent[1]) || improved(recent[1], recent[2])
 
-  if (!noIncrease) {
+  if (progressed) {
     return { status: 'progressing' }
   }
 
@@ -89,6 +91,22 @@ export function detectStagnation(
     excludedForReadiness,
     suggestedSubstitutionId: exercise.substitutionIds[0] ?? null,
   }
+}
+
+interface Session {
+  weightKg: number | null
+  effort: number
+}
+
+/**
+ * True if `b` beat `a` on either weight or effort. Never collapses the two
+ * into one scalar — a flat weight with climbing reps is real progress
+ * (double progression), not noise to discard.
+ */
+function improved(a: Session, b: Session): boolean {
+  const weightUp = a.weightKg !== null && b.weightKg !== null && b.weightKg > a.weightKg
+  const effortUp = b.effort > a.effort
+  return weightUp || effortUp
 }
 
 function maxOf<T>(items: readonly T[], value: (item: T) => number | null): number {

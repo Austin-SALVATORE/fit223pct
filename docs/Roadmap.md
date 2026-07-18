@@ -29,9 +29,18 @@ with an extra field. This closes the loop: consistency, strength, and
 waist trends (docs/Progress.md) — each with an explicit insufficient-data
 state, never a direction drawn from too few points — plus stagnation
 detection that excludes readiness-adjusted sessions from the stall count
-and states its evidence by name, the same way readiness does. A Monday-only
-weekly review reports the week just finished, honestly, including zero.
+and states its evidence by name, the same way readiness does. A weekly
+review reports the week just finished, honestly, including zero, and
+appears on the first open after the week ends rather than a fixed day.
 No charts anywhere — phrase-driven, consistent with the rest of the app.
+
+Review-patched same day: stagnation and strength trend both used to
+collapse weight and reps into one scalar or coerce a missing weight to
+`0` — either could turn the program's own double-progression pattern
+(flat weight, climbing reps) into a false "stagnant" claim. Trend
+direction moved from comparing two endpoints to comparing half-window
+medians; the consistency rate is now bounded at 1; the weekly review is no
+longer Monday-only. See docs/Progress.md.
 
 ## Milestone 5 — Polish & Phase 2
 

@@ -131,8 +131,26 @@ describe('ProgressPage — stagnation surfaces named evidence', () => {
     // can't join across that element boundary.
     expect(await screen.findByText('3 sessions')).toBeInTheDocument()
     expect(screen.getByText(/No increase in/)).toBeInTheDocument()
-    expect(screen.getByText(/16 kg → 16 kg → 16 kg/)).toBeInTheDocument()
+    // Both dimensions are shown per point — a session's reps still moved
+    // even when weight didn't, and hiding that is the exact bug that let
+    // double progression misread as a plateau.
+    expect(
+      screen.getByText(/16 kg × 10 reps → 16 kg × 10 reps → 16 kg × 9 reps/),
+    ).toBeInTheDocument()
     expect(await screen.findByRole('link', { name: /Split squat/ })).toBeInTheDocument()
+  })
+
+  it('never shows a stagnation callout for double progression — flat weight, climbing reps', async () => {
+    await db.workouts.bulkPut([
+      squatWorkout('w1', '2026-07-21', 16, 9),
+      squatWorkout('w2', '2026-07-23', 16, 11),
+      squatWorkout('w3', '2026-07-25', 16, 12),
+    ])
+    renderApp()
+    expect(await screen.findByRole('heading', { name: 'Progress' })).toBeInTheDocument()
+    expect(await screen.findByText(/holding steady|trending up/)).toBeInTheDocument()
+    expect(screen.queryByText(/No increase in/)).toBeNull()
+    expect(screen.queryByText(/Worth a change of stimulus/)).toBeNull()
   })
 
   it('round-trips Progress → exercise detail → Progress without landing on Library', async () => {

@@ -1,5 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
@@ -8,9 +8,11 @@ import { TodayPage } from './TodayPage'
 import type { Workout } from '@/domain/types'
 
 /**
- * The weekly review is a Monday-only moment (docs/Progress.md), reviewing
- * the week just finished — never a permanent dashboard tile, and never a
- * claim beyond what that one week actually contained.
+ * The weekly review is not attendance-dependent (docs/Progress.md): it
+ * appears on the first open after the week ends, whichever day that is —
+ * not gated to Monday — and disappears for good once seen, persisted via
+ * settingsRepo. It also must not vanish mid-session the instant that
+ * "seen" write lands, since the write happens as a side effect of showing it.
  */
 
 function workout(id: string, date: string): Workout {
@@ -55,34 +57,63 @@ function renderApp() {
   )
 }
 
+const WEEK_START = '2026-07-20'
+
 describe('Weekly review on Today', () => {
   beforeAll(async () => {
     await seedDatabase()
     await db.workouts.bulkPut([workout('w1', '2026-07-21'), workout('w2', '2026-07-23')])
   })
 
+  afterEach(() => {
+    cleanup()
+    vi.useRealTimers()
+  })
+
   afterAll(async () => {
-    vi.useRealTimers()
     await db.workouts.clear()
+    await db.settings.clear()
   })
 
-  it('does not appear on a non-Monday', async () => {
-    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 6, 22, 9, 0, 0) }) // Wednesday
-    renderApp()
-    expect(await screen.findByText(/Saturday|Sunday|Monday|Tuesday|Wednesday|Thursday|Friday/))
-      .toBeInTheDocument()
-    expect(screen.queryByLabelText('Last week')).toBeNull()
-    vi.useRealTimers()
-  })
-
-  it('appears on Monday, reviewing the week that just finished — facts only', async () => {
-    // Monday 27 Jul reviews Mon 20 – Sun 26 Jul; program starts Tue 21 Jul, so
-    // Mon 20 isn't scheduled — 2 of 2 scheduled sessions in that window were completed.
-    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 6, 27, 9, 0, 0) })
+  it('appears on a non-Monday open, reviewing the week that just finished — facts only', async () => {
+    await db.settings.update('user', { lastSeenWeeklyReviewWeekStart: null })
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 6, 30, 9, 0, 0) }) // Thursday
     renderApp()
     expect(await screen.findByLabelText('Last week')).toBeInTheDocument()
     expect(screen.getByText('Every scheduled session, done.')).toBeInTheDocument()
     expect(screen.getByText('2/2')).toBeInTheDocument()
-    vi.useRealTimers()
+
+    // Wait for this test's own mark-seen write to land before finishing —
+    // otherwise it can resolve mid-way through the NEXT test and clobber
+    // that test's reset, a cross-test race the earlier flake was made of.
+    await waitFor(async () => {
+      const settings = await db.settings.get('user')
+      expect(settings?.lastSeenWeeklyReviewWeekStart).toBe(WEEK_START)
+    })
+  })
+
+  it('stays visible for the rest of this session even after the seen-write commits', async () => {
+    await db.settings.update('user', { lastSeenWeeklyReviewWeekStart: null })
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 6, 30, 9, 0, 0) })
+    renderApp()
+    expect(await screen.findByLabelText('Last week')).toBeInTheDocument()
+
+    // Let the mark-seen write (and the reactive settings refresh it
+    // triggers) actually land...
+    await waitFor(async () => {
+      const settings = await db.settings.get('user')
+      expect(settings?.lastSeenWeeklyReviewWeekStart).toBe(WEEK_START)
+    })
+    // ...and confirm the card is still on screen despite that, because this
+    // session's decision to show it was locked in at mount.
+    expect(screen.getByLabelText('Last week')).toBeInTheDocument()
+  })
+
+  it('does not reappear on a later open once that week has been seen', async () => {
+    await db.settings.update('user', { lastSeenWeeklyReviewWeekStart: WEEK_START })
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 7, 1, 9, 0, 0) }) // the following Saturday
+    renderApp()
+    await screen.findByText(/Saturday/)
+    expect(screen.queryByLabelText('Last week')).toBeNull()
   })
 })

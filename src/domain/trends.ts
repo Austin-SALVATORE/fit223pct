@@ -88,12 +88,17 @@ export function consistencyTrend(
     }
   }
 
+  // Only completions that land on a scheduled day count toward the rate —
+  // an extra unscheduled session is real effort, but it isn't "more of the
+  // schedule than the schedule has," so it must never push the rate past
+  // 1. It simply doesn't move this number either way.
   const completedCount = workouts.filter(
     (w) =>
       w.programId === program.id &&
       w.completedAt !== null &&
       w.date >= windowStartKey &&
-      w.date <= windowEndKey,
+      w.date <= windowEndKey &&
+      program.trainingWeekdays.includes(isoWeekday(parseDateKey(w.date))),
   ).length
 
   return {
@@ -114,13 +119,30 @@ export function consistencyTrend(
  * nothing here is smoothed or estimated.
  */
 export function strengthTrend(exerciseId: string, workouts: readonly Workout[]): Trend {
-  const sessions = workouts
+  const allSessions = workouts
     .filter((w) => w.completedAt !== null)
     .flatMap((w) => {
       const exercise = w.exercises.find((e) => e.exerciseId === exerciseId && e.sets.length > 0)
       return exercise ? [{ date: w.date, sets: exercise.sets, mode: exercise.prescription.mode }] : []
     })
     .sort((a, b) => a.date.localeCompare(b.date))
+
+  if (allSessions.length < MIN_TREND_POINTS) {
+    return {
+      status: 'insufficient-data',
+      reason: 'Log this exercise a few more times to see a strength trend.',
+    }
+  }
+
+  const usesWeight = allSessions.some((s) => s.sets.some((set) => set.weightKg !== null))
+
+  // A kg-unit trend can only be built from sessions that actually logged a
+  // weight — a weightless session (a bodyweight swap, a forgotten field)
+  // is not a real "0 kg" data point, and fabricating one can flip the
+  // direction on invented data.
+  const sessions = usesWeight
+    ? allSessions.filter((s) => s.sets.some((set) => set.weightKg !== null))
+    : allSessions
 
   if (sessions.length < MIN_TREND_POINTS) {
     return {
@@ -129,7 +151,6 @@ export function strengthTrend(exerciseId: string, workouts: readonly Workout[]):
     }
   }
 
-  const usesWeight = sessions.some((s) => s.sets.some((set) => set.weightKg !== null))
   const unit: TrendUnit = usesWeight ? 'kg' : sessions.at(-1)!.mode
   const windowed = sessions.slice(-TREND_WINDOW_POINTS)
   const evidence: TrendEvidencePoint[] = windowed.map((session) => ({
@@ -171,12 +192,31 @@ export function waistTrend(checkins: readonly CheckIn[]): Trend {
   return { status: direction(evidence), evidence, unit: 'cm' }
 }
 
+/**
+ * Compares the median of the first half of the window against the median
+ * of the second half, rather than just the first and last point — a single
+ * noisy reading (measurement error, an off day) at either end shouldn't
+ * flip the whole verdict. With exactly three points (the minimum) this is
+ * mathematically identical to comparing the two endpoints — there is no
+ * more robust option with that little data.
+ */
 function direction(evidence: readonly TrendEvidencePoint[]): TrendDirection {
-  const first = evidence[0].value
-  const last = evidence.at(-1)!.value
-  if (last > first) return 'increasing'
-  if (last < first) return 'decreasing'
+  const values = evidence.map((e) => e.value)
+  const halfSize = Math.floor(values.length / 2)
+  const firstHalf = values.slice(0, halfSize)
+  const secondHalf = values.slice(values.length - halfSize)
+
+  const before = median(firstHalf)
+  const after = median(secondHalf)
+  if (after > before) return 'increasing'
+  if (after < before) return 'decreasing'
   return 'steady'
+}
+
+function median(values: readonly number[]): number {
+  const sorted = [...values].sort((a, b) => a - b)
+  const mid = Math.floor(sorted.length / 2)
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid]
 }
 
 function maxOf<T>(items: readonly T[], value: (item: T) => number | null): number {

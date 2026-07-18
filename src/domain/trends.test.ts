@@ -91,6 +91,24 @@ describe('consistencyTrend', () => {
     expect(trend.status).toBe('ok')
     if (trend.status === 'ok') expect(trend.scheduledCount).toBe(1) // just Monday
   })
+
+  it('never lets the rate exceed 1 — a bonus session on an unscheduled day does not count toward it', () => {
+    // Window: Mon 06 – Fri 10 (three scheduled days). Every scheduled day
+    // trained, PLUS an extra session on Tuesday 07 (not a training day).
+    const workouts = [
+      workout('2026-07-06', 'goblet-squat', 14, 10), // Mon, scheduled
+      workout('2026-07-07', 'goblet-squat', 14, 10), // Tue, bonus — not scheduled
+      workout('2026-07-08', 'goblet-squat', 14, 10), // Wed, scheduled
+      workout('2026-07-10', 'goblet-squat', 14, 10), // Fri, scheduled
+    ]
+    const trend = consistencyTrend(program, workouts, new Date(2026, 6, 11, 9, 0, 0))
+    expect(trend.status).toBe('ok')
+    if (trend.status === 'ok') {
+      expect(trend.scheduledCount).toBe(3)
+      expect(trend.completedCount).toBe(3)
+      expect(trend.rate).toBeLessThanOrEqual(1)
+    }
+  })
 })
 
 describe('strengthTrend', () => {
@@ -156,6 +174,49 @@ describe('strengthTrend', () => {
     ]
     const trend = strengthTrend('goblet-squat', workouts)
     expect(trend.status).toBe('insufficient-data')
+  })
+
+  it('never fabricates a 0 kg point for a session with no weight logged, on an otherwise weighted exercise', () => {
+    const workouts = [
+      workout('2026-07-06', 'goblet-squat', 16, 10),
+      workout('2026-07-08', 'goblet-squat', null, 10), // weight not logged that day
+      workout('2026-07-10', 'goblet-squat', 16, 10),
+      workout('2026-07-12', 'goblet-squat', 16, 10),
+    ]
+    const trend = strengthTrend('goblet-squat', workouts)
+    // The weightless session is excluded, not read as a collapse to 0 kg —
+    // three real 16 kg points remain, so this is steady, not decreasing.
+    expect(trend.status).toBe('steady')
+    if (trend.status !== 'insufficient-data') {
+      expect(trend.evidence.every((e) => e.value === 16)).toBe(true)
+      expect(trend.evidence).toHaveLength(3)
+    }
+  })
+
+  it('reports insufficient data, not a fabricated direction, when excluding weightless sessions drops below three', () => {
+    const workouts = [
+      workout('2026-07-06', 'goblet-squat', 16, 10),
+      workout('2026-07-08', 'goblet-squat', null, 12),
+      workout('2026-07-10', 'goblet-squat', 16, 8),
+    ]
+    const trend = strengthTrend('goblet-squat', workouts)
+    expect(trend.status).toBe('insufficient-data')
+  })
+
+  it('is not thrown off by one noisy final reading — half-median beats a lone endpoint', () => {
+    // Real progression across the middle sessions, but the LAST reading is
+    // a one-off bad day back at the starting weight. Comparing only the
+    // two endpoints (10 vs 10) would call this "steady" and hide the
+    // genuine rise in between; half-median correctly reads it as increasing.
+    const workouts = [
+      workout('2026-07-06', 'goblet-squat', 10, 10),
+      workout('2026-07-08', 'goblet-squat', 14, 10),
+      workout('2026-07-10', 'goblet-squat', 16, 10),
+      workout('2026-07-12', 'goblet-squat', 18, 10),
+      workout('2026-07-14', 'goblet-squat', 10, 6), // an off day, not the trend
+    ]
+    const trend = strengthTrend('goblet-squat', workouts)
+    expect(trend.status).toBe('increasing')
   })
 })
 

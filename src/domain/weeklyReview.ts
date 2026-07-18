@@ -12,9 +12,20 @@ export interface WeeklyReview {
   readinessTierCounts: Record<ReadinessTier, number>
 }
 
-/** Weekly reviews appear weekly — Monday, reviewing the week just finished. */
-export function shouldShowWeeklyReview(date: Date): boolean {
-  return isoWeekday(date) === 1
+/**
+ * A Monday-only trigger makes the review attendance-dependent — miss
+ * opening the app that one day and it never appears. Instead, the review
+ * for a given week stays available on every open until the user has seen
+ * it once; after that it is gone, whichever day it happened to be seen on.
+ * "Seen" is the caller's job to persist (a single write, on display) —
+ * this function only answers the pure question of whether today's
+ * candidate review is a new one.
+ */
+export function reviewIsUnseen(
+  review: WeeklyReview | null,
+  lastSeenWeekStart: string | null,
+): boolean {
+  return review !== null && review.weekStart !== lastSeenWeekStart
 }
 
 /**

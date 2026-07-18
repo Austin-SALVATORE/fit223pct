@@ -1,5 +1,5 @@
 import { db } from './db'
-import type { CheckIn, Exercise, Program, Workout } from '@/domain/types'
+import type { CheckIn, Exercise, Program, UserSettings, Workout } from '@/domain/types'
 
 /**
  * All reads/writes go through here — components never touch Dexie tables
@@ -57,4 +57,15 @@ export const checkinRepo = {
   getAll: (): Promise<CheckIn[]> => db.checkins.orderBy('date').toArray(),
 
   put: (checkIn: CheckIn): Promise<string> => db.checkins.put(checkIn),
+}
+
+export const settingsRepo = {
+  get: (): Promise<UserSettings | undefined> => db.settings.get('user'),
+
+  /** Persists that a given week's review has been shown — it never reappears after this. */
+  async markWeeklyReviewSeen(weekStart: string): Promise<void> {
+    const existing = await db.settings.get('user')
+    if (!existing) return
+    await db.settings.put({ ...existing, lastSeenWeeklyReviewWeekStart: weekStart })
+  },
 }
