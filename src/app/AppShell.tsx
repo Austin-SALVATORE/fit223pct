@@ -7,7 +7,7 @@ import { Outlet } from 'react-router'
 export function AppShell() {
   return (
     <div className="mx-auto w-full max-w-md">
-      <main className="min-h-dvh px-5 pb-16 pt-6">
+      <main className="min-h-dvh px-5 pb-16 pt-[max(1.5rem,env(safe-area-inset-top))]">
         <Outlet />
       </main>
     </div>

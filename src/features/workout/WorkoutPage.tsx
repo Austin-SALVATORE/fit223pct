@@ -99,7 +99,7 @@ export function WorkoutPage() {
   const totalSetCount = workout.exercises.reduce((n, e) => n + e.prescription.sets, 0)
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-8 pt-4">
+    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-8 pt-[max(1rem,env(safe-area-inset-top))]">
       <header className="flex items-center gap-4">
         <Link
           to="/"
