@@ -14,7 +14,16 @@ const groupOrder: { key: string; label: string; muscles: MuscleGroup[] }[] = [
 export function LibraryPage() {
   const exercises = useLiveQuery(() => exerciseRepo.getAll(), [])
 
-  if (!exercises) return <Heading />
+  // Root stays a <div> in both states — swapping root element types on
+  // load forces React to unmount and remount everything underneath it,
+  // including the heading, for no reason.
+  if (!exercises) {
+    return (
+      <div>
+        <Heading />
+      </div>
+    )
+  }
 
   const grouped = groupOrder
     .map((group) => ({

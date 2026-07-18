@@ -53,5 +53,8 @@ export const checkinRepo = {
   getRecent: (limit = 14): Promise<CheckIn[]> =>
     db.checkins.orderBy('date').reverse().limit(limit).toArray(),
 
+  /** Full check-in history, oldest first — waist/weight trends need more than a fortnight. */
+  getAll: (): Promise<CheckIn[]> => db.checkins.orderBy('date').toArray(),
+
   put: (checkIn: CheckIn): Promise<string> => db.checkins.put(checkIn),
 }

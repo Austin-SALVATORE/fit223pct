@@ -4,7 +4,7 @@
  * Library ("Today is the app"). Direct URLs fall back to Today: history
  * can't be trusted to contain an in-app entry.
  */
-export type NavigationOrigin = 'today' | 'library' | 'workout'
+export type NavigationOrigin = 'today' | 'library' | 'workout' | 'progress'
 
 export interface OriginTarget {
   path: string
@@ -15,6 +15,7 @@ const ORIGIN_TARGETS: Record<NavigationOrigin, OriginTarget> = {
   today: { path: '/', label: 'Today' },
   library: { path: '/library', label: 'Library' },
   workout: { path: '/workout', label: 'Workout' },
+  progress: { path: '/progress', label: 'Progress' },
 }
 
 export function resolveOrigin(state: unknown): NavigationOrigin {

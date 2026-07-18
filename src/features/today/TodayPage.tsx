@@ -7,17 +7,30 @@ import { resolveDayPlan } from '@/domain/schedule'
 import { createWorkout, summarizeWorkout } from '@/domain/workout'
 import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readiness'
 import { applyReadiness } from '@/domain/adjustments'
+import { buildWeeklyReview, shouldShowWeeklyReview, type WeeklyReview } from '@/domain/weeklyReview'
 import { formatLongDate, toDateKey } from '@/lib/dates'
-import type { Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
+import type { CheckIn, Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
 import { CheckInCard } from '@/features/checkin/CheckInCard'
 import { SessionPreview } from './SessionPreview'
+import { WeeklyReviewCard } from './WeeklyReviewCard'
+
+interface TodayData {
+  program: Program | undefined
+  exercises: Exercise[]
+  activeWorkout: Workout | undefined
+  todayWorkout: Workout | undefined
+  todayCheckIn: CheckIn | undefined
+  recentCheckIns: CheckIn[]
+  completedCount: number
+  weeklyReview: WeeklyReview | null
+}
 
 export function TodayPage() {
   const today = new Date()
   const todayKey = toDateKey(today)
   const reducedMotion = useReducedMotion()
 
-  const data = useLiveQuery(async () => {
+  const data = useLiveQuery(async (): Promise<TodayData> => {
     const [program, exercises, activeWorkout, todayWorkout, todayCheckIn, recentCheckIns] =
       await Promise.all([
         programRepo.getActive(todayKey),
@@ -28,6 +41,11 @@ export function TodayPage() {
         checkinRepo.getRecent(),
       ])
     const completedCount = program ? await workoutRepo.countCompleted(program.id) : 0
+    // Weekly review only matters on its one day — skip the extra read otherwise.
+    const weeklyReview =
+      program && shouldShowWeeklyReview(today)
+        ? buildWeeklyReview(program, await workoutRepo.getCompleted(), today)
+        : null
     return {
       program,
       exercises,
@@ -36,11 +54,34 @@ export function TodayPage() {
       todayCheckIn,
       recentCheckIns,
       completedCount,
+      weeklyReview,
     }
   }, [todayKey])
 
-  if (data === undefined) return <Header date={today} />
+  // Root stays a single <motion.div> across loading and loaded states —
+  // swapping root element types on load would force React to unmount and
+  // remount everything underneath it, including the header, for no reason.
+  return (
+    <motion.div
+      initial={reducedMotion ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <Header date={today} />
+      {data && <TodayBody data={data} today={today} todayKey={todayKey} />}
+    </motion.div>
+  )
+}
 
+function TodayBody({
+  data,
+  today,
+  todayKey,
+}: {
+  data: TodayData
+  today: Date
+  todayKey: string
+}) {
   const {
     program,
     exercises,
@@ -49,6 +90,7 @@ export function TodayPage() {
     todayCheckIn,
     recentCheckIns,
     completedCount,
+    weeklyReview,
   } = data
   const exerciseById = new Map(exercises.map((e) => [e.id, e]))
   const doneToday = todayWorkout !== undefined && todayWorkout.completedAt !== null
@@ -66,12 +108,8 @@ export function TodayPage() {
   )
 
   return (
-    <motion.div
-      initial={reducedMotion ? false : { opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <Header date={today} />
+    <>
+      {weeklyReview && <WeeklyReviewCard review={weeklyReview} />}
 
       {activeWorkout ? (
         <>
@@ -101,7 +139,7 @@ export function TodayPage() {
           {checkInCard}
         </>
       )}
-    </motion.div>
+    </>
   )
 }
 
@@ -343,12 +381,20 @@ function Header({ date }: { date: Date }) {
       <p className="eyebrow">
         <time dateTime={toDateKey(date)}>{formatLongDate(date)}</time>
       </p>
-      <Link
-        to="/library"
-        className="text-sm font-medium text-ink-tertiary transition-colors hover:text-ink-secondary"
-      >
-        Library
-      </Link>
+      <nav className="flex gap-4">
+        <Link
+          to="/progress"
+          className="text-sm font-medium text-ink-tertiary transition-colors hover:text-ink-secondary"
+        >
+          Progress
+        </Link>
+        <Link
+          to="/library"
+          className="text-sm font-medium text-ink-tertiary transition-colors hover:text-ink-secondary"
+        >
+          Library
+        </Link>
+      </nav>
     </header>
   )
 }

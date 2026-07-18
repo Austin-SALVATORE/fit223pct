@@ -4,6 +4,7 @@ import { TodayPage } from '@/features/today/TodayPage'
 import { LibraryPage } from '@/features/library/LibraryPage'
 import { ExercisePage } from '@/features/library/ExercisePage'
 import { WorkoutPage } from '@/features/workout/WorkoutPage'
+import { ProgressPage } from '@/features/progress/ProgressPage'
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Route index element={<TodayPage />} />
         <Route path="library" element={<LibraryPage />} />
         <Route path="library/:exerciseId" element={<ExercisePage />} />
+        <Route path="progress" element={<ProgressPage />} />
       </Route>
     </Routes>
   )

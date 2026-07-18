@@ -22,10 +22,16 @@ check-in, flowing into prescriptions (+1 RIR, accessory trim, deferred load
 jumps) with trend-based rest-day suggestions. Weight/waist trends, progress
 screens and the weekly review move to Milestone 4.
 
-## Milestone 4 — Education & intelligence
+## Milestone 4 — Progress & intelligence ✓ (shipped 18 Jul)
 
-Progressive teaching moments, stagnation detection, progression suggestions
-surfaced in context, monthly insights.
+An Adaptive Readiness Engine that only tracked recovery would be a logger
+with an extra field. This closes the loop: consistency, strength, and
+waist trends (docs/Progress.md) — each with an explicit insufficient-data
+state, never a direction drawn from too few points — plus stagnation
+detection that excludes readiness-adjusted sessions from the stall count
+and states its evidence by name, the same way readiness does. A Monday-only
+weekly review reports the week just finished, honestly, including zero.
+No charts anywhere — phrase-driven, consistent with the rest of the app.
 
 ## Milestone 5 — Polish & Phase 2
 
