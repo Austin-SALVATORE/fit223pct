@@ -1,4 +1,5 @@
 import { previousSetsFor } from './workout'
+import type { ReadinessTier } from './readiness'
 import type { LoggedSet, Workout } from './types'
 
 export type HighlightKind = 'first' | 'load' | 'effort' | 'steady'
@@ -58,7 +59,14 @@ export function workoutHighlights(
 }
 
 /** One quiet coaching sentence for the whole session. */
-export function coachInsight(highlights: readonly Highlight[]): string {
+export function coachInsight(
+  highlights: readonly Highlight[],
+  readinessTier?: ReadinessTier,
+): string {
+  if (readinessTier === 'easier') {
+    return 'Adjusted for readiness and done anyway — that is the discipline that compounds.'
+  }
+
   const count = (kind: HighlightKind) => highlights.filter((h) => h.kind === kind).length
   const loads = count('load')
   const efforts = count('effort')

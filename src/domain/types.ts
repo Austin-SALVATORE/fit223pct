@@ -42,6 +42,8 @@ export interface ExercisePrescription {
   targetRir: number
   restSeconds: number
   perSide: boolean
+  /** Volume adjustments only ever trim accessories; absent means 'main' (older snapshots) */
+  role?: 'main' | 'accessory'
   startWeightKg: number | null
   /** Hard equipment ceiling at home; null = load is not the lever (bands, bodyweight) */
   maxWeightKg: number | null
@@ -96,6 +98,11 @@ export interface Workout {
   startedAt: string
   completedAt: string | null
   exercises: WorkoutExercise[]
+  /** Readiness applied at start, kept for future intelligence (additive, optional) */
+  readiness?: {
+    tier: 'ready' | 'steady' | 'easier'
+    drivers: string[]
+  }
   notes?: string
 }
 

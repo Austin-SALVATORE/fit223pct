@@ -14,10 +14,13 @@ write-through persistence with exact resume, completion summary. Navigation
 reworked: no tab bar — Today is the app. Asset strategy documented
 (docs/ExerciseAssets.md).
 
-## Milestone 3 — Check-ins & progress
+## Milestone 3 — Adaptive Readiness Engine ✓ (shipped 18 Jul)
 
-Daily recovery check-in (sleep/energy/soreness/stress/motivation), weight and
-waist tracking, progress screens (strength trend, consistency), weekly review.
+Not passive tracking: a categorical readiness model (ready/steady/easier,
+driver-based, explainable — docs/Readiness.md) computed from a five-tap
+check-in, flowing into prescriptions (+1 RIR, accessory trim, deferred load
+jumps) with trend-based rest-day suggestions. Weight/waist trends, progress
+screens and the weekly review move to Milestone 4.
 
 ## Milestone 4 — Education & intelligence
 

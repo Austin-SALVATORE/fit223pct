@@ -1,3 +1,4 @@
+import type { ReadinessTier } from './readiness'
 import type { ExercisePrescription, LoggedSet } from './types'
 
 export type ProgressionType =
@@ -19,10 +20,15 @@ export interface ProgressionSuggestion {
  * Fill the rep range first; add load once every set tops the range with
  * reps in reserve; at the home-equipment ceiling, progress through
  * technique (tempo, pauses, range of motion, unilateral work) instead.
+ *
+ * On an 'easier' readiness day, load increases are deferred (never lost —
+ * the same earned increase is suggested next time), while filling the rep
+ * range remains allowed.
  */
 export function suggestProgression(
   prescription: ExercisePrescription,
   lastSets: readonly LoggedSet[],
+  readinessTier?: ReadinessTier,
 ): ProgressionSuggestion {
   const { range, targetRir } = prescription
 
@@ -56,6 +62,16 @@ export function suggestProgression(
       weightKg: lastWeight,
       targetReps: range.max,
       reason: 'Top of the range, but too close to failure — own it once more.',
+    }
+  }
+
+  if (readinessTier === 'easier') {
+    return {
+      type: 'consolidate',
+      weightKg: lastWeight,
+      targetReps: range.max,
+      reason:
+        "You've earned more load, but not today — same weight, save the jump for a fresher day.",
     }
   }
 

@@ -1,5 +1,5 @@
 import { db } from './db'
-import type { Exercise, Program, Workout } from '@/domain/types'
+import type { CheckIn, Exercise, Program, Workout } from '@/domain/types'
 
 /**
  * All reads/writes go through here — components never touch Dexie tables
@@ -43,4 +43,15 @@ export const workoutRepo = {
   put: (workout: Workout): Promise<string> => db.workouts.put(workout),
 
   remove: (id: string): Promise<void> => db.workouts.delete(id),
+}
+
+export const checkinRepo = {
+  getByDate: (dateKey: string): Promise<CheckIn | undefined> =>
+    db.checkins.where('date').equals(dateKey).first(),
+
+  /** Most recent check-ins, newest first, for readiness trend analysis. */
+  getRecent: (limit = 14): Promise<CheckIn[]> =>
+    db.checkins.orderBy('date').reverse().limit(limit).toArray(),
+
+  put: (checkIn: CheckIn): Promise<string> => db.checkins.put(checkIn),
 }

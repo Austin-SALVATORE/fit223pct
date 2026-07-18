@@ -76,6 +76,21 @@ describe('suggestProgression', () => {
     expect(s.weightKg).toBe(20)
   })
 
+  it('never suggests adding load on an easier readiness day — consolidates instead', () => {
+    const s = suggestProgression(
+      prescription,
+      [set(12, 16, 2), set(12, 16, 2), set(12, 16, 3)],
+      'easier',
+    )
+    expect(s.type).toBe('consolidate')
+    expect(s.weightKg).toBe(16)
+  })
+
+  it('still allows adding reps within the range on an easier day', () => {
+    const s = suggestProgression(prescription, [set(10, 16, 2), set(9, 16, 2)], 'easier')
+    expect(s.type).toBe('add-reps')
+  })
+
   it('progresses band/bodyweight work through reps then technique', () => {
     const bandWork: ExercisePrescription = {
       ...prescription,

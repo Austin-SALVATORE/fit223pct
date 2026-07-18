@@ -132,4 +132,12 @@ describe('coachInsight', () => {
     const insight = coachInsight([{ exerciseId: 'a', kind: 'steady', label: '' }])
     expect(insight).toContain('Consistent')
   })
+
+  it('honors a session trained on an adjusted (easier) day', () => {
+    const insight = coachInsight(
+      [{ exerciseId: 'a', kind: 'steady', label: '' }],
+      'easier',
+    )
+    expect(insight).toContain('Adjusted for readiness')
+  })
 })

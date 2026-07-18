@@ -4,6 +4,7 @@ const defaults = {
   mode: 'reps' as const,
   targetRir: 2,
   perSide: false,
+  role: 'main' as const,
 }
 
 function reps(
@@ -60,8 +61,12 @@ export const seedProgram: Program = {
         reps('romanian-deadlift', 3, 10, 15, { start: 25, max: 30, step: 2.5 }, {
           note: 'Slow eccentric — the bar takes 3 seconds down',
         }),
-        reps('band-pull-apart', 2, 15, 20, band, { restSeconds: 60 }),
-        reps('dead-bug', 2, 8, 10, bodyweight, { perSide: true, restSeconds: 60 }),
+        reps('band-pull-apart', 2, 15, 20, band, { restSeconds: 60, role: 'accessory' }),
+        reps('dead-bug', 2, 8, 10, bodyweight, {
+          perSide: true,
+          restSeconds: 60,
+          role: 'accessory',
+        }),
       ],
     },
     {
@@ -79,12 +84,13 @@ export const seedProgram: Program = {
         reps('hip-thrust', 3, 10, 15, { start: 20, max: 20, step: 2 }, {
           note: 'Move to single-leg once 15 reps feel controlled',
         }),
-        reps('band-lateral-raise', 2, 12, 20, band, { restSeconds: 60 }),
-        reps('band-curl', 2, 12, 20, band, { restSeconds: 60 }),
+        reps('band-lateral-raise', 2, 12, 20, band, { restSeconds: 60, role: 'accessory' }),
+        reps('band-curl', 2, 12, 20, band, { restSeconds: 60, role: 'accessory' }),
         reps('side-plank', 2, 20, 40, bodyweight, {
           mode: 'seconds',
           perSide: true,
           restSeconds: 60,
+          role: 'accessory',
         }),
       ],
     },

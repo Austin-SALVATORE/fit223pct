@@ -3,6 +3,7 @@ import { vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
+import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { TodayPage } from './TodayPage'
 import { ExercisePage } from '@/features/library/ExercisePage'
@@ -19,8 +20,9 @@ beforeAll(async () => {
   await seedDatabase()
 })
 
-afterAll(() => {
+afterAll(async () => {
   vi.useRealTimers()
+  await db.checkins.clear()
 })
 
 function renderApp(initialPath: string) {
@@ -46,6 +48,22 @@ describe('Today entry path', () => {
 
     await userEvent.click(screen.getByRole('link', { name: /Today/ }))
     expect(await screen.findByRole('button', { name: 'Start session' })).toBeInTheDocument()
+  })
+})
+
+describe('Readiness flowing into the plan', () => {
+  it('adjusts the training day after a low readiness check-in', async () => {
+    renderApp('/')
+    expect(await screen.findByRole('button', { name: 'Start session' })).toBeInTheDocument()
+
+    for (const label of ['Sleep', 'Energy', 'Freshness', 'Calm', 'Motivation']) {
+      await userEvent.click(await screen.findByRole('radio', { name: `${label} 2 of 5` }))
+    }
+
+    // Card collapses into the easier phrase, hero eases, accessory volume trims
+    expect(await screen.findByText(/touch easier/i)).toBeInTheDocument()
+    expect(await screen.findByText(/Eased back a touch/)).toBeInTheDocument()
+    expect(await screen.findByText(/1 × 15–20/)).toBeInTheDocument()
   })
 })
 

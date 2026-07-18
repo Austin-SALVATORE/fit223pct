@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import { Stepper } from '@/ui/Stepper'
 import { suggestProgression } from '@/domain/progression'
+import type { ReadinessTier } from '@/domain/readiness'
 import type { Exercise, LoggedSet, WorkoutExercise } from '@/domain/types'
 import { SwapSheet } from './SwapSheet'
 
@@ -11,6 +12,7 @@ interface SetScreenProps {
   setIndex: number
   previousSets: readonly LoggedSet[]
   exerciseById: Map<string, Exercise>
+  readinessTier?: ReadinessTier
   onLog: (set: Omit<LoggedSet, 'setIndex'>) => void
   onSwap: (exerciseId: string) => void
 }
@@ -21,11 +23,12 @@ export function SetScreen({
   setIndex,
   previousSets,
   exerciseById,
+  readinessTier,
   onLog,
   onSwap,
 }: SetScreenProps) {
   const { prescription } = workoutExercise
-  const suggestion = suggestProgression(prescription, previousSets)
+  const suggestion = suggestProgression(prescription, previousSets, readinessTier)
 
   // Within a session, people keep the weight they just used.
   const lastSetThisSession = workoutExercise.sets.at(-1)

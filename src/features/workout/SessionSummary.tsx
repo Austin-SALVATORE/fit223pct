@@ -27,7 +27,7 @@ export function SessionSummary({ workout, exerciseById, history }: SessionSummar
       <p className="text-sm font-medium text-sage">Session complete</p>
       <h1 className="text-display mt-2 text-5xl text-ink">Nice work.</h1>
       <p className="mt-4 max-w-[36ch] leading-relaxed text-ink-secondary">
-        {coachInsight(highlights)}
+        {coachInsight(highlights, workout.readiness?.tier)}
       </p>
 
       <dl className="mt-8 flex gap-8">

@@ -152,6 +152,7 @@ export function WorkoutPage() {
               setIndex={position.setIndex}
               previousSets={previousSets}
               exerciseById={exerciseById}
+              readinessTier={workout.readiness?.tier}
               onLog={handleLog}
               onSwap={handleSwap}
             />

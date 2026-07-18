@@ -1,12 +1,15 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Link, useNavigate } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
-import { exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
+import { checkinRepo, exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
 import { resolveDayPlan } from '@/domain/schedule'
 import { createWorkout, summarizeWorkout } from '@/domain/workout'
+import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readiness'
+import { applyReadiness } from '@/domain/adjustments'
 import { formatLongDate, toDateKey } from '@/lib/dates'
 import type { Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
+import { CheckInCard } from '@/features/checkin/CheckInCard'
 import { SessionPreview } from './SessionPreview'
 
 export function TodayPage() {
@@ -15,21 +18,45 @@ export function TodayPage() {
   const reducedMotion = useReducedMotion()
 
   const data = useLiveQuery(async () => {
-    const [program, exercises, activeWorkout, todayWorkout] = await Promise.all([
-      programRepo.getActive(todayKey),
-      exerciseRepo.getAll(),
-      workoutRepo.getActive(),
-      workoutRepo.getByDate(todayKey),
-    ])
+    const [program, exercises, activeWorkout, todayWorkout, todayCheckIn, recentCheckIns] =
+      await Promise.all([
+        programRepo.getActive(todayKey),
+        exerciseRepo.getAll(),
+        workoutRepo.getActive(),
+        workoutRepo.getByDate(todayKey),
+        checkinRepo.getByDate(todayKey),
+        checkinRepo.getRecent(),
+      ])
     const completedCount = program ? await workoutRepo.countCompleted(program.id) : 0
-    return { program, exercises, activeWorkout, todayWorkout, completedCount }
+    return {
+      program,
+      exercises,
+      activeWorkout,
+      todayWorkout,
+      todayCheckIn,
+      recentCheckIns,
+      completedCount,
+    }
   }, [todayKey])
 
   if (data === undefined) return <Header date={today} />
 
-  const { program, exercises, activeWorkout, todayWorkout, completedCount } = data
+  const {
+    program,
+    exercises,
+    activeWorkout,
+    todayWorkout,
+    todayCheckIn,
+    recentCheckIns,
+    completedCount,
+  } = data
   const exerciseById = new Map(exercises.map((e) => [e.id, e]))
   const doneToday = todayWorkout !== undefined && todayWorkout.completedAt !== null
+  const readiness = readinessFrom(todayCheckIn ?? null, recentCheckIns)
+
+  const checkInCard = (
+    <CheckInCard dateKey={todayKey} checkIn={todayCheckIn} readiness={readiness} />
+  )
 
   return (
     <motion.div
@@ -40,9 +67,15 @@ export function TodayPage() {
       <Header date={today} />
 
       {activeWorkout ? (
-        <InProgress workout={activeWorkout} program={program} />
+        <>
+          <InProgress workout={activeWorkout} program={program} />
+          {checkInCard}
+        </>
       ) : doneToday && todayWorkout ? (
-        <DoneToday workout={todayWorkout} />
+        <>
+          <DoneToday workout={todayWorkout} />
+          {checkInCard}
+        </>
       ) : program ? (
         <PlannedDay
           program={program}
@@ -50,11 +83,16 @@ export function TodayPage() {
           exerciseById={exerciseById}
           today={today}
           todayKey={todayKey}
+          readiness={readiness}
+          checkInCard={checkInCard}
         />
       ) : (
-        <p className="mt-10 text-ink-secondary">
-          No training program is set up yet. Your next phase will appear here.
-        </p>
+        <>
+          <p className="mt-10 text-ink-secondary">
+            No training program is set up yet. Your next phase will appear here.
+          </p>
+          {checkInCard}
+        </>
       )}
     </motion.div>
   )
@@ -66,14 +104,19 @@ function PlannedDay({
   exerciseById,
   today,
   todayKey,
+  readiness,
+  checkInCard,
 }: {
   program: Program
   completedCount: number
   exerciseById: Map<string, Exercise>
   today: Date
   todayKey: string
+  readiness: Readiness
+  checkInCard: ReactNode
 }) {
   const plan = resolveDayPlan(program, today, completedCount)
+  const eased = readiness.tier === 'easier'
 
   return (
     <>
@@ -88,6 +131,7 @@ function PlannedDay({
             title={program.name}
             subtitle="Your first session is ready. Nothing to do today except look forward to it."
           />
+          {checkInCard}
           <SessionPreview
             session={plan.firstSession}
             exerciseById={exerciseById}
@@ -97,15 +141,14 @@ function PlannedDay({
       )}
 
       {plan.kind === 'training' && (
-        <>
-          <Hero
-            eyebrow={`${plan.session.name} · ${plan.session.focus}`}
-            title={plan.session.focus}
-            subtitle="Warm up well. Your starting numbers are below — they'll be waiting in the session."
-          />
-          <StartButton program={program} session={plan.session} todayKey={todayKey} />
-          <SessionPreview session={plan.session} exerciseById={exerciseById} heading="Today" />
-        </>
+        <TrainingDay
+          program={program}
+          session={plan.session}
+          exerciseById={exerciseById}
+          todayKey={todayKey}
+          readiness={readiness}
+          checkInCard={checkInCard}
+        />
       )}
 
       {plan.kind === 'rest' && (
@@ -113,8 +156,13 @@ function PlannedDay({
           <Hero
             eyebrow="Rest day"
             title="Recovery is progress"
-            subtitle="Swim, play, walk — or do nothing at all. Your next session is ready when you are."
+            subtitle={
+              eased
+                ? 'A genuine rest day, perfectly timed. Recharge — your next session will wait.'
+                : 'Swim, play, walk — or do nothing at all. Your next session is ready when you are.'
+            }
           />
+          {checkInCard}
           <SessionPreview
             session={plan.nextSession}
             exerciseById={exerciseById}
@@ -124,12 +172,67 @@ function PlannedDay({
       )}
 
       {plan.kind === 'ended' && (
-        <Hero
-          eyebrow="Phase complete"
-          title="That's a wrap on this phase"
-          subtitle="Your next program will appear here once it begins."
-        />
+        <>
+          <Hero
+            eyebrow="Phase complete"
+            title="That's a wrap on this phase"
+            subtitle="Your next program will appear here once it begins."
+          />
+          {checkInCard}
+        </>
       )}
+    </>
+  )
+}
+
+function TrainingDay({
+  program,
+  session,
+  exerciseById,
+  todayKey,
+  readiness,
+  checkInCard,
+}: {
+  program: Program
+  session: SessionTemplate
+  exerciseById: Map<string, Exercise>
+  todayKey: string
+  readiness: Readiness
+  checkInCard: ReactNode
+}) {
+  const adjusted = applyReadiness(session, readiness)
+  const eased = adjusted.adjustments.length > 0
+  const drivers = describeDrivers(readiness.drivers)
+
+  return (
+    <>
+      <Hero
+        eyebrow={`${session.name} · ${session.focus}`}
+        title={session.focus}
+        subtitle={
+          eased
+            ? `Eased back a touch today — ${drivers}. Showing up on a day like this counts double.`
+            : "Warm up well. Your starting numbers are below — they'll be waiting in the session."
+        }
+      />
+      {checkInCard}
+      <StartButton
+        program={program}
+        session={adjusted.session}
+        readiness={readiness}
+        todayKey={todayKey}
+      />
+      {readiness.consecutiveLowDays >= 2 && (
+        <p className="mt-4 text-center text-sm leading-relaxed text-ink-secondary">
+          Second low day in a row — making this a rest day is a completely fine
+          choice. Your session will wait for you.
+        </p>
+      )}
+      <SessionPreview
+        session={adjusted.session}
+        exerciseById={exerciseById}
+        heading="Today"
+      />
     </>
   )
 }
@@ -137,22 +240,30 @@ function PlannedDay({
 function StartButton({
   program,
   session,
+  readiness,
   todayKey,
 }: {
   program: Program
   session: SessionTemplate
+  readiness: Readiness
   todayKey: string
 }) {
   const navigate = useNavigate()
 
   async function start() {
-    const workout = createWorkout({
-      id: crypto.randomUUID(),
-      programId: program.id,
-      session,
-      date: todayKey,
-      startedAt: new Date().toISOString(),
-    })
+    const workout = {
+      ...createWorkout({
+        id: crypto.randomUUID(),
+        programId: program.id,
+        session,
+        date: todayKey,
+        startedAt: new Date().toISOString(),
+      }),
+      readiness: {
+        tier: readiness.tier,
+        drivers: readiness.drivers.map((d) => d.label),
+      },
+    }
     await workoutRepo.put(workout)
     await navigate('/workout')
   }
@@ -209,13 +320,11 @@ function DoneToday({ workout }: { workout: Workout }) {
   const summary = summarizeWorkout(workout)
   const minutes = summary.durationMinutes
   return (
-    <>
-      <Hero
-        eyebrow="Session complete"
-        title="Done for today"
-        subtitle={`${summary.totalSets} sets${minutes !== null ? ` in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}` : ''} · ${Math.round(summary.volumeKg)} kg moved. Rest well — that's part of the plan.`}
-      />
-    </>
+    <Hero
+      eyebrow="Session complete"
+      title="Done for today"
+      subtitle={`${summary.totalSets} sets${minutes !== null ? ` in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}` : ''} · ${Math.round(summary.volumeKg)} kg moved. Rest well — that's part of the plan.`}
+    />
   )
 }
 
