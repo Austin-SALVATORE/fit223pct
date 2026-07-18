@@ -1,0 +1,90 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/fraunces';
+
+/*
+ * Atlas design tokens — source of truth (see docs/Design.md).
+ * Warm dark, editorial, calm. Accent is earned, not sprayed.
+ */
+@theme {
+  --color-*: initial;
+
+  /* Warm charcoal foundation (hue ~28°, never blue-black) */
+  --color-bg: #191512;
+  --color-surface: #211c18;
+  --color-raised: #2a241f;
+  --color-border: #352e27;
+  --color-border-strong: #4a4138;
+
+  /* Warm text ramp */
+  --color-ink: #f2ede6;
+  --color-ink-secondary: #a89f93;
+  --color-ink-tertiary: #6f675c;
+
+  /* Restrained accents */
+  --color-amber: #d9a048;
+  --color-amber-deep: #b5813a;
+  --color-sage: #8fae8b;
+  --color-clay: #c47f5a;
+
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --radius-card: 1.25rem;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    background-color: var(--color-bg);
+    color-scheme: dark;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background-color: var(--color-bg);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+  }
+
+  /* Training numbers always align */
+  [data-numeric],
+  time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-amber);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility text-display {
+  font-family: var(--font-display);
+  font-variation-settings:
+    'SOFT' 40,
+    'WONK' 0;
+  font-weight: 560;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+}
+
+@utility eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-tertiary);
+}
