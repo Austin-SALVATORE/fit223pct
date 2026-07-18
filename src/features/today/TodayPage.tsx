@@ -178,23 +178,26 @@ function PlannedDay({
   return (
     <>
       {plan.kind === 'upcoming' && (
-        <>
-          <Hero
-            eyebrow={
-              plan.daysUntilStart === 1
-                ? 'Starts tomorrow'
-                : `Starts in ${plan.daysUntilStart} days`
-            }
-            title={program.name}
-            subtitle="Your first session is ready. Nothing to do today except look forward to it."
-          />
-          {checkInCard}
-          <SessionPreview
-            session={plan.firstSession}
-            exerciseById={exerciseById}
-            heading="First up"
-          />
-        </>
+        <UnscheduledDay
+          program={program}
+          session={plan.firstSession}
+          exerciseById={exerciseById}
+          todayKey={todayKey}
+          readiness={readiness}
+          checkInCard={checkInCard}
+          hero={
+            <Hero
+              eyebrow={
+                plan.daysUntilStart === 1
+                  ? 'Starts tomorrow'
+                  : `Starts in ${plan.daysUntilStart} days`
+              }
+              title={program.name}
+              subtitle="Your first session is ready — begin on day one, or jump in early if you can't wait."
+            />
+          }
+          heading="First up"
+        />
       )}
 
       {plan.kind === 'training' && (
@@ -209,23 +212,26 @@ function PlannedDay({
       )}
 
       {plan.kind === 'rest' && (
-        <>
-          <Hero
-            eyebrow="Rest day"
-            title="Recovery is progress"
-            subtitle={
-              eased
-                ? 'A genuine rest day, perfectly timed. Recharge — your next session will wait.'
-                : 'Swim, play, walk — or do nothing at all. Your next session is ready when you are.'
-            }
-          />
-          {checkInCard}
-          <SessionPreview
-            session={plan.nextSession}
-            exerciseById={exerciseById}
-            heading="Next up"
-          />
-        </>
+        <UnscheduledDay
+          program={program}
+          session={plan.nextSession}
+          exerciseById={exerciseById}
+          todayKey={todayKey}
+          readiness={readiness}
+          checkInCard={checkInCard}
+          hero={
+            <Hero
+              eyebrow="Rest day"
+              title="Recovery is progress"
+              subtitle={
+                eased
+                  ? 'A genuine rest day, perfectly timed. Recharge — your next session will wait.'
+                  : 'Swim, play, walk — or do nothing at all. Your next session is ready when you are.'
+              }
+            />
+          }
+          heading="Next up"
+        />
       )}
 
       {plan.kind === 'ended' && (
@@ -296,16 +302,71 @@ function TrainingDay({
   )
 }
 
+/**
+ * A day with no scheduled session — a rest day, or any day before the
+ * program starts. The day's framing (rest, anticipation) stays the hero;
+ * the way into Workout Mode is a quiet affordance below the preview, so
+ * training early is always possible but never the recommendation. What it
+ * starts is exactly what the preview shows: the same readiness-adjusted
+ * session a training day would offer.
+ */
+function UnscheduledDay({
+  program,
+  session,
+  exerciseById,
+  todayKey,
+  readiness,
+  checkInCard,
+  hero,
+  heading,
+}: {
+  program: Program
+  session: SessionTemplate
+  exerciseById: Map<string, Exercise>
+  todayKey: string
+  readiness: Readiness
+  checkInCard: ReactNode
+  hero: ReactNode
+  heading: string
+}) {
+  const adjusted = applyReadiness(session, readiness)
+  const eased = adjusted.adjustments.length > 0
+
+  return (
+    <>
+      {hero}
+      {checkInCard}
+      <SessionPreview
+        session={adjusted.session}
+        exerciseById={exerciseById}
+        heading={heading}
+        badge={eased ? 'Adjusted for readiness' : undefined}
+        reasons={eased ? adjusted.adjustments.map((a) => a.reason) : undefined}
+      />
+      <StartButton
+        program={program}
+        session={adjusted.session}
+        readiness={readiness}
+        todayKey={todayKey}
+        variant="quiet"
+      />
+    </>
+  )
+}
+
 function StartButton({
   program,
   session,
   readiness,
   todayKey,
+  variant = 'primary',
 }: {
   program: Program
   session: SessionTemplate
   readiness: Readiness
   todayKey: string
+  /** 'quiet' is the early-start affordance on unscheduled days — present, never insistent */
+  variant?: 'primary' | 'quiet'
 }) {
   const navigate = useNavigate()
 
@@ -325,6 +386,18 @@ function StartButton({
     }
     await workoutRepo.put(workout)
     await navigate('/workout')
+  }
+
+  if (variant === 'quiet') {
+    return (
+      <button
+        type="button"
+        onClick={() => void start()}
+        className="mt-6 w-full rounded-card border border-border py-3.5 text-center text-base font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
+      >
+        Start this session now
+      </button>
+    )
   }
 
   return (
