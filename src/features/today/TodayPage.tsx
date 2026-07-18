@@ -53,9 +53,16 @@ export function TodayPage() {
   const exerciseById = new Map(exercises.map((e) => [e.id, e]))
   const doneToday = todayWorkout !== undefined && todayWorkout.completedAt !== null
   const readiness = readinessFrom(todayCheckIn ?? null, recentCheckIns)
-
+  // Once today's session has started, the readiness it was started on is
+  // fixed — editing the check-in now can't retroactively change that plan.
+  const sessionStartedToday = activeWorkout !== undefined || doneToday
   const checkInCard = (
-    <CheckInCard dateKey={todayKey} checkIn={todayCheckIn} readiness={readiness} />
+    <CheckInCard
+      dateKey={todayKey}
+      checkIn={todayCheckIn}
+      readiness={readiness}
+      locked={sessionStartedToday}
+    />
   )
 
   return (
@@ -224,14 +231,16 @@ function TrainingDay({
       />
       {readiness.consecutiveLowDays >= 2 && (
         <p className="mt-4 text-center text-sm leading-relaxed text-ink-secondary">
-          Second low day in a row — making this a rest day is a completely fine
-          choice. Your session will wait for you.
+          {readiness.consecutiveLowDays} low days in a row now — making this a
+          rest day is a completely fine choice. Your session will wait for you.
         </p>
       )}
       <SessionPreview
         session={adjusted.session}
         exerciseById={exerciseById}
         heading="Today"
+        badge={eased ? 'Adjusted for readiness' : undefined}
+        reasons={eased ? adjusted.adjustments.map((a) => a.reason) : undefined}
       />
     </>
   )
@@ -261,7 +270,7 @@ function StartButton({
       }),
       readiness: {
         tier: readiness.tier,
-        drivers: readiness.drivers.map((d) => d.label),
+        drivers: readiness.drivers.map((d) => d.signal),
       },
     }
     await workoutRepo.put(workout)

@@ -1,3 +1,4 @@
+import { addDays, toDateKey } from '@/lib/dates'
 import type { CheckIn, Rating } from './types'
 
 export type ReadinessTier = 'ready' | 'steady' | 'easier'
@@ -30,20 +31,39 @@ export function readinessFrom(
 ): Readiness {
   const tier = dayTier(today)
   const drivers = today ? driversOf(today) : []
-
-  let consecutiveLowDays = 0
-  if (tier === 'easier') {
-    consecutiveLowDays = 1
-    const past = [...recent]
-      .filter((c) => today === null || c.date < today.date)
-      .sort((a, b) => b.date.localeCompare(a.date))
-    for (const checkIn of past) {
-      if (dayTier(checkIn) !== 'easier') break
-      consecutiveLowDays += 1
-    }
-  }
+  const consecutiveLowDays =
+    tier === 'easier' && today ? countConsecutiveLowDays(today, recent) : 0
 
   return { tier, drivers, consecutiveLowDays }
+}
+
+/**
+ * Trailing run of 'easier' days ending today, where each prior day must be
+ * exactly one calendar day before the one after it — a gap (a missed
+ * check-in, or an old record) breaks the streak. Counting check-in
+ * *records* instead of adjacent *days* would let a stale easier check-in
+ * from weeks ago falsely read as "still going", which is exactly the kind
+ * of unearned claim this feature must never make.
+ */
+function countConsecutiveLowDays(today: CheckIn, recent: readonly CheckIn[]): number {
+  const byDate = new Map(recent.map((checkIn) => [checkIn.date, checkIn]))
+  let count = 1
+  let cursorDate = today.date
+
+  // Bounded walk — a year is far more than any real streak will ever reach.
+  for (let i = 0; i < 365; i += 1) {
+    const previousDateKey = toDateKey(addDays(parseDateKey(cursorDate), -1))
+    const candidate = byDate.get(previousDateKey)
+    if (!candidate || dayTier(candidate) !== 'easier') break
+    count += 1
+    cursorDate = previousDateKey
+  }
+
+  return count
+}
+
+function parseDateKey(dateKey: string): Date {
+  return new Date(`${dateKey}T00:00:00`)
 }
 
 /** Weights favor the best-supported signals: sleep and soreness. */
@@ -79,6 +99,11 @@ function dayTier(checkIn: CheckIn | null): ReadinessTier {
     if (rating !== null && rating <= 1) return 'easier'
   }
 
+  // A single answered signal — sleep/soreness severity aside — is too thin
+  // a sample to move off neutral; one lonely low rating (e.g. motivation,
+  // the least-weighted signal) should not carry full authority.
+  if (answered.length < 2) return 'steady'
+
   const totalWeight = answered.reduce((sum, signal) => sum + WEIGHTS[signal], 0)
   const score = answered.reduce(
     (sum, signal) => sum + WEIGHTS[signal] * normalize(checkIn[signal] as Rating),
@@ -110,4 +135,13 @@ export function describeDrivers(drivers: readonly ReadinessDriver[]): string {
   if (drivers.length === 0) return 'readiness is low'
   if (drivers.length <= 2) return drivers.map((d) => d.label).join(' and ')
   return 'a rough day all around'
+}
+
+/**
+ * Reconstructs the same phrasing from stored signal keys — the persisted
+ * shape (e.g. `Workout.readiness.drivers`) keeps only keys, never copy, so
+ * wording can change without invalidating history.
+ */
+export function describeDriverSignals(signals: readonly ReadinessSignal[]): string {
+  return describeDrivers(signals.map((signal) => ({ signal, label: DRIVER_LABELS[signal] })))
 }

@@ -87,4 +87,33 @@ describe('readinessFrom', () => {
     ])
     expect(readiness.consecutiveLowDays).toBe(1)
   })
+
+  it('does not bridge a gap in calendar days — a stale easier check-in from weeks ago does not count as a streak', () => {
+    const readiness = readinessFrom(checkIn('2026-07-24', allBad), [
+      checkIn('2026-06-01', allBad),
+    ])
+    expect(readiness.consecutiveLowDays).toBe(1)
+  })
+
+  it('does not bridge a one-day gap either — the day immediately before must exist and be low', () => {
+    const readiness = readinessFrom(checkIn('2026-07-24', allBad), [
+      checkIn('2026-07-22', allBad), // 07-23 is missing
+    ])
+    expect(readiness.consecutiveLowDays).toBe(1)
+  })
+
+  it('requires at least two answered signals before a single low rating can force easier', () => {
+    const readiness = readinessFrom(checkIn('2026-07-24', { motivation: 1 }), [])
+    expect(readiness.tier).toBe('steady')
+  })
+
+  it('still allows a lone severe signal (sleep or soreness) to force easier — that is a real red flag', () => {
+    const readiness = readinessFrom(checkIn('2026-07-24', { sleep: 1 }), [])
+    expect(readiness.tier).toBe('easier')
+  })
+
+  it('allows two low-but-not-severe signals to force easier together', () => {
+    const readiness = readinessFrom(checkIn('2026-07-24', { energy: 1, motivation: 1 }), [])
+    expect(readiness.tier).toBe('easier')
+  })
 })

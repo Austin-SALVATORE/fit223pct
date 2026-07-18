@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
+import { seedProgram } from '@/data/seed/program'
 import { TodayPage } from './TodayPage'
 import { ExercisePage } from '@/features/library/ExercisePage'
 import { LibraryPage } from '@/features/library/LibraryPage'
@@ -57,13 +58,43 @@ describe('Readiness flowing into the plan', () => {
     expect(await screen.findByRole('button', { name: 'Start session' })).toBeInTheDocument()
 
     for (const label of ['Sleep', 'Energy', 'Freshness', 'Calm', 'Motivation']) {
-      await userEvent.click(await screen.findByRole('radio', { name: `${label} 2 of 5` }))
+      await userEvent.click(await screen.findByRole('button', { name: `${label}: 2` }))
     }
 
     // Card collapses into the easier phrase, hero eases, accessory volume trims
     expect(await screen.findByText(/touch easier/i)).toBeInTheDocument()
     expect(await screen.findByText(/Eased back a touch/)).toBeInTheDocument()
     expect(await screen.findByText(/1 × 15–20/)).toBeInTheDocument()
+
+    // The canonical label and the concrete reasons appear next to the numbers
+    expect(await screen.findByText('Adjusted for readiness')).toBeInTheDocument()
+    expect(
+      await screen.findByText(/Keeping an extra rep in reserve today/),
+    ).toBeInTheDocument()
+  })
+
+  it('locks the check-in card once a session is already in progress today', async () => {
+    await db.workouts.put({
+      id: 'active-today',
+      programId: seedProgram.id,
+      sessionTemplateId: 'A',
+      date: '2026-07-22',
+      startedAt: '2026-07-22T09:00:00.000Z',
+      completedAt: null,
+      exercises: [],
+    })
+
+    renderApp('/')
+    expect(await screen.findByRole('link', { name: 'Resume session' })).toBeInTheDocument()
+
+    // Locked: no Edit affordance, and tapping a rating does nothing
+    expect(screen.queryByRole('button', { name: 'Edit' })).toBeNull()
+    expect(screen.getByText('Locked')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Sleep: 4' }),
+    ).toBeNull()
+
+    await db.workouts.delete('active-today')
   })
 })
 

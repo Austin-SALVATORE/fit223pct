@@ -5,12 +5,34 @@ interface SessionPreviewProps {
   session: SessionTemplate
   exerciseById: Map<string, Exercise>
   heading: string
+  /** Short canonical label shown beside the numbers when they've been modulated */
+  badge?: string
+  /** One line per applied adjustment, shown under the heading */
+  reasons?: string[]
 }
 
-export function SessionPreview({ session, exerciseById, heading }: SessionPreviewProps) {
+export function SessionPreview({
+  session,
+  exerciseById,
+  heading,
+  badge,
+  reasons,
+}: SessionPreviewProps) {
   return (
     <section className="mt-10" aria-label={`${heading}: ${session.name}`}>
-      <h2 className="eyebrow">{heading}</h2>
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 className="eyebrow">{heading}</h2>
+        {badge && <p className="text-xs font-medium text-amber">{badge}</p>}
+      </div>
+      {reasons && reasons.length > 0 && (
+        <ul className="mt-1.5 space-y-0.5">
+          {reasons.map((reason) => (
+            <li key={reason} className="text-xs leading-relaxed text-ink-tertiary">
+              {reason}
+            </li>
+          ))}
+        </ul>
+      )}
       <div className="mt-3">
         <GroupedList>
           {session.items.map((item) => {

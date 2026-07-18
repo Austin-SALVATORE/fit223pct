@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { Stepper } from '@/ui/Stepper'
+import { RatingPicker } from '@/ui/RatingPicker'
 import { suggestProgression } from '@/domain/progression'
 import type { ReadinessTier } from '@/domain/readiness'
 import type { Exercise, LoggedSet, WorkoutExercise } from '@/domain/types'
@@ -162,30 +163,24 @@ function LastTime({
   )
 }
 
+const RIR_OPTIONS = [0, 1, 2, 3, 4].map((value) => ({
+  value,
+  display: value === 4 ? '4+' : String(value),
+}))
+
 function RirPicker({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   return (
-    <fieldset className="mt-8">
-      <legend className="eyebrow mx-auto text-center">Reps left in the tank</legend>
-      <div className="mt-2 flex justify-center gap-1.5" role="radiogroup">
-        {[0, 1, 2, 3, 4].map((option) => (
-          <button
-            key={option}
-            type="button"
-            role="radio"
-            aria-checked={value === option}
-            data-numeric
-            onClick={() => onChange(option)}
-            className={`h-11 w-11 rounded-full border text-sm font-medium transition-colors ${
-              value === option
-                ? 'border-amber bg-amber/15 text-amber'
-                : 'border-border text-ink-secondary hover:border-border-strong'
-            }`}
-          >
-            {option === 4 ? '4+' : option}
-          </button>
-        ))}
+    <div className="mt-8">
+      <p className="eyebrow mx-auto text-center">Reps left in the tank</p>
+      <div className="mt-2">
+        <RatingPicker
+          label="Reps left in the tank"
+          options={RIR_OPTIONS}
+          value={value}
+          onChange={onChange}
+        />
       </div>
-    </fieldset>
+    </div>
   )
 }
 

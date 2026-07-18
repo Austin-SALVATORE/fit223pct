@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { checkinRepo } from '@/data/repositories'
 import { describeDrivers, type Readiness, type ReadinessSignal } from '@/domain/readiness'
 import type { CheckIn, Rating } from '@/domain/types'
+import { RatingPicker } from '@/ui/RatingPicker'
 
 /**
  * The readiness check-in: five taps, under ten seconds, zero typing.
@@ -18,16 +19,24 @@ const SIGNAL_ROWS: { signal: ReadinessSignal; label: string }[] = [
   { signal: 'motivation', label: 'Motivation' },
 ]
 
+const RATING_OPTIONS = [1, 2, 3, 4, 5].map((value) => ({ value, display: String(value) }))
+
 interface CheckInCardProps {
   dateKey: string
   checkIn: CheckIn | undefined
   readiness: Readiness
+  /**
+   * Today's session has already started (or finished) on this readiness —
+   * further edits can't change what already happened, so the card becomes
+   * read-only rather than silently inert.
+   */
+  locked?: boolean
 }
 
-export function CheckInCard({ dateKey, checkIn, readiness }: CheckInCardProps) {
+export function CheckInCard({ dateKey, checkIn, readiness, locked = false }: CheckInCardProps) {
   const complete = SIGNAL_ROWS.every(({ signal }) => checkIn?.[signal] != null)
   const [editing, setEditing] = useState(false)
-  const expanded = editing || !complete
+  const expanded = !locked && (editing || !complete)
 
   async function rate(signal: ReadinessSignal, value: Rating) {
     const next: CheckIn = {
@@ -63,51 +72,59 @@ export function CheckInCard({ dateKey, checkIn, readiness }: CheckInCardProps) {
             {SIGNAL_ROWS.map(({ signal, label }) => (
               <div key={signal} className="flex items-center justify-between gap-3">
                 <span className="w-24 shrink-0 text-sm text-ink-secondary">{label}</span>
-                <div
-                  role="radiogroup"
-                  aria-label={label}
-                  className="flex gap-1.5"
-                >
-                  {([1, 2, 3, 4, 5] as const).map((value) => {
-                    const selected = checkIn?.[signal] === value
-                    return (
-                      <button
-                        key={value}
-                        type="button"
-                        role="radio"
-                        aria-checked={selected}
-                        aria-label={`${label} ${value} of 5`}
-                        data-numeric
-                        onClick={() => void rate(signal, value)}
-                        className={`h-10 w-10 rounded-full border text-sm transition-colors ${
-                          selected
-                            ? 'border-amber bg-amber/15 font-semibold text-amber'
-                            : 'border-border text-ink-tertiary hover:border-border-strong hover:text-ink-secondary'
-                        }`}
-                      >
-                        {value}
-                      </button>
-                    )
-                  })}
-                </div>
+                <RatingPicker
+                  label={label}
+                  options={RATING_OPTIONS}
+                  value={checkIn?.[signal] ?? null}
+                  onChange={(value) => void rate(signal, value as Rating)}
+                />
               </div>
             ))}
           </div>
         </>
       ) : (
-        <button
-          type="button"
-          onClick={() => setEditing(true)}
-          className="flex w-full items-baseline justify-between gap-4 text-left"
-        >
-          <div>
-            <h2 className="eyebrow">Today's readiness</h2>
-            <p className="mt-2 text-ink">{tierPhrase(readiness)}</p>
-          </div>
-          <span className="shrink-0 text-sm text-ink-tertiary">Edit</span>
-        </button>
+        <CollapsedRow locked={locked} onEdit={() => setEditing(true)}>
+          <h2 className="eyebrow">Today's readiness</h2>
+          <p className="mt-2 text-ink">
+            {locked && !complete ? 'Not recorded today.' : tierPhrase(readiness)}
+          </p>
+          {locked && (
+            <p className="mt-1 text-sm text-ink-tertiary">
+              Locked in for today's session — changes now apply from tomorrow.
+            </p>
+          )}
+        </CollapsedRow>
       )}
     </section>
+  )
+}
+
+function CollapsedRow({
+  locked,
+  onEdit,
+  children,
+}: {
+  locked: boolean
+  onEdit: () => void
+  children: ReactNode
+}) {
+  if (locked) {
+    return (
+      <div className="flex w-full items-baseline justify-between gap-4">
+        <div className="min-w-0">{children}</div>
+        <span className="shrink-0 text-sm text-ink-tertiary">Locked</span>
+      </div>
+    )
+  }
+  return (
+    <button
+      type="button"
+      onClick={onEdit}
+      className="flex w-full items-baseline justify-between gap-4 text-left"
+    >
+      <div className="min-w-0">{children}</div>
+      <span className="shrink-0 text-sm text-ink-tertiary">Edit</span>
+    </button>
   )
 }
 

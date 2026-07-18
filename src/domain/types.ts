@@ -1,3 +1,5 @@
+import type { ReadinessSignal, ReadinessTier } from './readiness'
+
 export type MuscleGroup =
   | 'quads'
   | 'hamstrings'
@@ -98,10 +100,15 @@ export interface Workout {
   startedAt: string
   completedAt: string | null
   exercises: WorkoutExercise[]
-  /** Readiness applied at start, kept for future intelligence (additive, optional) */
+  /**
+   * Readiness applied at start, kept for future intelligence (additive,
+   * optional). `drivers` stores signal keys, not display copy — labels are
+   * derived at render time (see readiness.ts `describeDrivers`) so stored
+   * workouts stay analyzable even after wording changes.
+   */
   readiness?: {
-    tier: 'ready' | 'steady' | 'easier'
-    drivers: string[]
+    tier: ReadinessTier
+    drivers: ReadinessSignal[]
   }
   notes?: string
 }
