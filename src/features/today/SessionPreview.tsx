@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { useSessionName, usePrescriptionNote } from '@/i18n/seedProgram'
@@ -78,8 +79,10 @@ function ItemRow({
   programId: string
   sessionId: string
 }) {
+  const { t } = useTranslation('today')
   const exerciseName = useExerciseName(exercise.id)
   const note = usePrescriptionNote(programId, sessionId, item)
+  const perSideSuffix = item.perSide ? t('sessionPreview.perSideSuffix') : ''
   return (
     <GroupedRow to={`/library/${exercise.id}`} state={origin}>
       <div className="min-w-0">
@@ -87,15 +90,14 @@ function ItemRow({
         {note && <p className="mt-0.5 text-sm text-ink-tertiary">{note}</p>}
       </div>
       <p className="shrink-0 text-sm text-ink-secondary" data-numeric>
-        {formatPrescription(item)}
+        {formatPrescription(item, perSideSuffix)}
       </p>
     </GroupedRow>
   )
 }
 
-function formatPrescription(item: ExercisePrescription): string {
+function formatPrescription(item: ExercisePrescription, perSideSuffix: string): string {
   const unit = item.mode === 'seconds' ? 's' : ''
-  const side = item.perSide ? ' /side' : ''
   const load = item.startWeightKg !== null ? ` · ${item.startWeightKg} kg` : ''
-  return `${item.sets} × ${item.range.min}–${item.range.max}${unit}${side}${load}`
+  return `${item.sets} × ${item.range.min}–${item.range.max}${unit}${perSideSuffix}${load}`
 }

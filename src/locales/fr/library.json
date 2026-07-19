@@ -1,20 +1,20 @@
 {
-  "heading": "TODO",
+  "heading": "Exercices",
   "group": {
-    "lower": "TODO",
-    "push": "TODO",
-    "pull": "TODO",
-    "core": "TODO"
+    "lower": "Bas du corps",
+    "push": "Poussée",
+    "pull": "Tirage",
+    "core": "Gainage"
   },
-  "notFound": "TODO",
-  "unilateralSuffix": "TODO",
-  "techniqueSectionAriaLabel": "TODO",
-  "techniqueHeading": "TODO",
-  "conceptSectionAriaLabel": "TODO",
-  "whyItMatters": "TODO",
-  "substitutionsSectionAriaLabel": "TODO",
-  "swapFor": "TODO",
+  "notFound": "Cet exercice ne figure pas dans la bibliothèque. Il a peut-être été renommé.",
+  "unilateralSuffix": "un côté à la fois",
+  "techniqueSectionAriaLabel": "Repères techniques",
+  "techniqueHeading": "Technique",
+  "conceptSectionAriaLabel": "Concept",
+  "whyItMatters": "Pourquoi c'est important — {{title}}",
+  "substitutionsSectionAriaLabel": "Substitutions",
+  "swapFor": "Remplacer par",
   "backLink": {
-    "day": "TODO"
+    "day": "Jour"
   }
 }

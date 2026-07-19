@@ -1,32 +1,32 @@
 {
   "direction": {
-    "increasing": "TODO",
-    "steady": "TODO",
-    "decreasing": "TODO"
+    "increasing": "en hausse",
+    "steady": "stable",
+    "decreasing": "en baisse"
   },
   "consistency": {
-    "sectionLabel": "TODO",
-    "noProgram": "TODO",
-    "summary": "TODO",
-    "windowLine": "TODO"
+    "sectionLabel": "Régularité",
+    "noProgram": "Aucun programme d'entraînement n'est encore configuré. La régularité apparaîtra ici une fois qu'un programme aura commencé.",
+    "summary": "Séances complétées : {{completedCount}} sur {{scheduledCount}}",
+    "windowLine": "Sur les {{days}} derniers jours"
   },
   "strength": {
-    "sectionLabel": "TODO",
-    "noHistory": "TODO",
-    "stillGathering": "TODO",
-    "sessionsOfThree": "TODO",
+    "sectionLabel": "Force",
+    "noHistory": "Enregistre quelques séances pour voir apparaître des tendances de force ici.",
+    "stillGathering": "Données encore insuffisantes",
+    "sessionsOfThree": "{{count}} sur 3 séances",
     "stagnation": {
-      "noIncreasePrefix": "TODO",
-      "sessionCount_one": "TODO",
-      "sessionCount_other": "TODO",
-      "excluded_one": "TODO",
-      "excluded_other": "TODO",
-      "worthChange": "TODO",
-      "trySubstitution": "TODO"
+      "noIncreasePrefix": "Aucune augmentation sur",
+      "sessionCount_one": "{{count}} séance",
+      "sessionCount_other": "{{count}} séances",
+      "excluded_one": " ({{count}} jour plus facile non compté)",
+      "excluded_other": " ({{count}} jours plus faciles non comptés)",
+      "worthChange": "Ça vaut le coup de changer de stimulus —",
+      "trySubstitution": "essaie {{name}}"
     }
   },
   "waist": {
-    "sectionLabel": "TODO",
-    "rangeLine": "TODO"
+    "sectionLabel": "Tour de taille",
+    "rangeLine": "{{firstValue}} le {{firstDate}} → {{lastValue}} le {{lastDate}}"
   }
 }

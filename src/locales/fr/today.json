@@ -1,62 +1,65 @@
 {
-  "trainingDay": {
-    "easedSubtitle": "TODO",
-    "readySubtitle": "TODO",
-    "adjustedBadge": "TODO",
-    "heading": "TODO",
-    "lowStreak_one": "TODO",
-    "lowStreak_other": "TODO"
+  "sessionPreview": {
+    "perSideSuffix": " /côté"
   },
-  "noProgram": "TODO",
+  "trainingDay": {
+    "easedSubtitle": "On lève un peu le pied aujourd'hui — $t({{driversKey}}). Se présenter un jour comme celui-ci compte double.",
+    "readySubtitle": "Échauffe-toi bien. Tes chiffres de départ sont ci-dessous — ils t'attendront dans la séance.",
+    "adjustedBadge": "Ajusté selon ton état",
+    "heading": "Aujourd'hui",
+    "lowStreak_one": "{{count}} jour bas d'affilée maintenant — faire de ce jour un jour de repos est un choix tout à fait valable. Ta séance t'attendra.",
+    "lowStreak_other": "{{count}} jours bas d'affilée maintenant — faire de ce jour un jour de repos est un choix tout à fait valable. Ta séance t'attendra."
+  },
+  "noProgram": "Aucun programme d'entraînement n'est encore configuré. Ta prochaine phase apparaîtra ici.",
   "plannedDay": {
-    "startsIn_one": "TODO",
-    "startsIn_other": "TODO",
-    "upcomingSubtitle": "TODO",
-    "upcomingHeading": "TODO",
-    "restEyebrow": "TODO",
-    "restTitle": "TODO",
-    "restSubtitleEased": "TODO",
-    "restSubtitleReady": "TODO",
-    "restHeading": "TODO",
-    "endedEyebrow": "TODO",
-    "endedTitle": "TODO",
-    "endedSubtitle": "TODO"
+    "startsIn_one": "Commence demain",
+    "startsIn_other": "Commence dans {{count}} jours",
+    "upcomingSubtitle": "Ta première séance est prête — commence dès le premier jour, ou lance-toi plus tôt si tu ne peux pas attendre.",
+    "upcomingHeading": "À venir",
+    "restEyebrow": "Jour de repos",
+    "restTitle": "Le repos, c'est du progrès",
+    "restSubtitleEased": "Un vrai jour de repos, parfaitement placé. Recharge les batteries — ta prochaine séance t'attendra.",
+    "restSubtitleReady": "Nage, joue, marche — ou ne fais rien du tout. Ta prochaine séance est prête quand tu le seras.",
+    "restHeading": "Ensuite",
+    "endedEyebrow": "Phase terminée",
+    "endedTitle": "Cette phase est bouclée",
+    "endedSubtitle": "Ton prochain programme apparaîtra ici dès qu'il commencera."
   },
   "startButton": {
-    "quiet": "TODO",
-    "primary": "TODO"
+    "quiet": "Démarrer cette séance maintenant",
+    "primary": "Démarrer la séance"
   },
   "inProgress": {
-    "eyebrow": "TODO",
-    "sessionFallback": "TODO",
-    "loggedSets_one": "TODO",
-    "loggedSets_other": "TODO",
-    "waiting": "TODO",
-    "resume": "TODO",
-    "discard": "TODO",
-    "discardArmed": "TODO"
+    "eyebrow": "En cours",
+    "sessionFallback": "Séance",
+    "loggedSets_one": "{{count}} série enregistrée jusqu'ici. Reprends là où tu t'es arrêté.",
+    "loggedSets_other": "{{count}} séries enregistrées jusqu'ici. Reprends là où tu t'es arrêté.",
+    "waiting": "Ta séance est ouverte et t'attend.",
+    "resume": "Reprendre la séance",
+    "discard": "Abandonner la séance",
+    "discardArmed": "Appuie à nouveau pour abandonner cette séance"
   },
   "doneToday": {
-    "eyebrow": "TODO",
-    "title": "TODO",
-    "sets_one": "TODO",
-    "sets_other": "TODO",
-    "inMinutes_one": "TODO",
-    "inMinutes_other": "TODO",
-    "subtitle": "TODO"
+    "eyebrow": "Séance terminée",
+    "title": "Terminé pour aujourd'hui",
+    "sets_one": "{{count}} série",
+    "sets_other": "{{count}} séries",
+    "inMinutes_one": " en {{count}} minute",
+    "inMinutes_other": " en {{count}} minutes",
+    "subtitle": "{{setsPhrase}}{{minutesPhrase}} · {{volume}} kg déplacés. Repose-toi bien — ça fait partie du plan."
   },
   "weeklyReview": {
-    "heading": "TODO",
-    "noSessionsScheduled": "TODO",
-    "quietWeek": "TODO",
-    "allDone": "TODO",
-    "partial": "TODO",
-    "statSessions": "TODO",
-    "statSets": "TODO",
-    "statVolume": "TODO",
-    "readinessReady": "TODO",
-    "readinessSteady": "TODO",
-    "readinessEased": "TODO",
-    "readinessNone": "TODO"
+    "heading": "La semaine dernière",
+    "noSessionsScheduled": "Aucune séance n'était prévue la semaine dernière.",
+    "quietWeek": "Une semaine calme — aucune séance enregistrée.",
+    "allDone": "Toutes les séances prévues, complétées.",
+    "partial": "Séances complétées : {{completedCount}} sur {{scheduledCount}}.",
+    "statSessions": "Séances",
+    "statSets": "Séries",
+    "statVolume": "Volume",
+    "readinessReady": "Prêt : {{count}}",
+    "readinessSteady": "Stable : {{count}}",
+    "readinessEased": "Allégé : {{count}}",
+    "readinessNone": "Aucun état enregistré."
   }
 }

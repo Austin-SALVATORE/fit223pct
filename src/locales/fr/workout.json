@@ -1,55 +1,55 @@
 {
-  "noSession": "TODO",
-  "backToToday": "TODO",
-  "pauseAriaLabel": "TODO",
-  "progressAriaLabel": "TODO",
-  "progressValueText": "TODO",
+  "noSession": "Aucune séance en cours.",
+  "backToToday": "Retour à Aujourd'hui",
+  "pauseAriaLabel": "Mettre la séance en pause et retourner à Aujourd'hui",
+  "progressAriaLabel": "Progression de la séance",
+  "progressValueText": "{{logged}} sur {{total}} séries",
   "resting": {
-    "heading": "TODO",
-    "next": "TODO",
-    "nextUp": "TODO",
-    "ariaLabel": "TODO",
-    "setProgress": "TODO",
-    "plusThirty": "TODO",
-    "skip": "TODO"
+    "heading": "Repos",
+    "next": "Suivant",
+    "nextUp": "À suivre",
+    "ariaLabel": "En repos. {{nextLabel}} : {{exerciseName}}, série {{setIndex}} sur {{totalSets}}",
+    "setProgress": "{{exerciseName}} — série {{setIndex}} sur {{totalSets}}",
+    "plusThirty": "+30s",
+    "skip": "Passer"
   },
   "holdTimer": {
-    "start": "TODO",
-    "stopAriaLabel": "TODO",
-    "stopSuffix": "TODO"
+    "start": "Démarrer le maintien",
+    "stopAriaLabel": "Arrêter le maintien",
+    "stopSuffix": "— Arrêter"
   },
   "setScreen": {
-    "setProgress": "TODO",
-    "eachSide": "TODO",
-    "lastTimeFirst": "TODO",
-    "lastTimePrefix": "TODO",
-    "weightLabel": "TODO",
-    "holdLabel": "TODO",
-    "repsLabel": "TODO",
-    "logHold": "TODO",
-    "logSet": "TODO",
-    "technique": "TODO",
-    "swapExercise": "TODO",
-    "rirLabel": "TODO"
+    "setProgress": "Série {{setIndex}} sur {{totalSets}}",
+    "eachSide": "de chaque côté",
+    "lastTimeFirst": "Première fois — les chiffres ci-dessous sont ton point de départ.",
+    "lastTimePrefix": "La dernière fois",
+    "weightLabel": "Poids",
+    "holdLabel": "Maintien",
+    "repsLabel": "Répétitions",
+    "logHold": "Enregistrer le maintien",
+    "logSet": "Enregistrer la série",
+    "technique": "Technique",
+    "swapExercise": "Remplacer l'exercice",
+    "rirLabel": "Réserve de répétitions"
   },
   "swapSheet": {
-    "closeAriaLabel": "TODO",
-    "dialogAriaLabel": "TODO",
-    "heading": "TODO",
-    "noSubstitutions": "TODO",
-    "keep": "TODO"
+    "closeAriaLabel": "Fermer",
+    "dialogAriaLabel": "Remplacer {{exerciseName}}",
+    "heading": "Remplacer {{exerciseName}} par",
+    "noSubstitutions": "Aucune substitution pour celui-ci — c'est déjà la solution de repli.",
+    "keep": "Garder {{exerciseName}}"
   },
   "sessionSummary": {
-    "eyebrow": "TODO",
-    "heading": "TODO",
-    "statMinutes": "TODO",
-    "statSets": "TODO",
-    "statVolume": "TODO",
-    "setCount_one": "TODO",
-    "setCount_other": "TODO",
-    "topWeightReps": "TODO",
-    "topSeconds": "TODO",
-    "topReps": "TODO",
-    "topSetLine": "TODO"
+    "eyebrow": "Séance terminée",
+    "heading": "Bien joué.",
+    "statMinutes": "Minutes",
+    "statSets": "Séries",
+    "statVolume": "Volume",
+    "setCount_one": "{{count}} série",
+    "setCount_other": "{{count}} séries",
+    "topWeightReps": "{{reps}} × {{weight}} kg",
+    "topSeconds": "{{seconds}}s de maintien",
+    "topReps": "{{reps}} reps",
+    "topSetLine": "{{countPhrase}} · top {{detail}}"
   }
 }

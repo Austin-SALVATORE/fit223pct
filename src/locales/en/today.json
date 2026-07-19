@@ -1,4 +1,7 @@
 {
+  "sessionPreview": {
+    "perSideSuffix": " /side"
+  },
   "trainingDay": {
     "easedSubtitle": "Eased back a touch today — $t({{driversKey}}). Showing up on a day like this counts double.",
     "readySubtitle": "Warm up well. Your starting numbers are below — they'll be waiting in the session.",

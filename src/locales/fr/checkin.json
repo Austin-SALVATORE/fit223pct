@@ -1,26 +1,26 @@
 {
   "tierPhrase": {
-    "ready": "TODO",
-    "steady": "TODO",
-    "easier": "TODO"
+    "ready": "Prêt à t'entraîner.",
+    "steady": "C'est bon, on y va.",
+    "easier": "On lève un peu le pied aujourd'hui — $t({{driversKey}})."
   },
-  "sectionLabel": "TODO",
-  "heading": "TODO",
-  "hint": "TODO",
-  "notRecorded": "TODO",
-  "locked": "TODO",
-  "lockedNote": "TODO",
+  "sectionLabel": "État du jour",
+  "heading": "Ton état aujourd'hui",
+  "hint": "1 bas · 5 haut",
+  "notRecorded": "Non renseigné aujourd'hui.",
+  "locked": "Verrouillé",
+  "lockedNote": "Verrouillé pour la séance d'aujourd'hui — les changements s'appliqueront à partir de demain.",
   "signalLabel": {
-    "sleep": "TODO",
-    "energy": "TODO",
-    "soreness": "TODO",
-    "stress": "TODO",
-    "motivation": "TODO"
+    "sleep": "Sommeil",
+    "energy": "Énergie",
+    "soreness": "Fraîcheur",
+    "stress": "Calme",
+    "motivation": "Motivation"
   },
   "measurement": {
-    "sectionLabel": "TODO",
-    "heading": "TODO",
-    "weightLabel": "TODO",
-    "waistLabel": "TODO"
+    "sectionLabel": "Poids et tour de taille",
+    "heading": "Poids et taille",
+    "weightLabel": "Poids",
+    "waistLabel": "Taille"
   }
 }

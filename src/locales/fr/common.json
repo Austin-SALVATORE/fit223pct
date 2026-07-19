@@ -1,52 +1,52 @@
 {
   "nav": {
-    "today": "TODO",
-    "plan": "TODO",
-    "progress": "TODO",
-    "library": "TODO",
-    "workout": "TODO"
+    "today": "Aujourd'hui",
+    "plan": "Plan",
+    "progress": "Progression",
+    "library": "Bibliothèque",
+    "workout": "Séance"
   },
   "muscle": {
-    "quads": "TODO",
-    "hamstrings": "TODO",
-    "glutes": "TODO",
-    "chest": "TODO",
-    "back": "TODO",
-    "shoulders": "TODO",
-    "biceps": "TODO",
-    "triceps": "TODO",
-    "core": "TODO"
+    "quads": "Quadriceps",
+    "hamstrings": "Ischio-jambiers",
+    "glutes": "Fessiers",
+    "chest": "Pectoraux",
+    "back": "Dos",
+    "shoulders": "Épaules",
+    "biceps": "Biceps",
+    "triceps": "Triceps",
+    "core": "Abdominaux"
   },
   "activityKind": {
-    "recovery": "TODO",
-    "mobility": "TODO",
-    "cardio": "TODO",
-    "optional": "TODO",
-    "checkpoint": "TODO"
+    "recovery": "Récupération",
+    "mobility": "Mobilité",
+    "cardio": "Cardio",
+    "optional": "Optionnel",
+    "checkpoint": "Bilan"
   },
-  "edit": "TODO",
-  "done": "TODO",
-  "settings": "TODO",
+  "edit": "Modifier",
+  "done": "Terminé",
+  "settings": "Réglages",
   "stepper": {
-    "decrease": "TODO",
-    "increase": "TODO"
+    "decrease": "Diminuer {{label}}",
+    "increase": "Augmenter {{label}}"
   },
   "equipment": {
-    "barbell": "TODO",
-    "dumbbell": "TODO",
-    "bench": "TODO",
-    "band": "TODO",
-    "bodyweight": "TODO",
-    "machine": "TODO"
+    "barbell": "Barre",
+    "dumbbell": "Haltère",
+    "bench": "Banc",
+    "band": "Élastique",
+    "bodyweight": "Poids du corps",
+    "machine": "Machine"
   },
   "routeTitle": {
-    "today": "TODO",
-    "library": "TODO",
-    "progress": "TODO",
-    "plan": "TODO",
-    "settings": "TODO",
-    "exercise": "TODO",
-    "workout": "TODO"
+    "today": "{{productName}}",
+    "library": "{{productName}} — Bibliothèque",
+    "progress": "{{productName}} — Progression",
+    "plan": "{{productName}} — Plan",
+    "settings": "{{productName}} — Réglages",
+    "exercise": "{{productName}} — Exercice",
+    "workout": "{{productName}} — Séance"
   },
   "language": {
     "en": "English",

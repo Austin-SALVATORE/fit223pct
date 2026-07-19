@@ -1,14 +1,14 @@
 {
-  "heading": "TODO",
+  "heading": "Réglages",
   "language": {
-    "sectionLabel": "Language",
-    "heading": "Language"
+    "sectionLabel": "Langue",
+    "heading": "Langue"
   },
   "backup": {
-    "sectionLabel": "TODO",
-    "heading": "TODO",
-    "description": "TODO",
-    "exportButton": "TODO",
-    "saved": "TODO"
+    "sectionLabel": "Sauvegarde",
+    "heading": "Sauvegarde",
+    "description": "Un fichier daté avec chaque programme, séance et suivi — la sauvegarde manuelle d'une application local-first.",
+    "exportButton": "Exporter toutes les données",
+    "saved": "Sauvegarde enregistrée."
   }
 }

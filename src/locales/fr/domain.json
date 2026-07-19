@@ -1,52 +1,52 @@
 {
   "readiness": {
     "signal": {
-      "sleep": "TODO",
-      "soreness": "TODO",
-      "energy": "TODO",
-      "stress": "TODO",
-      "motivation": "TODO"
+      "sleep": "manque de sommeil",
+      "soreness": "courbatures",
+      "energy": "peu d'énergie",
+      "stress": "une période stressante",
+      "motivation": "motivation en berne"
     },
     "drivers": {
-      "none": "TODO",
-      "one": "TODO",
-      "two": "TODO",
-      "many": "TODO"
+      "none": "l'état est bas",
+      "one": "$t(domain:readiness.signal.{{signal}})",
+      "two": "$t(domain:readiness.signal.{{signal1}}) et $t(domain:readiness.signal.{{signal2}})",
+      "many": "une journée difficile dans l'ensemble"
     }
   },
   "adjustments": {
-    "effort": "TODO",
-    "volume": "TODO"
+    "effort": "On garde une répétition de plus en réserve aujourd'hui — $t({{driversKey}}).",
+    "volume": "Un set en moins sur les accessoires aujourd'hui — $t({{driversKey}})."
   },
   "progression": {
-    "start": "TODO",
-    "addReps": "TODO",
-    "consolidateNoReserve": "TODO",
-    "consolidateEasier": "TODO",
-    "addTechnique": "TODO",
-    "increaseLoad": "TODO"
+    "start": "Première séance — pars de la charge prescrite et maîtrise l'amplitude complète.",
+    "addReps": "Même charge — ajoute une répétition à ta série la plus faible.",
+    "consolidateNoReserve": "Haut de l'amplitude, mais trop proche de l'échec — assume-le une fois de plus.",
+    "consolidateEasier": "Tu as mérité plus de charge, mais pas aujourd'hui — même charge, garde ce saut pour un jour plus frais.",
+    "addTechnique": "La charge est au maximum pour cette configuration — progresse avec un tempo excentrique plus lent, une pause, ou plus d'amplitude.",
+    "increaseLoad": "Chaque série a atteint le haut de l'amplitude avec de la réserve de répétitions — il est temps d'augmenter la charge."
   },
   "highlight": {
-    "first": "TODO",
-    "load": "TODO",
-    "effortSeconds": "TODO",
-    "effortReps_one": "TODO",
-    "effortReps_other": "TODO",
-    "steady": "TODO"
+    "first": "Première fois",
+    "load": "+{{delta, number}} kg",
+    "effortSeconds": "+{{delta}}s",
+    "effortReps_one": "+{{count}} répétition",
+    "effortReps_other": "+{{count}} répétitions",
+    "steady": "Maintenu"
   },
   "coachInsight": {
-    "easier": "TODO",
-    "loadsUp_one": "TODO",
-    "loadsUp_other": "TODO",
-    "effortsUp": "TODO",
-    "baselines": "TODO",
-    "consistent": "TODO"
+    "easier": "Ajusté selon ton état, et fait quand même — c'est cette discipline qui paie sur la durée.",
+    "loadsUp_one": "La charge a augmenté sur un exercice — la double progression fait son travail.",
+    "loadsUp_other": "La charge a augmenté sur {{count}} exercices — la double progression fait son travail.",
+    "effortsUp": "Tu as fait mieux que la dernière fois sur les répétitions — une fois l'amplitude pleine, la charge suit.",
+    "baselines": "Bases posées. À partir de maintenant, tout est progrès.",
+    "consistent": "Un travail régulier aux mêmes chiffres — c'est ça qui paie sur la durée."
   },
   "trends": {
-    "firstWeekInProgress": "TODO",
-    "noScheduledSessions": "TODO",
-    "needMoreStrengthData": "TODO",
-    "needMoreWaistData": "TODO",
-    "spreadWaistMeasurements": "TODO"
+    "firstWeekInProgress": "Ta première semaine est encore en cours — reviens dans quelques jours.",
+    "noScheduledSessions": "Aucune séance prévue ne s'est encore produite sur cette période.",
+    "needMoreStrengthData": "Enregistre cet exercice quelques fois de plus pour voir une tendance de force.",
+    "needMoreWaistData": "Quelques mesures de tour de taille de plus feront apparaître une tendance.",
+    "spreadWaistMeasurements": "Étale tes mesures sur quelques semaines pour voir apparaître une tendance."
   }
 }

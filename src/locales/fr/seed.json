@@ -1,287 +1,287 @@
 {
   "exercise": {
     "goblet-squat": {
-      "name": "TODO",
+      "name": "Goblet squat",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Tiens l'haltère bien serré contre ta poitrine",
+        "Assieds-toi entre tes talons, pas vers l'arrière",
+        "Les coudes restent à l'intérieur des genoux en bas du mouvement"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "Le gainage",
+        "body": "Avant chaque répétition, prends une respiration dans le ventre et contracte doucement ta ceinture abdominale — comme si tu te préparais à recevoir un petit coup. Un tronc gainé stabilise ta colonne pour que tes jambes puissent faire le travail."
       }
     },
     "split-squat": {
-      "name": "TODO",
+      "name": "Fente statique",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Position longue, talon arrière libre",
+        "Descends le genou arrière tout droit vers le bas",
+        "Le pied avant porte la majorité du poids"
       ]
     },
     "tempo-bodyweight-squat": {
-      "name": "TODO",
+      "name": "Squat tempo au poids du corps",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Trois secondes à la descente",
+        "Marque une brève pause en bas",
+        "Reste bien droit entre les répétitions"
       ]
     },
     "bench-press": {
-      "name": "TODO",
+      "name": "Développé couché à la barre",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Rapproche et abaisse tes omoplates",
+        "Léger cambré, pieds bien ancrés au sol",
+        "Descends avec contrôle jusqu'au milieu de la poitrine"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "Position des omoplates",
+        "body": "Place tes omoplates vers le bas et vers l'arrière avant de décrocher la barre, et garde-les là. Une omoplate stable transforme le banc en rampe de lancement et protège tes épaules."
       }
     },
     "deficit-push-up": {
-      "name": "TODO",
+      "name": "Pompe en déficit",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Mains surélevées sur des livres ou des poignées",
+        "La poitrine descend sous le niveau des mains en bas",
+        "Le corps forme une ligne rigide"
       ]
     },
     "db-floor-press": {
-      "name": "TODO",
+      "name": "Développé haltères au sol",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Les coudes touchent le sol en douceur à chaque répétition",
+        "Pousse légèrement vers l'intérieur",
+        "Poignets alignés au-dessus des coudes"
       ]
     },
     "single-arm-db-row": {
-      "name": "TODO",
+      "name": "Rowing haltère unilatéral",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Dos plat, hanches alignées",
+        "Tire vers la hanche, pas vers l'aisselle",
+        "Laisse l'omoplate bouger — étire-toi, puis tire"
       ]
     },
     "bent-over-row": {
-      "name": "TODO",
+      "name": "Rowing barre buste penché",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Bascule le buste à environ 45°",
+        "Tire vers le bas des côtes",
+        "Marque une pause en haut"
       ]
     },
     "band-row": {
-      "name": "TODO",
+      "name": "Rowing à l'élastique",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Fixe l'élastique à hauteur de poitrine",
+        "Serre les omoplates",
+        "Retour lent"
       ]
     },
     "romanian-deadlift": {
-      "name": "TODO",
+      "name": "Soulevé de terre roumain",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Pousse les hanches vers l'arrière, genoux légèrement fléchis",
+        "La barre reste proche de tes jambes",
+        "Arrête-toi quand tes ischio-jambiers te disent stop"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "La charnière de hanche",
+        "body": "Une charnière de hanche pousse tes hanches vers l'arrière pendant que ta colonne reste longue — c'est une révérence, pas un squat. La maîtriser sollicite tes ischio-jambiers et tes fessiers plutôt que le bas du dos, et elle se retrouve dans presque tous les mouvements."
       }
     },
     "single-leg-rdl": {
-      "name": "TODO",
+      "name": "Soulevé de terre roumain unilatéral",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Les hanches restent alignées face au sol",
+        "Étends la jambe libre vers l'arrière",
+        "Lent et équilibré vaut mieux que lourd"
       ]
     },
     "bulgarian-split-squat": {
-      "name": "TODO",
+      "name": "Fente bulgare",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Pied arrière sur le banc, lacets vers le bas",
+        "Buste droit, une légère inclinaison vers l'avant est correcte",
+        "Pousse à travers tout le pied avant"
       ]
     },
     "overhead-press": {
-      "name": "TODO",
+      "name": "Développé militaire",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Serre les fessiers, côtes basses",
+        "La barre se déplace en ligne droite — bouge ta tête, pas la barre",
+        "Termine avec les biceps près des oreilles"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "Côtes basses",
+        "body": "Trop cambrer le bas du dos transforme un développé militaire en exercice pour le bas du dos. Rentre tes côtes vers tes hanches et serre tes fessiers — la poussée doit venir des épaules, pas de la colonne."
       }
     },
     "single-arm-db-press": {
-      "name": "TODO",
+      "name": "Développé haltère unilatéral",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Tension du corps entier",
+        "Pousse légèrement vers l'arrière, pas vers l'avant",
+        "Résiste à l'inclinaison latérale"
       ]
     },
     "hip-thrust": {
-      "name": "TODO",
+      "name": "Hip thrust",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Omoplates sur le bord du banc",
+        "Menton rentré, côtes basses en haut du mouvement",
+        "Serre pendant une seconde complète en position haute"
       ]
     },
     "single-leg-hip-thrust": {
-      "name": "TODO",
+      "name": "Hip thrust unilatéral",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Les hanches restent de niveau",
+        "Pousse à travers le talon",
+        "Lent à la descente"
       ]
     },
     "band-pull-apart": {
-      "name": "TODO",
+      "name": "Écarté à l'élastique",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Bras tendus, élastique à hauteur de poitrine",
+        "Serre entre les omoplates",
+        "Contrôle le retour"
       ]
     },
     "band-lateral-raise": {
-      "name": "TODO",
+      "name": "Élévation latérale à l'élastique",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Mène le mouvement avec les coudes",
+        "Arrête-toi à hauteur d'épaule",
+        "Pas d'élan"
       ]
     },
     "band-curl": {
-      "name": "TODO",
+      "name": "Curl à l'élastique",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Coudes plaqués contre le corps",
+        "Serre en haut du mouvement",
+        "Trois secondes à la descente"
       ]
     },
     "dead-bug": {
-      "name": "TODO",
+      "name": "Dead bug",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Le bas du dos légèrement pressé contre le sol",
+        "Le bras et la jambe opposés s'étendent lentement",
+        "Expire en étendant"
       ]
     },
     "side-plank": {
-      "name": "TODO",
+      "name": "Planche latérale",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Coude sous l'épaule",
+        "Hanches hautes — une seule ligne droite",
+        "Respire régulièrement"
       ]
     },
     "barbell-squat": {
-      "name": "TODO",
+      "name": "Squat arrière à la barre",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "La barre repose sur le haut des trapèzes, pas sur la nuque",
+        "Plie hanches et genoux ensemble, assieds-toi entre tes talons",
+        "Pousse le sol uniformément à travers les deux pieds pour te relever"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "Trajectoire de la barre",
+        "body": "La barre doit se déplacer en ligne verticale droite au-dessus du milieu de ton pied. Si tes hanches remontent en premier, tu transformes le squat en charnière de hanche — assieds-toi vers le bas, pas vers l'arrière, et laisse tes hanches et tes épaules remonter ensemble."
       }
     },
     "cable-row": {
-      "name": "TODO",
+      "name": "Tirage horizontal",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Assieds-toi droit, poitrine haute, légère inclinaison vers l'avant au départ",
+        "Tire vers le bas des côtes, coudes proches du corps",
+        "Laisse tes omoplates s'écarter complètement avant la répétition suivante"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "Mène avec le coude",
+        "body": "Commence chaque répétition en poussant ton coude vers l'arrière, pas en repliant la poignée avec ton bras. Ton dos fait le tirage ; ton biceps ne fait que tenir."
       }
     },
     "lat-pulldown": {
-      "name": "TODO",
+      "name": "Tirage vertical",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Prise juste au-delà de la largeur des épaules",
+        "Tire la barre vers le haut de la poitrine, coudes poussant vers le bas et l'arrière",
+        "Contrôle le retour — ne laisse pas la pile de poids remonter tes bras"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "Vers le bas et l'arrière, pas seulement vers le bas",
+        "body": "Pense à tirer tes coudes vers tes poches arrière, pas seulement à tirer la barre vers le bas. Ce repère déplace le travail vers ton grand dorsal plutôt que vers tes bras."
       }
     },
     "barbell-hip-thrust": {
-      "name": "TODO",
+      "name": "Hip thrust à la barre",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Haut du dos calé sur le bord du banc, barre rembourrée en travers des hanches",
+        "Menton rentré, côtes basses en poussant vers le haut",
+        "Extension complète — serre fort les fessiers pendant une seconde en haut"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "Placement de la barre",
+        "body": "La barre doit se placer dans le pli des hanches, pas sur le bas du ventre — un rembourrage épais ou un tapis plié protège cette zone. Si tu as l'impression qu'elle t'écrase, c'est qu'elle est mal placée, pas trop lourde."
       }
     },
     "dumbbell-lateral-raise": {
-      "name": "TODO",
+      "name": "Élévation latérale aux haltères",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Légère flexion des coudes, maintenue tout au long",
+        "Lève jusqu'à hauteur d'épaule, en menant avec les coudes",
+        "Descends lentement — c'est la phase négative qui fait tout l'intérêt de cet exercice"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "Charge légère, amplitude réelle",
+        "body": "Ce n'est pas un exercice de charge lourde — l'élan créé en balançant le poids vers le haut retire la tension de l'épaule, qui est tout l'intérêt du mouvement. Si tu dois t'incliner ou te balancer pour le lever, le poids est trop lourd."
       }
     },
     "dumbbell-curl": {
-      "name": "TODO",
+      "name": "Curl aux haltères",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "Coudes plaqués contre le corps pendant toute la répétition",
+        "Serre en haut sans balancer le poids",
+        "Descends avec contrôle sur toute l'amplitude"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "La position du coude est essentielle",
+        "body": "Si tes coudes dérivent vers l'avant quand le poids devient lourd, tes deltoïdes antérieurs prennent le relais de tes biceps. Garde-les alignés sous tes épaules pendant toute la série, même si cela veut dire choisir un haltère plus léger."
       }
     }
   },
   "program": {
     "phase-1-home": {
-      "name": "TODO",
+      "name": "Phase 1 — Maison",
       "session": {
         "A": {
-          "name": "TODO",
-          "focus": "TODO",
+          "name": "Séance A",
+          "focus": "Squat et tirage",
           "exercise": {
             "goblet-squat": {
-              "note": "TODO"
+              "note": "Descente de 3 secondes"
             },
             "romanian-deadlift": {
-              "note": "TODO"
+              "note": "Excentrique lent — la barre descend en 3 secondes"
             }
           }
         },
         "B": {
-          "name": "TODO",
-          "focus": "TODO",
+          "name": "Séance B",
+          "focus": "Charnière et poussée",
           "exercise": {
             "bent-over-row": {
-              "note": "TODO"
+              "note": "Pause en haut de chaque répétition"
             },
             "hip-thrust": {
-              "note": "TODO"
+              "note": "Passe à l'unilatéral une fois que 15 répétitions sont bien contrôlées"
             }
           }
         }
