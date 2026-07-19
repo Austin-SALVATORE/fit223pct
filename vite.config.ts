@@ -10,7 +10,12 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // 'prompt' + manual registration (src/app/ServiceWorkerUpdater.tsx):
+      // 'autoUpdate' reloads the page the instant a new deploy is found,
+      // which would yank the user out mid-set — the app decides when it's
+      // actually safe (no workout in progress) instead.
+      registerType: 'prompt',
+      injectRegister: false,
       workbox: {
         // Default glob omits woff2 — the self-hosted Fraunces display font
         // would silently fall back to a system serif on a repeat offline visit.
