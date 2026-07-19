@@ -24,15 +24,17 @@ type Phase =
 
 export function WorkoutPage() {
   const { t } = useTranslation('workout')
+  const { t: tCommon, i18n } = useTranslation('common')
   const reducedMotion = useReducedMotion()
   const [phase, setPhase] = useState<Phase>({ kind: 'logging' })
 
   // Workout mode is a full-screen takeover outside AppShell's route-title
   // handling — it needs its own, since navigating here from Today is still
-  // an SPA route change with no title update otherwise.
+  // an SPA route change with no title update otherwise. Also re-runs on a
+  // live language switch, same as AppShell's route-title effect.
   useEffect(() => {
-    document.title = `${PRODUCT_NAME} — Workout`
-  }, [])
+    document.title = tCommon('routeTitle.workout', { productName: PRODUCT_NAME })
+  }, [i18n.language, tCommon])
 
   const data = useLiveQuery(async () => {
     const [workout, exercises, completed] = await Promise.all([

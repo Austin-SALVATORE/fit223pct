@@ -5,19 +5,21 @@ import { checkinRepo, programRepo, settingsRepo, workoutRepo } from '@/data/repo
 import { buildFullDataExport, toFullDataExportJson, fullDataExportFilename } from '@/domain/dataExport'
 import { shareOrDownloadFile } from '@/lib/shareOrDownloadFile'
 import { toDateKey } from '@/lib/dates'
+import { useLocale } from '@/i18n/useLocale'
 import { SecondaryButton } from '@/ui/SecondaryButton'
+import { LanguageSwitcher } from '@/ui/LanguageSwitcher'
+import type { SupportedLocale } from '@/domain/types'
 
 type ExportState = { status: 'idle' } | { status: 'done'; message: string }
 
 /**
- * The app's first Settings page — deliberately minimal (see
- * docs/DataPortability.md's revised Surface section). Exactly the
- * full-data backup for now; the i18n milestone's language switcher joins
- * it later. Do not add other settings content here.
+ * The app's first Settings page (see docs/DataPortability.md's revised
+ * Surface section) — backup export plus, as of M7, the language switcher.
  */
 export function SettingsPage() {
   const { t } = useTranslation('settings')
   const { t: tCommon } = useTranslation('common')
+  const locale = useLocale() as SupportedLocale
   const [exportState, setExportState] = useState<ExportState>({ status: 'idle' })
 
   async function exportAllData() {
@@ -52,6 +54,17 @@ export function SettingsPage() {
         <span aria-hidden="true">←</span> {tCommon('nav.plan')}
       </Link>
       <h1 className="text-display mt-6 text-4xl text-ink">{t('heading')}</h1>
+
+      <section className="mt-8" aria-label={t('language.sectionLabel')}>
+        <h2 className="eyebrow">{t('language.heading')}</h2>
+        <div className="mt-4">
+          <LanguageSwitcher
+            value={locale}
+            onChange={(next) => void settingsRepo.update({ locale: next })}
+            groupLabel={t('language.heading')}
+          />
+        </div>
+      </section>
 
       <section className="mt-8" aria-label={t('backup.sectionLabel')}>
         <h2 className="eyebrow">{t('backup.heading')}</h2>

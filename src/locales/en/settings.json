@@ -1,5 +1,9 @@
 {
   "heading": "Settings",
+  "language": {
+    "sectionLabel": "Language",
+    "heading": "Language"
+  },
   "backup": {
     "sectionLabel": "Backup",
     "heading": "Backup",

@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router'
 import { AppShell } from './AppShell'
 import { ServiceWorkerUpdater } from './ServiceWorkerUpdater'
+import { LocaleSync } from '@/i18n/LocaleSync'
 import { TodayPage } from '@/features/today/TodayPage'
 import { LibraryPage } from '@/features/library/LibraryPage'
 import { ExercisePage } from '@/features/library/ExercisePage'
@@ -14,6 +15,7 @@ export default function App() {
   return (
     <>
       <ServiceWorkerUpdater />
+      <LocaleSync />
       <Routes>
         {/* Workout mode is a full-screen takeover — no shell chrome */}
         <Route path="workout" element={<WorkoutPage />} />

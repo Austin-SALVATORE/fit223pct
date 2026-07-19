@@ -38,5 +38,19 @@
     "band": "Band",
     "bodyweight": "Bodyweight",
     "machine": "Machine"
+  },
+  "routeTitle": {
+    "today": "{{productName}}",
+    "library": "{{productName}} — Library",
+    "progress": "{{productName}} — Progress",
+    "plan": "{{productName}} — Plan",
+    "settings": "{{productName}} — Settings",
+    "exercise": "{{productName}} — Exercise",
+    "workout": "{{productName}} — Workout"
+  },
+  "language": {
+    "en": "English",
+    "fr": "Français",
+    "zh-CN": "中文"
   }
 }

@@ -1,20 +1,21 @@
 import { useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation } from 'react-router'
 import { PRODUCT_NAME } from '@/lib/brand'
 
-const ROUTE_TITLES: Record<string, string> = {
-  '/': PRODUCT_NAME,
-  '/library': `${PRODUCT_NAME} — Library`,
-  '/progress': `${PRODUCT_NAME} — Progress`,
-  '/plan': `${PRODUCT_NAME} — Plan`,
-  '/settings': `${PRODUCT_NAME} — Settings`,
+const ROUTE_TITLE_KEYS: Record<string, string> = {
+  '/': 'routeTitle.today',
+  '/library': 'routeTitle.library',
+  '/progress': 'routeTitle.progress',
+  '/plan': 'routeTitle.plan',
+  '/settings': 'routeTitle.settings',
 }
 
-function titleFor(pathname: string): string {
-  if (pathname in ROUTE_TITLES) return ROUTE_TITLES[pathname]
+function titleKeyFor(pathname: string): string {
+  if (pathname in ROUTE_TITLE_KEYS) return ROUTE_TITLE_KEYS[pathname]
   // /plan/:date is a Plan sub-route; everything else dynamic is a Library detail.
-  if (pathname.startsWith('/plan/')) return `${PRODUCT_NAME} — Plan`
-  return `${PRODUCT_NAME} — Exercise`
+  if (pathname.startsWith('/plan/')) return 'routeTitle.plan'
+  return 'routeTitle.exercise'
 }
 
 /**
@@ -22,6 +23,7 @@ function titleFor(pathname: string): string {
  * surface reached in context (see docs/Design.md, Navigation).
  */
 export function AppShell() {
+  const { t, i18n } = useTranslation('common')
   const location = useLocation()
   const mainRef = useRef<HTMLElement>(null)
   // The pathname actually seen last, not just "have we mounted yet" — a
@@ -31,14 +33,16 @@ export function AppShell() {
 
   // SPA navigation gives neither a title update nor a focus move for free —
   // move focus to the new view on route *changes* only, never on first load
-  // (that would steal focus the browser already placed correctly).
+  // (that would steal focus the browser already placed correctly). Also
+  // re-runs on a live language switch (i18n.language in the deps) so the
+  // title announces in the active language without needing a navigation.
   useEffect(() => {
-    document.title = titleFor(location.pathname)
+    document.title = t(titleKeyFor(location.pathname), { productName: PRODUCT_NAME })
     if (previousPathname.current !== null && previousPathname.current !== location.pathname) {
       mainRef.current?.focus()
     }
     previousPathname.current = location.pathname
-  }, [location.pathname])
+  }, [location.pathname, i18n.language, t])
 
   return (
     <div className="mx-auto w-full max-w-md">

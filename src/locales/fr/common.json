@@ -38,5 +38,19 @@
     "band": "TODO",
     "bodyweight": "TODO",
     "machine": "TODO"
+  },
+  "routeTitle": {
+    "today": "TODO",
+    "library": "TODO",
+    "progress": "TODO",
+    "plan": "TODO",
+    "settings": "TODO",
+    "exercise": "TODO",
+    "workout": "TODO"
+  },
+  "language": {
+    "en": "English",
+    "fr": "Français",
+    "zh-CN": "中文"
   }
 }
