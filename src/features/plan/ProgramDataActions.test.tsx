@@ -8,7 +8,7 @@ import { programRepo } from '@/data/repositories'
 import { ProgramDataActions } from './ProgramDataActions'
 
 vi.mock('@/lib/shareOrDownloadFile', () => ({
-  shareOrDownloadFile: vi.fn().mockResolvedValue(undefined),
+  shareOrDownloadFile: vi.fn().mockResolvedValue('downloaded'),
 }))
 import { shareOrDownloadFile } from '@/lib/shareOrDownloadFile'
 
@@ -143,5 +143,28 @@ describe('ProgramDataActions export', () => {
     const parsed = JSON.parse(content)
     expect(parsed.programs.map((p: { id: string }) => p.id)).toContain(seedProgram.id)
     expect(parsed.settings.name).toBe('Austin')
+  })
+
+  it('shows a status line naming the program after a successful program export', async () => {
+    render(<ProgramDataActions program={seedProgram} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Export program' }))
+
+    expect(await screen.findByRole('status')).toHaveTextContent('Exported "Phase 1 — Home".')
+  })
+
+  it('shows "Backup saved." after a successful full-data export', async () => {
+    render(<ProgramDataActions program={seedProgram} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Export all data' }))
+
+    expect(await screen.findByRole('status')).toHaveTextContent('Backup saved.')
+  })
+
+  it('says nothing when the share sheet is cancelled', async () => {
+    vi.mocked(shareOrDownloadFile).mockResolvedValueOnce('cancelled')
+    render(<ProgramDataActions program={seedProgram} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Export program' }))
+
+    await waitFor(() => expect(shareOrDownloadFile).toHaveBeenCalled())
+    expect(screen.queryByRole('status')).toBeNull()
   })
 })
