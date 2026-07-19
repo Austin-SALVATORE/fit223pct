@@ -9,7 +9,7 @@ import {
   useExerciseTeachingConcept,
 } from '@/i18n/seedExercise'
 import type { Exercise } from '@/domain/types'
-import { originTarget, resolveOrigin, type OriginState } from './navigationOrigin'
+import { originTarget, resolveOrigin, type OriginState } from '@/lib/navigationOrigin'
 
 export function ExercisePage() {
   const { t } = useTranslation('library')

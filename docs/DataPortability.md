@@ -39,10 +39,18 @@ persistent datasource; imports reference it, never replace it.
 - **Surface** (revised 19 Jul after first real use): Import program /
   Export program as a single-line two-button row on the Plan page (the
   program surface). **Export all data moves to Settings** — it is an
-  app-level backup, not a program action; a gear icon top-right of the
-  Plan heading opens `/settings`, the app's first (deliberately
-  minimal) Settings page. The i18n milestone's language switcher joins
-  it there later.
+  app-level backup, not a program action.
+
+  **Settings entry (revised again 19 Jul, after the language switcher
+  made Settings a destination, not a corner):** one consistent gear
+  icon, top-right of the page header, on **every AppShell page** —
+  Today, Plan, Progress, Library — always the same position, icon-only
+  with `aria-label`, ≥44px target, via one shared component (no four
+  hand-rolled copies). **Deliberately absent from Workout Mode**: a
+  training session is the one surface where no app chrome competes
+  with the set in front of you; Settings is one tap away after ✕.
+  `/settings` remains the deliberately minimal page: backup export +
+  language switcher, nothing that hasn't earned the room.
 
 ## Export
 

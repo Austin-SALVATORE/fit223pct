@@ -1,7 +1,7 @@
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { useSessionName, usePrescriptionNote } from '@/i18n/seedProgram'
-import type { OriginState } from '@/features/library/navigationOrigin'
+import type { OriginState } from '@/lib/navigationOrigin'
 import type { Exercise, ExercisePrescription, SessionTemplate } from '@/domain/types'
 
 interface SessionPreviewProps {

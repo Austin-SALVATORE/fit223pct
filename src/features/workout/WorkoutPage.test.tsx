@@ -62,6 +62,13 @@ describe('WorkoutPage session preservation', () => {
     expect(await screen.findByRole('heading', { name: 'Goblet squat' })).toBeInTheDocument()
   })
 
+  it('never shows the Settings entry — Workout Mode is deliberately chrome-free', async () => {
+    await insertActiveWorkoutWithOneLoggedSet()
+    renderWorkout()
+    await screen.findByRole('heading', { name: 'Goblet squat' })
+    expect(screen.queryByRole('link', { name: 'Settings' })).toBeNull()
+  })
+
   it('survives a Technique detour: Workout → detail → back → same set', async () => {
     await insertActiveWorkoutWithOneLoggedSet()
     renderWorkout()

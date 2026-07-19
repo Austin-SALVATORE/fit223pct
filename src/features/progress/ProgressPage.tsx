@@ -8,6 +8,7 @@ import { toDateKey } from '@/lib/dates'
 import { useExerciseName } from '@/i18n/seedExercise'
 import type { Workout } from '@/domain/types'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
+import { SettingsLink } from '@/ui/SettingsLink'
 import { ConsistencyCard } from './ConsistencyCard'
 import { StrengthCard } from './StrengthCard'
 import { WaistCard } from './WaistCard'
@@ -175,7 +176,10 @@ function Heading() {
       >
         <span aria-hidden="true">←</span> {t('nav.today')}
       </Link>
-      <h1 className="text-display mt-6 text-4xl text-ink">{t('nav.progress')}</h1>
+      <div className="mt-6 flex items-start justify-between gap-4">
+        <h1 className="text-display text-4xl text-ink">{t('nav.progress')}</h1>
+        <SettingsLink origin="progress" />
+      </div>
     </header>
   )
 }

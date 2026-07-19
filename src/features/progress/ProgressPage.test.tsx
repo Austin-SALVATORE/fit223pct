@@ -6,6 +6,7 @@ import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { seedProgram } from '@/data/seed/program'
 import { ExercisePage } from '@/features/library/ExercisePage'
+import { SettingsPage } from '@/features/settings/SettingsPage'
 import { ProgressPage } from './ProgressPage'
 import type { Workout } from '@/domain/types'
 
@@ -43,6 +44,7 @@ function renderApp(initialPath = '/progress') {
       <Routes>
         <Route path="/progress" element={<ProgressPage />} />
         <Route path="/library/:exerciseId" element={<ExercisePage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </MemoryRouter>,
   )
@@ -85,6 +87,17 @@ function squatWorkout(id: string, date: string, weightKg: number, reps: number):
     ],
   }
 }
+
+describe('Settings entry', () => {
+  it('round-trips Progress → Settings → Progress', async () => {
+    renderApp()
+    await userEvent.click(await screen.findByRole('link', { name: 'Settings' }))
+    expect(await screen.findByRole('heading', { name: 'Settings' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('link', { name: /Progress/ }))
+    expect(await screen.findByRole('heading', { name: 'Progress' })).toBeInTheDocument()
+  })
+})
 
 describe('ProgressPage — insufficient data is never dressed up as a trend', () => {
   it('shows one honest message, not eight repeated cards, when nothing has been logged', async () => {

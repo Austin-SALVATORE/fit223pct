@@ -6,6 +6,7 @@ import { useEquipmentLabel } from '@/lib/equipmentLabel'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { useLocale } from '@/i18n/useLocale'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
+import { SettingsLink } from '@/ui/SettingsLink'
 import type { Exercise, MuscleGroup } from '@/domain/types'
 
 const groupOrder: { key: string; labelKey: string; muscles: MuscleGroup[] }[] = [
@@ -92,7 +93,10 @@ function Heading() {
       >
         <span aria-hidden="true">←</span> {tCommon('nav.today')}
       </Link>
-      <h1 className="text-display mt-6 text-4xl text-ink">{t('heading')}</h1>
+      <div className="mt-6 flex items-start justify-between gap-4">
+        <h1 className="text-display text-4xl text-ink">{t('heading')}</h1>
+        <SettingsLink origin="library" />
+      </div>
     </header>
   )
 }

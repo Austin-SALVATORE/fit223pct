@@ -1,10 +1,10 @@
 /**
- * Where an exercise-detail visit came from. Passed as router state so Back
+ * Where a detail-page visit came from. Passed as router state so Back
  * always returns to the user's actual origin — never forces a trip through
- * Library ("Today is the app"). Direct URLs fall back to Today: history
- * can't be trusted to contain an in-app entry.
+ * an intermediate page. Direct URLs fall back to Today: history can't be
+ * trusted to contain an in-app entry.
  */
-export type NavigationOrigin = 'today' | 'library' | 'workout' | 'progress' | 'plan-day'
+export type NavigationOrigin = 'today' | 'library' | 'workout' | 'progress' | 'plan' | 'plan-day'
 
 export interface OriginState {
   from: NavigationOrigin
@@ -23,6 +23,7 @@ const STATIC_ORIGIN_TARGETS: Record<Exclude<NavigationOrigin, 'plan-day'>, Origi
   library: { path: '/library', labelKey: 'common:nav.library' },
   workout: { path: '/workout', labelKey: 'common:nav.workout' },
   progress: { path: '/progress', labelKey: 'common:nav.progress' },
+  plan: { path: '/plan', labelKey: 'common:nav.plan' },
 }
 
 const KNOWN_ORIGINS: readonly NavigationOrigin[] = [
@@ -30,6 +31,7 @@ const KNOWN_ORIGINS: readonly NavigationOrigin[] = [
   'library',
   'workout',
   'progress',
+  'plan',
   'plan-day',
 ]
 

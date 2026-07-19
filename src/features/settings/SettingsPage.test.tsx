@@ -25,10 +25,11 @@ afterEach(async () => {
   await i18n.changeLanguage('en')
 })
 
-function renderApp() {
+function renderApp(initialEntry: string | { pathname: string; state?: unknown } = '/settings') {
   return render(
-    <MemoryRouter initialEntries={['/settings']}>
+    <MemoryRouter initialEntries={[initialEntry]}>
       <Routes>
+        <Route path="/" element={<p>TODAY PROBE</p>} />
         <Route path="/plan" element={<p>PLAN PROBE</p>} />
         <Route path="/settings" element={<SettingsPage />} />
       </Routes>
@@ -66,8 +67,14 @@ describe('SettingsPage', () => {
     expect(await screen.findByRole('status')).toHaveTextContent('Backup saved.')
   })
 
-  it('links back to Plan', async () => {
+  it('falls back to Today when opened with no origin state (e.g. a direct URL)', async () => {
     renderApp()
+    await userEvent.click(await screen.findByRole('link', { name: /Today/ }))
+    expect(await screen.findByText('TODAY PROBE')).toBeInTheDocument()
+  })
+
+  it('returns to Plan when opened from the Plan page', async () => {
+    renderApp({ pathname: '/settings', state: { from: 'plan' } })
     await userEvent.click(await screen.findByRole('link', { name: /Plan/ }))
     expect(await screen.findByText('PLAN PROBE')).toBeInTheDocument()
   })

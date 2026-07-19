@@ -8,6 +8,7 @@ import { seedDatabase } from '@/data/seed'
 import { seedProgram } from '@/data/seed/program'
 import { programRepo } from '@/data/repositories'
 import { createWorkout, logSet, completeWorkout } from '@/domain/workout'
+import { SettingsPage } from '@/features/settings/SettingsPage'
 import { PlanPage } from './PlanPage'
 
 /**
@@ -37,6 +38,7 @@ function renderApp() {
       <Routes>
         <Route path="/plan" element={<PlanPage />} />
         <Route path="/" element={<p>TODAY PROBE</p>} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </MemoryRouter>,
   )
@@ -62,6 +64,15 @@ async function putCompletedWorkout(date: string) {
 }
 
 describe('PlanPage', () => {
+  it('opens Settings from the gear and returns to Plan', async () => {
+    renderApp()
+    await userEvent.click(await screen.findByRole('link', { name: 'Settings' }))
+    expect(await screen.findByRole('heading', { name: 'Settings' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('link', { name: /Plan/ }))
+    expect(await screen.findByRole('heading', { name: 'Phase 1 — Home' })).toBeInTheDocument()
+  })
+
   it('renders the phase header with the rotation sentence', async () => {
     renderApp()
     expect(await screen.findByRole('heading', { name: 'Phase 1 — Home' })).toBeInTheDocument()

@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { checkinRepo, programRepo, settingsRepo, workoutRepo } from '@/data/repositories'
 import { buildFullDataExport, toFullDataExportJson, fullDataExportFilename } from '@/domain/dataExport'
 import { shareOrDownloadFile } from '@/lib/shareOrDownloadFile'
 import { toDateKey } from '@/lib/dates'
+import { originTarget, resolveOrigin } from '@/lib/navigationOrigin'
 import { useLocale } from '@/i18n/useLocale'
 import { SecondaryButton } from '@/ui/SecondaryButton'
 import { LanguageSwitcher } from '@/ui/LanguageSwitcher'
@@ -21,6 +22,8 @@ export function SettingsPage() {
   const { t: tCommon } = useTranslation('common')
   const locale = useLocale() as SupportedLocale
   const [exportState, setExportState] = useState<ExportState>({ status: 'idle' })
+  const origin = resolveOrigin(useLocation().state)
+  const backTarget = originTarget(origin)
 
   async function exportAllData() {
     const [programs, workouts, checkins, settings] = await Promise.all([
@@ -48,10 +51,10 @@ export function SettingsPage() {
   return (
     <div>
       <Link
-        to="/plan"
+        to={backTarget.path}
         className="inline-flex items-center gap-1.5 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
       >
-        <span aria-hidden="true">←</span> {tCommon('nav.plan')}
+        <span aria-hidden="true">←</span> {tCommon(backTarget.labelKey)}
       </Link>
       <h1 className="text-display mt-6 text-4xl text-ink">{t('heading')}</h1>
 

@@ -9,6 +9,7 @@ import { seedProgram } from '@/data/seed/program'
 import { TodayPage } from './TodayPage'
 import { ExercisePage } from '@/features/library/ExercisePage'
 import { LibraryPage } from '@/features/library/LibraryPage'
+import { SettingsPage } from '@/features/settings/SettingsPage'
 
 /**
  * Entry-path regressions: Today → detail → Today, Library → detail →
@@ -33,6 +34,7 @@ function renderApp(initialPath: string) {
         <Route path="/" element={<TodayPage />} />
         <Route path="/library" element={<LibraryPage />} />
         <Route path="/library/:exerciseId" element={<ExercisePage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </MemoryRouter>,
   )
@@ -95,6 +97,17 @@ describe('Readiness flowing into the plan', () => {
     ).toBeNull()
 
     await db.workouts.delete('active-today')
+  })
+})
+
+describe('Settings entry', () => {
+  it('round-trips Today → Settings → Today', async () => {
+    renderApp('/')
+    await userEvent.click(await screen.findByRole('link', { name: 'Settings' }))
+    expect(await screen.findByRole('heading', { name: 'Settings' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('link', { name: /Today/ }))
+    expect(await screen.findByRole('button', { name: 'Start session' })).toBeInTheDocument()
   })
 })
 
