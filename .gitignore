@@ -34,3 +34,7 @@ dist-ssr
 public/assets/exercises/*/reference.png
 !public/assets/exercises/goblet-squat/reference.png
 generation-run.log
+
+# Third-party reference pack (visual research material for prompt authoring,
+# not app content) — 549MB, never shipped, never committed.
+public/assets/Free Exercise Pack/
