@@ -81,6 +81,12 @@ export function WorkoutPage() {
     }
 
     await workoutRepo.put(updated)
+    // Auto-start only, deliberately: rest is prescribed against the set
+    // just completed, so logging is the only correct trigger — a separate
+    // manual "start rest" control would just be a second path to the same
+    // state, including into a new exercise (exerciseChanged below). Swapping
+    // an exercise (handleSwap) never starts a timer for the same reason:
+    // no set was actually performed.
     const rest = workoutExercise.prescription.restSeconds
     setPhase({
       kind: 'resting',

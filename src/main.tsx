@@ -10,6 +10,10 @@ seedDatabase().catch((error: unknown) => {
   console.error('Database seeding failed', error)
 })
 
+// Training history lives only in IndexedDB, with no server backup — ask the
+// browser not to evict it under storage pressure. No-op where unsupported.
+navigator.storage?.persist().catch(() => {})
+
 const rootElement = document.getElementById('root')
 if (!rootElement) {
   throw new Error('Root element #root is missing from index.html')
