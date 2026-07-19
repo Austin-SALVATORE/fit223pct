@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
 import { seedDatabase } from './data/seed'
 import App from './app/App'
+import './i18n/i18next'
 import './ui/index.css'
 
 // Fire-and-forget: live queries pick the content up reactively once seeded.

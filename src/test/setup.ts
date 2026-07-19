@@ -1,5 +1,6 @@
 import 'fake-indexeddb/auto'
 import '@testing-library/jest-dom/vitest'
+import '@/i18n/i18next'
 import { cleanup } from '@testing-library/react'
 import { afterEach } from 'vitest'
 
