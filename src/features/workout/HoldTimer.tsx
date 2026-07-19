@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface HoldTimerProps {
   onComplete: (seconds: number) => void
@@ -11,6 +12,7 @@ interface HoldTimerProps {
  * after, so a mistimed tap is never unrecoverable.
  */
 export function HoldTimer({ onComplete }: HoldTimerProps) {
+  const { t } = useTranslation('workout')
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [elapsed, setElapsed] = useState(0)
 
@@ -30,7 +32,7 @@ export function HoldTimer({ onComplete }: HoldTimerProps) {
         }}
         className="rounded-full border border-border px-4 py-2 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
       >
-        Start hold
+        {t('holdTimer.start')}
       </button>
     )
   }
@@ -46,13 +48,13 @@ export function HoldTimer({ onComplete }: HoldTimerProps) {
       // every second would interrupt a screen reader user mid-hold. The
       // visible/tabular count is enough; the final value lands in the
       // Stepper on stop.
-      aria-label="Stop hold"
+      aria-label={t('holdTimer.stopAriaLabel')}
       className="rounded-full border border-amber bg-amber/10 px-4 py-2 text-sm font-semibold text-amber transition-colors"
     >
       <time aria-live="off" data-numeric>
         {elapsed}s
       </time>{' '}
-      — Stop
+      {t('holdTimer.stopSuffix')}
     </button>
   )
 }

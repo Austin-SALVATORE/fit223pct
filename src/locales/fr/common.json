@@ -13,5 +13,13 @@
     "checkpoint": "TODO"
   },
   "edit": "TODO",
-  "done": "TODO"
+  "done": "TODO",
+  "equipment": {
+    "barbell": "TODO",
+    "dumbbell": "TODO",
+    "bench": "TODO",
+    "band": "TODO",
+    "bodyweight": "TODO",
+    "machine": "TODO"
+  }
 }

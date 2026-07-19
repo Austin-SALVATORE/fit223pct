@@ -13,5 +13,13 @@
     "checkpoint": "Checkpoint"
   },
   "edit": "Edit",
-  "done": "Done"
+  "done": "Done",
+  "equipment": {
+    "barbell": "Barbell",
+    "dumbbell": "Dumbbell",
+    "bench": "Bench",
+    "band": "Band",
+    "bodyweight": "Bodyweight",
+    "machine": "Machine"
+  }
 }

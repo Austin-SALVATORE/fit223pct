@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import type { Exercise, Workout } from '@/domain/types'
 import type { WorkoutPosition } from '@/domain/workout'
@@ -23,6 +24,7 @@ export function RestScreen({
   exerciseById,
   onDone,
 }: RestScreenProps) {
+  const { t } = useTranslation('workout')
   const [endsAt, setEndsAt] = useState(initialEndsAt)
   const [remaining, setRemaining] = useState(() => secondsLeft(initialEndsAt))
   const headingRef = useFocusOnMount<HTMLParagraphElement>()
@@ -41,6 +43,7 @@ export function RestScreen({
   if (!exercise) return null
 
   const total = Math.max(totalSeconds, Math.ceil((endsAt - Date.now()) / 1000))
+  const nextLabel = t(exerciseChanged ? 'resting.nextUp' : 'resting.next')
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center text-center">
@@ -48,27 +51,31 @@ export function RestScreen({
         ref={headingRef}
         tabIndex={-1}
         className="eyebrow"
-        aria-label={`Resting. ${exerciseChanged ? 'Next up' : 'Next'}: ${exercise.name}, set ${
-          position.setIndex + 1
-        } of ${nextExercise.prescription.sets}`}
+        aria-label={t('resting.ariaLabel', {
+          nextLabel,
+          exerciseName: exercise.name,
+          setIndex: position.setIndex + 1,
+          totalSets: nextExercise.prescription.sets,
+        })}
       >
-        Rest
+        {t('resting.heading')}
       </p>
 
       <TimerRing remaining={remaining} total={total} />
 
       <div className="mt-4 flex gap-3">
-        <RestButton label="+30s" onClick={() => setEndsAt((t) => t + 30_000)} />
-        <RestButton label="Skip" onClick={onDone} />
+        <RestButton label={t('resting.plusThirty')} onClick={() => setEndsAt((prev) => prev + 30_000)} />
+        <RestButton label={t('resting.skip')} onClick={onDone} />
       </div>
 
       <div className="mt-10">
-        <p className="text-sm text-ink-tertiary">
-          {exerciseChanged ? 'Next up' : 'Next'}
-        </p>
+        <p className="text-sm text-ink-tertiary">{nextLabel}</p>
         <p className="mt-1 font-medium text-ink">
-          {exercise.name} — set {position.setIndex + 1} of{' '}
-          {nextExercise.prescription.sets}
+          {t('resting.setProgress', {
+            exerciseName: exercise.name,
+            setIndex: position.setIndex + 1,
+            totalSets: nextExercise.prescription.sets,
+          })}
         </p>
       </div>
 

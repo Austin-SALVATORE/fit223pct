@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
 import { Stepper } from '@/ui/Stepper'
@@ -32,6 +33,7 @@ export function SetScreen({
   onLog,
   onSwap,
 }: SetScreenProps) {
+  const { t } = useTranslation('workout')
   const { prescription } = workoutExercise
   const suggestion = suggestProgression(prescription, previousSets, readinessTier)
   const suggestionReason = useTranslatedMessage(suggestion.reason)
@@ -68,8 +70,8 @@ export function SetScreen({
     <div className="flex flex-1 flex-col">
       <div className="mt-8">
         <p className="eyebrow">
-          Set {setIndex + 1} of {prescription.sets}
-          {prescription.perSide && ' · each side'}
+          {t('setScreen.setProgress', { setIndex: setIndex + 1, totalSets: prescription.sets })}
+          {prescription.perSide && ` · ${t('setScreen.eachSide')}`}
         </p>
         <h1 ref={headingRef} tabIndex={-1} className="text-display mt-2 text-4xl text-ink">
           {exercise.name}
@@ -95,7 +97,7 @@ export function SetScreen({
         <div className="flex items-start justify-center gap-4">
           {weightKg !== null && (
             <Stepper
-              label="Weight"
+              label={t('setScreen.weightLabel')}
               value={weightKg}
               step={prescription.weightStepKg ?? 1}
               min={0}
@@ -105,7 +107,7 @@ export function SetScreen({
             />
           )}
           <Stepper
-            label={isSeconds ? 'Hold' : 'Reps'}
+            label={isSeconds ? t('setScreen.holdLabel') : t('setScreen.repsLabel')}
             value={effort}
             step={isSeconds ? 5 : 1}
             min={isSeconds ? 5 : 1}
@@ -123,7 +125,7 @@ export function SetScreen({
           transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           className="mt-8 w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg"
         >
-          {isSeconds ? 'Log hold' : 'Log set'}
+          {isSeconds ? t('setScreen.logHold') : t('setScreen.logSet')}
         </motion.button>
 
         <div className="mt-4 flex items-center justify-center gap-6">
@@ -132,14 +134,14 @@ export function SetScreen({
             state={{ from: 'workout' }}
             className="text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
           >
-            Technique
+            {t('setScreen.technique')}
           </Link>
           <button
             type="button"
             onClick={() => setSwapOpen(true)}
             className="text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
           >
-            Swap exercise
+            {t('setScreen.swapExercise')}
           </button>
         </div>
       </div>
@@ -166,7 +168,8 @@ function LastTime({
   sets: readonly LoggedSet[]
   mode: 'reps' | 'seconds'
 }) {
-  if (sets.length === 0) return <>First time — the numbers below are your starting point.</>
+  const { t } = useTranslation('workout')
+  if (sets.length === 0) return <>{t('setScreen.lastTimeFirst')}</>
   const parts = sets
     .map((set) => {
       const effort = effortValue(set, mode)
@@ -176,7 +179,7 @@ function LastTime({
     .join(' · ')
   return (
     <>
-      Last time <span data-numeric>{parts}</span>
+      {t('setScreen.lastTimePrefix')} <span data-numeric>{parts}</span>
     </>
   )
 }
@@ -187,16 +190,13 @@ const RIR_OPTIONS = [0, 1, 2, 3, 4].map((value) => ({
 }))
 
 function RirPicker({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const { t } = useTranslation('workout')
+  const label = t('setScreen.rirLabel')
   return (
     <div className="mt-8">
-      <p className="eyebrow mx-auto text-center">Reps left in the tank</p>
+      <p className="eyebrow mx-auto text-center">{label}</p>
       <div className="mt-2">
-        <RatingPicker
-          label="Reps left in the tank"
-          options={RIR_OPTIONS}
-          value={value}
-          onChange={onChange}
-        />
+        <RatingPicker label={label} options={RIR_OPTIONS} value={value} onChange={onChange} />
       </div>
     </div>
   )

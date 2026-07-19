@@ -1,1 +1,55 @@
-{}
+{
+  "noSession": "TODO",
+  "backToToday": "TODO",
+  "pauseAriaLabel": "TODO",
+  "progressAriaLabel": "TODO",
+  "progressValueText": "TODO",
+  "resting": {
+    "heading": "TODO",
+    "next": "TODO",
+    "nextUp": "TODO",
+    "ariaLabel": "TODO",
+    "setProgress": "TODO",
+    "plusThirty": "TODO",
+    "skip": "TODO"
+  },
+  "holdTimer": {
+    "start": "TODO",
+    "stopAriaLabel": "TODO",
+    "stopSuffix": "TODO"
+  },
+  "setScreen": {
+    "setProgress": "TODO",
+    "eachSide": "TODO",
+    "lastTimeFirst": "TODO",
+    "lastTimePrefix": "TODO",
+    "weightLabel": "TODO",
+    "holdLabel": "TODO",
+    "repsLabel": "TODO",
+    "logHold": "TODO",
+    "logSet": "TODO",
+    "technique": "TODO",
+    "swapExercise": "TODO",
+    "rirLabel": "TODO"
+  },
+  "swapSheet": {
+    "closeAriaLabel": "TODO",
+    "dialogAriaLabel": "TODO",
+    "heading": "TODO",
+    "noSubstitutions": "TODO",
+    "keep": "TODO"
+  },
+  "sessionSummary": {
+    "eyebrow": "TODO",
+    "heading": "TODO",
+    "statMinutes": "TODO",
+    "statSets": "TODO",
+    "statVolume": "TODO",
+    "setCount_one": "TODO",
+    "setCount_other": "TODO",
+    "topWeightReps": "TODO",
+    "topSeconds": "TODO",
+    "topReps": "TODO",
+    "topSetLine": "TODO"
+  }
+}

@@ -1,1 +1,55 @@
-{}
+{
+  "noSession": "There's no session in progress.",
+  "backToToday": "Back to Today",
+  "pauseAriaLabel": "Pause session and go back to Today",
+  "progressAriaLabel": "Session progress",
+  "progressValueText": "{{logged}} of {{total}} sets",
+  "resting": {
+    "heading": "Rest",
+    "next": "Next",
+    "nextUp": "Next up",
+    "ariaLabel": "Resting. {{nextLabel}}: {{exerciseName}}, set {{setIndex}} of {{totalSets}}",
+    "setProgress": "{{exerciseName}} — set {{setIndex}} of {{totalSets}}",
+    "plusThirty": "+30s",
+    "skip": "Skip"
+  },
+  "holdTimer": {
+    "start": "Start hold",
+    "stopAriaLabel": "Stop hold",
+    "stopSuffix": "— Stop"
+  },
+  "setScreen": {
+    "setProgress": "Set {{setIndex}} of {{totalSets}}",
+    "eachSide": "each side",
+    "lastTimeFirst": "First time — the numbers below are your starting point.",
+    "lastTimePrefix": "Last time",
+    "weightLabel": "Weight",
+    "holdLabel": "Hold",
+    "repsLabel": "Reps",
+    "logHold": "Log hold",
+    "logSet": "Log set",
+    "technique": "Technique",
+    "swapExercise": "Swap exercise",
+    "rirLabel": "Reps left in the tank"
+  },
+  "swapSheet": {
+    "closeAriaLabel": "Close",
+    "dialogAriaLabel": "Swap {{exerciseName}}",
+    "heading": "Swap {{exerciseName}} for",
+    "noSubstitutions": "No substitutions for this one — it's already the fallback.",
+    "keep": "Keep {{exerciseName}}"
+  },
+  "sessionSummary": {
+    "eyebrow": "Session complete",
+    "heading": "Nice work.",
+    "statMinutes": "Minutes",
+    "statSets": "Sets",
+    "statVolume": "Volume",
+    "setCount_one": "{{count}} set",
+    "setCount_other": "{{count}} sets",
+    "topWeightReps": "{{reps}} × {{weight}} kg",
+    "topSeconds": "{{seconds}}s hold",
+    "topReps": "{{reps}} reps",
+    "topSetLine": "{{countPhrase}} · top {{detail}}"
+  }
+}

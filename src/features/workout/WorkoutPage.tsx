@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { exerciseRepo, workoutRepo } from '@/data/repositories'
@@ -22,6 +23,7 @@ type Phase =
   | { kind: 'summary' }
 
 export function WorkoutPage() {
+  const { t } = useTranslation('workout')
   const reducedMotion = useReducedMotion()
   const [phase, setPhase] = useState<Phase>({ kind: 'logging' })
 
@@ -54,9 +56,9 @@ export function WorkoutPage() {
   if (!workout) {
     return (
       <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col items-start justify-center px-5">
-        <p className="text-ink-secondary">There's no session in progress.</p>
+        <p className="text-ink-secondary">{t('noSession')}</p>
         <Link to="/" className="mt-4 font-medium text-amber">
-          Back to Today
+          {t('backToToday')}
         </Link>
       </div>
     )
@@ -117,18 +119,18 @@ export function WorkoutPage() {
       <header className="flex items-center gap-4">
         <Link
           to="/"
-          aria-label="Pause session and go back to Today"
+          aria-label={t('pauseAriaLabel')}
           className="-ml-2 flex h-10 w-10 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
         >
           ✕
         </Link>
         <div
           role="progressbar"
-          aria-label="Session progress"
+          aria-label={t('progressAriaLabel')}
           aria-valuenow={loggedSetCount}
           aria-valuemin={0}
           aria-valuemax={totalSetCount}
-          aria-valuetext={`${loggedSetCount} of ${totalSetCount} sets`}
+          aria-valuetext={t('progressValueText', { logged: loggedSetCount, total: totalSetCount })}
           className="h-1 flex-1 overflow-hidden rounded-full bg-raised"
         >
           <div

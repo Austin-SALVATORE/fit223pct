@@ -1,6 +1,8 @@
 import { useEffect, useRef, type KeyboardEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { effectiveSubstitutions } from '@/domain/substitutions'
+import { useEquipmentLabel } from '@/lib/equipmentLabel'
 import type { Exercise, ExercisePrescription } from '@/domain/types'
 
 const FOCUSABLE_SELECTOR =
@@ -23,6 +25,7 @@ export function SwapSheet({
   onSelect,
   onClose,
 }: SwapSheetProps) {
+  const { t } = useTranslation('workout')
   const reducedMotion = useReducedMotion()
   const panelRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLElement | null>(null)
@@ -72,7 +75,7 @@ export function SwapSheet({
         <>
           <motion.button
             type="button"
-            aria-label="Close"
+            aria-label={t('swapSheet.closeAriaLabel')}
             className="fixed inset-0 z-10 bg-black/50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -83,7 +86,7 @@ export function SwapSheet({
             ref={panelRef}
             role="dialog"
             aria-modal="true"
-            aria-label={`Swap ${exercise.name}`}
+            aria-label={t('swapSheet.dialogAriaLabel', { exerciseName: exercise.name })}
             onKeyDown={handleKeyDown}
             className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-md rounded-t-3xl border-t border-border bg-surface p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]"
             initial={reducedMotion ? { opacity: 0 } : { y: '100%' }}
@@ -91,26 +94,13 @@ export function SwapSheet({
             exit={reducedMotion ? { opacity: 0 } : { y: '100%' }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="eyebrow">Swap {exercise.name} for</p>
+            <p className="eyebrow">{t('swapSheet.heading', { exerciseName: exercise.name })}</p>
             {options.length === 0 ? (
-              <p className="mt-4 text-sm text-ink-secondary">
-                No substitutions for this one — it's already the fallback.
-              </p>
+              <p className="mt-4 text-sm text-ink-secondary">{t('swapSheet.noSubstitutions')}</p>
             ) : (
               <ul className="mt-3 divide-y divide-border">
                 {options.map((option) => (
-                  <li key={option.id}>
-                    <button
-                      type="button"
-                      onClick={() => onSelect(option.id)}
-                      className="flex w-full items-center justify-between gap-4 py-3.5 text-left transition-colors hover:text-amber"
-                    >
-                      <span className="font-medium text-ink">{option.name}</span>
-                      <span className="text-sm capitalize text-ink-tertiary">
-                        {option.equipment[0]}
-                      </span>
-                    </button>
-                  </li>
+                  <SubstitutionRow key={option.id} option={option} onSelect={onSelect} />
                 ))}
               </ul>
             )}
@@ -119,11 +109,33 @@ export function SwapSheet({
               onClick={onClose}
               className="mt-4 w-full rounded-card border border-border py-3 text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
             >
-              Keep {exercise.name}
+              {t('swapSheet.keep', { exerciseName: exercise.name })}
             </button>
           </motion.div>
         </>
       )}
     </AnimatePresence>
+  )
+}
+
+function SubstitutionRow({
+  option,
+  onSelect,
+}: {
+  option: Exercise
+  onSelect: (exerciseId: string) => void
+}) {
+  const equipmentLabel = useEquipmentLabel(option.equipment[0])
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={() => onSelect(option.id)}
+        className="flex w-full items-center justify-between gap-4 py-3.5 text-left transition-colors hover:text-amber"
+      >
+        <span className="font-medium text-ink">{option.name}</span>
+        <span className="text-sm text-ink-tertiary">{equipmentLabel}</span>
+      </button>
+    </li>
   )
 }

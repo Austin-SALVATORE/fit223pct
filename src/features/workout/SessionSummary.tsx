@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { motion, useReducedMotion } from 'motion/react'
 import { summarizeWorkout } from '@/domain/workout'
 import { coachInsight, workoutHighlights, type Highlight } from '@/domain/highlights'
@@ -14,6 +15,8 @@ interface SessionSummaryProps {
 }
 
 export function SessionSummary({ workout, exerciseById, history }: SessionSummaryProps) {
+  const { t } = useTranslation('workout')
+  const { t: tCommon } = useTranslation('common')
   const reducedMotion = useReducedMotion()
   const headingRef = useFocusOnMount<HTMLHeadingElement>()
   const summary = summarizeWorkout(workout)
@@ -28,18 +31,18 @@ export function SessionSummary({ workout, exerciseById, history }: SessionSummar
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
-      <p className="text-sm font-medium text-sage">Session complete</p>
+      <p className="text-sm font-medium text-sage">{t('sessionSummary.eyebrow')}</p>
       <h1 ref={headingRef} tabIndex={-1} className="text-display mt-2 text-5xl text-ink">
-        Nice work.
+        {t('sessionSummary.heading')}
       </h1>
       <p className="mt-4 max-w-[36ch] leading-relaxed text-ink-secondary">{insight}</p>
 
       <dl className="mt-8 flex gap-8">
         {summary.durationMinutes !== null && (
-          <Stat label="Minutes" value={String(summary.durationMinutes)} />
+          <Stat label={t('sessionSummary.statMinutes')} value={String(summary.durationMinutes)} />
         )}
-        <Stat label="Sets" value={String(summary.totalSets)} />
-        <Stat label="Volume" value={`${formatVolume(summary.volumeKg)} kg`} />
+        <Stat label={t('sessionSummary.statSets')} value={String(summary.totalSets)} />
+        <Stat label={t('sessionSummary.statVolume')} value={`${formatVolume(summary.volumeKg)} kg`} />
       </dl>
 
       <ul className="mt-10 space-y-4">
@@ -59,7 +62,7 @@ export function SessionSummary({ workout, exerciseById, history }: SessionSummar
         to="/"
         className="mt-auto block w-full rounded-card bg-surface py-4 text-center font-medium text-ink transition-colors hover:bg-raised"
       >
-        Done
+        {tCommon('done')}
       </Link>
     </motion.div>
   )
@@ -86,12 +89,13 @@ function ExerciseLine({
   highlight: Highlight | undefined
 }) {
   const label = useTranslatedMessage(highlight?.label ?? { key: 'domain:highlight.steady' })
+  const topSet = useTopSetLabel(workoutExercise)
   return (
     <li className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
       <div className="min-w-0">
         <p className="text-ink">{exercise?.name ?? workoutExercise.exerciseId}</p>
         <p className="mt-0.5 text-sm text-ink-tertiary" data-numeric>
-          {topSetLabel(workoutExercise)}
+          {topSet}
         </p>
       </div>
       {highlight && (
@@ -110,19 +114,22 @@ function ExerciseLine({
   )
 }
 
-function topSetLabel(workoutExercise: WorkoutExercise): string {
+function useTopSetLabel(workoutExercise: WorkoutExercise): string {
+  const { t } = useTranslation('workout')
   const sets = workoutExercise.sets
   const best = sets.reduce((top, set) => {
     const effort = (set.weightKg ?? 0) * (set.reps ?? 0)
     const topEffort = (top.weightKg ?? 0) * (top.reps ?? 0)
     return effort > topEffort ? set : top
   })
-  const count = `${sets.length} ${sets.length === 1 ? 'set' : 'sets'}`
-  if (best.weightKg !== null && best.reps !== null) {
-    return `${count} · top ${best.reps} × ${best.weightKg} kg`
-  }
-  if (best.seconds !== null) return `${count} · top ${best.seconds}s hold`
-  return `${count} · top ${best.reps ?? 0} reps`
+  const countPhrase = t('sessionSummary.setCount', { count: sets.length })
+  const detail =
+    best.weightKg !== null && best.reps !== null
+      ? t('sessionSummary.topWeightReps', { reps: best.reps, weight: best.weightKg })
+      : best.seconds !== null
+        ? t('sessionSummary.topSeconds', { seconds: best.seconds })
+        : t('sessionSummary.topReps', { reps: best.reps ?? 0 })
+  return t('sessionSummary.topSetLine', { countPhrase, detail })
 }
 
 function formatVolume(volume: number): string {
