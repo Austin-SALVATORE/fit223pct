@@ -2,6 +2,7 @@ import { Link } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
 import { summarizeWorkout } from '@/domain/workout'
 import { coachInsight, workoutHighlights, type Highlight } from '@/domain/highlights'
+import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import type { Exercise, Workout, WorkoutExercise } from '@/domain/types'
 
 interface SessionSummaryProps {
@@ -13,6 +14,7 @@ interface SessionSummaryProps {
 
 export function SessionSummary({ workout, exerciseById, history }: SessionSummaryProps) {
   const reducedMotion = useReducedMotion()
+  const headingRef = useFocusOnMount<HTMLHeadingElement>()
   const summary = summarizeWorkout(workout)
   const highlights = workoutHighlights(workout, history)
   const highlightById = new Map(highlights.map((h) => [h.exerciseId, h]))
@@ -25,7 +27,9 @@ export function SessionSummary({ workout, exerciseById, history }: SessionSummar
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
       <p className="text-sm font-medium text-sage">Session complete</p>
-      <h1 className="text-display mt-2 text-5xl text-ink">Nice work.</h1>
+      <h1 ref={headingRef} tabIndex={-1} className="text-display mt-2 text-5xl text-ink">
+        Nice work.
+      </h1>
       <p className="mt-4 max-w-[36ch] leading-relaxed text-ink-secondary">
         {coachInsight(highlights, workout.readiness?.tier)}
       </p>

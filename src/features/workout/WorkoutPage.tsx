@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Link } from 'react-router'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
@@ -10,6 +10,7 @@ import {
   swapExercise,
   workoutPosition,
 } from '@/domain/workout'
+import { PRODUCT_NAME } from '@/lib/brand'
 import type { LoggedSet, Workout } from '@/domain/types'
 import { SetScreen } from './SetScreen'
 import { RestScreen } from './RestScreen'
@@ -23,6 +24,13 @@ type Phase =
 export function WorkoutPage() {
   const reducedMotion = useReducedMotion()
   const [phase, setPhase] = useState<Phase>({ kind: 'logging' })
+
+  // Workout mode is a full-screen takeover outside AppShell's route-title
+  // handling — it needs its own, since navigating here from Today is still
+  // an SPA route change with no title update otherwise.
+  useEffect(() => {
+    document.title = `${PRODUCT_NAME} — Workout`
+  }, [])
 
   const data = useLiveQuery(async () => {
     const [workout, exercises, completed] = await Promise.all([
@@ -120,6 +128,7 @@ export function WorkoutPage() {
           aria-valuenow={loggedSetCount}
           aria-valuemin={0}
           aria-valuemax={totalSetCount}
+          aria-valuetext={`${loggedSetCount} of ${totalSetCount} sets`}
           className="h-1 flex-1 overflow-hidden rounded-full bg-raised"
         >
           <div

@@ -42,7 +42,11 @@ export function HoldTimer({ onComplete }: HoldTimerProps) {
         onComplete(Math.max(1, elapsed))
         setStartedAt(null)
       }}
-      aria-label={`Stop hold, ${elapsed} seconds elapsed`}
+      // Stable while running, deliberately — a label that re-announces
+      // every second would interrupt a screen reader user mid-hold. The
+      // visible/tabular count is enough; the final value lands in the
+      // Stepper on stop.
+      aria-label="Stop hold"
       className="rounded-full border border-amber bg-amber/10 px-4 py-2 text-sm font-semibold text-amber transition-colors"
     >
       <time aria-live="off" data-numeric>

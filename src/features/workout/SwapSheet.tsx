@@ -1,5 +1,9 @@
+import { useEffect, useRef, type KeyboardEvent } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { Exercise } from '@/domain/types'
+
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 
 interface SwapSheetProps {
   open: boolean
@@ -11,9 +15,47 @@ interface SwapSheetProps {
 
 export function SwapSheet({ open, exercise, exerciseById, onSelect, onClose }: SwapSheetProps) {
   const reducedMotion = useReducedMotion()
+  const panelRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLElement | null>(null)
   const options = exercise.substitutionIds
     .map((id) => exerciseById.get(id))
     .filter((sub): sub is Exercise => sub !== undefined)
+
+  // A sheet is a modal: it must take focus on open, trap it while open, and
+  // return it to whatever opened the sheet on close — otherwise a keyboard
+  // user can Tab straight through to controls hidden behind the backdrop.
+  useEffect(() => {
+    if (open) {
+      triggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
+      panelRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)?.focus()
+    } else {
+      triggerRef.current?.focus()
+    }
+  }, [open])
+
+  function handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      onClose()
+      return
+    }
+    if (event.key !== 'Tab' || !panelRef.current) return
+
+    const focusable = Array.from(
+      panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+    )
+    if (focusable.length === 0) return
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault()
+      first.focus()
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -29,8 +71,11 @@ export function SwapSheet({ open, exercise, exerciseById, onSelect, onClose }: S
             onClick={onClose}
           />
           <motion.div
+            ref={panelRef}
             role="dialog"
+            aria-modal="true"
             aria-label={`Swap ${exercise.name}`}
+            onKeyDown={handleKeyDown}
             className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-md rounded-t-3xl border-t border-border bg-surface p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]"
             initial={reducedMotion ? { opacity: 0 } : { y: '100%' }}
             animate={reducedMotion ? { opacity: 1 } : { y: 0 }}

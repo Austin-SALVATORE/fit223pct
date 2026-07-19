@@ -15,10 +15,13 @@
   --color-border: #352e27;
   --color-border-strong: #4a4138;
 
-  /* Warm text ramp */
+  /* Warm text ramp — ink-tertiary sits at the AA floor (4.5:1) against the
+     lightest surface it's used on (raised, #2a241f); it carries real label
+     text via .eyebrow and direct usage, not decoration, so it can't dip
+     below that even for a subtler third tier. */
   --color-ink: #f2ede6;
   --color-ink-secondary: #a89f93;
-  --color-ink-tertiary: #6f675c;
+  --color-ink-tertiary: #968f82;
 
   /* Restrained accents */
   --color-amber: #d9a048;

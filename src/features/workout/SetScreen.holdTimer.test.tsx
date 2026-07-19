@@ -71,8 +71,8 @@ describe('hold timer', () => {
     await user.click(screen.getByRole('button', { name: 'Start hold' }))
     await vi.advanceTimersByTimeAsync(12_000)
 
-    const stopButton = screen.getByRole('button', { name: /Stop hold, (\d+) seconds elapsed/ })
-    const elapsed = stopButton.getAttribute('aria-label')?.match(/(\d+) seconds/)?.[1]
+    const stopButton = screen.getByRole('button', { name: 'Stop hold' })
+    const elapsed = stopButton.querySelector('time')?.textContent?.match(/(\d+)s/)?.[1]
     expect(Number(elapsed)).toBeGreaterThanOrEqual(11)
     await user.click(stopButton)
 

@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { Stepper } from '@/ui/Stepper'
 import { RatingPicker } from '@/ui/RatingPicker'
 import { suggestProgression } from '@/domain/progression'
+import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import type { ReadinessTier } from '@/domain/readiness'
 import type { Exercise, LoggedSet, WorkoutExercise } from '@/domain/types'
 import { HoldTimer } from './HoldTimer'
@@ -47,6 +48,7 @@ export function SetScreen({
   const [swapOpen, setSwapOpen] = useState(false)
 
   const isSeconds = prescription.mode === 'seconds'
+  const headingRef = useFocusOnMount<HTMLHeadingElement>()
 
   function handleLog() {
     onLog({
@@ -65,7 +67,9 @@ export function SetScreen({
           Set {setIndex + 1} of {prescription.sets}
           {prescription.perSide && ' · each side'}
         </p>
-        <h1 className="text-display mt-2 text-4xl text-ink">{exercise.name}</h1>
+        <h1 ref={headingRef} tabIndex={-1} className="text-display mt-2 text-4xl text-ink">
+          {exercise.name}
+        </h1>
         <p className="mt-3 text-sm leading-relaxed text-ink-secondary">
           <LastTime sets={previousSets} mode={prescription.mode} />
         </p>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import type { Exercise, Workout } from '@/domain/types'
 import type { WorkoutPosition } from '@/domain/workout'
 
@@ -24,6 +25,7 @@ export function RestScreen({
 }: RestScreenProps) {
   const [endsAt, setEndsAt] = useState(initialEndsAt)
   const [remaining, setRemaining] = useState(() => secondsLeft(initialEndsAt))
+  const headingRef = useFocusOnMount<HTMLParagraphElement>()
 
   useEffect(() => {
     const tick = setInterval(() => setRemaining(secondsLeft(endsAt)), 250)
@@ -42,7 +44,16 @@ export function RestScreen({
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center text-center">
-      <p className="eyebrow">Rest</p>
+      <p
+        ref={headingRef}
+        tabIndex={-1}
+        className="eyebrow"
+        aria-label={`Resting. ${exerciseChanged ? 'Next up' : 'Next'}: ${exercise.name}, set ${
+          position.setIndex + 1
+        } of ${nextExercise.prescription.sets}`}
+      >
+        Rest
+      </p>
 
       <TimerRing remaining={remaining} total={total} />
 
