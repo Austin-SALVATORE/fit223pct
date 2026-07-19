@@ -37,10 +37,10 @@ function renderApp() {
 async function importPhase2() {
   const source = readFileSync(PHASE_2_PATH, 'utf-8')
   const parsed = parseProgramMarkdown(source)
-  if (!parsed.ok) throw new Error(parsed.error)
+  if (!parsed.ok) throw new Error(parsed.error.key)
   const libraryIds = new Set(seedExercises.map((e) => e.id))
   const result = validateProgramImport(parsed.data, libraryIds)
-  if (!result.ok) throw new Error(result.error)
+  if (!result.ok) throw new Error(result.error.key)
   await programRepo.put(result.program)
   return result.program
 }

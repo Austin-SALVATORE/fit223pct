@@ -61,7 +61,7 @@ Focus: Squat & pull
     if (!parsed.ok) return
     const result = validateProgramImport(parsed.data, libraryIds)
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toMatch(/cable-machine-row/)
+    if (!result.ok) expect(result.error.params?.exerciseId).toBe('cable-machine-row')
   })
 
   it('a well-formed activity section validates end to end', () => {
@@ -132,6 +132,11 @@ Title: Recovery walk
     if (!parsed.ok) return
     const result = validateProgramImport(parsed.data, libraryIds)
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toBe("Monday is a training day — it can't also carry an activity.")
+    if (!result.ok) {
+      expect(result.error).toEqual({
+        key: 'plan:import.weekdayIsTrainingDay',
+        params: { weekdayKey: 'plan:import.weekdayName.1' },
+      })
+    }
   })
 })

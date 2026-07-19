@@ -1,4 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks'
+import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useParams } from 'react-router'
 import { exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
 import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
@@ -58,11 +59,13 @@ function DayDetailBody({
   exerciseById: Map<string, Exercise>
   date: string
 }) {
+  const { t } = useTranslation('plan')
+
   if (day.workout && day.workout.completedAt !== null) {
     return (
       <CompletedDetail
         workout={day.workout}
-        sessionName={day.session?.name ?? 'Session'}
+        sessionName={day.session?.name ?? t('sessionFallback')}
         exerciseById={exerciseById}
         date={date}
       />
@@ -77,11 +80,7 @@ function DayDetailBody({
     return <ProjectedDetail session={day.session} exerciseById={exerciseById} date={date} />
   }
 
-  return (
-    <p className="mt-6 leading-relaxed text-ink-secondary">
-      Nothing was logged this day — the session shifted forward, nothing was lost.
-    </p>
-  )
+  return <p className="mt-6 leading-relaxed text-ink-secondary">{t('dayDetail.nothingLogged')}</p>
 }
 
 function CompletedDetail({
@@ -95,22 +94,30 @@ function CompletedDetail({
   exerciseById: Map<string, Exercise>
   date: string
 }) {
+  const { t } = useTranslation('plan')
+  const formatLoggedSet = useFormatLoggedSet()
   const summary = summarizeWorkout(workout)
   const loggedExercises = workout.exercises.filter((e) => e.sets.length > 0)
+  const setsPhrase = t('dayDetail.sets', { count: summary.totalSets })
+  const minutesPhrase =
+    summary.durationMinutes !== null
+      ? t('dayDetail.inMinutes', { count: summary.durationMinutes })
+      : ''
 
   return (
     <>
       <p className="mt-1 text-ink-secondary">{sessionName}</p>
       <p className="mt-4 text-sm text-ink-tertiary" data-numeric>
-        {summary.totalSets} {summary.totalSets === 1 ? 'set' : 'sets'} ·{' '}
-        {Math.round(summary.volumeKg)} kg
-        {summary.durationMinutes !== null &&
-          ` · ${summary.durationMinutes} ${summary.durationMinutes === 1 ? 'minute' : 'minutes'}`}
+        {t('dayDetail.summaryLine', {
+          setsPhrase,
+          volume: Math.round(summary.volumeKg),
+          minutesPhrase,
+        })}
       </p>
 
-      <h2 className="eyebrow mt-8">Exercises</h2>
+      <h2 className="eyebrow mt-8">{t('dayDetail.exercisesHeading')}</h2>
       <ul
-        aria-label="Logged exercises"
+        aria-label={t('dayDetail.loggedExercisesAriaLabel')}
         className="mt-3 divide-y divide-border overflow-hidden rounded-card border border-border bg-surface"
       >
         {loggedExercises.map((we) => {
@@ -148,14 +155,11 @@ function ProjectedDetail({
   exerciseById: Map<string, Exercise>
   date: string
 }) {
+  const { t } = useTranslation('plan')
   return (
     <>
-      <p className="mt-1 text-sm font-medium text-amber">Projected</p>
-      <p className="mt-4 text-sm leading-relaxed text-ink-tertiary">
-        Projected sessions assume every session between now and then gets completed — the
-        rotation follows what you complete, not the date, so a missed day shifts everything
-        after it.
-      </p>
+      <p className="mt-1 text-sm font-medium text-amber">{t('dayDetail.projectedLabel')}</p>
+      <p className="mt-4 text-sm leading-relaxed text-ink-tertiary">{t('projectedNote')}</p>
       <SessionPreview
         session={session}
         exerciseById={exerciseById}
@@ -185,28 +189,33 @@ function ActivityDetail({ activity }: { activity: ActivityTemplate }) {
 }
 
 function NotPartOfPhase() {
+  const { t } = useTranslation('plan')
   return (
     <div>
       <BackToPlan />
-      <p className="mt-10 text-ink-secondary">This date isn't part of this phase.</p>
+      <p className="mt-10 text-ink-secondary">{t('dayDetail.notPartOfPhase')}</p>
     </div>
   )
 }
 
 function BackToPlan() {
+  const { t } = useTranslation('common')
   return (
     <Link
       to="/plan"
       className="inline-flex items-center gap-1.5 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
     >
-      <span aria-hidden="true">←</span> Plan
+      <span aria-hidden="true">←</span> {t('nav.plan')}
     </Link>
   )
 }
 
-function formatLoggedSet(set: LoggedSet, mode: 'reps' | 'seconds'): string {
-  const effort = mode === 'seconds' ? `${set.seconds}s` : `${set.reps}`
-  const weight = set.weightKg !== null ? ` × ${set.weightKg} kg` : ''
-  const rir = set.rir !== null ? `, RIR ${set.rir}` : ''
-  return `${effort}${weight}${rir}`
+function useFormatLoggedSet(): (set: LoggedSet, mode: 'reps' | 'seconds') => string {
+  const { t } = useTranslation('plan')
+  return (set, mode) => {
+    const effort = mode === 'seconds' ? t('dayDetail.secondsEffort', { seconds: set.seconds }) : String(set.reps)
+    const weight = set.weightKg !== null ? t('dayDetail.weightSuffix', { weight: set.weightKg }) : ''
+    const rir = set.rir !== null ? t('dayDetail.rirSuffix', { rir: set.rir }) : ''
+    return `${effort}${weight}${rir}`
+  }
 }

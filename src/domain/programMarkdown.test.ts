@@ -80,8 +80,8 @@ describe('parseProgramMarkdown', () => {
     const result = parseProgramMarkdown(bad)
     expect(result.ok).toBe(false)
     if (!result.ok) {
-      expect(result.error).toMatch(/range/i)
-      expect(result.error).toMatch(/barbell-squat|Session A|A\b/)
+      expect(result.error.key).toBe('plan:import.invalidRange')
+      expect(result.error.params).toMatchObject({ sectionId: 'A', exerciseId: 'barbell-squat' })
     }
   })
 
@@ -89,7 +89,10 @@ describe('parseProgramMarkdown', () => {
     const bad = validMarkdown.replace('| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note |\n|---|---|---|---|---|---|---|---|\n| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | Goblet squat substitutes if the rack\'s busy |', '| Exercise | Sets | Range | Mode | RIR | Weights | Note |\n|---|---|---|---|---|---|---|\n| barbell-squat | 3 | 8-12 | reps | 2 | 20/40/2.5 | Goblet squat substitutes if the rack\'s busy |')
     const result = parseProgramMarkdown(bad)
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toMatch(/rest/i)
+    if (!result.ok) {
+      expect(result.error.key).toBe('plan:import.sessionMissingColumn')
+      expect(result.error.params?.column).toBe('Rest')
+    }
   })
 
   it('parses a comma-separated Substitutions column, treating "-" as none', () => {
@@ -110,7 +113,7 @@ describe('parseProgramMarkdown', () => {
   it('rejects markdown with no session sections', () => {
     const result = parseProgramMarkdown('---\nid: x\nname: X\nphase: 1\nstartDate: 2026-01-01\nendDate:\ntrainingWeekdays: [1]\nrotation: [A]\n---\n')
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toMatch(/session/i)
+    if (!result.ok) expect(result.error.key).toBe('plan:import.noSessionsFound')
   })
 
   it('parses one or more "## Activity: <Weekday>" sections into weekdayActivities', () => {
@@ -166,7 +169,10 @@ Title: Weekly checkpoint
       '\n## Activity: Someday\nKind: recovery\nTitle: Recovery walk\n\n- 20-minute walk\n'
     const result = parseProgramMarkdown(bad)
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toMatch(/Someday/)
+    if (!result.ok) {
+      expect(result.error.key).toBe('plan:import.unrecognizedWeekdayHeading')
+      expect(result.error.params?.weekdayName).toBe('Someday')
+    }
   })
 
   it('rejects an Activity section missing a Kind or Title line', () => {
@@ -174,13 +180,13 @@ Title: Weekly checkpoint
       validMarkdown + '\n## Activity: Tuesday\nTitle: Recovery walk\n\n- 20-minute walk\n'
     const result = parseProgramMarkdown(missingKind)
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toMatch(/Kind/)
+    if (!result.ok) expect(result.error.key).toBe('plan:import.activityMissingKind')
   })
 
   it('rejects an Activity section with no item bullets', () => {
     const bad = validMarkdown + '\n## Activity: Tuesday\nKind: recovery\nTitle: Recovery walk\n'
     const result = parseProgramMarkdown(bad)
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toMatch(/item/i)
+    if (!result.ok) expect(result.error.key).toBe('plan:import.activityMissingItems')
   })
 })

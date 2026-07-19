@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { MessageDescriptor } from './message'
 import type { Program } from './types'
 
 const dateKeySchema = z
@@ -72,11 +73,21 @@ export type ProgramInput = z.infer<typeof programSchema>
 
 export type ProgramImportResult =
   | { ok: true; program: Program }
-  | { ok: false; error: string }
+  | { ok: false; error: MessageDescriptor }
 
 /**
  * Whole-file-or-nothing: the first problem found — schema, cross-reference,
  * or Library lookup — stops the import and names exactly what's wrong.
+ *
+ * Every hand-authored check below returns a translated-template descriptor
+ * with raw tokens (ids, column names) interpolated verbatim — the same
+ * template/token split as domain's other messages. Zod's own schema-level
+ * messages (regex/refine strings on programSchema) are a deliberate v1
+ * exclusion, documented in docs/I18n-adding-a-locale.md: wiring a
+ * translated error map through Zod is a separate, larger piece of work
+ * this milestone doesn't take on. humanizeZodError still wraps them in a
+ * descriptor so the *path* prefix localizes even though the message itself
+ * doesn't yet.
  */
 export function validateProgramImport(
   input: unknown,
@@ -92,7 +103,7 @@ export function validateProgramImport(
   if (duplicateSessionId) {
     return {
       ok: false,
-      error: `Two sessions share the id "${duplicateSessionId}" — session ids must be unique.`,
+      error: { key: 'plan:import.duplicateSessionId', params: { sessionId: duplicateSessionId } },
     }
   }
 
@@ -101,7 +112,7 @@ export function validateProgramImport(
     if (!sessionIds.has(rotationId)) {
       return {
         ok: false,
-        error: `Rotation references session id "${rotationId}", which no session in this file defines.`,
+        error: { key: 'plan:import.unknownRotationSession', params: { rotationId } },
       }
     }
   }
@@ -111,7 +122,10 @@ export function validateProgramImport(
       if (!libraryExerciseIds.has(item.exerciseId)) {
         return {
           ok: false,
-          error: `Exercise id "${item.exerciseId}" in session "${session.id}" doesn't exist in the Library.`,
+          error: {
+            key: 'plan:import.exerciseNotInLibrary',
+            params: { exerciseId: item.exerciseId, sessionId: session.id },
+          },
         }
       }
 
@@ -126,7 +140,10 @@ export function validateProgramImport(
       if (program.trainingWeekdays.includes(weekday)) {
         return {
           ok: false,
-          error: `${WEEKDAY_NAMES[weekday]} is a training day — it can't also carry an activity.`,
+          error: {
+            key: 'plan:import.weekdayIsTrainingDay',
+            params: { weekdayKey: `plan:import.weekdayName.${weekday}` },
+          },
         }
       }
     }
@@ -135,35 +152,34 @@ export function validateProgramImport(
   return { ok: true, program: program as Program }
 }
 
-const WEEKDAY_NAMES: Record<number, string> = {
-  1: 'Monday',
-  2: 'Tuesday',
-  3: 'Wednesday',
-  4: 'Thursday',
-  5: 'Friday',
-  6: 'Saturday',
-  7: 'Sunday',
-}
-
 function validateSubstitutions(
   item: { exerciseId: string; substitutionIds?: string[] },
   sessionId: string,
   libraryExerciseIds: ReadonlySet<string>,
-): string | null {
+): MessageDescriptor | null {
   if (!item.substitutionIds) return null
 
   if (item.substitutionIds.includes(item.exerciseId)) {
-    return `Exercise "${item.exerciseId}" in session "${sessionId}" lists itself as a substitution.`
+    return {
+      key: 'plan:import.substitutionListsSelf',
+      params: { exerciseId: item.exerciseId, sessionId },
+    }
   }
 
   const duplicate = findDuplicate(item.substitutionIds)
   if (duplicate) {
-    return `Exercise "${item.exerciseId}" in session "${sessionId}" lists substitution "${duplicate}" twice.`
+    return {
+      key: 'plan:import.duplicateSubstitution',
+      params: { exerciseId: item.exerciseId, sessionId, substitutionId: duplicate },
+    }
   }
 
   for (const subId of item.substitutionIds) {
     if (!libraryExerciseIds.has(subId)) {
-      return `Substitution "${subId}" for exercise "${item.exerciseId}" in session "${sessionId}" doesn't exist in the Library.`
+      return {
+        key: 'plan:import.substitutionNotInLibrary',
+        params: { substitutionId: subId, exerciseId: item.exerciseId, sessionId },
+      }
     }
   }
 
@@ -179,8 +195,10 @@ function findDuplicate(values: readonly string[]): string | null {
   return null
 }
 
-function humanizeZodError(error: z.ZodError): string {
+function humanizeZodError(error: z.ZodError): MessageDescriptor {
   const issue = error.issues[0]
   const path = issue.path.join('.')
-  return path ? `${path}: ${issue.message}` : issue.message
+  return path
+    ? { key: 'plan:import.schemaErrorWithPath', params: { path, message: issue.message } }
+    : { key: 'plan:import.schemaError', params: { message: issue.message } }
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { programRepo, workoutRepo } from '@/data/repositories'
 import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
@@ -20,6 +21,7 @@ const WEEKDAY_ABBR: Record<number, string> = {
 }
 
 export function PlanPage() {
+  const { t } = useTranslation('plan')
   const today = new Date()
   const todayKey = toDateKey(today)
   const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null)
@@ -48,7 +50,7 @@ export function PlanPage() {
     return (
       <div>
         <Heading />
-        <p className="mt-10 text-ink-secondary">No program is set up yet.</p>
+        <p className="mt-10 text-ink-secondary">{t('noProgram')}</p>
       </div>
     )
   }
@@ -76,38 +78,37 @@ export function PlanPage() {
 
       <ProgramDataActions program={program} />
 
-      {hasProjectedDays && (
-        <p className="mt-6 text-sm leading-relaxed text-ink-tertiary">
-          Projected sessions assume every session between now and then gets
-          completed — the rotation follows what you complete, not the date,
-          so a missed day shifts everything after it.
-        </p>
-      )}
+      {hasProjectedDays && <p className="mt-6 text-sm leading-relaxed text-ink-tertiary">{t('projectedNote')}</p>}
 
-      {weeks.map((week) => (
-        <section key={week.weekStart} className="mt-6" aria-label={`Week of ${week.weekStart}`}>
-          <GroupedList label={`Week of ${week.weekStart}`}>
-            {week.days.map((day) => (
-              <DayRow key={day.date} day={day} />
-            ))}
-          </GroupedList>
-        </section>
-      ))}
+      {weeks.map((week) => {
+        const weekLabel = t('weekOf', { weekStart: week.weekStart })
+        return (
+          <section key={week.weekStart} className="mt-6" aria-label={weekLabel}>
+            <GroupedList label={weekLabel}>
+              {week.days.map((day) => (
+                <DayRow key={day.date} day={day} />
+              ))}
+            </GroupedList>
+          </section>
+        )
+      })}
     </div>
   )
 }
 
 function DayRow({ day }: { day: ScheduleDay }) {
+  const { t } = useTranslation('plan')
+  const { t: tCommon } = useTranslation('common')
   const label = formatDayLabel(day.date)
 
   if (day.isToday) {
     return (
       <GroupedRow to="/">
         <span className="font-medium text-ink">
-          {label} <span className="text-ink-tertiary">· Today</span>
+          {label} <span className="text-ink-tertiary">· {tCommon('nav.today')}</span>
         </span>
         <span className="shrink-0 text-sm text-ink-secondary">
-          {day.session ? day.session.name : (day.activity?.title ?? 'Rest')}
+          {day.session ? day.session.name : (day.activity?.title ?? t('restFallback'))}
         </span>
       </GroupedRow>
     )
@@ -119,9 +120,9 @@ function DayRow({ day }: { day: ScheduleDay }) {
       <GroupedRow to={`/plan/${day.date}`}>
         <span className="font-medium text-ink">{label}</span>
         <span className="shrink-0 text-right text-sm text-ink-secondary">
-          {day.session?.name ?? 'Session'}
+          {day.session?.name ?? t('sessionFallback')}
           <span className="block text-ink-tertiary">
-            {summary.totalSets} sets · {Math.round(summary.volumeKg)} kg
+            {t('setsVolume', { count: summary.totalSets, volume: Math.round(summary.volumeKg) })}
           </span>
         </span>
       </GroupedRow>
@@ -134,7 +135,7 @@ function DayRow({ day }: { day: ScheduleDay }) {
         <span className="font-medium text-ink">{label}</span>
         <span className="shrink-0 text-sm text-ink-secondary">
           {day.session.name}
-          {day.projected && <span className="text-ink-tertiary"> · Projected</span>}
+          {day.projected && <span className="text-ink-tertiary"> · {t('projectedBadge')}</span>}
         </span>
       </GroupedRow>
     )
@@ -155,7 +156,7 @@ function DayRow({ day }: { day: ScheduleDay }) {
   return (
     <GroupedRow to={`/plan/${day.date}`}>
       <span className="text-ink-secondary">{label}</span>
-      <span className="shrink-0 text-sm text-ink-tertiary" aria-label="No session">
+      <span className="shrink-0 text-sm text-ink-tertiary" aria-label={t('noSessionAriaLabel')}>
         —
       </span>
     </GroupedRow>
@@ -163,7 +164,15 @@ function DayRow({ day }: { day: ScheduleDay }) {
 }
 
 function PhaseHeader({ program }: { program: Program }) {
+  const { t, i18n } = useTranslation('plan')
   const uniqueRotation = [...new Set(program.rotation)]
+  // Intl.ListFormat, not a hardcoded ' and ' join — the same latent i18n
+  // bug the driver-phrase composition caught in Phase 2, here too: joining
+  // words are locale grammar, not punctuation.
+  const rotationList = new Intl.ListFormat(i18n.language, {
+    style: 'long',
+    type: 'conjunction',
+  }).format(uniqueRotation)
   const weekdaysLabel = program.trainingWeekdays
     .slice()
     .sort((a, b) => a - b)
@@ -176,13 +185,13 @@ function PhaseHeader({ program }: { program: Program }) {
       <p className="mt-1 text-sm text-ink-secondary">
         {formatShortDate(program.startDate)}
         {' – '}
-        {program.endDate ? formatShortDate(program.endDate) : 'ongoing'}
+        {program.endDate ? formatShortDate(program.endDate) : t('ongoing')}
       </p>
       <p className="mt-3 text-sm leading-relaxed text-ink-secondary">
         {program.sessions.map((s) => `${s.name} — ${s.focus}`).join(' · ')}
       </p>
       <p className="mt-1 text-sm text-ink-tertiary">
-        {uniqueRotation.join(' and ')} alternate, {weekdaysLabel}
+        {t('rotationLine', { rotationList, weekdays: weekdaysLabel })}
       </p>
     </section>
   )
@@ -227,19 +236,20 @@ function PhaseNav({
 }
 
 function Heading() {
+  const { t } = useTranslation('common')
   return (
     <header>
       <Link
         to="/"
         className="inline-flex items-center gap-1.5 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
       >
-        <span aria-hidden="true">←</span> Today
+        <span aria-hidden="true">←</span> {t('nav.today')}
       </Link>
       <div className="mt-6 flex items-start justify-between gap-4">
-        <h1 className="text-display text-4xl text-ink">Plan</h1>
+        <h1 className="text-display text-4xl text-ink">{t('nav.plan')}</h1>
         <Link
           to="/settings"
-          aria-label="Settings"
+          aria-label={t('settings')}
           className="-mr-2.5 -mt-1.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:text-ink-secondary"
         >
           <GearIcon />

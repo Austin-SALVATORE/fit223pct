@@ -107,7 +107,9 @@ describe('PlanPage', () => {
     const row = (await screen.findByText('Wed 22 Jul')).closest('li')
     expect(row).not.toBeNull()
     expect(row).toHaveTextContent('Session A')
-    expect(row).toHaveTextContent('1 sets')
+    // Correctly singular now that the count is pluralized — previously
+    // this always rendered "sets" regardless of count.
+    expect(row).toHaveTextContent('1 set')
     expect(row).not.toHaveTextContent('Projected')
   })
 

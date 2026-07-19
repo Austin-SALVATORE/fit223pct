@@ -30,9 +30,9 @@ describe('Phase 2 (Fitness Park) program file', () => {
 
   it('starts the day after Phase 1 ends, keeping the timeline honest', () => {
     const parsed = parseProgramMarkdown(source)
-    if (!parsed.ok) throw new Error(parsed.error)
+    if (!parsed.ok) throw new Error(parsed.error.key)
     const result = validateProgramImport(parsed.data, libraryIds)
-    if (!result.ok) throw new Error(result.error)
+    if (!result.ok) throw new Error(result.error.key)
 
     expect(result.program.startDate).toBe('2026-08-10')
     expect(seedProgram.endDate).toBe('2026-08-09')
@@ -40,9 +40,9 @@ describe('Phase 2 (Fitness Park) program file', () => {
 
   it('graduates every home-equipment-capped exercise with its predecessor as the substitution', () => {
     const parsed = parseProgramMarkdown(source)
-    if (!parsed.ok) throw new Error(parsed.error)
+    if (!parsed.ok) throw new Error(parsed.error.key)
     const result = validateProgramImport(parsed.data, libraryIds)
-    if (!result.ok) throw new Error(result.error)
+    if (!result.ok) throw new Error(result.error.key)
 
     const exerciseById = new Map(seedExercises.map((e) => [e.id, e]))
     const usedIds = result.program.sessions.flatMap((s) => s.items.map((i) => i.exerciseId))
@@ -54,9 +54,9 @@ describe('Phase 2 (Fitness Park) program file', () => {
 
   it('declares contextual fallbacks on the machine-dependent slots', () => {
     const parsed = parseProgramMarkdown(source)
-    if (!parsed.ok) throw new Error(parsed.error)
+    if (!parsed.ok) throw new Error(parsed.error.key)
     const result = validateProgramImport(parsed.data, libraryIds)
-    if (!result.ok) throw new Error(result.error)
+    if (!result.ok) throw new Error(result.error.key)
 
     const itemById = new Map(
       result.program.sessions.flatMap((s) => s.items).map((i) => [i.exerciseId, i]),
@@ -74,9 +74,9 @@ describe('Phase 2 (Fitness Park) program file', () => {
 
   it('removes the home-equipment weight ceiling on every loaded main lift', () => {
     const parsed = parseProgramMarkdown(source)
-    if (!parsed.ok) throw new Error(parsed.error)
+    if (!parsed.ok) throw new Error(parsed.error.key)
     const result = validateProgramImport(parsed.data, libraryIds)
-    if (!result.ok) throw new Error(result.error)
+    if (!result.ok) throw new Error(result.error.key)
 
     const mainLifts = result.program.sessions
       .flatMap((s) => s.items)
@@ -90,9 +90,9 @@ describe('Phase 2 (Fitness Park) program file', () => {
 
   it('declares the four Milestone 6 activity days, none overlapping a training weekday', () => {
     const parsed = parseProgramMarkdown(source)
-    if (!parsed.ok) throw new Error(parsed.error)
+    if (!parsed.ok) throw new Error(parsed.error.key)
     const result = validateProgramImport(parsed.data, libraryIds)
-    if (!result.ok) throw new Error(result.error)
+    if (!result.ok) throw new Error(result.error.key)
 
     const activities = result.program.weekdayActivities
     expect(activities).toBeDefined()
@@ -109,9 +109,9 @@ describe('Phase 2 (Fitness Park) program file', () => {
 
   it('holds every activity item to the technique-note specificity bar — no generic wellness prompts', () => {
     const parsed = parseProgramMarkdown(source)
-    if (!parsed.ok) throw new Error(parsed.error)
+    if (!parsed.ok) throw new Error(parsed.error.key)
     const result = validateProgramImport(parsed.data, libraryIds)
-    if (!result.ok) throw new Error(result.error)
+    if (!result.ok) throw new Error(result.error.key)
 
     const genericPhrases = /hydrate|drink water|sleep early|self-?care|listen to your body|stay active/i
     const allItems = Object.values(result.program.weekdayActivities ?? {}).flatMap((a) => a.items)

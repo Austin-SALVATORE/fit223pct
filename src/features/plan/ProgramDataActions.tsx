@@ -1,15 +1,18 @@
 import { useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { exerciseRepo, programRepo } from '@/data/repositories'
 import { validateProgramImport } from '@/domain/programImport'
 import { parseProgramMarkdown } from '@/domain/programMarkdown'
 import { toCanonicalProgramJson, programExportFilename } from '@/domain/programExport'
 import { shareOrDownloadFile } from '@/lib/shareOrDownloadFile'
+import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { SecondaryButton } from '@/ui/SecondaryButton'
+import type { MessageDescriptor } from '@/domain/message'
 import type { Program } from '@/domain/types'
 
 type ImportState =
   | { status: 'idle' }
-  | { status: 'error'; message: string }
+  | { status: 'error'; message: MessageDescriptor }
   | { status: 'confirm'; program: Program; existingName: string }
   | { status: 'done'; name: string }
 
@@ -21,6 +24,7 @@ type ExportState = { status: 'idle' } | { status: 'done'; message: string }
  * moved to Settings; this is program content only.
  */
 export function ProgramDataActions({ program }: { program: Program }) {
+  const { t } = useTranslation('plan')
   const [importState, setImportState] = useState<ImportState>({ status: 'idle' })
   const [exportState, setExportState] = useState<ExportState>({ status: 'idle' })
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -41,7 +45,7 @@ export function ProgramDataActions({ program }: { program: Program }) {
       try {
         input = JSON.parse(text)
       } catch {
-        setImportState({ status: 'error', message: "That file isn't valid JSON." })
+        setImportState({ status: 'error', message: { key: 'plan:import.notValidJson' } })
         return
       }
     }
@@ -74,7 +78,7 @@ export function ProgramDataActions({ program }: { program: Program }) {
       toCanonicalProgramJson(program),
     )
     if (outcome !== 'cancelled') {
-      setExportState({ status: 'done', message: `Exported "${program.name}".` })
+      setExportState({ status: 'done', message: t('export.done', { name: program.name }) })
     }
   }
 
@@ -82,9 +86,9 @@ export function ProgramDataActions({ program }: { program: Program }) {
     <div className="mt-6">
       <div className="grid grid-cols-2 gap-3">
         <SecondaryButton onClick={() => fileInputRef.current?.click()}>
-          Import program
+          {t('import.importProgram')}
         </SecondaryButton>
-        <SecondaryButton onClick={() => void exportProgram()}>Export program</SecondaryButton>
+        <SecondaryButton onClick={() => void exportProgram()}>{t('import.exportProgram')}</SecondaryButton>
       </div>
       <input
         ref={fileInputRef}
@@ -121,12 +125,17 @@ function ImportFeedback({
   onConfirm: () => void
   onCancel: () => void
 }) {
+  const { t } = useTranslation('plan')
+  const errorMessage = useTranslatedMessage(
+    state.status === 'error' ? state.message : { key: 'plan:import.notValidJson' },
+  )
+
   if (state.status === 'idle') return null
 
   if (state.status === 'error') {
     return (
       <p role="alert" className="mt-3 text-clay">
-        {state.message}
+        {errorMessage}
       </p>
     )
   }
@@ -134,7 +143,7 @@ function ImportFeedback({
   if (state.status === 'done') {
     return (
       <p role="status" className="mt-3 text-ink-secondary">
-        Imported "{state.name}".
+        {t('import.imported', { name: state.name })}
       </p>
     )
   }
@@ -142,13 +151,16 @@ function ImportFeedback({
   return (
     <p role="alert" className="mt-3 flex flex-wrap items-baseline gap-x-2 text-ink-secondary">
       <span>
-        "{state.program.name}" replaces "{state.existingName}" — same program id.
+        {t('import.replacesExisting', {
+          newName: state.program.name,
+          existingName: state.existingName,
+        })}
       </span>
       <button type="button" onClick={onConfirm} className="font-medium text-clay">
-        Replace
+        {t('import.replace')}
       </button>
       <button type="button" onClick={onCancel} className="text-ink-tertiary">
-        Cancel
+        {t('import.cancel')}
       </button>
     </p>
   )

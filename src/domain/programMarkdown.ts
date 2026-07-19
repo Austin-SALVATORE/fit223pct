@@ -1,6 +1,8 @@
+import type { MessageDescriptor } from './message'
+
 export type MarkdownParseResult =
   | { ok: true; data: unknown }
-  | { ok: false; error: string }
+  | { ok: false; error: MessageDescriptor }
 
 const REQUIRED_COLUMNS = [
   'Exercise',
@@ -42,7 +44,7 @@ const WEEKDAY_NAME_TO_ISO: Record<string, number> = {
 export function parseProgramMarkdown(source: string): MarkdownParseResult {
   const match = FRONT_MATTER.exec(source)
   if (!match) {
-    return { ok: false, error: 'Missing front matter — expected a "---" block at the top of the file.' }
+    return { ok: false, error: { key: 'plan:import.missingFrontMatter' } }
   }
   const [, frontMatterBlock, body] = match
   const frontMatter = parseFrontMatter(frontMatterBlock)
@@ -52,10 +54,7 @@ export function parseProgramMarkdown(source: string): MarkdownParseResult {
   const activitySections = rawSections.filter((s) => s.type === 'activity')
 
   if (sessionSections.length === 0) {
-    return {
-      ok: false,
-      error: 'No sessions found — expected at least one "## Session: <id>" section.',
-    }
+    return { ok: false, error: { key: 'plan:import.noSessionsFound' } }
   }
 
   const sessions: unknown[] = []
@@ -127,16 +126,16 @@ function splitSections(content: string): RawSection[] {
   return sections
 }
 
-function parseSession(section: RawSection): { ok: true; data: unknown } | { ok: false; error: string } {
+function parseSession(section: RawSection): { ok: true; data: unknown } | { ok: false; error: MessageDescriptor } {
   const sectionId = section.heading
   const name = findFieldLine(section.lines, 'Name')
   const focus = findFieldLine(section.lines, 'Focus')
-  if (!name) return { ok: false, error: `Session "${sectionId}" is missing a "Name:" line.` }
-  if (!focus) return { ok: false, error: `Session "${sectionId}" is missing a "Focus:" line.` }
+  if (!name) return { ok: false, error: { key: 'plan:import.sessionMissingName', params: { sectionId } } }
+  if (!focus) return { ok: false, error: { key: 'plan:import.sessionMissingFocus', params: { sectionId } } }
 
   const tableLines = section.lines.filter((line) => line.trim().startsWith('|'))
   if (tableLines.length < 2) {
-    return { ok: false, error: `Session "${sectionId}" has no exercise table.` }
+    return { ok: false, error: { key: 'plan:import.sessionMissingTable', params: { sectionId } } }
   }
 
   const header = splitRow(tableLines[0]).map((cell) => cell.trim())
@@ -148,7 +147,7 @@ function parseSession(section: RawSection): { ok: true; data: unknown } | { ok: 
     if (index === -1) {
       return {
         ok: false,
-        error: `Session "${sectionId}" table is missing the "${column}" column.`,
+        error: { key: 'plan:import.sessionMissingColumn', params: { sectionId, column } },
       }
     }
     columnIndex.set(column, index)
@@ -168,14 +167,20 @@ function parseSession(section: RawSection): { ok: true; data: unknown } | { ok: 
     if (!range) {
       return {
         ok: false,
-        error: `Session "${sectionId}": row for "${exerciseId}" has an invalid Range "${get('Range')}" — expected "min-max".`,
+        error: {
+          key: 'plan:import.invalidRange',
+          params: { sectionId, exerciseId, value: get('Range') },
+        },
       }
     }
     const weights = parseWeights(get('Weights'))
     if (!weights) {
       return {
         ok: false,
-        error: `Session "${sectionId}": row for "${exerciseId}" has invalid Weights "${get('Weights')}" — expected "start/max/step" with "-" for null.`,
+        error: {
+          key: 'plan:import.invalidWeights',
+          params: { sectionId, exerciseId, value: get('Weights') },
+        },
       }
     }
     const sets = Number(get('Sets'))
@@ -184,7 +189,7 @@ function parseSession(section: RawSection): { ok: true; data: unknown } | { ok: 
     if (!Number.isFinite(sets) || !Number.isFinite(targetRir) || !Number.isFinite(restSeconds)) {
       return {
         ok: false,
-        error: `Session "${sectionId}": row for "${exerciseId}" has a non-numeric Sets, RIR, or Rest value.`,
+        error: { key: 'plan:import.nonNumericField', params: { sectionId, exerciseId } },
       }
     }
 
@@ -219,7 +224,7 @@ function parseSession(section: RawSection): { ok: true; data: unknown } | { ok: 
 
 type ActivityParseResult =
   | { ok: true; weekday: string; data: unknown }
-  | { ok: false; error: string }
+  | { ok: false; error: MessageDescriptor }
 
 function parseActivity(section: RawSection): ActivityParseResult {
   const weekdayName = section.heading
@@ -227,20 +232,20 @@ function parseActivity(section: RawSection): ActivityParseResult {
   if (weekday === undefined) {
     return {
       ok: false,
-      error: `Activity heading "${weekdayName}" isn't a recognized weekday name (Monday … Sunday).`,
+      error: { key: 'plan:import.unrecognizedWeekdayHeading', params: { weekdayName } },
     }
   }
 
   const kind = findFieldLine(section.lines, 'Kind')
   const title = findFieldLine(section.lines, 'Title')
-  if (!kind) return { ok: false, error: `Activity "${weekdayName}" is missing a "Kind:" line.` }
-  if (!title) return { ok: false, error: `Activity "${weekdayName}" is missing a "Title:" line.` }
+  if (!kind) return { ok: false, error: { key: 'plan:import.activityMissingKind', params: { weekdayName } } }
+  if (!title) return { ok: false, error: { key: 'plan:import.activityMissingTitle', params: { weekdayName } } }
 
   const itemLines = section.lines.filter((line) => line.trim().startsWith('-'))
   if (itemLines.length === 0) {
     return {
       ok: false,
-      error: `Activity "${weekdayName}" has no items — expected at least one "- " bullet line.`,
+      error: { key: 'plan:import.activityMissingItems', params: { weekdayName } },
     }
   }
   const items = itemLines.map(parseActivityItem)

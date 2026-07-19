@@ -66,21 +66,21 @@ describe('validateProgramImport', () => {
     }
   })
 
-  it('rejects a missing required field with a human sentence', () => {
+  it('rejects a missing required field, naming the field via the schema-error descriptor', () => {
     const bad = validProgram()
     delete (bad as Record<string, unknown>).startDate
     const result = validateProgramImport(bad, libraryIds)
     expect(result.ok).toBe(false)
     if (!result.ok) {
-      expect(result.error).toMatch(/startDate/)
-      expect(result.error).not.toMatch(/at \[object|ZodError|issues/i)
+      expect(result.error.key).toBe('plan:import.schemaErrorWithPath')
+      expect(result.error.params?.path).toBe('startDate')
     }
   })
 
   it('rejects a malformed date', () => {
     const result = validateProgramImport(validProgram({ startDate: '10 Aug 2026' }), libraryIds)
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toMatch(/startDate/)
+    if (!result.ok) expect(result.error.params?.path).toBe('startDate')
   })
 
   it('rejects endDate before startDate', () => {
@@ -89,7 +89,7 @@ describe('validateProgramImport', () => {
       libraryIds,
     )
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toMatch(/endDate/)
+    if (!result.ok) expect(result.error.params?.path).toBe('endDate')
   })
 
   it('rejects an unknown exercise id and names it', () => {
@@ -98,15 +98,21 @@ describe('validateProgramImport', () => {
       'barbell-squat'
     const result = validateProgramImport(bad, libraryIds)
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toBe(
-      'Exercise id "barbell-squat" in session "A" doesn\'t exist in the Library.',
-    )
+    if (!result.ok) {
+      expect(result.error).toEqual({
+        key: 'plan:import.exerciseNotInLibrary',
+        params: { exerciseId: 'barbell-squat', sessionId: 'A' },
+      })
+    }
   })
 
   it('rejects a rotation entry with no matching session', () => {
     const result = validateProgramImport(validProgram({ rotation: ['A', 'C'] }), libraryIds)
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toMatch(/"C"/)
+    if (!result.ok) {
+      expect(result.error.key).toBe('plan:import.unknownRotationSession')
+      expect(result.error.params?.rotationId).toBe('C')
+    }
   })
 
   it('rejects duplicate session ids', () => {
@@ -114,7 +120,10 @@ describe('validateProgramImport', () => {
     ;(bad.sessions as Array<{ id: string }>)[1].id = 'A'
     const result = validateProgramImport(bad, libraryIds)
     expect(result.ok).toBe(false)
-    if (!result.ok) expect(result.error).toMatch(/"A"/)
+    if (!result.ok) {
+      expect(result.error.key).toBe('plan:import.duplicateSessionId')
+      expect(result.error.params?.sessionId).toBe('A')
+    }
   })
 
   it('rejects a whole file on one bad exercise — no partial import', () => {
@@ -149,9 +158,10 @@ describe('validateProgramImport', () => {
     const result = validateProgramImport(bad, libraryIds)
     expect(result.ok).toBe(false)
     if (!result.ok) {
-      expect(result.error).toBe(
-        'Exercise "goblet-squat" in session "A" lists itself as a substitution.',
-      )
+      expect(result.error).toEqual({
+        key: 'plan:import.substitutionListsSelf',
+        params: { exerciseId: 'goblet-squat', sessionId: 'A' },
+      })
     }
   })
 
@@ -164,9 +174,10 @@ describe('validateProgramImport', () => {
     const result = validateProgramImport(bad, libraryIds)
     expect(result.ok).toBe(false)
     if (!result.ok) {
-      expect(result.error).toBe(
-        'Exercise "goblet-squat" in session "A" lists substitution "split-squat" twice.',
-      )
+      expect(result.error).toEqual({
+        key: 'plan:import.duplicateSubstitution',
+        params: { exerciseId: 'goblet-squat', sessionId: 'A', substitutionId: 'split-squat' },
+      })
     }
   })
 
@@ -176,9 +187,10 @@ describe('validateProgramImport', () => {
     const result = validateProgramImport(bad, libraryIds)
     expect(result.ok).toBe(false)
     if (!result.ok) {
-      expect(result.error).toBe(
-        'Substitution "leg-press" for exercise "goblet-squat" in session "A" doesn\'t exist in the Library.',
-      )
+      expect(result.error).toEqual({
+        key: 'plan:import.substitutionNotInLibrary',
+        params: { substitutionId: 'leg-press', exerciseId: 'goblet-squat', sessionId: 'A' },
+      })
     }
   })
 
@@ -270,7 +282,10 @@ describe('validateProgramImport', () => {
     const result = validateProgramImport(bad, libraryIds)
     expect(result.ok).toBe(false)
     if (!result.ok) {
-      expect(result.error).toBe("Monday is a training day — it can't also carry an activity.")
+      expect(result.error).toEqual({
+        key: 'plan:import.weekdayIsTrainingDay',
+        params: { weekdayKey: 'plan:import.weekdayName.1' },
+      })
     }
   })
 })
