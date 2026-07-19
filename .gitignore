@@ -27,3 +27,10 @@ dist-ssr
 
 # Playwright MCP browser session artifacts
 .playwright-mcp/
+
+# Exercise asset sources — regenerable from prompt.md via scripts/ (~$0.15/strip);
+# runtime AVIFs are committed instead. Exception: the goblet-squat style anchor,
+# the irreplaceable ground truth every generation is matched against.
+public/assets/exercises/*/reference.png
+!public/assets/exercises/goblet-squat/reference.png
+generation-run.log

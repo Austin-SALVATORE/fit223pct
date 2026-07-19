@@ -1,0 +1,12 @@
+{
+  "exerciseId": "dead-bug",
+  "version": 1,
+  "media": {
+    "frameCount": 3,
+    "thumbnailFrame": 2
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-19"
+  }
+}

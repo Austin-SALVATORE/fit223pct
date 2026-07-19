@@ -1,0 +1,370 @@
+{
+  "abductor-machine": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "adductor-machine": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "arnold-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "assisted-pull-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "barbell-back-squat": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "barbell-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "bench-dip": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "bench-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "biceps-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "bird-dog": {
+    "frameCount": 3,
+    "thumbnailFrame": 2
+  },
+  "bodyweight-squat": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "bulgarian-split-squat": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "cable-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "cable-fly": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "cable-lateral-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "cable-pull-through": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "cable-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "cable-woodchop": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "chest-press-machine": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "chest-supported-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "close-grip-bench-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "concentration-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "crunch": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "dead-bug": {
+    "frameCount": 3,
+    "thumbnailFrame": 2
+  },
+  "deadlift": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "decline-bench-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "decline-dumbbell-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "diamond-push-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "dip": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "dumbbell-bench-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "dumbbell-biceps-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "dumbbell-fly": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "dumbbell-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "dumbbell-shoulder-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "face-pull": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "front-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "front-squat": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "glute-bridge": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "goblet-squat": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "good-morning": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "hack-squat": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "hammer-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "hanging-leg-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "hip-thrust": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "incline-bench-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "incline-dumbbell-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "incline-dumbbell-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "incline-push-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "inverted-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "kettlebell-swing": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "lat-pulldown": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "lateral-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "leg-extension": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "leg-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "leg-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "lying-leg-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "machine-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "machine-shoulder-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "one-arm-cable-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "overhead-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "overhead-triceps-extension": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "pec-deck": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "plank": {
+    "frameCount": 2,
+    "thumbnailFrame": 2
+  },
+  "preacher-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "pull-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "push-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "rear-delt-fly": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "rear-delt-machine": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "reverse-crunch": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "reverse-lunge": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "romanian-deadlift": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "rope-triceps-pushdown": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "russian-twist": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "seated-cable-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "seated-calf-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "seated-dumbbell-shoulder-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "seated-leg-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "shrug": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "side-plank": {
+    "frameCount": 2,
+    "thumbnailFrame": 2
+  },
+  "single-arm-triceps-pushdown": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "single-leg-romanian-deadlift": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "skull-crusher": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "smith-machine-squat": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "split-squat": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "standing-calf-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "step-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "straight-arm-pulldown": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "sumo-deadlift": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "t-bar-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  },
+  "triceps-pushdown": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "upright-row": {
+    "frameCount": 4,
+    "thumbnailFrame": 3
+  },
+  "walking-lunge": {
+    "frameCount": 6,
+    "thumbnailFrame": 4
+  }
+}
