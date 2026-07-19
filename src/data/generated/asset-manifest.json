@@ -1,370 +1,2762 @@
 {
   "abductor-machine": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        402,
+        822
+      ],
+      [
+        434,
+        822
+      ],
+      [
+        494,
+        822
+      ],
+      [
+        419,
+        822
+      ]
+    ]
   },
   "adductor-machine": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        486,
+        821
+      ],
+      [
+        481,
+        821
+      ],
+      [
+        388,
+        821
+      ],
+      [
+        478,
+        821
+      ]
+    ]
   },
   "arnold-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        248,
+        822
+      ],
+      [
+        329,
+        822
+      ],
+      [
+        336,
+        822
+      ],
+      [
+        278,
+        822
+      ],
+      [
+        315,
+        822
+      ],
+      [
+        248,
+        822
+      ]
+    ]
   },
   "assisted-pull-up": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1804,
+      872
+    ],
+    "frameSizes": [
+      [
+        337,
+        872
+      ],
+      [
+        316,
+        872
+      ],
+      [
+        276,
+        872
+      ],
+      [
+        283,
+        872
+      ],
+      [
+        283,
+        872
+      ],
+      [
+        309,
+        872
+      ]
+    ]
   },
   "barbell-back-squat": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        361,
+        821
+      ],
+      [
+        330,
+        821
+      ],
+      [
+        297,
+        821
+      ],
+      [
+        305,
+        821
+      ],
+      [
+        278,
+        821
+      ],
+      [
+        344,
+        821
+      ]
+    ]
   },
   "barbell-row": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        336,
+        821
+      ],
+      [
+        315,
+        821
+      ],
+      [
+        323,
+        821
+      ],
+      [
+        320,
+        821
+      ],
+      [
+        309,
+        821
+      ],
+      [
+        312,
+        821
+      ]
+    ]
   },
   "bench-dip": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1942,
+      809
+    ],
+    "frameSizes": [
+      [
+        565,
+        809
+      ],
+      [
+        445,
+        809
+      ],
+      [
+        414,
+        809
+      ],
+      [
+        477,
+        809
+      ]
+    ]
   },
   "bench-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2172,
+      724
+    ],
+    "frameSizes": [
+      [
+        371,
+        724
+      ],
+      [
+        350,
+        724
+      ],
+      [
+        369,
+        724
+      ],
+      [
+        356,
+        724
+      ],
+      [
+        375,
+        724
+      ],
+      [
+        351,
+        724
+      ]
+    ]
   },
   "biceps-curl": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        494,
+        822
+      ],
+      [
+        473,
+        822
+      ],
+      [
+        456,
+        822
+      ],
+      [
+        476,
+        822
+      ]
+    ]
   },
   "bird-dog": {
     "frameCount": 3,
-    "thumbnailFrame": 2
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        509,
+        821
+      ],
+      [
+        688,
+        821
+      ],
+      [
+        686,
+        821
+      ]
+    ]
   },
   "bodyweight-squat": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        251,
+        822
+      ],
+      [
+        348,
+        822
+      ],
+      [
+        335,
+        822
+      ],
+      [
+        336,
+        822
+      ],
+      [
+        260,
+        822
+      ],
+      [
+        251,
+        822
+      ]
+    ]
   },
   "bulgarian-split-squat": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2172,
+      724
+    ],
+    "frameSizes": [
+      [
+        360,
+        724
+      ],
+      [
+        356,
+        724
+      ],
+      [
+        351,
+        724
+      ],
+      [
+        346,
+        724
+      ],
+      [
+        393,
+        724
+      ],
+      [
+        325,
+        724
+      ]
+    ]
   },
   "cable-curl": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        409,
+        822
+      ],
+      [
+        408,
+        822
+      ],
+      [
+        391,
+        822
+      ],
+      [
+        391,
+        822
+      ]
+    ]
   },
   "cable-fly": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        541,
+        821
+      ],
+      [
+        468,
+        821
+      ],
+      [
+        455,
+        821
+      ],
+      [
+        442,
+        821
+      ]
+    ]
   },
   "cable-lateral-raise": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        400,
+        821
+      ],
+      [
+        441,
+        821
+      ],
+      [
+        460,
+        821
+      ],
+      [
+        457,
+        821
+      ]
+    ]
   },
   "cable-pull-through": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1947,
+      808
+    ],
+    "frameSizes": [
+      [
+        294,
+        808
+      ],
+      [
+        314,
+        808
+      ],
+      [
+        326,
+        808
+      ],
+      [
+        341,
+        808
+      ],
+      [
+        345,
+        808
+      ],
+      [
+        276,
+        808
+      ]
+    ]
   },
   "cable-row": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1713,
+      918
+    ],
+    "frameSizes": [
+      [
+        316,
+        918
+      ],
+      [
+        295,
+        918
+      ],
+      [
+        278,
+        918
+      ],
+      [
+        254,
+        918
+      ],
+      [
+        272,
+        918
+      ],
+      [
+        298,
+        918
+      ]
+    ]
   },
   "cable-woodchop": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        609,
+        821
+      ],
+      [
+        378,
+        821
+      ],
+      [
+        380,
+        821
+      ],
+      [
+        417,
+        821
+      ]
+    ]
   },
   "chest-press-machine": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        315,
+        821
+      ],
+      [
+        338,
+        821
+      ],
+      [
+        300,
+        821
+      ],
+      [
+        332,
+        821
+      ],
+      [
+        314,
+        821
+      ],
+      [
+        316,
+        821
+      ]
+    ]
   },
   "chest-supported-row": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2172,
+      724
+    ],
+    "frameSizes": [
+      [
+        380,
+        724
+      ],
+      [
+        358,
+        724
+      ],
+      [
+        351,
+        724
+      ],
+      [
+        343,
+        724
+      ],
+      [
+        353,
+        724
+      ],
+      [
+        387,
+        724
+      ]
+    ]
   },
   "close-grip-bench-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2034,
+      773
+    ],
+    "frameSizes": [
+      [
+        374,
+        773
+      ],
+      [
+        345,
+        773
+      ],
+      [
+        326,
+        773
+      ],
+      [
+        312,
+        773
+      ],
+      [
+        321,
+        773
+      ],
+      [
+        356,
+        773
+      ]
+    ]
   },
   "concentration-curl": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        494,
+        821
+      ],
+      [
+        482,
+        821
+      ],
+      [
+        473,
+        821
+      ],
+      [
+        466,
+        821
+      ]
+    ]
   },
   "crunch": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        537,
+        823
+      ],
+      [
+        475,
+        823
+      ],
+      [
+        460,
+        823
+      ],
+      [
+        440,
+        823
+      ]
+    ]
   },
   "dead-bug": {
     "frameCount": 3,
-    "thumbnailFrame": 2
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1918,
+      820
+    ],
+    "frameSizes": [
+      [
+        558,
+        820
+      ],
+      [
+        698,
+        820
+      ],
+      [
+        662,
+        820
+      ]
+    ]
   },
   "deadlift": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        336,
+        822
+      ],
+      [
+        313,
+        822
+      ],
+      [
+        300,
+        822
+      ],
+      [
+        291,
+        822
+      ],
+      [
+        301,
+        822
+      ],
+      [
+        320,
+        822
+      ]
+    ]
   },
   "decline-bench-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2172,
+      724
+    ],
+    "frameSizes": [
+      [
+        372,
+        724
+      ],
+      [
+        355,
+        724
+      ],
+      [
+        368,
+        724
+      ],
+      [
+        364,
+        724
+      ],
+      [
+        360,
+        724
+      ],
+      [
+        341,
+        724
+      ]
+    ]
   },
   "decline-dumbbell-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        335,
+        821
+      ],
+      [
+        316,
+        821
+      ],
+      [
+        316,
+        821
+      ],
+      [
+        320,
+        821
+      ],
+      [
+        306,
+        821
+      ],
+      [
+        322,
+        821
+      ]
+    ]
   },
   "diamond-push-up": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        353,
+        821
+      ],
+      [
+        327,
+        821
+      ],
+      [
+        303,
+        821
+      ],
+      [
+        294,
+        821
+      ],
+      [
+        300,
+        821
+      ],
+      [
+        338,
+        821
+      ]
+    ]
   },
   "dip": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        328,
+        822
+      ],
+      [
+        317,
+        822
+      ],
+      [
+        305,
+        822
+      ],
+      [
+        324,
+        822
+      ],
+      [
+        293,
+        822
+      ],
+      [
+        336,
+        822
+      ]
+    ]
   },
   "dumbbell-bench-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        335,
+        821
+      ],
+      [
+        322,
+        821
+      ],
+      [
+        329,
+        821
+      ],
+      [
+        319,
+        821
+      ],
+      [
+        307,
+        821
+      ],
+      [
+        303,
+        821
+      ]
+    ]
   },
   "dumbbell-biceps-curl": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        345,
+        821
+      ],
+      [
+        365,
+        821
+      ],
+      [
+        330,
+        821
+      ],
+      [
+        333,
+        821
+      ]
+    ]
   },
   "dumbbell-fly": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        457,
+        821
+      ],
+      [
+        478,
+        821
+      ],
+      [
+        553,
+        821
+      ],
+      [
+        427,
+        821
+      ]
+    ]
   },
   "dumbbell-row": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1774,
+      887
+    ],
+    "frameSizes": [
+      [
+        321,
+        887
+      ],
+      [
+        295,
+        887
+      ],
+      [
+        291,
+        887
+      ],
+      [
+        283,
+        887
+      ],
+      [
+        287,
+        887
+      ],
+      [
+        297,
+        887
+      ]
+    ]
   },
   "dumbbell-shoulder-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        273,
+        822
+      ],
+      [
+        279,
+        822
+      ],
+      [
+        282,
+        822
+      ],
+      [
+        267,
+        822
+      ],
+      [
+        278,
+        822
+      ],
+      [
+        271,
+        822
+      ]
+    ]
   },
   "face-pull": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        492,
+        821
+      ],
+      [
+        442,
+        821
+      ],
+      [
+        464,
+        821
+      ],
+      [
+        488,
+        821
+      ]
+    ]
   },
   "front-raise": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        252,
+        821
+      ],
+      [
+        383,
+        821
+      ],
+      [
+        407,
+        821
+      ],
+      [
+        350,
+        821
+      ]
+    ]
   },
   "front-squat": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1916,
+      821
+    ],
+    "frameSizes": [
+      [
+        363,
+        821
+      ],
+      [
+        315,
+        821
+      ],
+      [
+        312,
+        821
+      ],
+      [
+        288,
+        821
+      ],
+      [
+        302,
+        821
+      ],
+      [
+        336,
+        821
+      ]
+    ]
   },
   "glute-bridge": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        503,
+        821
+      ],
+      [
+        440,
+        821
+      ],
+      [
+        471,
+        821
+      ],
+      [
+        501,
+        821
+      ]
+    ]
   },
   "goblet-squat": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1916,
+      821
+    ],
+    "frameSizes": [
+      [
+        266,
+        821
+      ],
+      [
+        282,
+        821
+      ],
+      [
+        294,
+        821
+      ],
+      [
+        304,
+        821
+      ],
+      [
+        288,
+        821
+      ],
+      [
+        267,
+        821
+      ]
+    ]
   },
   "good-morning": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        291,
+        822
+      ],
+      [
+        294,
+        822
+      ],
+      [
+        316,
+        822
+      ],
+      [
+        363,
+        822
+      ],
+      [
+        284,
+        822
+      ],
+      [
+        279,
+        822
+      ]
+    ]
   },
   "hack-squat": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        308,
+        822
+      ],
+      [
+        312,
+        822
+      ],
+      [
+        328,
+        822
+      ],
+      [
+        322,
+        822
+      ],
+      [
+        330,
+        822
+      ],
+      [
+        313,
+        822
+      ]
+    ]
   },
   "hammer-curl": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        295,
+        821
+      ],
+      [
+        286,
+        821
+      ],
+      [
+        273,
+        821
+      ],
+      [
+        292,
+        821
+      ]
+    ]
   },
   "hanging-leg-raise": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        405,
+        821
+      ],
+      [
+        587,
+        821
+      ],
+      [
+        482,
+        821
+      ],
+      [
+        441,
+        821
+      ]
+    ]
   },
   "hip-thrust": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        324,
+        821
+      ],
+      [
+        315,
+        821
+      ],
+      [
+        321,
+        821
+      ],
+      [
+        332,
+        821
+      ],
+      [
+        308,
+        821
+      ],
+      [
+        315,
+        821
+      ]
+    ]
   },
   "incline-bench-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        359,
+        821
+      ],
+      [
+        311,
+        821
+      ],
+      [
+        328,
+        821
+      ],
+      [
+        318,
+        821
+      ],
+      [
+        312,
+        821
+      ],
+      [
+        287,
+        821
+      ]
+    ]
   },
   "incline-dumbbell-curl": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        500,
+        823
+      ],
+      [
+        475,
+        823
+      ],
+      [
+        481,
+        823
+      ],
+      [
+        456,
+        823
+      ]
+    ]
   },
   "incline-dumbbell-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        321,
+        821
+      ],
+      [
+        349,
+        821
+      ],
+      [
+        336,
+        821
+      ],
+      [
+        269,
+        821
+      ],
+      [
+        366,
+        821
+      ],
+      [
+        274,
+        821
+      ]
+    ]
   },
   "incline-push-up": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        360,
+        821
+      ],
+      [
+        314,
+        821
+      ],
+      [
+        311,
+        821
+      ],
+      [
+        318,
+        821
+      ],
+      [
+        286,
+        821
+      ],
+      [
+        326,
+        821
+      ]
+    ]
   },
   "inverted-row": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1919,
+      820
+    ],
+    "frameSizes": [
+      [
+        341,
+        820
+      ],
+      [
+        326,
+        820
+      ],
+      [
+        330,
+        820
+      ],
+      [
+        284,
+        820
+      ],
+      [
+        297,
+        820
+      ],
+      [
+        341,
+        820
+      ]
+    ]
   },
   "kettlebell-swing": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        307,
+        822
+      ],
+      [
+        279,
+        822
+      ],
+      [
+        343,
+        822
+      ],
+      [
+        342,
+        822
+      ],
+      [
+        309,
+        822
+      ],
+      [
+        291,
+        822
+      ]
+    ]
   },
   "lat-pulldown": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2172,
+      724
+    ],
+    "frameSizes": [
+      [
+        414,
+        724
+      ],
+      [
+        381,
+        724
+      ],
+      [
+        365,
+        724
+      ],
+      [
+        378,
+        724
+      ],
+      [
+        349,
+        724
+      ],
+      [
+        285,
+        724
+      ]
+    ]
   },
   "lateral-raise": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1836,
+      857
+    ],
+    "frameSizes": [
+      [
+        305,
+        857
+      ],
+      [
+        497,
+        857
+      ],
+      [
+        558,
+        857
+      ],
+      [
+        422,
+        857
+      ]
+    ]
   },
   "leg-extension": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        446,
+        821
+      ],
+      [
+        476,
+        821
+      ],
+      [
+        499,
+        821
+      ],
+      [
+        458,
+        821
+      ]
+    ]
   },
   "leg-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        336,
+        821
+      ],
+      [
+        315,
+        821
+      ],
+      [
+        311,
+        821
+      ],
+      [
+        313,
+        821
+      ],
+      [
+        326,
+        821
+      ],
+      [
+        314,
+        821
+      ]
+    ]
   },
   "leg-raise": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        529,
+        821
+      ],
+      [
+        441,
+        821
+      ],
+      [
+        385,
+        821
+      ],
+      [
+        560,
+        821
+      ]
+    ]
   },
   "lying-leg-curl": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        493,
+        821
+      ],
+      [
+        470,
+        821
+      ],
+      [
+        447,
+        821
+      ],
+      [
+        480,
+        821
+      ]
+    ]
   },
   "machine-row": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2030,
+      775
+    ],
+    "frameSizes": [
+      [
+        361,
+        775
+      ],
+      [
+        339,
+        775
+      ],
+      [
+        308,
+        775
+      ],
+      [
+        329,
+        775
+      ],
+      [
+        353,
+        775
+      ],
+      [
+        340,
+        775
+      ]
+    ]
   },
   "machine-shoulder-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        350,
+        821
+      ],
+      [
+        322,
+        821
+      ],
+      [
+        309,
+        821
+      ],
+      [
+        306,
+        821
+      ],
+      [
+        304,
+        821
+      ],
+      [
+        324,
+        821
+      ]
+    ]
   },
   "one-arm-cable-row": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        673,
+        822
+      ],
+      [
+        207,
+        822
+      ],
+      [
+        111,
+        822
+      ],
+      [
+        205,
+        822
+      ],
+      [
+        301,
+        822
+      ],
+      [
+        417,
+        822
+      ]
+    ]
   },
   "overhead-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2172,
+      724
+    ],
+    "frameSizes": [
+      [
+        396,
+        724
+      ],
+      [
+        352,
+        724
+      ],
+      [
+        352,
+        724
+      ],
+      [
+        342,
+        724
+      ],
+      [
+        350,
+        724
+      ],
+      [
+        368,
+        724
+      ]
+    ]
   },
   "overhead-triceps-extension": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1918,
+      820
+    ],
+    "frameSizes": [
+      [
+        219,
+        820
+      ],
+      [
+        239,
+        820
+      ],
+      [
+        257,
+        820
+      ],
+      [
+        218,
+        820
+      ]
+    ]
   },
   "pec-deck": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        513,
+        822
+      ],
+      [
+        447,
+        822
+      ],
+      [
+        418,
+        822
+      ],
+      [
+        507,
+        822
+      ]
+    ]
   },
   "plank": {
     "frameCount": 2,
-    "thumbnailFrame": 2
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      2172,
+      724
+    ],
+    "frameSizes": [
+      [
+        1019,
+        724
+      ],
+      [
+        1081,
+        724
+      ]
+    ]
   },
   "preacher-curl": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        490,
+        821
+      ],
+      [
+        473,
+        821
+      ],
+      [
+        449,
+        821
+      ],
+      [
+        451,
+        821
+      ]
+    ]
   },
   "pull-up": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1904,
+      826
+    ],
+    "frameSizes": [
+      [
+        321,
+        826
+      ],
+      [
+        290,
+        826
+      ],
+      [
+        253,
+        826
+      ],
+      [
+        414,
+        826
+      ],
+      [
+        267,
+        826
+      ],
+      [
+        359,
+        826
+      ]
+    ]
   },
   "push-up": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1919,
+      820
+    ],
+    "frameSizes": [
+      [
+        399,
+        820
+      ],
+      [
+        166,
+        820
+      ],
+      [
+        410,
+        820
+      ],
+      [
+        311,
+        820
+      ],
+      [
+        286,
+        820
+      ],
+      [
+        347,
+        820
+      ]
+    ]
   },
   "rear-delt-fly": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        376,
+        821
+      ],
+      [
+        497,
+        821
+      ],
+      [
+        559,
+        821
+      ],
+      [
+        413,
+        821
+      ]
+    ]
   },
   "rear-delt-machine": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        389,
+        822
+      ],
+      [
+        449,
+        822
+      ],
+      [
+        509,
+        822
+      ],
+      [
+        457,
+        822
+      ]
+    ]
   },
   "reverse-crunch": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        511,
+        822
+      ],
+      [
+        467,
+        822
+      ],
+      [
+        414,
+        822
+      ],
+      [
+        504,
+        822
+      ]
+    ]
   },
   "reverse-lunge": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1919,
+      820
+    ],
+    "frameSizes": [
+      [
+        261,
+        820
+      ],
+      [
+        348,
+        820
+      ],
+      [
+        329,
+        820
+      ],
+      [
+        310,
+        820
+      ],
+      [
+        319,
+        820
+      ],
+      [
+        275,
+        820
+      ]
+    ]
   },
   "romanian-deadlift": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1774,
+      887
+    ],
+    "frameSizes": [
+      [
+        301,
+        887
+      ],
+      [
+        274,
+        887
+      ],
+      [
+        301,
+        887
+      ],
+      [
+        341,
+        887
+      ],
+      [
+        273,
+        887
+      ],
+      [
+        281,
+        887
+      ]
+    ]
   },
   "rope-triceps-pushdown": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        398,
+        822
+      ],
+      [
+        426,
+        822
+      ],
+      [
+        408,
+        822
+      ],
+      [
+        407,
+        822
+      ]
+    ]
   },
   "russian-twist": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        483,
+        822
+      ],
+      [
+        489,
+        822
+      ],
+      [
+        462,
+        822
+      ],
+      [
+        444,
+        822
+      ]
+    ]
   },
   "seated-cable-row": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1909,
+      824
+    ],
+    "frameSizes": [
+      [
+        360,
+        824
+      ],
+      [
+        311,
+        824
+      ],
+      [
+        303,
+        824
+      ],
+      [
+        298,
+        824
+      ],
+      [
+        316,
+        824
+      ],
+      [
+        321,
+        824
+      ]
+    ]
   },
   "seated-calf-raise": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        459,
+        822
+      ],
+      [
+        464,
+        822
+      ],
+      [
+        443,
+        822
+      ],
+      [
+        484,
+        822
+      ]
+    ]
   },
   "seated-dumbbell-shoulder-press": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        358,
+        822
+      ],
+      [
+        321,
+        822
+      ],
+      [
+        318,
+        822
+      ],
+      [
+        296,
+        822
+      ],
+      [
+        303,
+        822
+      ],
+      [
+        318,
+        822
+      ]
+    ]
   },
   "seated-leg-curl": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        495,
+        821
+      ],
+      [
+        449,
+        821
+      ],
+      [
+        438,
+        821
+      ],
+      [
+        479,
+        821
+      ]
+    ]
   },
   "shrug": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        473,
+        821
+      ],
+      [
+        448,
+        821
+      ],
+      [
+        447,
+        821
+      ],
+      [
+        482,
+        821
+      ]
+    ]
   },
   "side-plank": {
     "frameCount": 2,
-    "thumbnailFrame": 2
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1672,
+      941
+    ],
+    "frameSizes": [
+      [
+        668,
+        941
+      ],
+      [
+        810,
+        941
+      ]
+    ]
   },
   "single-arm-triceps-pushdown": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        475,
+        822
+      ],
+      [
+        441,
+        822
+      ],
+      [
+        393,
+        822
+      ],
+      [
+        431,
+        822
+      ]
+    ]
   },
   "single-leg-romanian-deadlift": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        221,
+        821
+      ],
+      [
+        327,
+        821
+      ],
+      [
+        402,
+        821
+      ],
+      [
+        293,
+        821
+      ],
+      [
+        393,
+        821
+      ],
+      [
+        227,
+        821
+      ]
+    ]
   },
   "skull-crusher": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1918,
+      820
+    ],
+    "frameSizes": [
+      [
+        485,
+        820
+      ],
+      [
+        461,
+        820
+      ],
+      [
+        474,
+        820
+      ],
+      [
+        483,
+        820
+      ]
+    ]
   },
   "smith-machine-squat": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2103,
+      748
+    ],
+    "frameSizes": [
+      [
+        356,
+        748
+      ],
+      [
+        347,
+        748
+      ],
+      [
+        348,
+        748
+      ],
+      [
+        335,
+        748
+      ],
+      [
+        335,
+        748
+      ],
+      [
+        379,
+        748
+      ]
+    ]
   },
   "split-squat": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        321,
+        822
+      ],
+      [
+        317,
+        822
+      ],
+      [
+        314,
+        822
+      ],
+      [
+        313,
+        822
+      ],
+      [
+        316,
+        822
+      ],
+      [
+        327,
+        822
+      ]
+    ]
   },
   "standing-calf-raise": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        369,
+        822
+      ],
+      [
+        370,
+        822
+      ],
+      [
+        372,
+        822
+      ],
+      [
+        369,
+        822
+      ]
+    ]
   },
   "step-up": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1916,
+      821
+    ],
+    "frameSizes": [
+      [
+        323,
+        821
+      ],
+      [
+        305,
+        821
+      ],
+      [
+        269,
+        821
+      ],
+      [
+        230,
+        821
+      ],
+      [
+        350,
+        821
+      ],
+      [
+        216,
+        821
+      ]
+    ]
   },
   "straight-arm-pulldown": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        473,
+        821
+      ],
+      [
+        443,
+        821
+      ],
+      [
+        440,
+        821
+      ],
+      [
+        448,
+        821
+      ]
+    ]
   },
   "sumo-deadlift": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        383,
+        821
+      ],
+      [
+        329,
+        821
+      ],
+      [
+        310,
+        821
+      ],
+      [
+        301,
+        821
+      ],
+      [
+        298,
+        821
+      ],
+      [
+        294,
+        821
+      ]
+    ]
   },
   "t-bar-row": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1918,
+      820
+    ],
+    "frameSizes": [
+      [
+        341,
+        820
+      ],
+      [
+        313,
+        820
+      ],
+      [
+        298,
+        820
+      ],
+      [
+        318,
+        820
+      ],
+      [
+        308,
+        820
+      ],
+      [
+        340,
+        820
+      ]
+    ]
   },
   "triceps-pushdown": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1908,
+      824
+    ],
+    "frameSizes": [
+      [
+        442,
+        824
+      ],
+      [
+        431,
+        824
+      ],
+      [
+        432,
+        824
+      ],
+      [
+        435,
+        824
+      ]
+    ]
   },
   "upright-row": {
     "frameCount": 4,
-    "thumbnailFrame": 3
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        467,
+        822
+      ],
+      [
+        460,
+        822
+      ],
+      [
+        466,
+        822
+      ],
+      [
+        465,
+        822
+      ]
+    ]
   },
   "walking-lunge": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        256,
+        821
+      ],
+      [
+        389,
+        821
+      ],
+      [
+        323,
+        821
+      ],
+      [
+        300,
+        821
+      ],
+      [
+        341,
+        821
+      ],
+      [
+        262,
+        821
+      ]
+    ]
   }
 }

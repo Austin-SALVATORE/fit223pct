@@ -3,7 +3,37 @@
   "version": 1,
   "media": {
     "frameCount": 6,
-    "thumbnailFrame": 4
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2103,
+      748
+    ],
+    "frameSizes": [
+      [
+        356,
+        748
+      ],
+      [
+        347,
+        748
+      ],
+      [
+        348,
+        748
+      ],
+      [
+        335,
+        748
+      ],
+      [
+        335,
+        748
+      ],
+      [
+        379,
+        748
+      ]
+    ]
   },
   "credits": {
     "source": "gpt-5.6-sol",
