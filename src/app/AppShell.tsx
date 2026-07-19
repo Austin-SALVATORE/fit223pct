@@ -6,6 +6,7 @@ const ROUTE_TITLES: Record<string, string> = {
   '/': PRODUCT_NAME,
   '/library': `${PRODUCT_NAME} — Library`,
   '/progress': `${PRODUCT_NAME} — Progress`,
+  '/plan': `${PRODUCT_NAME} — Plan`,
 }
 
 /**

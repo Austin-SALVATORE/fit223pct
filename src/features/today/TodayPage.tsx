@@ -475,6 +475,12 @@ function Header({ date }: { date: Date }) {
       </p>
       <nav className="flex gap-4">
         <Link
+          to="/plan"
+          className="text-sm font-medium text-ink-tertiary transition-colors hover:text-ink-secondary"
+        >
+          Plan
+        </Link>
+        <Link
           to="/progress"
           className="text-sm font-medium text-ink-tertiary transition-colors hover:text-ink-secondary"
         >

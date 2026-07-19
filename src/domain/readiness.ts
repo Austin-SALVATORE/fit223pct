@@ -1,4 +1,4 @@
-import { addDays, toDateKey } from '@/lib/dates'
+import { addDays, parseDateKey, toDateKey } from '@/lib/dates'
 import type { CheckIn, Rating } from './types'
 
 export type ReadinessTier = 'ready' | 'steady' | 'easier'
@@ -60,10 +60,6 @@ function countConsecutiveLowDays(today: CheckIn, recent: readonly CheckIn[]): nu
   }
 
   return count
-}
-
-function parseDateKey(dateKey: string): Date {
-  return new Date(`${dateKey}T00:00:00`)
 }
 
 /** Weights favor the best-supported signals: sleep and soreness. */

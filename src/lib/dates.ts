@@ -6,6 +6,11 @@ export function toDateKey(date: Date): string {
   return `${y}-${m}-${d}`
 }
 
+/** Inverse of toDateKey — local midnight of the given yyyy-mm-dd key. */
+export function parseDateKey(dateKey: string): Date {
+  return new Date(`${dateKey}T00:00:00`)
+}
+
 /** ISO weekday: 1 = Monday … 7 = Sunday */
 export function isoWeekday(date: Date): number {
   const day = date.getDay()

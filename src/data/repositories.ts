@@ -30,6 +30,9 @@ export const programRepo = {
 
     return [...programs].reverse().find((p) => p.startDate <= dateKey)
   },
+
+  /** Every program, chronological — phase navigation on the Plan page. */
+  getAll: (): Promise<Program[]> => db.programs.orderBy('startDate').toArray(),
 }
 
 export const workoutRepo = {
