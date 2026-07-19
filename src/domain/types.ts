@@ -11,7 +11,7 @@ export type MuscleGroup =
   | 'triceps'
   | 'core'
 
-export type Equipment = 'barbell' | 'dumbbell' | 'bench' | 'band' | 'bodyweight'
+export type Equipment = 'barbell' | 'dumbbell' | 'bench' | 'band' | 'bodyweight' | 'machine'
 
 export interface TeachingConcept {
   title: string

@@ -250,4 +250,110 @@ export const seedExercises: Exercise[] = [
     substitutionIds: ['dead-bug'],
     isUnilateral: true,
   },
+  // Phase 2 (Fitness Park) additions — the gym unlocks movements home
+  // equipment couldn't: a rack for real barbell squats, a hip thrust
+  // station, and cable machines for vertical pulling. Each keeps its
+  // home-equipment counterpart as a substitution for a busy machine.
+  {
+    id: 'barbell-squat',
+    name: 'Barbell back squat',
+    muscles: ['quads', 'glutes', 'core'],
+    equipment: ['barbell', 'machine'],
+    cues: [
+      'Bar sits on your upper traps, not your neck',
+      'Break at the hips and knees together, sit between your heels',
+      'Drive the floor away evenly through both feet to stand',
+    ],
+    substitutionIds: ['goblet-squat'],
+    isUnilateral: false,
+    teachingConcept: {
+      title: 'Bar path',
+      body: 'The bar should travel in a straight vertical line over the middle of your foot. If your hips shoot up first, you turn the squat into a hip hinge — sit down, not back, and let your hips and shoulders rise together.',
+    },
+  },
+  {
+    id: 'cable-row',
+    name: 'Seated cable row',
+    muscles: ['back', 'biceps'],
+    equipment: ['machine'],
+    cues: [
+      'Sit tall, chest up, slight forward lean at the start',
+      'Pull to your lower ribs, elbows close to your body',
+      'Let your shoulder blades protract fully before the next rep',
+    ],
+    substitutionIds: ['single-arm-db-row'],
+    isUnilateral: false,
+    teachingConcept: {
+      title: 'Lead with the elbow',
+      body: 'Initiate every rep by driving your elbow back, not by curling the handle in with your arm. Your back does the pulling; your bicep just holds on.',
+    },
+  },
+  {
+    id: 'lat-pulldown',
+    name: 'Lat pulldown',
+    muscles: ['back', 'biceps'],
+    equipment: ['machine'],
+    cues: [
+      'Grip just outside shoulder width',
+      'Pull the bar to your upper chest, elbows driving down and back',
+      "Control the return — don't let the weight stack pull your arms up",
+    ],
+    substitutionIds: ['band-row'],
+    isUnilateral: false,
+    teachingConcept: {
+      title: 'Down and back, not just down',
+      body: 'Think about pulling your elbows toward your back pockets, not just pulling the bar down. That cue shifts the work into your lats instead of your arms.',
+    },
+  },
+  {
+    id: 'barbell-hip-thrust',
+    name: 'Barbell hip thrust',
+    muscles: ['glutes', 'hamstrings'],
+    equipment: ['barbell', 'bench'],
+    cues: [
+      'Upper back braced on the bench edge, bar padded across your hips',
+      'Chin tucked, ribs down as you drive up',
+      'Full lockout — squeeze glutes hard for a second at the top',
+    ],
+    substitutionIds: ['hip-thrust'],
+    isUnilateral: false,
+    teachingConcept: {
+      title: 'Bar placement',
+      body: "The bar should sit in the crease of your hips, not on your lower belly — a thick pad or folded mat protects that spot. If it feels like it's crushing you, it's in the wrong place, not too heavy.",
+    },
+  },
+  {
+    id: 'dumbbell-lateral-raise',
+    name: 'Dumbbell lateral raise',
+    muscles: ['shoulders'],
+    equipment: ['dumbbell'],
+    cues: [
+      'Slight bend in the elbows, held throughout',
+      'Raise to shoulder height, leading with the elbows',
+      'Lower slowly — the negative is where this exercise earns its keep',
+    ],
+    substitutionIds: ['band-lateral-raise'],
+    isUnilateral: false,
+    teachingConcept: {
+      title: 'Light weight, real range',
+      body: 'This is not a heavy-load exercise — momentum from swinging the weight up removes tension from the shoulder, which is the entire point of the movement. If you need to lean or swing to lift it, the weight is too heavy.',
+    },
+  },
+  {
+    id: 'dumbbell-curl',
+    name: 'Dumbbell curl',
+    muscles: ['biceps'],
+    equipment: ['dumbbell'],
+    cues: [
+      'Elbows pinned to your sides through the whole rep',
+      'Squeeze at the top without swinging the weight up',
+      'Lower under control through the full range',
+    ],
+    substitutionIds: ['band-curl'],
+    isUnilateral: false,
+    teachingConcept: {
+      title: 'Elbow position is everything',
+      body: 'If your elbows drift forward as the weight gets heavy, your front delts take over from your biceps. Keep them stacked under your shoulders for the whole set, even if that means picking a lighter dumbbell.',
+    },
+  },
 ]
