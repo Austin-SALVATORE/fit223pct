@@ -513,11 +513,11 @@ function Header({ date }: { date: Date }) {
   const { t } = useTranslation('common')
   const locale = useLocale()
   return (
-    <header className="flex items-start justify-between gap-2">
-      <p className="eyebrow mt-2">
+    <header className="flex items-baseline justify-between gap-2">
+      <p className="eyebrow">
         <time dateTime={toDateKey(date)}>{formatLongDate(date, locale)}</time>
       </p>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-3">
         <nav className="flex gap-3">
           <Link
             to="/plan"
@@ -538,7 +538,7 @@ function Header({ date }: { date: Date }) {
             {t('nav.library')}
           </Link>
         </nav>
-        <SettingsLink origin="today" />
+        <SettingsLink origin="today" variant="inline" />
       </div>
     </header>
   )

@@ -6,31 +6,43 @@ import type { NavigationOrigin } from '@/lib/navigationOrigin'
 interface SettingsLinkProps {
   /** Which AppShell page this is rendered on — carried so Back returns here, not a hardcoded page. */
   origin: Exclude<NavigationOrigin, 'workout' | 'plan-day'>
+  /**
+   * 'corner' (default): alone beside a large page heading (Plan, Progress,
+   * Library) — fixed 44px box, negative margins align it flush with the
+   * heading's top-right corner.
+   * 'inline': a peer of Today's text-sm nav links — no box, no corner
+   * offset. The 44px target comes from padding, then a matching negative
+   * margin cancels that padding back out of layout so it doesn't push the
+   * visual icon away from the last link; the touch area still bleeds into
+   * the surrounding gap, which is the intended trade — visual size and
+   * touch target are different things.
+   */
+  variant?: 'corner' | 'inline'
 }
 
 /**
- * The one shared Settings entry point — icon-only gear, top-right of every
- * AppShell page header (docs/DataPortability.md's Settings entry section).
- * Deliberately absent from Workout Mode, which renders outside AppShell.
+ * The one shared Settings entry point (docs/DataPortability.md's Settings
+ * entry section). Deliberately absent from Workout Mode, which renders
+ * outside AppShell.
  */
-export function SettingsLink({ origin }: SettingsLinkProps) {
+export function SettingsLink({ origin, variant = 'corner' }: SettingsLinkProps) {
   const { t } = useTranslation('common')
   const reducedMotion = useReducedMotion()
+  const className =
+    variant === 'inline'
+      ? '-m-3.5 flex items-center justify-center p-3.5 text-ink-tertiary transition-colors hover:text-ink-secondary'
+      : '-mr-2.5 -mt-1.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:text-ink-secondary'
+
   return (
     <motion.div whileTap={reducedMotion ? undefined : { scale: 0.94 }}>
-      <Link
-        to="/settings"
-        state={{ from: origin }}
-        aria-label={t('settings')}
-        className="-mr-2.5 -mt-1.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:text-ink-secondary"
-      >
-        <GearIcon />
+      <Link to="/settings" state={{ from: origin }} aria-label={t('settings')} className={className}>
+        <GearIcon className={variant === 'inline' ? 'h-4 w-4' : 'h-5 w-5'} />
       </Link>
     </motion.div>
   )
 }
 
-function GearIcon() {
+function GearIcon({ className }: { className: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -39,7 +51,7 @@ function GearIcon() {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="h-5 w-5"
+      className={className}
       aria-hidden="true"
     >
       <circle cx="12" cy="12" r="3" />
