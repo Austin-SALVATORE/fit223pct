@@ -50,12 +50,16 @@ describe('exerciseAsset', () => {
     expect(exerciseAsset('not-a-real-exercise', 'frame', 1)).toBeNull()
   })
 
-  it('resolves the seed’s single-leg-rdl through the asset pipeline’s single-leg-romanian-deadlift alias', () => {
-    const aliased = exerciseAsset('single-leg-rdl', 'thumbnail')
-    const direct = exerciseAsset('single-leg-romanian-deadlift', 'thumbnail')
+  it.each([
+    ['single-leg-rdl', 'single-leg-romanian-deadlift'],
+    ['barbell-squat', 'barbell-back-squat'],
+    ['bent-over-row', 'barbell-row'],
+  ])('resolves the seed’s %s through the asset pipeline’s %s alias', (seedId, assetId) => {
+    const aliased = exerciseAsset(seedId, 'thumbnail')
+    const direct = exerciseAsset(assetId, 'thumbnail')
     expect(aliased).not.toBeNull()
     expect(aliased).toEqual(direct)
-    expect(aliased?.url).toBe('/assets/exercises/single-leg-romanian-deadlift/thumbnail.avif')
+    expect(aliased?.url).toBe(`/assets/exercises/${assetId}/thumbnail.avif`)
   })
 
   it('carries the newer referenceSize/frameSizes manifest fields, not just frameCount/thumbnailFrame', () => {

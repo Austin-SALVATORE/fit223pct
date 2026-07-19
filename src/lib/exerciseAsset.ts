@@ -12,8 +12,14 @@ export interface ExerciseAsset {
 interface ManifestEntry {
   frameCount: number
   thumbnailFrame: number
-  referenceSize: [number, number]
-  frameSizes: [number, number][]
+  // Optional, not asserted: the manifest is generated data, and generated
+  // data can be stale relative to the code reading it (a schema-adding
+  // regeneration landing in a separate commit/push from this resolver is
+  // exactly how it went missing once — see docs/design/
+  // ExerciseAssetPipeline.md's "App integration" process rule). Every read
+  // below tolerates either field being absent.
+  referenceSize?: [number, number]
+  frameSizes?: [number, number][]
 }
 
 // The generated manifest's JSON types are plain number[]/number[][] —
@@ -22,15 +28,20 @@ interface ManifestEntry {
 const ASSET_MANIFEST = manifest as unknown as Record<string, ManifestEntry>
 
 /**
- * The domain seed's `single-leg-rdl` and the asset pipeline's
- * `single-leg-romanian-deadlift` name the same exercise under different
- * ids — reconciled here per docs/design/ExerciseAssetPipeline.md's
- * "Parked decisions" rather than renaming either side. The only pair
- * that doc calls out; no other seed/asset id mismatch is a reconciliation
- * target (most are exercises with no prompt yet — see the same section).
+ * Domain seed ids that name the same exercise as an asset-pipeline id
+ * under a different string — reconciled here rather than renaming either
+ * side, per docs/design/ExerciseAssetPipeline.md's "Parked decisions".
+ * Approved pairs only: `single-leg-rdl` was the pipeline doc's own
+ * original call-out; `barbell-squat`/`bent-over-row` were approved after
+ * (owner review) once the asset side turned out to already cover them
+ * under `barbell-back-squat`/`barbell-row`. No other seed/asset id
+ * mismatch is a reconciliation target — the rest are exercises with no
+ * prompt yet (see the same doc section).
  */
 const ASSET_ID_ALIASES: Record<string, string> = {
   'single-leg-rdl': 'single-leg-romanian-deadlift',
+  'barbell-squat': 'barbell-back-squat',
+  'bent-over-row': 'barbell-row',
 }
 
 /**
@@ -54,12 +65,13 @@ export function exerciseAsset(
   const base = `/assets/exercises/${assetId}`
 
   if (kind === 'reference') {
+    if (!entry.referenceSize) return null
     const [width, height] = entry.referenceSize
     return { url: `${base}/reference.avif`, width, height }
   }
 
   if (kind === 'thumbnail') {
-    const size = entry.frameSizes[entry.thumbnailFrame - 1]
+    const size = entry.frameSizes?.[entry.thumbnailFrame - 1]
     if (!size) return null
     return { url: `${base}/thumbnail.avif`, width: size[0], height: size[1] }
   }
@@ -67,7 +79,7 @@ export function exerciseAsset(
   // kind === 'frame' — 1-based, must fall within the strip this exercise
   // actually has (frame counts vary per exercise; side-plank has 2).
   if (frame === undefined || frame < 1 || frame > entry.frameCount) return null
-  const size = entry.frameSizes[frame - 1]
+  const size = entry.frameSizes?.[frame - 1]
   if (!size) return null
   const padded = String(frame).padStart(2, '0')
   return { url: `${base}/frames/${padded}.avif`, width: size[0], height: size[1] }

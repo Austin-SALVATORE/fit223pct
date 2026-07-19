@@ -91,6 +91,15 @@ Rules:
   list thumbnails → (later) rest-timer "next up" preview.
 - Frames from `bench-side` / `floor-side` strips are landscape; standing
   strips are portrait. Components must handle both orientations.
+- **Process rule (added after a production incident):** the generated
+  manifest and the code that reads its schema land in the **same
+  commit** — never split across a commit and an uncommitted working-tree
+  change. Pre-push live verification runs against the committed tree,
+  not the dev server's working tree, since the dev server happily reads
+  files that were never committed and would pass a check the deployed
+  build can't. The resolver still tolerates a stale/missing field either
+  way (see src/lib/exerciseAsset.ts) — this rule is about not needing
+  that tolerance in the first place.
 
 ## Offline / shipping
 
@@ -129,8 +138,12 @@ frame handling (bench-press), the 2-frame hold case (side-plank), and
 
 - 8 near-duplicate consolidations (pec-deck / machine-chest-fly, pulldown
   grips, shrugs, etc.) — assets deferred, listed in the generation plan.
-- `single-leg-romanian-deadlift` (asset id) vs `single-leg-rdl` (domain id)
-  — must be reconciled before app wiring.
+- Domain/asset id mismatches — **resolved via the resolver's alias map**
+  (src/lib/exerciseAsset.ts), not by renaming either side: `single-leg-rdl`
+  → `single-leg-romanian-deadlift` (this doc's original call-out);
+  `barbell-squat` → `barbell-back-squat` and `bent-over-row` →
+  `barbell-row` (approved on owner review once the asset side turned out
+  to already cover them under those names).
 - ~13 seeded exercises (band work, tempo/deficit/single-arm variants) have
   no prompts yet.
 - `chatgpt-image-latest` requires org verification — optional alternative
