@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
+import { motion, useReducedMotion } from 'motion/react'
 import { Stepper } from '@/ui/Stepper'
 import { RatingPicker } from '@/ui/RatingPicker'
 import { suggestProgression } from '@/domain/progression'
@@ -49,6 +50,7 @@ export function SetScreen({
 
   const isSeconds = prescription.mode === 'seconds'
   const headingRef = useFocusOnMount<HTMLHeadingElement>()
+  const reducedMotion = useReducedMotion()
 
   function handleLog() {
     onLog({
@@ -112,13 +114,15 @@ export function SetScreen({
 
         <RirPicker value={rir} onChange={setRir} />
 
-        <button
+        <motion.button
           type="button"
           onClick={handleLog}
-          className="mt-8 w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg transition-transform active:scale-[0.98]"
+          whileTap={reducedMotion ? undefined : { scale: 0.94 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          className="mt-8 w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg"
         >
           {isSeconds ? 'Log hold' : 'Log set'}
-        </button>
+        </motion.button>
 
         <div className="mt-4 flex items-center justify-center gap-6">
           <Link

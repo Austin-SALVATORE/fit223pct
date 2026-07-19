@@ -81,6 +81,9 @@ function TimerRing({ remaining, total }: { remaining: number; total: number }) {
   const radius = 88
   const circumference = 2 * Math.PI * radius
   const fraction = total > 0 ? remaining / total : 0
+  // Final-seconds emphasis lives on the ring only — the digit itself is a
+  // data-critical number and stays a plain, stable readout.
+  const almostDone = remaining > 0 && remaining <= 3
 
   return (
     <div className="relative mt-6 h-52 w-52">
@@ -100,7 +103,9 @@ function TimerRing({ remaining, total }: { remaining: number; total: number }) {
           fill="none"
           strokeWidth="6"
           strokeLinecap="round"
-          className="stroke-amber transition-[stroke-dashoffset] duration-300 ease-linear"
+          className={`transition-[stroke-dashoffset,stroke] duration-300 ease-linear ${
+            almostDone ? 'stroke-clay' : 'stroke-amber'
+          }`}
           strokeDasharray={circumference}
           strokeDashoffset={circumference * (1 - fraction)}
         />
