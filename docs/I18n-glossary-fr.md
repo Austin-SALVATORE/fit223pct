@@ -1,15 +1,16 @@
-# French glossary — draft, pending Austin's review
+# French glossary — approved
 
-**Status: draft, gates Milestone 7 Phase 8.** Nothing in `src/locales/fr/`
-is translated in bulk until these ~15 core terms are confirmed. A wrong
-call here propagates into every sentence that nests it (driver phrases
-interpolate into adjustment/tier sentences), so this list exists to catch
-that before it multiplies across 300+ strings, not after.
+**Status: approved 2026-07-19, ruled by Austin.** Gated Milestone 7 Phase
+8 until this ruling; Phase 8 translation now proceeds from these terms
+verbatim. A wrong call here would have propagated into every sentence
+that nests it (driver phrases interpolate into adjustment/tier
+sentences), so this list existed to catch that before it multiplied
+across 300+ strings, not after.
 
-Register target throughout: a personal coach speaking directly to one
-person (`tu`, not `vous`) — warm, plain, never clinical. Same constraint
-as the English copy: no medical framing, no fabricated claims, no
-euphemism.
+Register: a personal coach speaking directly to one person (`tu`, not
+`vous`) — warm, plain, never clinical, confirmed throughout. Same
+constraint as the English copy: no medical framing, no fabricated
+claims, no euphemism.
 
 ## Readiness (the core concept)
 
@@ -20,7 +21,7 @@ boundary was set in M3 and must survive translation.
 
 | Candidate | Verdict | Reasoning |
 |---|---|---|
-| **état** (as in *état du jour*, "today's state") | **Proposed** | Plain and neutral — mirrors the Chinese choice (状态, "state/condition") — describes a fact ("your state today") rather than making a wellness claim. Works as a compound: "Bilan du jour" for the check-in section, "ton état" for badges. |
+| **état** (as in *état du jour*, "today's state") | **Ruled** | Plain and neutral — mirrors the Chinese choice (状态, "state/condition") — describes a fact ("your state today") rather than making a wellness claim. État-based phrasing throughout ("Ton état aujourd'hui", "ton état" for badges) — "Bilan" is reserved exclusively for the checkpoint activity kind below and must not be reused for the readiness check-in. |
 | récupération | Rejected | Literally "recovery" — exactly the medical-register term the product forbids |
 | forme | Rejected | An earlier draft of this glossary proposed *forme* as the safe alternative to récupération — corrected on review. *Forme* carries real wellness/lifestyle-marketing baggage in French (*être en forme*, *cure de forme*, diet and spa-magazine copy) and reads as a soft, vague wellness claim rather than a coach's plain assessment — the same territory the product's fitness rules already forbid ("never promise specific body transformation outcomes"). Not medical, but not neutral either. |
 | disposition | Rejected | Correct meaning but bureaucratic/administrative register, wrong tone for a coach's voice |

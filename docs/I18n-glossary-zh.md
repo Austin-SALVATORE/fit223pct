@@ -1,9 +1,11 @@
-# Simplified Chinese glossary — draft, pending Austin's review
+# Simplified Chinese glossary — approved
 
-**Status: draft, gates Milestone 7 Phase 9.** Same gate as the French
-glossary: nothing in `src/locales/zh-CN/` is translated in bulk until
-these ~15 core terms are confirmed, since a bad call here propagates into
-every nested driver phrase.
+**Status: approved 2026-07-19, ruled by Austin.** Same gate as the French
+glossary: `src/locales/zh-CN/` was translated in bulk only after these
+~15 core terms were confirmed, since a bad call here propagates into
+every nested driver phrase. Phase 9 (Chinese translation) starts only
+after Phase 8 (French) ships and Austin signs off on it — this glossary
+being ruled is not itself the Phase 9 go-ahead.
 
 Register target: a personal coach speaking directly to one person —
 plain spoken Chinese, the register used in real fitness communities
@@ -89,7 +91,7 @@ an inconsistency: a recovery *day* is a real category, a recovery
 | Kind | Proposed Chinese | Rejected candidates |
 |---|---|---|
 | recovery | **恢复** | — (correct use, see note above) |
-| mobility | **灵活性** ("flexibility/mobility") | *拉伸* ("stretching") — too narrow; mobility work covers more than static stretching |
+| mobility | **活动度** ("range/quality of movement") | **Ruled 2026-07-19**: 灵活性 (líng huó xìng, "flexibility") moved to rejected — reads specifically as flexibility (a narrower, static-stretch-adjacent concept), where 活动度 is the term the Chinese fitness community currently uses for mobility work generally. *拉伸* ("stretching") remains rejected too — too narrow either way; mobility work covers more than static stretching. |
 | cardio | **有氧** (short for 有氧运动, "aerobic exercise") | — (the standard fitness-community term) |
 | optional | **可选** | — (plain, neutral) |
 | checkpoint | **小结** ("stage summary") | *检查点* ("checkpoint," literal) — reads like a software/game checkpoint, wrong register for a training milestone |
