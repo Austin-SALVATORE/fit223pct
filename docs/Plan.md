@@ -66,6 +66,35 @@ exist only on the day they're measured.
 - **A11y**: list semantics; route-change focus and title come free from
   AppShell's existing handling.
 
+## Amendment (19 Jul): day detail — every row clickable
+
+v1 deferred a per-day view "until something proves the need"; first
+real use proved it. Every day row navigates to `/plan/:date` (today's
+row keeps linking to Today — that page *is* today's detail). The
+detail shows, by day state:
+
+- **Completed workout day** — facts: session name, per-exercise logged
+  sets (weight × reps/seconds, RIR), and the summary line (sets,
+  volume, duration). This is the app's first past-workout view; it
+  states what happened and interprets nothing (Progress owns
+  interpretation).
+- **Future training day** — the projected session via the existing
+  `SessionPreview`, carrying a "Projected" label and the honesty line.
+  Readiness is never applied to future days.
+- **Activity day** — the activity's title and items, same display
+  vocabulary as Today's activity hero at list scale.
+- **Past scheduled day, nothing logged** — an honest empty state:
+  nothing was logged, the session shifted forward, nothing was lost.
+  Never a fabricated "would-have-been" session.
+- **Unknown/out-of-phase date** — a quiet "not part of this phase"
+  with the back link; never a crash.
+
+Exercise names link to the Library with contextual back-navigation
+(existing `navigationOrigin` pattern). The date resolves its program
+across phases with the same semantics as `programRepo.getActive`.
+Rows use the existing `GroupedRow` link affordance — visibly tappable,
+consistent with the Library.
+
 ## Out of scope (deliberate)
 
 Editing the schedule, dragging sessions, per-day notes, a month-grid

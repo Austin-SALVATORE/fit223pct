@@ -1,7 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Link, useLocation, useParams } from 'react-router'
 import { exerciseRepo } from '@/data/repositories'
-import { originTarget, resolveOrigin, type NavigationOrigin } from './navigationOrigin'
+import { originTarget, resolveOrigin, type OriginState } from './navigationOrigin'
 
 export function ExercisePage() {
   const { exerciseId } = useParams<{ exerciseId: string }>()
@@ -77,7 +77,7 @@ export function ExercisePage() {
               <li key={sub.id}>
                 <Link
                   to={`/library/${sub.id}`}
-                  state={{ from: origin }}
+                  state={{ from: origin.from, date: origin.date }}
                   className="inline-block rounded-full border border-border bg-surface px-4 py-2 text-sm text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
                 >
                   {sub.name}
@@ -91,7 +91,7 @@ export function ExercisePage() {
   )
 }
 
-function BackLink({ origin }: { origin: NavigationOrigin }) {
+function BackLink({ origin }: { origin: OriginState }) {
   const target = originTarget(origin)
   return (
     <Link

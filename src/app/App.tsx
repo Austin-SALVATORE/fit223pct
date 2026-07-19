@@ -7,6 +7,8 @@ import { ExercisePage } from '@/features/library/ExercisePage'
 import { WorkoutPage } from '@/features/workout/WorkoutPage'
 import { ProgressPage } from '@/features/progress/ProgressPage'
 import { PlanPage } from '@/features/plan/PlanPage'
+import { PlanDayPage } from '@/features/plan/PlanDayPage'
+import { SettingsPage } from '@/features/settings/SettingsPage'
 
 export default function App() {
   return (
@@ -21,6 +23,8 @@ export default function App() {
           <Route path="library/:exerciseId" element={<ExercisePage />} />
           <Route path="progress" element={<ProgressPage />} />
           <Route path="plan" element={<PlanPage />} />
+          <Route path="plan/:date" element={<PlanDayPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </>

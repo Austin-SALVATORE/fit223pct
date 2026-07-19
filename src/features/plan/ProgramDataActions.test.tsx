@@ -133,30 +133,11 @@ describe('ProgramDataActions export', () => {
     )
   })
 
-  it('exports full data as one dated JSON bundle', async () => {
-    render(<ProgramDataActions program={seedProgram} />)
-    await userEvent.click(screen.getByRole('button', { name: 'Export all data' }))
-
-    await waitFor(() => expect(shareOrDownloadFile).toHaveBeenCalled())
-    const [filename, content] = vi.mocked(shareOrDownloadFile).mock.calls[0]
-    expect(filename).toMatch(/^fit223-export-\d{4}-\d{2}-\d{2}\.json$/)
-    const parsed = JSON.parse(content)
-    expect(parsed.programs.map((p: { id: string }) => p.id)).toContain(seedProgram.id)
-    expect(parsed.settings.name).toBe('Austin')
-  })
-
   it('shows a status line naming the program after a successful program export', async () => {
     render(<ProgramDataActions program={seedProgram} />)
     await userEvent.click(screen.getByRole('button', { name: 'Export program' }))
 
     expect(await screen.findByRole('status')).toHaveTextContent('Exported "Phase 1 — Home".')
-  })
-
-  it('shows "Backup saved." after a successful full-data export', async () => {
-    render(<ProgramDataActions program={seedProgram} />)
-    await userEvent.click(screen.getByRole('button', { name: 'Export all data' }))
-
-    expect(await screen.findByRole('status')).toHaveTextContent('Backup saved.')
   })
 
   it('says nothing when the share sheet is cancelled', async () => {
@@ -166,5 +147,18 @@ describe('ProgramDataActions export', () => {
 
     await waitFor(() => expect(shareOrDownloadFile).toHaveBeenCalled())
     expect(screen.queryByRole('status')).toBeNull()
+  })
+
+  it('shows exactly Import program and Export program — Export all data moved to Settings', async () => {
+    render(<ProgramDataActions program={seedProgram} />)
+    const buttons = screen.getAllByRole('button')
+    expect(buttons.map((b) => b.textContent)).toEqual(['Import program', 'Export program'])
+  })
+
+  it('lays the two buttons out on one equal-width row', async () => {
+    render(<ProgramDataActions program={seedProgram} />)
+    const [importButton, exportButton] = screen.getAllByRole('button')
+    expect(importButton.parentElement).toBe(exportButton.parentElement)
+    expect(importButton.parentElement?.className).toMatch(/grid-cols-2/)
   })
 })

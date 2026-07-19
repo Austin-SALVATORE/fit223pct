@@ -36,8 +36,13 @@ persistent datasource; imports reference it, never replace it.
   schedules seven days a week, the app imports it. The import surface
   is sovereignty, not a coach — the readiness engine remains the
   in-app voice on load management.
-- **Surface:** quiet Import/Export actions on the Plan page (the
-  program surface). No new nav entry.
+- **Surface** (revised 19 Jul after first real use): Import program /
+  Export program as a single-line two-button row on the Plan page (the
+  program surface). **Export all data moves to Settings** — it is an
+  app-level backup, not a program action; a gear icon top-right of the
+  Plan heading opens `/settings`, the app's first (deliberately
+  minimal) Settings page. The i18n milestone's language switcher joins
+  it there later.
 
 ## Export
 

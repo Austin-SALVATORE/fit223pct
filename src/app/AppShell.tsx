@@ -7,6 +7,14 @@ const ROUTE_TITLES: Record<string, string> = {
   '/library': `${PRODUCT_NAME} — Library`,
   '/progress': `${PRODUCT_NAME} — Progress`,
   '/plan': `${PRODUCT_NAME} — Plan`,
+  '/settings': `${PRODUCT_NAME} — Settings`,
+}
+
+function titleFor(pathname: string): string {
+  if (pathname in ROUTE_TITLES) return ROUTE_TITLES[pathname]
+  // /plan/:date is a Plan sub-route; everything else dynamic is a Library detail.
+  if (pathname.startsWith('/plan/')) return `${PRODUCT_NAME} — Plan`
+  return `${PRODUCT_NAME} — Exercise`
 }
 
 /**
@@ -25,8 +33,7 @@ export function AppShell() {
   // move focus to the new view on route *changes* only, never on first load
   // (that would steal focus the browser already placed correctly).
   useEffect(() => {
-    document.title =
-      ROUTE_TITLES[location.pathname] ?? `${PRODUCT_NAME} — Exercise`
+    document.title = titleFor(location.pathname)
     if (previousPathname.current !== null && previousPathname.current !== location.pathname) {
       mainRef.current?.focus()
     }

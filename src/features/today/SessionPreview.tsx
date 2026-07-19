@@ -1,4 +1,5 @@
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
+import type { OriginState } from '@/features/library/navigationOrigin'
 import type { Exercise, ExercisePrescription, SessionTemplate } from '@/domain/types'
 
 interface SessionPreviewProps {
@@ -9,6 +10,8 @@ interface SessionPreviewProps {
   badge?: string
   /** One line per applied adjustment, shown under the heading */
   reasons?: string[]
+  /** Where exercise links should return to — defaults to Today, the original and still most common caller */
+  origin?: OriginState
 }
 
 export function SessionPreview({
@@ -17,6 +20,7 @@ export function SessionPreview({
   heading,
   badge,
   reasons,
+  origin = { from: 'today' },
 }: SessionPreviewProps) {
   return (
     <section className="mt-10" aria-label={`${heading}: ${session.name}`}>
@@ -42,7 +46,7 @@ export function SessionPreview({
               <GroupedRow
                 key={item.exerciseId}
                 to={`/library/${exercise.id}`}
-                state={{ from: 'today' }}
+                state={origin}
               >
                 <div className="min-w-0">
                   <p className="font-medium text-ink">{exercise.name}</p>

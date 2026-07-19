@@ -9,6 +9,7 @@ import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readine
 import { applyReadiness } from '@/domain/adjustments'
 import { buildWeeklyReview, reviewIsUnseen, type WeeklyReview } from '@/domain/weeklyReview'
 import { formatLongDate, toDateKey } from '@/lib/dates'
+import { ACTIVITY_KIND_LABEL } from '@/lib/activityKindLabel'
 import type { ActivityTemplate, CheckIn, Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
 import { CheckInCard } from '@/features/checkin/CheckInCard'
 import { MeasurementCard } from '@/features/checkin/MeasurementCard'
@@ -530,14 +531,6 @@ function Hero({ eyebrow, title, subtitle }: HeroProps) {
       <p className="mt-4 max-w-[34ch] leading-relaxed text-ink-secondary">{subtitle}</p>
     </div>
   )
-}
-
-const ACTIVITY_KIND_LABEL: Record<ActivityTemplate['kind'], string> = {
-  recovery: 'Recovery',
-  mobility: 'Mobility',
-  cardio: 'Cardio',
-  optional: 'Optional',
-  checkpoint: 'Checkpoint',
 }
 
 /**

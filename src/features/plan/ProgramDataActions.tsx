@@ -1,12 +1,10 @@
-import { useRef, useState, type ReactNode } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
-import { exerciseRepo, checkinRepo, programRepo, settingsRepo, workoutRepo } from '@/data/repositories'
+import { useRef, useState } from 'react'
+import { exerciseRepo, programRepo } from '@/data/repositories'
 import { validateProgramImport } from '@/domain/programImport'
 import { parseProgramMarkdown } from '@/domain/programMarkdown'
 import { toCanonicalProgramJson, programExportFilename } from '@/domain/programExport'
-import { buildFullDataExport, toFullDataExportJson, fullDataExportFilename } from '@/domain/dataExport'
 import { shareOrDownloadFile } from '@/lib/shareOrDownloadFile'
-import { toDateKey } from '@/lib/dates'
+import { SecondaryButton } from '@/ui/SecondaryButton'
 import type { Program } from '@/domain/types'
 
 type ImportState =
@@ -18,8 +16,9 @@ type ImportState =
 type ExportState = { status: 'idle' } | { status: 'done'; message: string }
 
 /**
- * Quiet Import/Export actions for the Plan page — the program surface (see
- * docs/DataPortability.md). No new nav entry; this is the whole surface.
+ * Import/Export program — the program surface (see
+ * docs/DataPortability.md's revised Surface section). Full-data backup
+ * moved to Settings; this is program content only.
  */
 export function ProgramDataActions({ program }: { program: Program }) {
   const [importState, setImportState] = useState<ImportState>({ status: 'idle' })
@@ -79,32 +78,14 @@ export function ProgramDataActions({ program }: { program: Program }) {
     }
   }
 
-  async function exportAllData() {
-    const [programs, workouts, checkins, settings] = await Promise.all([
-      programRepo.getAll(),
-      workoutRepo.getAll(),
-      checkinRepo.getAll(),
-      settingsRepo.get(),
-    ])
-    const data = buildFullDataExport({
-      programs,
-      workouts,
-      checkins,
-      settings,
-      exportedAt: new Date().toISOString(),
-    })
-    const outcome = await shareOrDownloadFile(
-      fullDataExportFilename(toDateKey(new Date())),
-      toFullDataExportJson(data),
-    )
-    if (outcome !== 'cancelled') {
-      setExportState({ status: 'done', message: 'Backup saved.' })
-    }
-  }
-
   return (
-    <div className="mt-6 flex flex-wrap gap-3">
-      <ActionButton onClick={() => fileInputRef.current?.click()}>Import program</ActionButton>
+    <div className="mt-6">
+      <div className="grid grid-cols-2 gap-3">
+        <SecondaryButton onClick={() => fileInputRef.current?.click()}>
+          Import program
+        </SecondaryButton>
+        <SecondaryButton onClick={() => void exportProgram()}>Export program</SecondaryButton>
+      </div>
       <input
         ref={fileInputRef}
         type="file"
@@ -116,8 +97,6 @@ export function ProgramDataActions({ program }: { program: Program }) {
           if (file) void handleFile(file)
         }}
       />
-      <ActionButton onClick={() => void exportProgram()}>Export program</ActionButton>
-      <ActionButton onClick={() => void exportAllData()}>Export all data</ActionButton>
 
       <ImportFeedback
         state={importState}
@@ -125,33 +104,11 @@ export function ProgramDataActions({ program }: { program: Program }) {
         onCancel={() => setImportState({ status: 'idle' })}
       />
       {exportState.status === 'done' && (
-        <p role="status" className="w-full text-sm text-ink-secondary">
+        <p role="status" className="mt-3 text-sm text-ink-secondary">
           {exportState.message}
         </p>
       )}
     </div>
-  )
-}
-
-/**
- * The app's established secondary-control pattern (HoldTimer's "Start
- * hold", the early-start affordance) — bordered, text-ink-secondary,
- * never amber. whileTap mirrors Log set's press feedback exactly;
- * active:bg-raised (GroupedRow's own press tint) covers reduced-motion,
- * which drops whileTap entirely.
- */
-function ActionButton({ onClick, children }: { onClick: () => void; children: ReactNode }) {
-  const reducedMotion = useReducedMotion()
-  return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      whileTap={reducedMotion ? undefined : { scale: 0.94 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-      className="rounded-full border border-border px-4 py-3 text-sm font-medium text-ink-secondary transition-colors active:bg-raised hover:border-border-strong hover:text-ink"
-    >
-      {children}
-    </motion.button>
   )
 }
 
@@ -168,7 +125,7 @@ function ImportFeedback({
 
   if (state.status === 'error') {
     return (
-      <p role="alert" className="w-full text-clay">
+      <p role="alert" className="mt-3 text-clay">
         {state.message}
       </p>
     )
@@ -176,14 +133,14 @@ function ImportFeedback({
 
   if (state.status === 'done') {
     return (
-      <p role="status" className="w-full text-ink-secondary">
+      <p role="status" className="mt-3 text-ink-secondary">
         Imported "{state.name}".
       </p>
     )
   }
 
   return (
-    <p role="alert" className="flex w-full flex-wrap items-baseline gap-x-2 text-ink-secondary">
+    <p role="alert" className="mt-3 flex flex-wrap items-baseline gap-x-2 text-ink-secondary">
       <span>
         "{state.program.name}" replaces "{state.existingName}" — same program id.
       </span>
