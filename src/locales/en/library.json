@@ -1,1 +1,20 @@
-{}
+{
+  "heading": "Exercises",
+  "group": {
+    "lower": "Lower body",
+    "push": "Push",
+    "pull": "Pull",
+    "core": "Core"
+  },
+  "notFound": "This exercise isn't in the library. It may have been renamed.",
+  "unilateralSuffix": "one side at a time",
+  "techniqueSectionAriaLabel": "Technique cues",
+  "techniqueHeading": "Technique",
+  "conceptSectionAriaLabel": "Concept",
+  "whyItMatters": "Why it matters — {{title}}",
+  "substitutionsSectionAriaLabel": "Substitutions",
+  "swapFor": "Swap for",
+  "backLink": {
+    "day": "Day"
+  }
+}

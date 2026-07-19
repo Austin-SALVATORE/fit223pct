@@ -1,1 +1,20 @@
-{}
+{
+  "heading": "TODO",
+  "group": {
+    "lower": "TODO",
+    "push": "TODO",
+    "pull": "TODO",
+    "core": "TODO"
+  },
+  "notFound": "TODO",
+  "unilateralSuffix": "TODO",
+  "techniqueSectionAriaLabel": "TODO",
+  "techniqueHeading": "TODO",
+  "conceptSectionAriaLabel": "TODO",
+  "whyItMatters": "TODO",
+  "substitutionsSectionAriaLabel": "TODO",
+  "swapFor": "TODO",
+  "backLink": {
+    "day": "TODO"
+  }
+}

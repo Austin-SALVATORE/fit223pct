@@ -1,1 +1,32 @@
-{}
+{
+  "direction": {
+    "increasing": "trending up",
+    "steady": "holding steady",
+    "decreasing": "trending down"
+  },
+  "consistency": {
+    "sectionLabel": "Consistency",
+    "noProgram": "No training program is set up yet. Consistency will appear here once one begins.",
+    "summary": "{{completedCount}} of {{scheduledCount}} scheduled sessions completed",
+    "windowLine": "Over the last {{days}} days"
+  },
+  "strength": {
+    "sectionLabel": "Strength",
+    "noHistory": "Log a few sessions to start seeing strength trends here.",
+    "stillGathering": "Still gathering data",
+    "sessionsOfThree": "{{count}} of 3 sessions",
+    "stagnation": {
+      "noIncreasePrefix": "No increase in",
+      "sessionCount_one": "{{count}} session",
+      "sessionCount_other": "{{count}} sessions",
+      "excluded_one": " ({{count}} easier day not counted)",
+      "excluded_other": " ({{count}} easier days not counted)",
+      "worthChange": "Worth a change of stimulus —",
+      "trySubstitution": "try {{name}}"
+    }
+  },
+  "waist": {
+    "sectionLabel": "Waist",
+    "rangeLine": "{{firstValue}} on {{firstDate}} → {{lastValue}} on {{lastDate}}"
+  }
+}

@@ -1,1 +1,32 @@
-{}
+{
+  "direction": {
+    "increasing": "TODO",
+    "steady": "TODO",
+    "decreasing": "TODO"
+  },
+  "consistency": {
+    "sectionLabel": "TODO",
+    "noProgram": "TODO",
+    "summary": "TODO",
+    "windowLine": "TODO"
+  },
+  "strength": {
+    "sectionLabel": "TODO",
+    "noHistory": "TODO",
+    "stillGathering": "TODO",
+    "sessionsOfThree": "TODO",
+    "stagnation": {
+      "noIncreasePrefix": "TODO",
+      "sessionCount_one": "TODO",
+      "sessionCount_other": "TODO",
+      "excluded_one": "TODO",
+      "excluded_other": "TODO",
+      "worthChange": "TODO",
+      "trySubstitution": "TODO"
+    }
+  },
+  "waist": {
+    "sectionLabel": "TODO",
+    "rangeLine": "TODO"
+  }
+}

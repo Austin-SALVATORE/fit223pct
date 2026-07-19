@@ -1,4 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { checkinRepo, exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
 import { consistencyTrend, strengthTrend, waistTrend } from '@/domain/trends'
@@ -11,6 +12,7 @@ import { StrengthCard } from './StrengthCard'
 import { WaistCard } from './WaistCard'
 
 export function ProgressPage() {
+  const { t } = useTranslation('progress')
   const todayKey = toDateKey(new Date())
 
   const data = useLiveQuery(async () => {
@@ -62,22 +64,20 @@ export function ProgressPage() {
     <div>
       <Heading />
 
-      <section className="mt-8" aria-label="Consistency">
-        <h2 className="eyebrow">Consistency</h2>
+      <section className="mt-8" aria-label={t('consistency.sectionLabel')}>
+        <h2 className="eyebrow">{t('consistency.sectionLabel')}</h2>
         <div className="mt-3">
           <ConsistencyCard trend={consistency} />
         </div>
       </section>
 
       {mainExerciseIds.length > 0 && (
-        <section className="mt-8" aria-label="Strength">
-          <h2 className="eyebrow">Strength</h2>
+        <section className="mt-8" aria-label={t('strength.sectionLabel')}>
+          <h2 className="eyebrow">{t('strength.sectionLabel')}</h2>
 
           {withHistory.length === 0 ? (
             <div className="mt-3 rounded-card border border-border bg-surface p-5">
-              <p className="text-ink-secondary">
-                Log a few sessions to start seeing strength trends here.
-              </p>
+              <p className="text-ink-secondary">{t('strength.noHistory')}</p>
             </div>
           ) : (
             <div className="mt-3 space-y-3">
@@ -107,7 +107,7 @@ export function ProgressPage() {
 
               {gathering.length > 0 && (
                 <div>
-                  <p className="text-xs text-ink-tertiary">Still gathering data</p>
+                  <p className="text-xs text-ink-tertiary">{t('strength.stillGathering')}</p>
                   <div className="mt-2">
                     <GroupedList>
                       {gathering.map((exerciseId) => {
@@ -124,7 +124,7 @@ export function ProgressPage() {
                               className="shrink-0 text-sm text-ink-tertiary"
                               data-numeric
                             >
-                              {sessionCount(exerciseId, completed)} of 3 sessions
+                              {t('strength.sessionsOfThree', { count: sessionCount(exerciseId, completed) })}
                             </span>
                           </GroupedRow>
                         )
@@ -138,8 +138,8 @@ export function ProgressPage() {
         </section>
       )}
 
-      <section className="mt-8" aria-label="Waist">
-        <h2 className="eyebrow">Waist</h2>
+      <section className="mt-8" aria-label={t('waist.sectionLabel')}>
+        <h2 className="eyebrow">{t('waist.sectionLabel')}</h2>
         <div className="mt-3">
           <WaistCard trend={waist} />
         </div>
@@ -154,15 +154,16 @@ function sessionCount(exerciseId: string, workouts: readonly Workout[]): number 
 }
 
 function Heading() {
+  const { t } = useTranslation('common')
   return (
     <header>
       <Link
         to="/"
         className="inline-flex items-center gap-1.5 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
       >
-        <span aria-hidden="true">←</span> Today
+        <span aria-hidden="true">←</span> {t('nav.today')}
       </Link>
-      <h1 className="text-display mt-6 text-4xl text-ink">Progress</h1>
+      <h1 className="text-display mt-6 text-4xl text-ink">{t('nav.progress')}</h1>
     </header>
   )
 }

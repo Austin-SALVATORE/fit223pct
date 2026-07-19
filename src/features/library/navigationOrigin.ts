@@ -14,14 +14,15 @@ export interface OriginState {
 
 export interface OriginTarget {
   path: string
-  label: string
+  /** Namespace-qualified i18next key — resolve via t() at render time */
+  labelKey: string
 }
 
 const STATIC_ORIGIN_TARGETS: Record<Exclude<NavigationOrigin, 'plan-day'>, OriginTarget> = {
-  today: { path: '/', label: 'Today' },
-  library: { path: '/library', label: 'Library' },
-  workout: { path: '/workout', label: 'Workout' },
-  progress: { path: '/progress', label: 'Progress' },
+  today: { path: '/', labelKey: 'common:nav.today' },
+  library: { path: '/library', labelKey: 'common:nav.library' },
+  workout: { path: '/workout', labelKey: 'common:nav.workout' },
+  progress: { path: '/progress', labelKey: 'common:nav.progress' },
 }
 
 const KNOWN_ORIGINS: readonly NavigationOrigin[] = [
@@ -48,7 +49,9 @@ export function resolveOrigin(state: unknown): OriginState {
 
 export function originTarget(origin: OriginState): OriginTarget {
   if (origin.from === 'plan-day') {
-    return origin.date ? { path: `/plan/${origin.date}`, label: 'Day' } : { path: '/plan', label: 'Plan' }
+    return origin.date
+      ? { path: `/plan/${origin.date}`, labelKey: 'library:backLink.day' }
+      : { path: '/plan', labelKey: 'common:nav.plan' }
   }
   return STATIC_ORIGIN_TARGETS[origin.from]
 }

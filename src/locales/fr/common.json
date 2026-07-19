@@ -3,7 +3,19 @@
     "today": "TODO",
     "plan": "TODO",
     "progress": "TODO",
-    "library": "TODO"
+    "library": "TODO",
+    "workout": "TODO"
+  },
+  "muscle": {
+    "quads": "TODO",
+    "hamstrings": "TODO",
+    "glutes": "TODO",
+    "chest": "TODO",
+    "back": "TODO",
+    "shoulders": "TODO",
+    "biceps": "TODO",
+    "triceps": "TODO",
+    "core": "TODO"
   },
   "activityKind": {
     "recovery": "TODO",

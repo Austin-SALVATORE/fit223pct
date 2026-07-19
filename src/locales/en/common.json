@@ -3,7 +3,19 @@
     "today": "Today",
     "plan": "Plan",
     "progress": "Progress",
-    "library": "Library"
+    "library": "Library",
+    "workout": "Workout"
+  },
+  "muscle": {
+    "quads": "Quads",
+    "hamstrings": "Hamstrings",
+    "glutes": "Glutes",
+    "chest": "Chest",
+    "back": "Back",
+    "shoulders": "Shoulders",
+    "biceps": "Biceps",
+    "triceps": "Triceps",
+    "core": "Core"
   },
   "activityKind": {
     "recovery": "Recovery",

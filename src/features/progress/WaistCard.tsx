@@ -1,9 +1,13 @@
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { Trend } from '@/domain/trends'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
-import { DIRECTION_PHRASE, formatValue } from './formatTrend'
+import { formatValue, useDirectionPhrase } from './formatTrend'
 
 export function WaistCard({ trend }: { trend: Trend }) {
+  const { t } = useTranslation('progress')
+  const directionPhrase = useDirectionPhrase(trend.status === 'insufficient-data' ? 'steady' : trend.status)
+
   if (trend.status === 'insufficient-data') {
     return <InsufficientDataCard trend={trend} />
   }
@@ -14,11 +18,15 @@ export function WaistCard({ trend }: { trend: Trend }) {
   return (
     <Card>
       <p className="text-ink" data-numeric>
-        {formatValue(last.value, trend.unit)} — {DIRECTION_PHRASE[trend.status]}
+        {formatValue(last.value, trend.unit)} — {directionPhrase}
       </p>
       <p className="mt-1 text-sm text-ink-tertiary" data-numeric>
-        {formatValue(first.value, trend.unit)} on {first.date} → {formatValue(last.value, trend.unit)} on{' '}
-        {last.date}
+        {t('waist.rangeLine', {
+          firstValue: formatValue(first.value, trend.unit),
+          firstDate: first.date,
+          lastValue: formatValue(last.value, trend.unit),
+          lastDate: last.date,
+        })}
       </p>
     </Card>
   )

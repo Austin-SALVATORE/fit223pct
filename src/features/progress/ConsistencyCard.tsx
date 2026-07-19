@@ -1,14 +1,15 @@
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { ConsistencyTrend } from '@/domain/trends'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 
 export function ConsistencyCard({ trend }: { trend: ConsistencyTrend | null }) {
+  const { t } = useTranslation('progress')
+
   if (!trend) {
     return (
       <Card>
-        <p className="text-ink-secondary">
-          No training program is set up yet. Consistency will appear here once one begins.
-        </p>
+        <p className="text-ink-secondary">{t('consistency.noProgram')}</p>
       </Card>
     )
   }
@@ -23,9 +24,14 @@ export function ConsistencyCard({ trend }: { trend: ConsistencyTrend | null }) {
   return (
     <Card>
       <p className="text-ink" data-numeric>
-        {trend.completedCount} of {trend.scheduledCount} scheduled sessions completed
+        {t('consistency.summary', {
+          completedCount: trend.completedCount,
+          scheduledCount: trend.scheduledCount,
+        })}
       </p>
-      <p className="mt-1 text-sm text-ink-tertiary">Over the last {windowDays} days</p>
+      <p className="mt-1 text-sm text-ink-tertiary">
+        {t('consistency.windowLine', { days: windowDays })}
+      </p>
     </Card>
   )
 }

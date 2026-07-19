@@ -1,10 +1,11 @@
 import { Link } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import type { MessageDescriptor } from '@/domain/message'
 import type { StagnationEvidencePoint, StagnationResult } from '@/domain/stagnation'
 import type { Trend } from '@/domain/trends'
 import type { Exercise } from '@/domain/types'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
-import { DIRECTION_PHRASE, formatValue } from './formatTrend'
+import { formatValue, useDirectionPhrase } from './formatTrend'
 
 interface StrengthCardProps {
   exercise: Exercise
@@ -14,6 +15,9 @@ interface StrengthCardProps {
 }
 
 export function StrengthCard({ exercise, trend, stagnation, substitution }: StrengthCardProps) {
+  const { t } = useTranslation('progress')
+  const directionPhrase = useDirectionPhrase(trend.status === 'insufficient-data' ? 'steady' : trend.status)
+
   return (
     <div className="rounded-card border border-border bg-surface p-5">
       <Link
@@ -28,33 +32,32 @@ export function StrengthCard({ exercise, trend, stagnation, substitution }: Stre
         <InsufficientTrend reason={trend.reason} />
       ) : (
         <p className="mt-1.5 text-sm text-ink-secondary" data-numeric>
-          {formatValue(trend.evidence.at(-1)!.value, trend.unit)} — {DIRECTION_PHRASE[trend.status]}
+          {formatValue(trend.evidence.at(-1)!.value, trend.unit)} — {directionPhrase}
         </p>
       )}
 
       {stagnation.status === 'stagnant' && (
         <div className="mt-3 rounded-lg border border-border-strong/60 bg-raised p-3.5">
           <p className="text-sm leading-relaxed text-ink-secondary">
-            No increase in <span data-numeric>{stagnation.evidence.length} sessions</span> —{' '}
+            {t('strength.stagnation.noIncreasePrefix')}{' '}
+            <span data-numeric>
+              {t('strength.stagnation.sessionCount', { count: stagnation.evidence.length })}
+            </span>
+            {' — '}
             {stagnation.evidence.map((point) => formatEvidence(point)).join(' → ')}
-            {stagnation.excludedForReadiness > 0 && (
-              <>
-                {' '}
-                ({stagnation.excludedForReadiness} easier{' '}
-                {stagnation.excludedForReadiness === 1 ? 'day' : 'days'} not counted)
-              </>
-            )}
+            {stagnation.excludedForReadiness > 0 &&
+              t('strength.stagnation.excluded', { count: stagnation.excludedForReadiness })}
             .
           </p>
           {substitution && (
             <p className="mt-2 text-sm text-ink-tertiary">
-              Worth a change of stimulus —{' '}
+              {t('strength.stagnation.worthChange')}{' '}
               <Link
                 to={`/library/${substitution.id}`}
                 state={{ from: 'progress' }}
                 className="text-amber transition-colors hover:text-amber-deep"
               >
-                try {substitution.name}
+                {t('strength.stagnation.trySubstitution', { name: substitution.name })}
               </Link>
               .
             </p>
