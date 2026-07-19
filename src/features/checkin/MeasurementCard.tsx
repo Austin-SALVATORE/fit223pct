@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { checkinRepo } from '@/data/repositories'
 import { Stepper } from '@/ui/Stepper'
 import type { CheckIn } from '@/domain/types'
@@ -19,6 +20,8 @@ const DEFAULT_WAIST_CM = 80
  * save step, and nothing here tracks whether "today's" checkpoint was done.
  */
 export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
+  const { t } = useTranslation('checkin')
+  const { t: tCommon } = useTranslation('common')
   const [editing, setEditing] = useState(false)
   const complete = checkIn?.weightKg != null && checkIn?.waistCm != null
   const expanded = editing || !complete
@@ -48,25 +51,25 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
         className="mt-8 flex w-full items-baseline justify-between gap-4 rounded-card border border-border bg-surface p-5 text-left"
       >
         <div className="min-w-0">
-          <h2 className="eyebrow">Weight &amp; waist</h2>
+          <h2 className="eyebrow">{t('measurement.heading')}</h2>
           <p className="mt-2 text-ink" data-numeric>
             {checkIn!.weightKg} kg · {checkIn!.waistCm} cm
           </p>
         </div>
-        <span className="shrink-0 text-sm text-ink-tertiary">Edit</span>
+        <span className="shrink-0 text-sm text-ink-tertiary">{tCommon('edit')}</span>
       </button>
     )
   }
 
   return (
     <section
-      aria-label="Weight and waist measurement"
+      aria-label={t('measurement.sectionLabel')}
       className="mt-8 rounded-card border border-border bg-surface p-5"
     >
-      <h2 className="eyebrow">Weight &amp; waist</h2>
+      <h2 className="eyebrow">{t('measurement.heading')}</h2>
       <div className="mt-4 flex justify-center gap-8">
         <Stepper
-          label="Weight"
+          label={t('measurement.weightLabel')}
           value={checkIn?.weightKg ?? DEFAULT_WEIGHT_KG}
           step={0.1}
           min={20}
@@ -74,7 +77,7 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
           onChange={(value) => void save('weightKg', value)}
         />
         <Stepper
-          label="Waist"
+          label={t('measurement.waistLabel')}
           value={checkIn?.waistCm ?? DEFAULT_WAIST_CM}
           step={0.5}
           min={30}
@@ -88,7 +91,7 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
           onClick={() => setEditing(false)}
           className="mt-4 w-full text-center text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
         >
-          Done
+          {tCommon('done')}
         </button>
       )}
     </section>

@@ -11,5 +11,7 @@
     "cardio": "Cardio",
     "optional": "Optional",
     "checkpoint": "Checkpoint"
-  }
+  },
+  "edit": "Edit",
+  "done": "Done"
 }

@@ -3,5 +3,24 @@
     "ready": "Ready to train.",
     "steady": "Good to go.",
     "easier": "Taking it a touch easier today — $t({{driversKey}})."
+  },
+  "sectionLabel": "Readiness check-in",
+  "heading": "Today's readiness",
+  "hint": "1 low · 5 high",
+  "notRecorded": "Not recorded today.",
+  "locked": "Locked",
+  "lockedNote": "Locked in for today's session — changes now apply from tomorrow.",
+  "signalLabel": {
+    "sleep": "Sleep",
+    "energy": "Energy",
+    "soreness": "Freshness",
+    "stress": "Calm",
+    "motivation": "Motivation"
+  },
+  "measurement": {
+    "sectionLabel": "Weight and waist measurement",
+    "heading": "Weight & waist",
+    "weightLabel": "Weight",
+    "waistLabel": "Waist"
   }
 }

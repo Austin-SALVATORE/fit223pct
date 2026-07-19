@@ -3,5 +3,24 @@
     "ready": "TODO",
     "steady": "TODO",
     "easier": "TODO"
+  },
+  "sectionLabel": "TODO",
+  "heading": "TODO",
+  "hint": "TODO",
+  "notRecorded": "TODO",
+  "locked": "TODO",
+  "lockedNote": "TODO",
+  "signalLabel": {
+    "sleep": "TODO",
+    "energy": "TODO",
+    "soreness": "TODO",
+    "stress": "TODO",
+    "motivation": "TODO"
+  },
+  "measurement": {
+    "sectionLabel": "TODO",
+    "heading": "TODO",
+    "weightLabel": "TODO",
+    "waistLabel": "TODO"
   }
 }
