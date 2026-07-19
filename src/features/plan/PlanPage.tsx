@@ -5,23 +5,25 @@ import { Link } from 'react-router'
 import { programRepo, workoutRepo } from '@/data/repositories'
 import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
-import { addDays, isoWeekday, parseDateKey, toDateKey } from '@/lib/dates'
+import { addDays, dateFormattingLocale, isoWeekday, parseDateKey, toDateKey } from '@/lib/dates'
+import { useLocale } from '@/i18n/useLocale'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { ProgramDataActions } from './ProgramDataActions'
 import type { Program } from '@/domain/types'
 
-const WEEKDAY_ABBR: Record<number, string> = {
-  1: 'Mon',
-  2: 'Tue',
-  3: 'Wed',
-  4: 'Thu',
-  5: 'Fri',
-  6: 'Sat',
-  7: 'Sun',
+// A known Monday — used only to look up each ISO weekday's short name via
+// Intl.DateTimeFormat, never as a real date.
+const REFERENCE_MONDAY = new Date(2024, 0, 1)
+
+function weekdayAbbr(weekday: number, locale: string): string {
+  return addDays(REFERENCE_MONDAY, weekday - 1).toLocaleDateString(dateFormattingLocale(locale), {
+    weekday: 'short',
+  })
 }
 
 export function PlanPage() {
   const { t } = useTranslation('plan')
+  const locale = useLocale()
   const today = new Date()
   const todayKey = toDateKey(today)
   const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null)
@@ -68,7 +70,7 @@ export function PlanPage() {
   return (
     <div>
       <Heading />
-      <PhaseHeader program={program} />
+      <PhaseHeader program={program} locale={locale} />
 
       <PhaseNav
         previous={previousProgram}
@@ -81,12 +83,12 @@ export function PlanPage() {
       {hasProjectedDays && <p className="mt-6 text-sm leading-relaxed text-ink-tertiary">{t('projectedNote')}</p>}
 
       {weeks.map((week) => {
-        const weekLabel = t('weekOf', { weekStart: week.weekStart })
+        const weekLabel = t('weekOf', { weekStart: formatShortDate(week.weekStart, locale) })
         return (
           <section key={week.weekStart} className="mt-6" aria-label={weekLabel}>
             <GroupedList label={weekLabel}>
               {week.days.map((day) => (
-                <DayRow key={day.date} day={day} />
+                <DayRow key={day.date} day={day} locale={locale} />
               ))}
             </GroupedList>
           </section>
@@ -96,10 +98,10 @@ export function PlanPage() {
   )
 }
 
-function DayRow({ day }: { day: ScheduleDay }) {
+function DayRow({ day, locale }: { day: ScheduleDay; locale: string }) {
   const { t } = useTranslation('plan')
   const { t: tCommon } = useTranslation('common')
-  const label = formatDayLabel(day.date)
+  const label = formatDayLabel(day.date, locale)
 
   if (day.isToday) {
     return (
@@ -163,29 +165,29 @@ function DayRow({ day }: { day: ScheduleDay }) {
   )
 }
 
-function PhaseHeader({ program }: { program: Program }) {
-  const { t, i18n } = useTranslation('plan')
+function PhaseHeader({ program, locale }: { program: Program; locale: string }) {
+  const { t } = useTranslation('plan')
   const uniqueRotation = [...new Set(program.rotation)]
   // Intl.ListFormat, not a hardcoded ' and ' join — the same latent i18n
   // bug the driver-phrase composition caught in Phase 2, here too: joining
   // words are locale grammar, not punctuation.
-  const rotationList = new Intl.ListFormat(i18n.language, {
+  const rotationList = new Intl.ListFormat(locale, {
     style: 'long',
     type: 'conjunction',
   }).format(uniqueRotation)
   const weekdaysLabel = program.trainingWeekdays
     .slice()
     .sort((a, b) => a - b)
-    .map((d) => WEEKDAY_ABBR[d])
+    .map((d) => weekdayAbbr(d, locale))
     .join(' / ')
 
   return (
     <section className="mt-6">
       <h2 className="eyebrow">{program.name}</h2>
       <p className="mt-1 text-sm text-ink-secondary">
-        {formatShortDate(program.startDate)}
+        {formatShortDate(program.startDate, locale)}
         {' – '}
-        {program.endDate ? formatShortDate(program.endDate) : t('ongoing')}
+        {program.endDate ? formatShortDate(program.endDate, locale) : t('ongoing')}
       </p>
       <p className="mt-3 text-sm leading-relaxed text-ink-secondary">
         {program.sessions.map((s) => `${s.name} — ${s.focus}`).join(' · ')}
@@ -298,16 +300,16 @@ function mondayOf(dateKey: string): string {
   return toDateKey(addDays(date, -(isoWeekday(date) - 1)))
 }
 
-function formatDayLabel(dateKey: string): string {
-  return parseDateKey(dateKey).toLocaleDateString('en-GB', {
+function formatDayLabel(dateKey: string, locale: string): string {
+  return parseDateKey(dateKey).toLocaleDateString(dateFormattingLocale(locale), {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
   })
 }
 
-function formatShortDate(dateKey: string): string {
-  return parseDateKey(dateKey).toLocaleDateString('en-GB', {
+function formatShortDate(dateKey: string, locale: string): string {
+  return parseDateKey(dateKey).toLocaleDateString(dateFormattingLocale(locale), {
     day: 'numeric',
     month: 'short',
   })

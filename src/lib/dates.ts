@@ -25,8 +25,19 @@ export function addDays(date: Date, days: number): Date {
   return next
 }
 
-export function formatLongDate(date: Date): string {
-  return date.toLocaleDateString('en-GB', {
+/**
+ * The app's established English date convention is day-before-month
+ * ("22 July"), which is the `en-GB` formatting, not the `en`/`en-US`
+ * default ("July 22") `Intl` would otherwise apply — this is the one
+ * place that distinction is resolved, so every date-formatting call site
+ * can just pass the active i18next locale through unchanged.
+ */
+export function dateFormattingLocale(locale: string): string {
+  return locale === 'en' ? 'en-GB' : locale
+}
+
+export function formatLongDate(date: Date, locale: string): string {
+  return date.toLocaleDateString(dateFormattingLocale(locale), {
     weekday: 'long',
     day: 'numeric',
     month: 'long',

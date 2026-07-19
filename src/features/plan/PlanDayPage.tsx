@@ -6,6 +6,7 @@ import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
 import { formatLongDate, parseDateKey, toDateKey } from '@/lib/dates'
 import { useActivityKindLabel } from '@/lib/activityKindLabel'
+import { useLocale } from '@/i18n/useLocale'
 import { SessionPreview } from '@/features/today/SessionPreview'
 import type { ActivityTemplate, Exercise, LoggedSet, SessionTemplate, Workout } from '@/domain/types'
 
@@ -17,6 +18,7 @@ const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/
  * rather than duplicating it.
  */
 export function PlanDayPage() {
+  const locale = useLocale()
   const { date } = useParams<{ date: string }>()
   const validDate = typeof date === 'string' && DATE_KEY_PATTERN.test(date)
   const todayKey = toDateKey(new Date())
@@ -44,7 +46,7 @@ export function PlanDayPage() {
   return (
     <div>
       <BackToPlan />
-      <h1 className="text-display mt-6 text-4xl text-ink">{formatLongDate(parseDateKey(date))}</h1>
+      <h1 className="text-display mt-6 text-4xl text-ink">{formatLongDate(parseDateKey(date), locale)}</h1>
       <DayDetailBody day={data.day} exerciseById={data.exerciseById} date={date} />
     </div>
   )

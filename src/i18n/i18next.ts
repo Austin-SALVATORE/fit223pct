@@ -53,6 +53,11 @@ i18next
     saveMissing: import.meta.env.DEV,
     missingKeyHandler: import.meta.env.DEV
       ? (languages: readonly string[], namespace: string, key: string) => {
+          // Before the bundled-JSON backend resolves, every key looks
+          // "missing" for a moment — that's the no-Suspense tradeoff above,
+          // not a real omission. Only log once init (incl. backend load)
+          // has actually completed.
+          if (!i18next.isInitialized) return
           console.error(`[i18n] missing key: ${namespace}:${key} (${languages.join(',')})`)
         }
       : undefined,

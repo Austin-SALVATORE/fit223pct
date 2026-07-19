@@ -11,6 +11,7 @@ import { applyReadiness } from '@/domain/adjustments'
 import { buildWeeklyReview, reviewIsUnseen, type WeeklyReview } from '@/domain/weeklyReview'
 import { formatLongDate, toDateKey } from '@/lib/dates'
 import { useActivityKindLabel } from '@/lib/activityKindLabel'
+import { useLocale } from '@/i18n/useLocale'
 import type { ActivityTemplate, CheckIn, Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
 import { CheckInCard } from '@/features/checkin/CheckInCard'
 import { MeasurementCard } from '@/features/checkin/MeasurementCard'
@@ -503,10 +504,11 @@ function DoneToday({ workout }: { workout: Workout }) {
 
 function Header({ date }: { date: Date }) {
   const { t } = useTranslation('common')
+  const locale = useLocale()
   return (
     <header className="flex items-baseline justify-between">
       <p className="eyebrow">
-        <time dateTime={toDateKey(date)}>{formatLongDate(date)}</time>
+        <time dateTime={toDateKey(date)}>{formatLongDate(date, locale)}</time>
       </p>
       <nav className="flex gap-4">
         <Link
