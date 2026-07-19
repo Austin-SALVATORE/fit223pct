@@ -1,0 +1,115 @@
+# Decline Bench Press — image generation prompt
+
+| Field | Value |
+|---|---|
+| Exercise id | `decline-bench-press` |
+| Category | Chest Variants |
+| Camera | `bench-side` |
+| Frames | 6 |
+| Equipment | Barbell, Decline bench |
+| Status | `planned` |
+
+## Prompt
+
+```text
+Create one wide instructional fitness illustration: a single horizontal strip
+showing the SAME person performing one repetition, read left to right.
+
+RENDERING STYLE (identical in every image):
+Semi-realistic digital vector illustration. Smooth cel shading with soft
+gradient blends. No visible outlines, no sketch linework, no cross-hatching, no
+painterly brush texture, no halftone. Clean, premium, modern fitness-app
+artwork. Even neutral studio lighting from the front-left. Soft form shading
+only — no cast shadow on the ground, no dark occlusion pooling.
+
+BACKGROUND:
+Pure flat white #FFFFFF, completely empty. No floor, no ground line, no shadow,
+no gym environment, no gradient, no vignette, no frame or border.
+
+CHARACTER (must be the same woman in every image and every frame):
+One adult woman, athletic and lean, visible but not exaggerated muscle
+definition, mid-to-late twenties. Warm medium-tan skin: highlight #FAC497,
+midtone #EBA878, shadow #CE8254. Dark near-black brown hair, #2B201D with
+#3F2F28 highlights, pulled into a high ponytail that hangs behind the shoulder
+and follows the movement naturally. Softly defined realistic face, subtle
+natural makeup, calm and confident neutral expression, mouth closed, eyes open
+and looking in the direction the movement faces.
+
+WARDROBE (identical in every image):
+Steel denim-blue racerback sports bra, #2C4F6C, midriff exposed.
+Deep navy-charcoal high-waisted full-length leggings, #31384A, highlights
+#353C4E, shadows #1D222F.
+Clean white low-profile sneakers with white soles, #FEFEFE, shading #E9E9EA.
+No visible socks, no jewelry, no watch, no logos, no text or graphics on any
+clothing.
+
+EQUIPMENT RENDERING:
+Matte near-black metal #1D2025 with brushed chrome shafts and handles #EFEFEF.
+Upholstery and bench pads matte near-black #1D2025. Simple, clean, realistic
+proportions with believable weight and correct scale against the body.
+
+COMPOSITION:
+All figures stand on one shared invisible ground line, at exactly the same
+scale, evenly spaced with clear white gaps between them. No figure overlaps,
+touches, or is cropped by another. The entire body is visible in every frame,
+including both feet. Generous white margin above and below. Eye-level camera at
+an identical angle and distance for every frame.
+
+STRICTLY EXCLUDE:
+Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
+lines, grids, watermarks, logos, background objects, mirrors, other people,
+extra or missing limbs, distorted hands, broken or hyperextended joints.
+
+MOVEMENT FOR THIS IMAGE:
+Exercise: Decline Bench Press
+Camera: bench-side view, the bench seen from the side so the decline angle,
+the bar path and the elbow angle are all readable.
+Equipment: one long brushed chrome bar with matte black bumper plates, evenly
+loaded both sides, plus one matte black padded bench declined roughly 15
+degrees head-down on a black steel frame, with a padded black ankle roller at
+the raised foot end. The head end points toward the left of each frame and
+sits lower than the feet; the shins are hooked behind the ankle roller at the
+raised end. No uprights or rack in frame.
+Number of frames: 6, evenly spaced left to right.
+
+Frames:
+1. Lockout start. Lying back on the decline bench with the head lower than the
+   hips, head, upper back and glutes on the pad, shins hooked behind the ankle
+   roller. Hands just wider than shoulder width with a full thumbs-around
+   grip, arms extended with the bar held directly over the lower chest.
+2. Early descent, elbows bent to roughly 25 degrees. The bar travels down
+   toward the lower chest on a short, nearly vertical path, upper arms tucking
+   toward roughly 45 degrees from the torso rather than flaring to 90.
+3. Half descent, elbows at roughly 90 degrees, forearms vertical, bar just
+   above the lower chest, shoulder blades pinned back and down into the pad.
+4. Bottom position. The bar lightly touches the lower chest at the base of the
+   sternum, elbows still tucked to roughly 45 degrees and sitting under the
+   wrists, forearms vertical from this side view, wrists neutral, chest
+   lifted, glutes on the pad, shins still hooked behind the roller.
+5. Ascent, back to roughly a half press. The bar drives up along the same
+   short, nearly vertical path, elbows extending, hips staying down on the
+   pad.
+6. Lockout again, identical to frame 1, elbows extended, bar directly over the
+   lower chest.
+
+TECHNIQUE — must be correct in every frame:
+- The bench reads clearly as roughly 15 degrees head-down in every frame, the
+  head end lower than the raised foot end.
+- The shins stay hooked behind the padded ankle roller — this is what anchors
+  the body on the decline.
+- The bar touches the lower chest at the base of the sternum — never the neck
+  and never the upper chest.
+- Elbows stay at roughly 45 degrees to the torso, never flared to 90.
+- Forearms stay vertical with the wrists stacked over the elbows.
+- The bar stays level and evenly loaded on both sides.
+```
+
+## Form checkpoints (QA)
+
+- [ ] Bench reads as roughly 15 degrees head-down in all six frames
+- [ ] Shins hooked behind the ankle roller in all six frames
+- [ ] Bar touches the lower chest at the base of the sternum, never the neck
+- [ ] Elbows tucked to roughly 45 degrees, wrists stacked over elbows
+- [ ] Head, upper back and glutes stay on the pad throughout
+- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Readable as a decline barbell press at 64 px wide

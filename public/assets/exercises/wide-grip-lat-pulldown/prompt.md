@@ -1,0 +1,132 @@
+# Wide-Grip Lat Pulldown — image generation prompt
+
+| Field | Value |
+|---|---|
+| Exercise id | `wide-grip-lat-pulldown` |
+| Category | Back Variants |
+| Camera | `machine-three-quarter` |
+| Frames | 6 |
+| Equipment | Lat pulldown — long bar, wide overhand grip |
+| Status | `planned` |
+
+## Prompt
+
+```text
+Create one wide instructional fitness illustration: a single horizontal strip
+showing the SAME person performing one repetition, read left to right.
+
+RENDERING STYLE (identical in every image):
+Semi-realistic digital vector illustration. Smooth cel shading with soft
+gradient blends. No visible outlines, no sketch linework, no cross-hatching, no
+painterly brush texture, no halftone. Clean, premium, modern fitness-app
+artwork. Even neutral studio lighting from the front-left. Soft form shading
+only — no cast shadow on the ground, no dark occlusion pooling.
+
+BACKGROUND:
+Pure flat white #FFFFFF, completely empty. No floor, no ground line, no shadow,
+no gym environment, no gradient, no vignette, no frame or border.
+
+CHARACTER (must be the same woman in every image and every frame):
+One adult woman, athletic and lean, visible but not exaggerated muscle
+definition, mid-to-late twenties. Warm medium-tan skin: highlight #FAC497,
+midtone #EBA878, shadow #CE8254. Dark near-black brown hair, #2B201D with
+#3F2F28 highlights, pulled into a high ponytail that hangs behind the shoulder
+and follows the movement naturally. Softly defined realistic face, subtle
+natural makeup, calm and confident neutral expression, mouth closed, eyes open
+and looking in the direction the movement faces.
+
+WARDROBE (identical in every image):
+Steel denim-blue racerback sports bra, #2C4F6C, midriff exposed.
+Deep navy-charcoal high-waisted full-length leggings, #31384A, highlights
+#353C4E, shadows #1D222F.
+Clean white low-profile sneakers with white soles, #FEFEFE, shading #E9E9EA.
+No visible socks, no jewelry, no watch, no logos, no text or graphics on any
+clothing.
+
+EQUIPMENT RENDERING:
+Matte near-black metal #1D2025 with brushed chrome shafts and handles #EFEFEF.
+Upholstery and bench pads matte near-black #1D2025. Simple, clean, realistic
+proportions with believable weight and correct scale against the body.
+
+COMPOSITION:
+All figures stand on one shared invisible ground line, at exactly the same
+scale, evenly spaced with clear white gaps between them. No figure overlaps,
+touches, or is cropped by another. The entire body is visible in every frame,
+including both feet. Generous white margin above and below. Eye-level camera at
+an identical angle and distance for every frame.
+
+STRICTLY EXCLUDE:
+Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
+lines, grids, watermarks, logos, background objects, mirrors, other people,
+extra or missing limbs, distorted hands, broken or hyperextended joints.
+
+MOVEMENT FOR THIS IMAGE:
+Exercise: Wide-Grip Lat Pulldown
+Camera: machine three-quarter view, the machine column set slightly behind and
+to the side so the cable line, the bar path and the front of the torso all
+stay readable.
+Equipment: matte black seated frame with thigh pad, chrome cable, long straight
+black bar. The woman is seated on the pad with both thighs locked under the
+thigh pad, feet flat on the floor, shins vertical. The grip is the loudest
+visual element: each hand a full hand-span outside its shoulder, palms facing
+forward, in every frame.
+Number of frames: 6, evenly spaced left to right.
+
+Frames:
+1. Start position. Seated tall, thighs pinned under the pad, both arms fully
+   extended overhead in a wide V, each hand a full hand-span outside its
+   shoulder on the long bar, palms facing forward. Shoulder blades elevated
+   toward the ears by the load, elbows straight but not locked, torso vertical.
+2. Initiation. Arms still straight in the wide V, palms forward, hands still
+   far outside the shoulders. The shoulder blades retract and depress — the
+   shoulders visibly drop away from the ears — before the elbows bend. Torso
+   begins a small backward lean of about 10 degrees from vertical.
+3. Early pull. Elbows bent to roughly 140 degrees and driving down and out to
+   the sides in the plane of the wide bar, hands still well outside the
+   shoulders, palms forward. Bar at forehead height, chest lifting toward the
+   bar, torso lean now 15 degrees and fixed there.
+4. End position, deepest point. Bar just under the chin at upper-chest height,
+   hands still a full hand-span outside each shoulder, palms forward, elbows
+   bent to roughly 60 degrees and pointing down and out, wide of the torso,
+   shoulder blades fully retracted and depressed, chest tall, torso still at
+   the same 15-degree backward lean, wrists straight and stacked over the
+   forearms.
+5. Controlled return, halfway. Elbows opening back toward 140 degrees, bar at
+   forehead height, hands still wide, shoulder blades still held down, torso
+   lean unchanged.
+6. Return to full stretch, identical to frame 1. Arms fully extended overhead
+   in the wide V, hands far outside the shoulders, shoulder blades allowed to
+   rise again under control, thighs still locked under the pad.
+
+TECHNIQUE — must be correct in every frame:
+- Each hand stays a full hand-span outside its shoulder with the palms facing
+  forward — the widest grip in the pulldown family.
+- Shoulder blades depress before the elbows bend on every rep.
+- The bar travels to the upper chest in front of the head, never behind the
+  neck.
+- Elbows track down and out in the plane of the bar, never drifting behind
+  the body.
+- Torso lean stays fixed at roughly 15 degrees — no rocking backwards.
+- Thighs stay pinned under the pad and both feet stay flat on the floor.
+```
+
+## Form checkpoints (QA)
+
+- [ ] Hands a full hand-span outside each shoulder, palms forward, in every
+      frame — the arms form a clear wide V overhead
+- [ ] Frame 2 shows scapular depression with the elbows still straight
+- [ ] Bar finishes at the upper chest in front of the head — never behind
+      the neck
+- [ ] Torso lean identical in frames 3 through 6 — no rocking
+- [ ] Distinct from `lat-pulldown` (hands just wider than the shoulders),
+      `close-grip-lat-pulldown` (hands inside the shoulders, underhand) and
+      `neutral-grip-lat-pulldown` (compact parallel-grip handle) — the giveaway
+      here is how far outside the shoulders the hands sit
+- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Readable as a vertical pull at 64 px wide
+
+> Note: at 64 px thumbnails this asset, `lat-pulldown`,
+> `wide-grip-lat-pulldown`, `close-grip-lat-pulldown` and
+> `neutral-grip-lat-pulldown` are nearly indistinguishable — the app should
+> consider showing one generic pulldown thumbnail for all four and reserving
+> the grip-specific art for the full-size exercise detail view.
