@@ -37,7 +37,7 @@ const session: SessionTemplate = {
 function readiness(tier: Readiness['tier'], consecutiveLowDays = tier === 'easier' ? 1 : 0): Readiness {
   return {
     tier,
-    drivers: tier === 'easier' ? [{ signal: 'sleep', label: 'short sleep' }] : [],
+    drivers: tier === 'easier' ? [{ signal: 'sleep' }] : [],
     consecutiveLowDays,
   }
 }
@@ -84,11 +84,12 @@ describe('applyReadiness', () => {
     expect(result.session.items[0].sets).toBe(3)
   })
 
-  it('explains every adjustment with a driver-derived reason', () => {
+  it('explains every adjustment with a driver-derived reason, keyed by signal — never a label', () => {
     const result = applyReadiness(session, readiness('easier'))
     expect(result.adjustments.length).toBeGreaterThan(0)
     for (const adjustment of result.adjustments) {
-      expect(adjustment.reason).toContain('sleep')
+      expect(adjustment.reason.params?.driversKey).toBe('domain:readiness.drivers.one')
+      expect(adjustment.reason.params?.signal).toBe('sleep')
     }
   })
 

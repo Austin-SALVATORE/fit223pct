@@ -1,1 +1,52 @@
-{}
+{
+  "readiness": {
+    "signal": {
+      "sleep": "TODO",
+      "soreness": "TODO",
+      "energy": "TODO",
+      "stress": "TODO",
+      "motivation": "TODO"
+    },
+    "drivers": {
+      "none": "TODO",
+      "one": "TODO",
+      "two": "TODO",
+      "many": "TODO"
+    }
+  },
+  "adjustments": {
+    "effort": "TODO",
+    "volume": "TODO"
+  },
+  "progression": {
+    "start": "TODO",
+    "addReps": "TODO",
+    "consolidateNoReserve": "TODO",
+    "consolidateEasier": "TODO",
+    "addTechnique": "TODO",
+    "increaseLoad": "TODO"
+  },
+  "highlight": {
+    "first": "TODO",
+    "load": "TODO",
+    "effortSeconds": "TODO",
+    "effortReps_one": "TODO",
+    "effortReps_other": "TODO",
+    "steady": "TODO"
+  },
+  "coachInsight": {
+    "easier": "TODO",
+    "loadsUp_one": "TODO",
+    "loadsUp_other": "TODO",
+    "effortsUp": "TODO",
+    "baselines": "TODO",
+    "consistent": "TODO"
+  },
+  "trends": {
+    "firstWeekInProgress": "TODO",
+    "noScheduledSessions": "TODO",
+    "needMoreStrengthData": "TODO",
+    "needMoreWaistData": "TODO",
+    "spreadWaistMeasurements": "TODO"
+  }
+}

@@ -1,1 +1,52 @@
-{}
+{
+  "readiness": {
+    "signal": {
+      "sleep": "short sleep",
+      "soreness": "sore muscles",
+      "energy": "low energy",
+      "stress": "a stressful stretch",
+      "motivation": "low motivation"
+    },
+    "drivers": {
+      "none": "readiness is low",
+      "one": "$t(domain:readiness.signal.{{signal}})",
+      "two": "$t(domain:readiness.signal.{{signal1}}) and $t(domain:readiness.signal.{{signal2}})",
+      "many": "a rough day all around"
+    }
+  },
+  "adjustments": {
+    "effort": "Keeping an extra rep in reserve today — $t({{driversKey}}).",
+    "volume": "One set less on the small stuff — $t({{driversKey}})."
+  },
+  "progression": {
+    "start": "First session — start at the prescribed weight and own the range.",
+    "addReps": "Same weight — add a rep to your weakest set.",
+    "consolidateNoReserve": "Top of the range, but too close to failure — own it once more.",
+    "consolidateEasier": "You've earned more load, but not today — same weight, save the jump for a fresher day.",
+    "addTechnique": "Load is maxed for this setup — progress with a slower eccentric, a pause, or more range.",
+    "increaseLoad": "Every set topped the range with reps in reserve — time to add load."
+  },
+  "highlight": {
+    "first": "First time",
+    "load": "+{{delta, number}} kg",
+    "effortSeconds": "+{{delta}}s",
+    "effortReps_one": "+{{count}} rep",
+    "effortReps_other": "+{{count}} reps",
+    "steady": "Held steady"
+  },
+  "coachInsight": {
+    "easier": "Adjusted for readiness and done anyway — that is the discipline that compounds.",
+    "loadsUp_one": "Load went up on one exercise — double progression is doing its job.",
+    "loadsUp_other": "Load went up on {{count}} exercises — double progression is doing its job.",
+    "effortsUp": "You beat last time on reps — when the range is full, load comes next.",
+    "baselines": "Baselines set. Everything from here is progress.",
+    "consistent": "Consistent work at the same numbers — that is what compounds."
+  },
+  "trends": {
+    "firstWeekInProgress": "Your first week is still in progress — check back once a few days have passed.",
+    "noScheduledSessions": "No scheduled sessions have fallen in this window yet.",
+    "needMoreStrengthData": "Log this exercise a few more times to see a strength trend.",
+    "needMoreWaistData": "A few more waist measurements will show a trend.",
+    "spreadWaistMeasurements": "Spread your measurements out over a couple of weeks to see a trend."
+  }
+}

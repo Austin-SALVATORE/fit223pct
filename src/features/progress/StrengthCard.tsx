@@ -1,7 +1,9 @@
 import { Link } from 'react-router'
+import type { MessageDescriptor } from '@/domain/message'
 import type { StagnationEvidencePoint, StagnationResult } from '@/domain/stagnation'
 import type { Trend } from '@/domain/trends'
 import type { Exercise } from '@/domain/types'
+import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { DIRECTION_PHRASE, formatValue } from './formatTrend'
 
 interface StrengthCardProps {
@@ -23,7 +25,7 @@ export function StrengthCard({ exercise, trend, stagnation, substitution }: Stre
       </Link>
 
       {trend.status === 'insufficient-data' ? (
-        <p className="mt-1.5 text-sm text-ink-tertiary">{trend.reason}</p>
+        <InsufficientTrend reason={trend.reason} />
       ) : (
         <p className="mt-1.5 text-sm text-ink-secondary" data-numeric>
           {formatValue(trend.evidence.at(-1)!.value, trend.unit)} — {DIRECTION_PHRASE[trend.status]}
@@ -61,6 +63,10 @@ export function StrengthCard({ exercise, trend, stagnation, substitution }: Stre
       )}
     </div>
   )
+}
+
+function InsufficientTrend({ reason }: { reason: MessageDescriptor }) {
+  return <p className="mt-1.5 text-sm text-ink-tertiary">{useTranslatedMessage(reason)}</p>
 }
 
 /** Shows both dimensions when weight is present — a session's reps still

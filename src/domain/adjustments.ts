@@ -1,9 +1,10 @@
 import { describeDrivers, type Readiness } from './readiness'
+import type { MessageDescriptor } from './message'
 import type { SessionTemplate } from './types'
 
 export interface Adjustment {
   kind: 'effort' | 'volume'
-  reason: string
+  reason: MessageDescriptor
 }
 
 export interface AdjustedSession {
@@ -28,8 +29,6 @@ export function applyReadiness(
     return { session, adjustments: [] }
   }
 
-  const because = reasonFrom(readiness)
-
   const items = session.items.map((item) => ({
     ...item,
     targetRir: Math.min(item.targetRir + 1, MAX_TARGET_RIR),
@@ -41,23 +40,22 @@ export function applyReadiness(
   )
 
   const adjustments: Adjustment[] = [
-    {
-      kind: 'effort',
-      reason: `Keeping an extra rep in reserve today — ${because}.`,
-    },
+    { kind: 'effort', reason: reasonFor('domain:adjustments.effort', readiness) },
     ...(trimmedAccessories
-      ? [
-          {
-            kind: 'volume' as const,
-            reason: `One set less on the small stuff — ${because}.`,
-          },
-        ]
+      ? [{ kind: 'volume' as const, reason: reasonFor('domain:adjustments.volume', readiness) }]
       : []),
   ]
 
   return { session: { ...session, items }, adjustments }
 }
 
-function reasonFrom(readiness: Readiness): string {
-  return describeDrivers(readiness.drivers)
+/**
+ * Composes a translated sentence around the driver phrase via i18next
+ * nesting (`$t({{driversKey}})` in the locale file) — the driver
+ * descriptor's own key varies by driver count, so it's passed through as a
+ * param rather than resolved here, keeping this function locale-blind.
+ */
+function reasonFor(key: string, readiness: Readiness): MessageDescriptor {
+  const because = describeDrivers(readiness.drivers)
+  return { key, params: { driversKey: because.key, ...because.params } }
 }

@@ -1,14 +1,11 @@
 import type { ReactNode } from 'react'
 import type { Trend } from '@/domain/trends'
+import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { DIRECTION_PHRASE, formatValue } from './formatTrend'
 
 export function WaistCard({ trend }: { trend: Trend }) {
   if (trend.status === 'insufficient-data') {
-    return (
-      <Card>
-        <p className="text-ink-secondary">{trend.reason}</p>
-      </Card>
-    )
+    return <InsufficientDataCard trend={trend} />
   }
 
   const first = trend.evidence[0]
@@ -23,6 +20,15 @@ export function WaistCard({ trend }: { trend: Trend }) {
         {formatValue(first.value, trend.unit)} on {first.date} → {formatValue(last.value, trend.unit)} on{' '}
         {last.date}
       </p>
+    </Card>
+  )
+}
+
+function InsufficientDataCard({ trend }: { trend: Extract<Trend, { status: 'insufficient-data' }> }) {
+  const reason = useTranslatedMessage(trend.reason)
+  return (
+    <Card>
+      <p className="text-ink-secondary">{reason}</p>
     </Card>
   )
 }

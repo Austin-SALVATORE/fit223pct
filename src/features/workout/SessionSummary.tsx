@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import { summarizeWorkout } from '@/domain/workout'
 import { coachInsight, workoutHighlights, type Highlight } from '@/domain/highlights'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
+import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import type { Exercise, Workout, WorkoutExercise } from '@/domain/types'
 
 interface SessionSummaryProps {
@@ -18,6 +19,7 @@ export function SessionSummary({ workout, exerciseById, history }: SessionSummar
   const summary = summarizeWorkout(workout)
   const highlights = workoutHighlights(workout, history)
   const highlightById = new Map(highlights.map((h) => [h.exerciseId, h]))
+  const insight = useTranslatedMessage(coachInsight(highlights, workout.readiness?.tier))
 
   return (
     <motion.div
@@ -30,9 +32,7 @@ export function SessionSummary({ workout, exerciseById, history }: SessionSummar
       <h1 ref={headingRef} tabIndex={-1} className="text-display mt-2 text-5xl text-ink">
         Nice work.
       </h1>
-      <p className="mt-4 max-w-[36ch] leading-relaxed text-ink-secondary">
-        {coachInsight(highlights, workout.readiness?.tier)}
-      </p>
+      <p className="mt-4 max-w-[36ch] leading-relaxed text-ink-secondary">{insight}</p>
 
       <dl className="mt-8 flex gap-8">
         {summary.durationMinutes !== null && (
@@ -85,6 +85,7 @@ function ExerciseLine({
   exercise: Exercise | undefined
   highlight: Highlight | undefined
 }) {
+  const label = useTranslatedMessage(highlight?.label ?? { key: 'domain:highlight.steady' })
   return (
     <li className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
       <div className="min-w-0">
@@ -102,7 +103,7 @@ function ExerciseLine({
           }`}
           data-numeric
         >
-          {highlight.label}
+          {label}
         </span>
       )}
     </li>

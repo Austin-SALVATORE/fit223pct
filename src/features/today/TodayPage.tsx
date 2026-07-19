@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
 import { checkinRepo, exerciseRepo, programRepo, settingsRepo, workoutRepo } from '@/data/repositories'
@@ -278,9 +279,10 @@ function TrainingDay({
   readiness: Readiness
   checkInCard: ReactNode
 }) {
+  const { t } = useTranslation('today')
   const adjusted = applyReadiness(session, readiness)
   const eased = adjusted.adjustments.length > 0
-  const drivers = describeDrivers(readiness.drivers)
+  const because = describeDrivers(readiness.drivers)
 
   return (
     <>
@@ -289,8 +291,8 @@ function TrainingDay({
         title={session.focus}
         subtitle={
           eased
-            ? `Eased back a touch today — ${drivers}. Showing up on a day like this counts double.`
-            : "Warm up well. Your starting numbers are below — they'll be waiting in the session."
+            ? t('trainingDay.easedSubtitle', { driversKey: because.key, ...because.params })
+            : t('trainingDay.readySubtitle')
         }
       />
       {checkInCard}
@@ -310,8 +312,8 @@ function TrainingDay({
         session={adjusted.session}
         exerciseById={exerciseById}
         heading="Today"
-        badge={eased ? 'Adjusted for readiness' : undefined}
-        reasons={eased ? adjusted.adjustments.map((a) => a.reason) : undefined}
+        badge={eased ? t('trainingDay.adjustedBadge') : undefined}
+        reasons={eased ? adjusted.adjustments.map((a) => t(a.reason.key, a.reason.params)) : undefined}
       />
     </>
   )
@@ -348,6 +350,7 @@ function UnscheduledDay({
   hero: ReactNode
   heading: string
 }) {
+  const { t } = useTranslation('today')
   const adjusted = applyReadiness(session, readiness)
   const eased = adjusted.adjustments.length > 0
 
@@ -362,8 +365,8 @@ function UnscheduledDay({
         session={adjusted.session}
         exerciseById={exerciseById}
         heading={heading}
-        badge={eased ? 'Adjusted for readiness' : undefined}
-        reasons={eased ? adjusted.adjustments.map((a) => a.reason) : undefined}
+        badge={eased ? t('trainingDay.adjustedBadge') : undefined}
+        reasons={eased ? adjusted.adjustments.map((a) => t(a.reason.key, a.reason.params)) : undefined}
       />
       <StartButton
         program={program}

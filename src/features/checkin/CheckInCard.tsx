@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { checkinRepo } from '@/data/repositories'
 import { describeDrivers, type Readiness, type ReadinessSignal } from '@/domain/readiness'
 import type { CheckIn, Rating } from '@/domain/types'
@@ -37,6 +38,7 @@ export function CheckInCard({ dateKey, checkIn, readiness, locked = false }: Che
   const complete = SIGNAL_ROWS.every(({ signal }) => checkIn?.[signal] != null)
   const [editing, setEditing] = useState(false)
   const expanded = !locked && (editing || !complete)
+  const tierPhrase = useTierPhrase(readiness)
 
   async function rate(signal: ReadinessSignal, value: Rating) {
     const next: CheckIn = {
@@ -88,7 +90,7 @@ export function CheckInCard({ dateKey, checkIn, readiness, locked = false }: Che
         <CollapsedRow locked={locked} onEdit={() => setEditing(true)}>
           <h2 className="eyebrow">Today's readiness</h2>
           <p className="mt-2 text-ink">
-            {locked && !complete ? 'Not recorded today.' : tierPhrase(readiness)}
+            {locked && !complete ? 'Not recorded today.' : tierPhrase}
           </p>
           {locked && (
             <p className="mt-1 text-sm text-ink-tertiary">
@@ -130,13 +132,16 @@ function CollapsedRow({
   )
 }
 
-function tierPhrase(readiness: Readiness): string {
+function useTierPhrase(readiness: Readiness): string {
+  const { t } = useTranslation('checkin')
   switch (readiness.tier) {
     case 'ready':
-      return 'Ready to train.'
+      return t('tierPhrase.ready')
     case 'steady':
-      return 'Good to go.'
-    case 'easier':
-      return `Taking it a touch easier today — ${describeDrivers(readiness.drivers)}.`
+      return t('tierPhrase.steady')
+    case 'easier': {
+      const because = describeDrivers(readiness.drivers)
+      return t('tierPhrase.easier', { driversKey: because.key, ...because.params })
+    }
   }
 }

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { ConsistencyTrend } from '@/domain/trends'
+import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 
 export function ConsistencyCard({ trend }: { trend: ConsistencyTrend | null }) {
   if (!trend) {
@@ -13,11 +14,7 @@ export function ConsistencyCard({ trend }: { trend: ConsistencyTrend | null }) {
   }
 
   if (trend.status === 'insufficient-data') {
-    return (
-      <Card>
-        <p className="text-ink-secondary">{trend.reason}</p>
-      </Card>
-    )
+    return <InsufficientDataCard trend={trend} />
   }
 
   const windowDays =
@@ -29,6 +26,15 @@ export function ConsistencyCard({ trend }: { trend: ConsistencyTrend | null }) {
         {trend.completedCount} of {trend.scheduledCount} scheduled sessions completed
       </p>
       <p className="mt-1 text-sm text-ink-tertiary">Over the last {windowDays} days</p>
+    </Card>
+  )
+}
+
+function InsufficientDataCard({ trend }: { trend: Extract<ConsistencyTrend, { status: 'insufficient-data' }> }) {
+  const reason = useTranslatedMessage(trend.reason)
+  return (
+    <Card>
+      <p className="text-ink-secondary">{reason}</p>
     </Card>
   )
 }

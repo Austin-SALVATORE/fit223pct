@@ -1,4 +1,5 @@
 import { addDays, parseDateKey, toDateKey } from '@/lib/dates'
+import type { MessageDescriptor } from './message'
 import type { CheckIn, Rating } from './types'
 
 export type ReadinessTier = 'ready' | 'steady' | 'easier'
@@ -7,7 +8,6 @@ export type ReadinessSignal = 'sleep' | 'energy' | 'soreness' | 'stress' | 'moti
 
 export interface ReadinessDriver {
   signal: ReadinessSignal
-  label: string
 }
 
 export interface Readiness {
@@ -76,14 +76,6 @@ const SIGNALS = Object.keys(WEIGHTS) as ReadinessSignal[]
 /** A single terrible signal is enough to ease off, whatever the average. */
 const SEVERE_SIGNALS: ReadinessSignal[] = ['sleep', 'soreness']
 
-const DRIVER_LABELS: Record<ReadinessSignal, string> = {
-  sleep: 'short sleep',
-  soreness: 'sore muscles',
-  energy: 'low energy',
-  stress: 'a stressful stretch',
-  motivation: 'low motivation',
-}
-
 function dayTier(checkIn: CheckIn | null): ReadinessTier {
   if (!checkIn) return 'steady'
 
@@ -116,7 +108,7 @@ function driversOf(checkIn: CheckIn): ReadinessDriver[] {
   return SIGNALS.filter((signal) => {
     const rating = checkIn[signal]
     return rating !== null && rating <= 2
-  }).map((signal) => ({ signal, label: DRIVER_LABELS[signal] }))
+  }).map((signal) => ({ signal }))
 }
 
 function normalize(rating: Rating): number {
@@ -124,13 +116,14 @@ function normalize(rating: Rating): number {
 }
 
 /**
- * Human phrasing of the drivers, capped to avoid a symptom dump:
- * one or two get named; three or more collapse to a single honest phrase.
+ * Human phrasing of the drivers, capped to avoid a symptom dump: one or two
+ * get named; three or more collapse to a single honest phrase. Descriptor
+ * params carry signal keys, never pre-composed labels — the UI resolves
+ * each signal's label via nested `$t()` lookups in domain.json, so wording
+ * can change per locale without touching this function.
  */
-export function describeDrivers(drivers: readonly ReadinessDriver[]): string {
-  if (drivers.length === 0) return 'readiness is low'
-  if (drivers.length <= 2) return drivers.map((d) => d.label).join(' and ')
-  return 'a rough day all around'
+export function describeDrivers(drivers: readonly ReadinessDriver[]): MessageDescriptor {
+  return describeDriverSignals(drivers.map((d) => d.signal))
 }
 
 /**
@@ -138,6 +131,14 @@ export function describeDrivers(drivers: readonly ReadinessDriver[]): string {
  * shape (e.g. `Workout.readiness.drivers`) keeps only keys, never copy, so
  * wording can change without invalidating history.
  */
-export function describeDriverSignals(signals: readonly ReadinessSignal[]): string {
-  return describeDrivers(signals.map((signal) => ({ signal, label: DRIVER_LABELS[signal] })))
+export function describeDriverSignals(signals: readonly ReadinessSignal[]): MessageDescriptor {
+  if (signals.length === 0) return { key: 'domain:readiness.drivers.none' }
+  if (signals.length === 1) return { key: 'domain:readiness.drivers.one', params: { signal: signals[0] } }
+  if (signals.length === 2) {
+    return {
+      key: 'domain:readiness.drivers.two',
+      params: { signal1: signals[0], signal2: signals[1] },
+    }
+  }
+  return { key: 'domain:readiness.drivers.many' }
 }

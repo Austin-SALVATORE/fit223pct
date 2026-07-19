@@ -1,1 +1,7 @@
-{}
+{
+  "tierPhrase": {
+    "ready": "Ready to train.",
+    "steady": "Good to go.",
+    "easier": "Taking it a touch easier today — $t({{driversKey}})."
+  }
+}

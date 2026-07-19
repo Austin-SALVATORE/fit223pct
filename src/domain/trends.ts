@@ -1,4 +1,5 @@
 import { addDays, isoWeekday, toDateKey } from '@/lib/dates'
+import type { MessageDescriptor } from './message'
 import type { CheckIn, Program, Workout } from './types'
 
 export type TrendDirection = 'increasing' | 'steady' | 'decreasing'
@@ -10,7 +11,7 @@ export interface TrendEvidencePoint {
 
 export interface InsufficientTrendData {
   status: 'insufficient-data'
-  reason: string
+  reason: MessageDescriptor
 }
 
 export type TrendUnit = 'kg' | 'reps' | 'seconds' | 'cm'
@@ -25,7 +26,7 @@ export type Trend = InsufficientTrendData | TrendResult
 
 export interface InsufficientConsistencyData {
   status: 'insufficient-data'
-  reason: string
+  reason: MessageDescriptor
 }
 
 export interface ConsistencyResult {
@@ -65,7 +66,7 @@ export function consistencyTrend(
   if (windowEndKey < program.startDate) {
     return {
       status: 'insufficient-data',
-      reason: "Your first week is still in progress — check back once a few days have passed.",
+      reason: { key: 'domain:trends.firstWeekInProgress' },
     }
   }
 
@@ -84,7 +85,7 @@ export function consistencyTrend(
   if (scheduledCount === 0) {
     return {
       status: 'insufficient-data',
-      reason: 'No scheduled sessions have fallen in this window yet.',
+      reason: { key: 'domain:trends.noScheduledSessions' },
     }
   }
 
@@ -130,7 +131,7 @@ export function strengthTrend(exerciseId: string, workouts: readonly Workout[]):
   if (allSessions.length < MIN_TREND_POINTS) {
     return {
       status: 'insufficient-data',
-      reason: 'Log this exercise a few more times to see a strength trend.',
+      reason: { key: 'domain:trends.needMoreStrengthData' },
     }
   }
 
@@ -147,7 +148,7 @@ export function strengthTrend(exerciseId: string, workouts: readonly Workout[]):
   if (sessions.length < MIN_TREND_POINTS) {
     return {
       status: 'insufficient-data',
-      reason: 'Log this exercise a few more times to see a strength trend.',
+      reason: { key: 'domain:trends.needMoreStrengthData' },
     }
   }
 
@@ -174,7 +175,7 @@ export function waistTrend(checkins: readonly CheckIn[]): Trend {
   if (measurements.length < MIN_TREND_POINTS) {
     return {
       status: 'insufficient-data',
-      reason: 'A few more waist measurements will show a trend.',
+      reason: { key: 'domain:trends.needMoreWaistData' },
     }
   }
 
@@ -182,7 +183,7 @@ export function waistTrend(checkins: readonly CheckIn[]): Trend {
   if (spanDays < MIN_WAIST_SPAN_DAYS) {
     return {
       status: 'insufficient-data',
-      reason: 'Spread your measurements out over a couple of weeks to see a trend.',
+      reason: { key: 'domain:trends.spreadWaistMeasurements' },
     }
   }
 

@@ -1,3 +1,4 @@
+import type { MessageDescriptor } from './message'
 import type { ReadinessTier } from './readiness'
 import type { ExercisePrescription, LoggedSet } from './types'
 
@@ -12,7 +13,7 @@ export interface ProgressionSuggestion {
   type: ProgressionType
   weightKg: number | null
   targetReps: number
-  reason: string
+  reason: MessageDescriptor
 }
 
 /**
@@ -37,7 +38,7 @@ export function suggestProgression(
       type: 'start',
       weightKg: prescription.startWeightKg,
       targetReps: range.min,
-      reason: 'First session — start at the prescribed weight and own the range.',
+      reason: { key: 'domain:progression.start' },
     }
   }
 
@@ -52,7 +53,7 @@ export function suggestProgression(
       type: 'add-reps',
       weightKg: lastWeight,
       targetReps: Math.min(weakest + 1, range.max),
-      reason: 'Same weight — add a rep to your weakest set.',
+      reason: { key: 'domain:progression.addReps' },
     }
   }
 
@@ -61,7 +62,7 @@ export function suggestProgression(
       type: 'consolidate',
       weightKg: lastWeight,
       targetReps: range.max,
-      reason: 'Top of the range, but too close to failure — own it once more.',
+      reason: { key: 'domain:progression.consolidateNoReserve' },
     }
   }
 
@@ -70,8 +71,7 @@ export function suggestProgression(
       type: 'consolidate',
       weightKg: lastWeight,
       targetReps: range.max,
-      reason:
-        "You've earned more load, but not today — same weight, save the jump for a fresher day.",
+      reason: { key: 'domain:progression.consolidateEasier' },
     }
   }
 
@@ -86,8 +86,7 @@ export function suggestProgression(
       type: 'add-technique',
       weightKg: lastWeight,
       targetReps: range.min,
-      reason:
-        'Load is maxed for this setup — progress with a slower eccentric, a pause, or more range.',
+      reason: { key: 'domain:progression.addTechnique' },
     }
   }
 
@@ -95,7 +94,7 @@ export function suggestProgression(
     type: 'increase-load',
     weightKg: lastWeight + weightStepKg,
     targetReps: range.min,
-    reason: 'Every set topped the range with reps in reserve — time to add load.',
+    reason: { key: 'domain:progression.increaseLoad' },
   }
 }
 

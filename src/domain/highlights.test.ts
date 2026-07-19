@@ -73,7 +73,7 @@ describe('workoutHighlights', () => {
     const current = buildWorkout('w2', '2026-07-22', [squat], [[set(8, 16), set(8, 16)]])
     const [highlight] = workoutHighlights(current, [previous])
     expect(highlight.kind).toBe('load')
-    expect(highlight.label).toBe('+2 kg')
+    expect(highlight.label).toEqual({ key: 'domain:highlight.load', params: { delta: 2 } })
   })
 
   it('celebrates added reps at the same top load', () => {
@@ -81,7 +81,7 @@ describe('workoutHighlights', () => {
     const current = buildWorkout('w2', '2026-07-22', [squat], [[set(11, 14), set(8, 14)]])
     const [highlight] = workoutHighlights(current, [previous])
     expect(highlight.kind).toBe('effort')
-    expect(highlight.label).toBe('+2 reps')
+    expect(highlight.label).toEqual({ key: 'domain:highlight.effortReps', params: { count: 2 } })
   })
 
   it('celebrates longer holds for time-based work', () => {
@@ -89,7 +89,7 @@ describe('workoutHighlights', () => {
     const current = buildWorkout('w2', '2026-07-22', [plank], [[set(null, null, 30), set(null, null, 25)]])
     const [highlight] = workoutHighlights(current, [previous])
     expect(highlight.kind).toBe('effort')
-    expect(highlight.label).toBe('+5s')
+    expect(highlight.label).toEqual({ key: 'domain:highlight.effortSeconds', params: { delta: 5 } })
   })
 
   it('reports steady work without inventing progress', () => {
@@ -109,35 +109,37 @@ describe('workoutHighlights', () => {
 describe('coachInsight', () => {
   it('leads with load progress when present', () => {
     const insight = coachInsight([
-      { exerciseId: 'a', kind: 'load', label: '+2 kg' },
-      { exerciseId: 'b', kind: 'steady', label: '' },
+      { exerciseId: 'a', kind: 'load', label: { key: 'domain:highlight.load', params: { delta: 2 } } },
+      { exerciseId: 'b', kind: 'steady', label: { key: 'domain:highlight.steady' } },
     ])
-    expect(insight).toContain('Load went up')
+    expect(insight).toEqual({ key: 'domain:coachInsight.loadsUp', params: { count: 1 } })
   })
 
   it('frames added reps as the road to more load', () => {
-    const insight = coachInsight([{ exerciseId: 'a', kind: 'effort', label: '+1 rep' }])
-    expect(insight).toContain('load comes next')
+    const insight = coachInsight([
+      { exerciseId: 'a', kind: 'effort', label: { key: 'domain:highlight.effortReps', params: { count: 1 } } },
+    ])
+    expect(insight).toEqual({ key: 'domain:coachInsight.effortsUp' })
   })
 
   it('treats an all-first session as baseline setting', () => {
     const insight = coachInsight([
-      { exerciseId: 'a', kind: 'first', label: 'First time' },
-      { exerciseId: 'b', kind: 'first', label: 'First time' },
+      { exerciseId: 'a', kind: 'first', label: { key: 'domain:highlight.first' } },
+      { exerciseId: 'b', kind: 'first', label: { key: 'domain:highlight.first' } },
     ])
-    expect(insight).toContain('Baselines')
+    expect(insight).toEqual({ key: 'domain:coachInsight.baselines' })
   })
 
   it('never shames a steady session', () => {
-    const insight = coachInsight([{ exerciseId: 'a', kind: 'steady', label: '' }])
-    expect(insight).toContain('Consistent')
+    const insight = coachInsight([{ exerciseId: 'a', kind: 'steady', label: { key: 'domain:highlight.steady' } }])
+    expect(insight).toEqual({ key: 'domain:coachInsight.consistent' })
   })
 
   it('honors a session trained on an adjusted (easier) day', () => {
     const insight = coachInsight(
-      [{ exerciseId: 'a', kind: 'steady', label: '' }],
+      [{ exerciseId: 'a', kind: 'steady', label: { key: 'domain:highlight.steady' } }],
       'easier',
     )
-    expect(insight).toContain('Adjusted for readiness')
+    expect(insight).toEqual({ key: 'domain:coachInsight.easier' })
   })
 })

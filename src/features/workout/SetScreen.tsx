@@ -5,6 +5,7 @@ import { Stepper } from '@/ui/Stepper'
 import { RatingPicker } from '@/ui/RatingPicker'
 import { suggestProgression } from '@/domain/progression'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
+import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import type { ReadinessTier } from '@/domain/readiness'
 import type { Exercise, LoggedSet, WorkoutExercise } from '@/domain/types'
 import { HoldTimer } from './HoldTimer'
@@ -33,6 +34,7 @@ export function SetScreen({
 }: SetScreenProps) {
   const { prescription } = workoutExercise
   const suggestion = suggestProgression(prescription, previousSets, readinessTier)
+  const suggestionReason = useTranslatedMessage(suggestion.reason)
 
   // Within a session, people keep the weight they just used.
   const lastSetThisSession = workoutExercise.sets.at(-1)
@@ -76,7 +78,7 @@ export function SetScreen({
           <LastTime sets={previousSets} mode={prescription.mode} />
         </p>
         {suggestion.type !== 'start' && (
-          <p className="mt-1 text-sm leading-relaxed text-amber">{suggestion.reason}</p>
+          <p className="mt-1 text-sm leading-relaxed text-amber">{suggestionReason}</p>
         )}
         {prescription.note && (
           <p className="mt-1 text-sm text-ink-tertiary">{prescription.note}</p>

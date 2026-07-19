@@ -60,7 +60,7 @@ describe('readinessFrom', () => {
     expect(readiness.tier).toBe('steady')
   })
 
-  it('names low signals as human-readable drivers', () => {
+  it('names low signals as drivers, by signal key — labels are resolved at render time', () => {
     const readiness = readinessFrom(
       checkIn('2026-07-24', { ...allGood, sleep: 2, soreness: 2 }),
       [],
@@ -68,7 +68,6 @@ describe('readinessFrom', () => {
     const signals = readiness.drivers.map((d) => d.signal)
     expect(signals).toContain('sleep')
     expect(signals).toContain('soreness')
-    for (const driver of readiness.drivers) expect(driver.label.length).toBeGreaterThan(0)
   })
 
   it('counts consecutive low days including today for trend escalation', () => {

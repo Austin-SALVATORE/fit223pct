@@ -1,4 +1,5 @@
 import { previousSetsFor } from './workout'
+import type { MessageDescriptor } from './message'
 import type { ReadinessTier } from './readiness'
 import type { LoggedSet, Workout } from './types'
 
@@ -8,7 +9,7 @@ export interface Highlight {
   exerciseId: string
   kind: HighlightKind
   /** Short badge text, e.g. "+2 kg", "+3 reps", "First time" */
-  label: string
+  label: MessageDescriptor
 }
 
 /**
@@ -28,7 +29,7 @@ export function workoutHighlights(
       const { exerciseId } = exercise
       const previous = previousSetsFor(priorWorkouts, exerciseId)
       if (previous.length === 0) {
-        return { exerciseId, kind: 'first' as const, label: 'First time' }
+        return { exerciseId, kind: 'first' as const, label: { key: 'domain:highlight.first' } }
       }
 
       const seconds = exercise.prescription.mode === 'seconds'
@@ -39,7 +40,10 @@ export function workoutHighlights(
         return {
           exerciseId,
           kind: 'load' as const,
-          label: `+${formatKg(topWeightNow - topWeightBefore)} kg`,
+          label: {
+            key: 'domain:highlight.load',
+            params: { delta: topWeightNow - topWeightBefore },
+          },
         }
       }
 
@@ -47,14 +51,13 @@ export function workoutHighlights(
       const effortBefore = bestEffort(previous, topWeightBefore, seconds)
       if (effortNow > effortBefore) {
         const delta = effortNow - effortBefore
-        return {
-          exerciseId,
-          kind: 'effort' as const,
-          label: seconds ? `+${delta}s` : `+${delta} ${delta === 1 ? 'rep' : 'reps'}`,
-        }
+        const label: MessageDescriptor = seconds
+          ? { key: 'domain:highlight.effortSeconds', params: { delta } }
+          : { key: 'domain:highlight.effortReps', params: { count: delta } }
+        return { exerciseId, kind: 'effort' as const, label }
       }
 
-      return { exerciseId, kind: 'steady' as const, label: 'Held steady' }
+      return { exerciseId, kind: 'steady' as const, label: { key: 'domain:highlight.steady' } }
     })
 }
 
@@ -62,9 +65,9 @@ export function workoutHighlights(
 export function coachInsight(
   highlights: readonly Highlight[],
   readinessTier?: ReadinessTier,
-): string {
+): MessageDescriptor {
   if (readinessTier === 'easier') {
-    return 'Adjusted for readiness and done anyway — that is the discipline that compounds.'
+    return { key: 'domain:coachInsight.easier' }
   }
 
   const count = (kind: HighlightKind) => highlights.filter((h) => h.kind === kind).length
@@ -73,17 +76,15 @@ export function coachInsight(
   const firsts = count('first')
 
   if (loads > 0) {
-    return loads === 1
-      ? 'Load went up on one exercise — double progression is doing its job.'
-      : `Load went up on ${loads} exercises — double progression is doing its job.`
+    return { key: 'domain:coachInsight.loadsUp', params: { count: loads } }
   }
   if (efforts > 0) {
-    return 'You beat last time on reps — when the range is full, load comes next.'
+    return { key: 'domain:coachInsight.effortsUp' }
   }
   if (firsts === highlights.length && firsts > 0) {
-    return 'Baselines set. Everything from here is progress.'
+    return { key: 'domain:coachInsight.baselines' }
   }
-  return 'Consistent work at the same numbers — that is what compounds.'
+  return { key: 'domain:coachInsight.consistent' }
 }
 
 function topWeight(sets: readonly LoggedSet[]): number | null {
@@ -105,8 +106,4 @@ function bestEffort(
     (best, s) => Math.max(best, (seconds ? s.seconds : s.reps) ?? 0),
     0,
   )
-}
-
-function formatKg(value: number): string {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1)
 }
