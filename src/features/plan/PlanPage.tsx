@@ -6,6 +6,7 @@ import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
 import { addDays, isoWeekday, parseDateKey, toDateKey } from '@/lib/dates'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
+import { ProgramDataActions } from './ProgramDataActions'
 import type { Program } from '@/domain/types'
 
 const WEEKDAY_ABBR: Record<number, string> = {
@@ -72,6 +73,8 @@ export function PlanPage() {
         next={nextProgram}
         onSelect={setSelectedProgramId}
       />
+
+      <ProgramDataActions program={program} />
 
       {hasProjectedDays && (
         <p className="mt-6 text-sm leading-relaxed text-ink-tertiary">

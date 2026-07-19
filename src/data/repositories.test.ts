@@ -1,10 +1,11 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { db } from './db'
-import { programRepo } from './repositories'
-import type { Program } from '@/domain/types'
+import { programRepo, workoutRepo } from './repositories'
+import type { Program, Workout } from '@/domain/types'
 
 afterEach(async () => {
   await db.programs.clear()
+  await db.workouts.clear()
 })
 
 function makeProgram(overrides: Partial<Program>): Program {
@@ -61,5 +62,43 @@ describe('programRepo.getActive', () => {
   it('returns undefined when no programs exist at all', async () => {
     const active = await programRepo.getActive('2026-07-25')
     expect(active).toBeUndefined()
+  })
+})
+
+describe('programRepo.getById / put', () => {
+  it('put upserts, getById reads it back', async () => {
+    const program = makeProgram({ id: 'phase-2' })
+    await programRepo.put(program)
+    expect(await programRepo.getById('phase-2')).toEqual(program)
+  })
+
+  it('put replaces an existing program by id — import overwrite', async () => {
+    await programRepo.put(makeProgram({ id: 'phase-2', name: 'Old name' }))
+    await programRepo.put(makeProgram({ id: 'phase-2', name: 'New name' }))
+    const all = await programRepo.getAll()
+    expect(all.filter((p) => p.id === 'phase-2')).toHaveLength(1)
+    expect((await programRepo.getById('phase-2'))?.name).toBe('New name')
+  })
+})
+
+function makeWorkout(overrides: Partial<Workout>): Workout {
+  return {
+    id: 'w1',
+    programId: 'p',
+    sessionTemplateId: 'A',
+    date: '2026-07-22',
+    startedAt: '2026-07-22T09:00:00.000Z',
+    completedAt: null,
+    exercises: [],
+    ...overrides,
+  }
+}
+
+describe('workoutRepo.getAll', () => {
+  it('returns every workout, completed or not', async () => {
+    await db.workouts.put(makeWorkout({ id: 'done', completedAt: '2026-07-22T10:00:00.000Z' }))
+    await db.workouts.put(makeWorkout({ id: 'open', date: '2026-07-24' }))
+    const all = await workoutRepo.getAll()
+    expect(all.map((w) => w.id).sort()).toEqual(['done', 'open'])
   })
 })

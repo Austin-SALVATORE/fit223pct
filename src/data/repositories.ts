@@ -33,6 +33,11 @@ export const programRepo = {
 
   /** Every program, chronological — phase navigation on the Plan page. */
   getAll: (): Promise<Program[]> => db.programs.orderBy('startDate').toArray(),
+
+  getById: (id: string): Promise<Program | undefined> => db.programs.get(id),
+
+  /** Upsert — import's write path. Never touches workouts. */
+  put: (program: Program): Promise<string> => db.programs.put(program),
 }
 
 export const workoutRepo = {
@@ -52,6 +57,9 @@ export const workoutRepo = {
 
   getCompleted: (): Promise<Workout[]> =>
     db.workouts.filter((w) => w.completedAt !== null).toArray(),
+
+  /** Every workout, completed or not — the full-data-export source. */
+  getAll: (): Promise<Workout[]> => db.workouts.orderBy('date').toArray(),
 
   put: (workout: Workout): Promise<string> => db.workouts.put(workout),
 

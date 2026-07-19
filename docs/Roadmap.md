@@ -47,6 +47,22 @@ longer Monday-only. See docs/Progress.md.
 PWA install/offline hardening, motion polish pass, accessibility audit,
 Fitness Park (gym equipment) program for Phase 2, program transition UX.
 
+Added from field use (19 Jul): the **Plan page** (docs/Plan.md) — browse
+the whole program: any date's session (past = facts, future = labeled
+projections; rotation follows completed count, so projections must say
+they shift), and navigate between phases. Pairs naturally with Phase 2
+authoring and the transition UX, since phase navigation needs a second
+program to browse.
+
+Added 19 Jul, sequenced **before Phase 2 authoring**: **data
+portability** (docs/DataPortability.md) — program import from JSON
+(canonical) and Markdown (authoring format), strict whole-file
+validation against the app-owned Library, upsert-with-consent, history
+never touched; program export (round-trip) and full data export
+(programs + workouts + check-ins + settings) as the local-first backup
+story. Phase 2 ships as the first *imported* program file, dogfooding
+the pipeline on real content.
+
 Pre-flight (real-device pass ahead of Phase 1's 21 Jul start): offline font
 caching, iOS home-screen install meta tags, safe-area padding so the status
 bar no longer overlaps installed-PWA headers. Landed early, ahead of the
@@ -56,6 +72,19 @@ session preview, so training ahead of schedule is always possible without
 being the recommendation — and a tap-to-start hold timer for seconds-mode
 sets (side plank and similar), which pre-fills the manual seconds Stepper
 on stop rather than replacing it.
+
+## Milestone 6 — Internationalization
+
+English, French, Simplified Chinese (docs/I18n.md). Not a string sweep:
+the deep work is refactoring domain functions to return message
+descriptors instead of English prose, and moving seeded content
+(exercise names, cues) to locale-keyed lookup — storage stays
+locale-free. Includes the app's first Settings surface (language only),
+auto-detection, persistence, live switching, English fallback.
+Terminology constraints (readiness, never wellness/medical) carry into
+every locale. Scheduled after M5: it is the largest cross-cutting
+refactor since foundations and should not land mid-phase while the app
+is in daily training use.
 
 ## Later (architecture-ready, not scheduled)
 
