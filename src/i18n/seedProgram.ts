@@ -8,6 +8,13 @@ import type { ExercisePrescription, Program, SessionTemplate } from '@/domain/ty
  * typed. So these fall through to the literal stored field instead of
  * requiring a key to exist, unlike Exercise's hooks in seedExercise.ts.
  *
+ * That fallback used to key on the program's id alone — but an imported
+ * file can reuse the seed's id (`phase-1-home`), and an id match isn't
+ * evidence the content is the seed's own. `Program.origin` is the
+ * explicit signal instead: 'imported' always wins with the stored
+ * literal, in every locale, with no key lookup at all. Absent/'seed'
+ * keeps today's locale-key behavior.
+ *
  * Each also guards on an empty id ('') — callers pass placeholder
  * Program/SessionTemplate objects to keep hook order stable before their
  * real data loads (see call sites' Rules-of-Hooks comments); without the
@@ -16,19 +23,27 @@ import type { ExercisePrescription, Program, SessionTemplate } from '@/domain/ty
  */
 export function useProgramName(program: Program): string {
   const { t } = useTranslation('seed')
-  if (program.id === '') return program.name
+  if (program.id === '' || program.origin === 'imported') return program.name
   return t(`program.${program.id}.name`, { defaultValue: program.name })
 }
 
-export function useSessionName(programId: string, session: SessionTemplate): string {
+export function useSessionName(
+  programId: string,
+  session: SessionTemplate,
+  programOrigin?: Program['origin'],
+): string {
   const { t } = useTranslation('seed')
-  if (programId === '' || session.id === '') return session.name
+  if (programId === '' || session.id === '' || programOrigin === 'imported') return session.name
   return t(`program.${programId}.session.${session.id}.name`, { defaultValue: session.name })
 }
 
-export function useSessionFocus(programId: string, session: SessionTemplate): string {
+export function useSessionFocus(
+  programId: string,
+  session: SessionTemplate,
+  programOrigin?: Program['origin'],
+): string {
   const { t } = useTranslation('seed')
-  if (programId === '' || session.id === '') return session.focus
+  if (programId === '' || session.id === '' || programOrigin === 'imported') return session.focus
   return t(`program.${programId}.session.${session.id}.focus`, { defaultValue: session.focus })
 }
 
@@ -36,9 +51,10 @@ export function usePrescriptionNote(
   programId: string,
   sessionId: string,
   item: ExercisePrescription,
+  programOrigin?: Program['origin'],
 ): string | undefined {
   const { t, i18n } = useTranslation('seed')
-  if (programId === '' || sessionId === '') return item.note
+  if (programId === '' || sessionId === '' || programOrigin === 'imported') return item.note
   const key = `program.${programId}.session.${sessionId}.exercise.${item.exerciseId}.note`
   return i18n.exists(`seed:${key}`) ? t(key) : item.note
 }

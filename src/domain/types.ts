@@ -99,6 +99,14 @@ export interface Program {
    * overlap). Absent = today's behavior, a bare rest day.
    */
   weekdayActivities?: Partial<Record<IsoWeekday, ActivityTemplate>>
+  /**
+   * Where this record came from — decides whether name/focus/note fields
+   * resolve through a locale key or always render the stored literal.
+   * Absent means 'seed' (the pre-M7 installed record needs no migration).
+   * Never trust the id to distinguish these: an imported file can reuse
+   * the seed program's id, and its authored content must still win.
+   */
+  origin?: 'seed' | 'imported'
 }
 
 export interface LoggedSet {

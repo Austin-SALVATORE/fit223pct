@@ -3,12 +3,14 @@ import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { useSessionName, usePrescriptionNote } from '@/i18n/seedProgram'
 import type { OriginState } from '@/lib/navigationOrigin'
-import type { Exercise, ExercisePrescription, SessionTemplate } from '@/domain/types'
+import type { Exercise, ExercisePrescription, Program, SessionTemplate } from '@/domain/types'
 
 interface SessionPreviewProps {
   session: SessionTemplate
   /** For seed-content resolution (program.<id>.session.<id>...) — see i18n/seedProgram.ts */
   programId: string
+  /** 'imported' skips locale-key resolution entirely — see i18n/seedProgram.ts */
+  programOrigin?: Program['origin']
   exerciseById: Map<string, Exercise>
   heading: string
   /** Short canonical label shown beside the numbers when they've been modulated */
@@ -22,13 +24,14 @@ interface SessionPreviewProps {
 export function SessionPreview({
   session,
   programId,
+  programOrigin,
   exerciseById,
   heading,
   badge,
   reasons,
   origin = { from: 'today' },
 }: SessionPreviewProps) {
-  const sessionName = useSessionName(programId, session)
+  const sessionName = useSessionName(programId, session, programOrigin)
   return (
     <section className="mt-10" aria-label={`${heading}: ${sessionName}`}>
       <div className="flex items-baseline justify-between gap-3">
@@ -56,6 +59,7 @@ export function SessionPreview({
                 exercise={exercise}
                 origin={origin}
                 programId={programId}
+                programOrigin={programOrigin}
                 sessionId={session.id}
               />
             )
@@ -71,17 +75,19 @@ function ItemRow({
   exercise,
   origin,
   programId,
+  programOrigin,
   sessionId,
 }: {
   item: ExercisePrescription
   exercise: Exercise
   origin: OriginState
   programId: string
+  programOrigin?: Program['origin']
   sessionId: string
 }) {
   const { t } = useTranslation('today')
   const exerciseName = useExerciseName(exercise.id)
-  const note = usePrescriptionNote(programId, sessionId, item)
+  const note = usePrescriptionNote(programId, sessionId, item, programOrigin)
   const perSideSuffix = item.perSide ? t('sessionPreview.perSideSuffix') : ''
   return (
     <GroupedRow to={`/library/${exercise.id}`} state={origin}>

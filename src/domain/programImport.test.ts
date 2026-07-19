@@ -66,6 +66,24 @@ describe('validateProgramImport', () => {
     }
   })
 
+  it('always sets origin to "imported", regardless of id or claimed origin in the input', () => {
+    // Reusing the seed's own id is exactly the scenario that shadowed
+    // authored content before origin existed — id can never be trusted
+    // to distinguish "seed" from "imported".
+    const reusingSeedId = validateProgramImport(
+      validProgram({ id: 'phase-1-home' }),
+      libraryIds,
+    )
+    expect(reusingSeedId.ok).toBe(true)
+    if (reusingSeedId.ok) expect(reusingSeedId.program.origin).toBe('imported')
+
+    // origin isn't part of the import schema — an input file can't claim
+    // to be seed content, whatever value it sets.
+    const claimsSeed = validateProgramImport(validProgram({ origin: 'seed' }), libraryIds)
+    expect(claimsSeed.ok).toBe(true)
+    if (claimsSeed.ok) expect(claimsSeed.program.origin).toBe('imported')
+  })
+
   it('rejects a missing required field, naming the field via the schema-error descriptor', () => {
     const bad = validProgram()
     delete (bad as Record<string, unknown>).startDate

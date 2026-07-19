@@ -39,6 +39,7 @@ const bodyweight = band
 export const seedProgram: Program = {
   id: 'phase-1-home',
   name: 'Phase 1 — Home',
+  origin: 'seed',
   phase: 1,
   startDate: '2026-07-21',
   endDate: '2026-08-09',

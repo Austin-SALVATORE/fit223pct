@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { exerciseRepo, workoutRepo } from '@/data/repositories'
+import { exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
 import {
   completeWorkout,
   logSet,
@@ -42,14 +42,23 @@ export function WorkoutPage() {
       exerciseRepo.getAll(),
       workoutRepo.getCompleted(),
     ])
-    return { workout, exerciseById: new Map(exercises.map((e) => [e.id, e])), completed }
+    // Only origin is needed here (note resolution) — the rest of the
+    // program record isn't; Workout is already the source of truth for
+    // everything else Workout Mode renders.
+    const program = workout ? await programRepo.getById(workout.programId) : undefined
+    return {
+      workout,
+      exerciseById: new Map(exercises.map((e) => [e.id, e])),
+      completed,
+      programOrigin: program?.origin,
+    }
   }, [])
 
   // Summary keeps its own snapshot: by then the active workout is gone.
   const [finished, setFinished] = useState<Workout | null>(null)
 
   if (!data) return null
-  const { workout, exerciseById, completed } = data
+  const { workout, exerciseById, completed, programOrigin } = data
 
   if (phase.kind === 'summary' && finished) {
     return <SessionSummary workout={finished} exerciseById={exerciseById} history={completed} />
@@ -173,6 +182,7 @@ export function WorkoutPage() {
               exerciseById={exerciseById}
               readinessTier={workout.readiness?.tier}
               programId={workout.programId}
+              programOrigin={programOrigin}
               sessionId={workout.sessionTemplateId}
               onLog={handleLog}
               onSwap={handleSwap}

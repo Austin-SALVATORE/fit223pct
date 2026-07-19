@@ -105,7 +105,13 @@ export function PlanPage() {
           <section key={week.weekStart} className="mt-6" aria-label={weekLabel}>
             <GroupedList label={weekLabel}>
               {week.days.map((day) => (
-                <DayRow key={day.date} day={day} locale={locale} programId={program.id} />
+                <DayRow
+                  key={day.date}
+                  day={day}
+                  locale={locale}
+                  programId={program.id}
+                  programOrigin={program.origin}
+                />
               ))}
             </GroupedList>
           </section>
@@ -115,13 +121,23 @@ export function PlanPage() {
   )
 }
 
-function DayRow({ day, locale, programId }: { day: ScheduleDay; locale: string; programId: string }) {
+function DayRow({
+  day,
+  locale,
+  programId,
+  programOrigin,
+}: {
+  day: ScheduleDay
+  locale: string
+  programId: string
+  programOrigin: Program['origin']
+}) {
   const { t } = useTranslation('plan')
   const { t: tCommon } = useTranslation('common')
   const label = formatDayLabel(day.date, locale)
   // Called unconditionally, before any of the state-specific returns below,
   // so hook order stays stable across day states.
-  const resolvedSessionName = useSessionName(programId, day.session ?? EMPTY_SESSION)
+  const resolvedSessionName = useSessionName(programId, day.session ?? EMPTY_SESSION, programOrigin)
   const sessionName = day.session ? resolvedSessionName : t('sessionFallback')
 
   if (day.isToday) {
@@ -208,10 +224,19 @@ function PhaseHeader({ program, locale }: { program: Program; locale: string }) 
     .map((d) => weekdayAbbr(d, locale))
     .join(weekdaySeparator)
 
+  // Mapped, so this can't call the useSessionName/useSessionFocus hooks
+  // (Rules of Hooks) — same origin guard as those, inlined: an imported
+  // program's own session names/foci must never resolve through the
+  // seed's locale keys, even reusing the seed's session ids.
+  const imported = program.origin === 'imported'
   const sessionsLine = program.sessions
     .map((s) => {
-      const name = tSeed(`program.${program.id}.session.${s.id}.name`, { defaultValue: s.name })
-      const focus = tSeed(`program.${program.id}.session.${s.id}.focus`, { defaultValue: s.focus })
+      const name = imported
+        ? s.name
+        : tSeed(`program.${program.id}.session.${s.id}.name`, { defaultValue: s.name })
+      const focus = imported
+        ? s.focus
+        : tSeed(`program.${program.id}.session.${s.id}.focus`, { defaultValue: s.focus })
       return `${name} — ${focus}`
     })
     .join(' · ')

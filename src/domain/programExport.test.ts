@@ -7,12 +7,16 @@ import { seedExercises } from '@/data/seed/exercises'
 const libraryIds = new Set(seedExercises.map((e) => e.id))
 
 describe('toCanonicalProgramJson', () => {
-  it('round-trips through validateProgramImport unchanged', () => {
+  it('round-trips through validateProgramImport unchanged on content, but never carries origin', () => {
     const json = toCanonicalProgramJson(seedProgram)
+    expect(JSON.parse(json)).not.toHaveProperty('origin')
+
     const result = validateProgramImport(JSON.parse(json), libraryIds)
     expect(result.ok).toBe(true)
     if (!result.ok) return
-    expect(result.program).toEqual(seedProgram)
+    // Content is byte-equal to the seed; origin is not — a re-imported
+    // file always comes back 'imported', even reusing the seed's own id.
+    expect(result.program).toEqual({ ...seedProgram, origin: 'imported' })
   })
 
   it('names the export file after the program id', () => {
@@ -37,7 +41,7 @@ describe('toCanonicalProgramJson', () => {
     const result = validateProgramImport(JSON.parse(json), libraryIds)
     expect(result.ok).toBe(true)
     if (!result.ok) return
-    expect(result.program).toEqual(withSubs)
+    expect(result.program).toEqual({ ...withSubs, origin: 'imported' })
     expect(result.program.sessions[0].items[0].substitutionIds).toEqual([
       'split-squat',
       'tempo-bodyweight-squat',
@@ -64,7 +68,7 @@ describe('toCanonicalProgramJson', () => {
     const result = validateProgramImport(JSON.parse(json), libraryIds)
     expect(result.ok).toBe(true)
     if (!result.ok) return
-    expect(result.program).toEqual(withActivities)
+    expect(result.program).toEqual({ ...withActivities, origin: 'imported' })
     expect(result.program.weekdayActivities?.[2]?.title).toBe('Recovery walk & stretch')
   })
 })

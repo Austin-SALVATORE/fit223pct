@@ -5,6 +5,7 @@ import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { seedProgram } from '@/data/seed/program'
 import { programRepo } from '@/data/repositories'
+import { toCanonicalProgramJson } from '@/domain/programExport'
 import { ProgramDataActions } from './ProgramDataActions'
 
 vi.mock('@/lib/shareOrDownloadFile', () => ({
@@ -129,8 +130,10 @@ describe('ProgramDataActions export', () => {
 
     expect(shareOrDownloadFile).toHaveBeenCalledWith(
       'phase-1-home.json',
-      JSON.stringify(seedProgram, null, 2),
+      toCanonicalProgramJson(seedProgram),
     )
+    const [, exportedJson] = vi.mocked(shareOrDownloadFile).mock.calls[0]
+    expect(JSON.parse(exportedJson)).not.toHaveProperty('origin')
   })
 
   it('shows a status line naming the program after a successful program export', async () => {

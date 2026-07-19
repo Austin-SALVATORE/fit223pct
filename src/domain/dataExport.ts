@@ -1,3 +1,4 @@
+import { stripProgramOrigin } from './programExport'
 import type { CheckIn, Program, UserSettings, Workout } from './types'
 
 /**
@@ -21,7 +22,7 @@ export function buildFullDataExport(input: {
 }): FullDataExport {
   return {
     exportedAt: input.exportedAt,
-    programs: input.programs,
+    programs: input.programs.map(stripProgramOrigin),
     workouts: input.workouts,
     checkins: input.checkins,
     settings: input.settings ?? null,

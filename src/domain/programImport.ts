@@ -149,7 +149,11 @@ export function validateProgramImport(
     }
   }
 
-  return { ok: true, program: program as Program }
+  // Unconditional, not a merge default: an imported file's content must
+  // never resolve through the seed's locale keys, even if it reuses the
+  // seed program's id (programSchema also has no `origin` field, so an
+  // input file can't claim to be seed content either way).
+  return { ok: true, program: { ...program, origin: 'imported' } as Program }
 }
 
 function validateSubstitutions(

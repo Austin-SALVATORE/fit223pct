@@ -286,8 +286,8 @@ function TrainingDay({
   checkInCard: ReactNode
 }) {
   const { t } = useTranslation('today')
-  const sessionName = useSessionName(program.id, session)
-  const sessionFocus = useSessionFocus(program.id, session)
+  const sessionName = useSessionName(program.id, session, program.origin)
+  const sessionFocus = useSessionFocus(program.id, session, program.origin)
   const adjusted = applyReadiness(session, readiness)
   const eased = adjusted.adjustments.length > 0
   const because = describeDrivers(readiness.drivers)
@@ -318,6 +318,7 @@ function TrainingDay({
       <SessionPreview
         session={adjusted.session}
         programId={program.id}
+        programOrigin={program.origin}
         exerciseById={exerciseById}
         heading={t('trainingDay.heading')}
         badge={eased ? t('trainingDay.adjustedBadge') : undefined}
@@ -372,6 +373,7 @@ function UnscheduledDay({
       <SessionPreview
         session={adjusted.session}
         programId={program.id}
+        programOrigin={program.origin}
         exerciseById={exerciseById}
         heading={heading}
         badge={eased ? t('trainingDay.adjustedBadge') : undefined}

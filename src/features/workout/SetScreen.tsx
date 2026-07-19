@@ -10,7 +10,7 @@ import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { usePrescriptionNote } from '@/i18n/seedProgram'
 import type { ReadinessTier } from '@/domain/readiness'
-import type { Exercise, LoggedSet, WorkoutExercise } from '@/domain/types'
+import type { Exercise, LoggedSet, Program, WorkoutExercise } from '@/domain/types'
 import { HoldTimer } from './HoldTimer'
 import { SwapSheet } from './SwapSheet'
 
@@ -22,6 +22,8 @@ interface SetScreenProps {
   exerciseById: Map<string, Exercise>
   readinessTier?: ReadinessTier
   programId: string
+  /** 'imported' skips locale-key resolution entirely — see i18n/seedProgram.ts */
+  programOrigin?: Program['origin']
   sessionId: string
   onLog: (set: Omit<LoggedSet, 'setIndex'>) => void
   onSwap: (exerciseId: string) => void
@@ -35,6 +37,7 @@ export function SetScreen({
   exerciseById,
   readinessTier,
   programId,
+  programOrigin,
   sessionId,
   onLog,
   onSwap,
@@ -42,7 +45,7 @@ export function SetScreen({
   const { t } = useTranslation('workout')
   const exerciseName = useExerciseName(exercise.id)
   const { prescription } = workoutExercise
-  const note = usePrescriptionNote(programId, sessionId, prescription)
+  const note = usePrescriptionNote(programId, sessionId, prescription, programOrigin)
   const suggestion = suggestProgression(prescription, previousSets, readinessTier)
   const suggestionReason = useTranslatedMessage(suggestion.reason)
 

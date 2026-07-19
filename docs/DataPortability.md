@@ -109,6 +109,25 @@ changes; a free-string shadow copy per prescription would be a second,
 weaker source of truth. Revisit only as explicit *override* semantics
 if a real program ever needs them.
 
+## Bugfix (20 Jul): imported content shadowed by the seed's translations
+
+Real use found it: importing a program that reused the seed program's id
+(`phase-1-home`) had its authored notes silently replaced by the seed's
+translated ones wherever a matching locale key happened to exist — the
+i18n fallback resolver (docs/I18n.md) keyed on id alone, which can't
+distinguish "the pristine seeded program" from "user content that
+happens to wear the seed's id." **User content is never translated and
+never shadowed by translation — the app translates itself, not your
+data.** Fixed with an explicit, additive `Program.origin?: 'seed' |
+'imported'` field: the import path always sets `'imported'` regardless
+of what the file claims (`origin` isn't part of the import schema — a
+file can't declare itself seed content); `'imported'` always renders
+the stored literal, in every locale, no key lookup at all. Absent means
+`'seed'`, so the one already-installed record needs no migration.
+`origin` is bookkeeping the app keeps about itself, not portable data —
+stripped on both program export and full-data export; a re-imported
+file always comes back `'imported'`.
+
 ## Out of scope (deliberate)
 
 Library import/editing (app-owned; revisit only if a real program

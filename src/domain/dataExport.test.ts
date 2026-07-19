@@ -37,6 +37,10 @@ const settings: UserSettings = {
   lastSeenWeeklyReviewWeekStart: null,
 }
 
+// origin is bookkeeping the app keeps about itself, never a portable
+// field — buildFullDataExport strips it, same as the single-program export.
+const { origin: _seedOrigin, ...seedProgramContent } = seedProgram
+
 describe('buildFullDataExport', () => {
   it('bundles programs, workouts, checkins, and settings, but never the Library', () => {
     const data = buildFullDataExport({
@@ -48,13 +52,14 @@ describe('buildFullDataExport', () => {
     })
     expect(data).toEqual({
       exportedAt: '2026-07-19T12:00:00.000Z',
-      programs: [seedProgram],
+      programs: [seedProgramContent],
       workouts: [workout],
       checkins: [checkIn],
       settings,
     })
     expect(data).not.toHaveProperty('exercises')
     expect(data).not.toHaveProperty('library')
+    expect(data.programs[0]).not.toHaveProperty('origin')
   })
 
   it('falls back to null settings when none exist yet', () => {

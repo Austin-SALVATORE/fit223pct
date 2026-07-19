@@ -10,7 +10,7 @@ import { useExerciseName } from '@/i18n/seedExercise'
 import { useSessionName } from '@/i18n/seedProgram'
 import { useLocale } from '@/i18n/useLocale'
 import { SessionPreview } from '@/features/today/SessionPreview'
-import type { ActivityTemplate, Exercise, LoggedSet, SessionTemplate, Workout } from '@/domain/types'
+import type { ActivityTemplate, Exercise, LoggedSet, Program, SessionTemplate, Workout } from '@/domain/types'
 
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
@@ -41,6 +41,7 @@ export function PlanDayPage() {
       day: days.find((d) => d.date === date) ?? null,
       exerciseById: new Map(exercises.map((e) => [e.id, e])),
       programId: program.id,
+      programOrigin: program.origin,
     }
   }, [date, validDate])
 
@@ -53,7 +54,13 @@ export function PlanDayPage() {
     <div>
       <BackToPlan />
       <h1 className="text-display mt-6 text-4xl text-ink">{formatLongDate(parseDateKey(date), locale)}</h1>
-      <DayDetailBody day={data.day} exerciseById={data.exerciseById} date={date} programId={data.programId} />
+      <DayDetailBody
+        day={data.day}
+        exerciseById={data.exerciseById}
+        date={date}
+        programId={data.programId}
+        programOrigin={data.programOrigin}
+      />
     </div>
   )
 }
@@ -63,11 +70,13 @@ function DayDetailBody({
   exerciseById,
   date,
   programId,
+  programOrigin,
 }: {
   day: ScheduleDay
   exerciseById: Map<string, Exercise>
   date: string
   programId: string
+  programOrigin: Program['origin']
 }) {
   const { t } = useTranslation('plan')
 
@@ -77,6 +86,7 @@ function DayDetailBody({
         workout={day.workout}
         session={day.session ?? undefined}
         programId={programId}
+        programOrigin={programOrigin}
         exerciseById={exerciseById}
         date={date}
       />
@@ -89,7 +99,13 @@ function DayDetailBody({
 
   if (day.session) {
     return (
-      <ProjectedDetail session={day.session} programId={programId} exerciseById={exerciseById} date={date} />
+      <ProjectedDetail
+        session={day.session}
+        programId={programId}
+        programOrigin={programOrigin}
+        exerciseById={exerciseById}
+        date={date}
+      />
     )
   }
 
@@ -100,12 +116,14 @@ function CompletedDetail({
   workout,
   session,
   programId,
+  programOrigin,
   exerciseById,
   date,
 }: {
   workout: Workout
   session: SessionTemplate | undefined
   programId: string
+  programOrigin: Program['origin']
   exerciseById: Map<string, Exercise>
   date: string
 }) {
@@ -115,7 +133,7 @@ function CompletedDetail({
   // workout is defensive-only (shouldn't happen in practice), so the
   // empty placeholder below is never actually rendered — sessionFallback
   // covers that case instead.
-  const resolvedSessionName = useSessionName(programId, session ?? EMPTY_SESSION)
+  const resolvedSessionName = useSessionName(programId, session ?? EMPTY_SESSION, programOrigin)
   const sessionName = session ? resolvedSessionName : t('sessionFallback')
   const summary = summarizeWorkout(workout)
   const loggedExercises = workout.exercises.filter((e) => e.sets.length > 0)
@@ -190,16 +208,18 @@ function LoggedExerciseRow({
 function ProjectedDetail({
   session,
   programId,
+  programOrigin,
   exerciseById,
   date,
 }: {
   session: SessionTemplate
   programId: string
+  programOrigin: Program['origin']
   exerciseById: Map<string, Exercise>
   date: string
 }) {
   const { t } = useTranslation('plan')
-  const sessionName = useSessionName(programId, session)
+  const sessionName = useSessionName(programId, session, programOrigin)
   return (
     <>
       <p className="mt-1 text-sm font-medium text-amber">{t('dayDetail.projectedLabel')}</p>
@@ -207,6 +227,7 @@ function ProjectedDetail({
       <SessionPreview
         session={session}
         programId={programId}
+        programOrigin={programOrigin}
         exerciseById={exerciseById}
         heading={sessionName}
         origin={{ from: 'plan-day', date }}
