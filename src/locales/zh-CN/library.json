@@ -1,20 +1,20 @@
 {
-  "heading": "TODO",
+  "heading": "动作库",
   "group": {
-    "lower": "TODO",
-    "push": "TODO",
-    "pull": "TODO",
-    "core": "TODO"
+    "lower": "下肢",
+    "push": "推",
+    "pull": "拉",
+    "core": "核心"
   },
-  "notFound": "TODO",
-  "unilateralSuffix": "TODO",
-  "techniqueSectionAriaLabel": "TODO",
-  "techniqueHeading": "TODO",
-  "conceptSectionAriaLabel": "TODO",
-  "whyItMatters": "TODO",
-  "substitutionsSectionAriaLabel": "TODO",
-  "swapFor": "TODO",
+  "notFound": "动作库中没有这个动作，可能已被重命名。",
+  "unilateralSuffix": "单侧进行",
+  "techniqueSectionAriaLabel": "技术要点",
+  "techniqueHeading": "技术",
+  "conceptSectionAriaLabel": "概念",
+  "whyItMatters": "为什么重要——{{title}}",
+  "substitutionsSectionAriaLabel": "替代动作",
+  "swapFor": "替换为",
   "backLink": {
-    "day": "TODO"
+    "day": "当天"
   }
 }

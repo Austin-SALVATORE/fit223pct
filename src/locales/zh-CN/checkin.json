@@ -1,26 +1,26 @@
 {
   "tierPhrase": {
-    "ready": "TODO",
-    "steady": "TODO",
-    "easier": "TODO"
+    "ready": "今天状态好，可以练。",
+    "steady": "状态平稳，照常训练。",
+    "easier": "今天练轻松一点——$t({{driversKey}})。"
   },
-  "sectionLabel": "TODO",
-  "heading": "TODO",
-  "hint": "TODO",
-  "notRecorded": "TODO",
-  "locked": "TODO",
-  "lockedNote": "TODO",
+  "sectionLabel": "今日状态",
+  "heading": "今天的状态",
+  "hint": "1 低 · 5 高",
+  "notRecorded": "今天还没有记录。",
+  "locked": "已锁定",
+  "lockedNote": "本次训练已锁定——更改将从明天开始生效。",
   "signalLabel": {
-    "sleep": "TODO",
-    "energy": "TODO",
-    "soreness": "TODO",
-    "stress": "TODO",
-    "motivation": "TODO"
+    "sleep": "睡眠",
+    "energy": "精力",
+    "soreness": "肌肉状态",
+    "stress": "平静",
+    "motivation": "动力"
   },
   "measurement": {
-    "sectionLabel": "TODO",
-    "heading": "TODO",
-    "weightLabel": "TODO",
-    "waistLabel": "TODO"
+    "sectionLabel": "体重和腰围",
+    "heading": "体重与腰围",
+    "weightLabel": "体重",
+    "waistLabel": "腰围"
   }
 }

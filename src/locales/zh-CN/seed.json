@@ -1,287 +1,287 @@
 {
   "exercise": {
     "goblet-squat": {
-      "name": "TODO",
+      "name": "高脚杯深蹲",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "把哑铃紧贴胸口",
+        "向下坐在两脚跟之间，不要向后坐",
+        "蹲到最低点时，手肘保持在膝盖内侧"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "核心收紧",
+        "body": "每次动作前，先深吸一口气到腹部，轻轻收紧核心——就像准备好承受轻轻一戳。核心收紧能让脊柱保持稳定，这样你的腿才能真正发力。"
       }
     },
     "split-squat": {
-      "name": "TODO",
+      "name": "分腿蹲",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "两脚间距拉大，后脚跟自然抬起",
+        "后膝盖垂直向下",
+        "前脚承担大部分重量"
       ]
     },
     "tempo-bodyweight-squat": {
-      "name": "TODO",
+      "name": "慢速自重深蹲",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "下蹲用时三秒",
+        "在最低点稍作停顿",
+        "每次动作之间站直"
       ]
     },
     "bench-press": {
-      "name": "TODO",
+      "name": "杠铃卧推",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "肩胛骨向下收紧靠拢",
+        "腰部微微拱起，双脚踩实地面",
+        "有控制地下放到胸部中间位置"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "肩胛骨位置",
+        "body": "取杠之前先把肩胛骨向下、向后收紧，并保持住。稳定的肩胛骨能让卧推凳变成发力的支点，同时保护你的肩膀。"
       }
     },
     "deficit-push-up": {
-      "name": "TODO",
+      "name": "垫高俯卧撑",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "双手垫在书本或把手上",
+        "最低点时胸部低于手的位置",
+        "身体保持一条直线"
       ]
     },
     "db-floor-press": {
-      "name": "TODO",
+      "name": "哑铃地板卧推",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "每次动作手肘轻轻触地",
+        "推起时稍微向内收",
+        "手腕对齐在手肘正上方"
       ]
     },
     "single-arm-db-row": {
-      "name": "TODO",
+      "name": "单臂哑铃划船",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "背部平直，髋部保持水平",
+        "拉向髋部，而不是腋下",
+        "让肩胛骨参与活动——先伸展，再拉动"
       ]
     },
     "bent-over-row": {
-      "name": "TODO",
+      "name": "杠铃俯身划船",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "髋部铰链至约45度",
+        "拉向下肋骨位置",
+        "顶点稍作停顿"
       ]
     },
     "band-row": {
-      "name": "TODO",
+      "name": "弹力带划船",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "固定点在胸部高度",
+        "收紧肩胛骨",
+        "缓慢还原"
       ]
     },
     "romanian-deadlift": {
-      "name": "TODO",
+      "name": "罗马尼亚硬拉",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "髋部向后推，膝盖微屈",
+        "杠铃始终贴近腿部",
+        "腘绳肌感到牵拉到位就停"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "髋关节铰链",
+        "body": "髋关节铰链是髋部向后移动、脊柱保持延展的动作——更像鞠躬，而不是深蹲。掌握它能让腘绳肌和臀肌承担负荷，而不是下背部，而且这个模式几乎贯穿所有力量动作。"
       }
     },
     "single-leg-rdl": {
-      "name": "TODO",
+      "name": "单腿罗马尼亚硬拉",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "髋部始终保持朝向地面",
+        "自由腿向后伸展",
+        "慢而稳比重量更重要"
       ]
     },
     "bulgarian-split-squat": {
-      "name": "TODO",
+      "name": "保加利亚分腿蹲",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "后脚放在训练凳上，脚背朝下",
+        "上身保持挺直，略微前倾也可以",
+        "用整个前脚发力蹬起"
       ]
     },
     "overhead-press": {
-      "name": "TODO",
+      "name": "杠铃肩上推举",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "收紧臀部，肋骨下沉",
+        "杠铃走直线——移动的是你的头，不是杠铃",
+        "推到顶点时手臂贴近耳朵"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "肋骨下沉",
+        "body": "下背部过度拱起会让肩上推举变成下背部的训练。把肋骨往髋部方向收，同时收紧臀部——发力应该来自肩膀，而不是脊柱。"
       }
     },
     "single-arm-db-press": {
-      "name": "TODO",
+      "name": "单臂哑铃推举",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "全身保持紧张发力",
+        "稍微向后推，而不是向前",
+        "抵抗身体侧弯"
       ]
     },
     "hip-thrust": {
-      "name": "TODO",
+      "name": "臀桥",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "肩胛骨靠在训练凳边缘",
+        "顶点时下巴微收，肋骨下沉",
+        "在顶点收紧完整一秒"
       ]
     },
     "single-leg-hip-thrust": {
-      "name": "TODO",
+      "name": "单腿臀桥",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "髋部保持水平",
+        "用脚跟发力蹬起",
+        "下降时放慢速度"
       ]
     },
     "band-pull-apart": {
-      "name": "TODO",
+      "name": "弹力带扩胸",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "手臂伸直，弹力带拉至胸前",
+        "收紧两侧肩胛骨中间",
+        "有控制地还原"
       ]
     },
     "band-lateral-raise": {
-      "name": "TODO",
+      "name": "弹力带侧平举",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "用手肘带动动作",
+        "抬到肩膀高度就停",
+        "不要借力摆动"
       ]
     },
     "band-curl": {
-      "name": "TODO",
+      "name": "弹力带弯举",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "手肘固定在身体两侧",
+        "顶点收紧发力",
+        "下放用时三秒"
       ]
     },
     "dead-bug": {
-      "name": "TODO",
+      "name": "死虫式",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "下背部轻轻贴住地面",
+        "对侧手臂和腿缓慢向外伸展",
+        "伸展的同时呼气"
       ]
     },
     "side-plank": {
-      "name": "TODO",
+      "name": "侧平板支撑",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "手肘位于肩膀正下方",
+        "髋部抬高——身体呈一条直线",
+        "呼吸保持平稳"
       ]
     },
     "barbell-squat": {
-      "name": "TODO",
+      "name": "杠铃深蹲",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "杠铃放在斜方肌上部，而不是脖子上",
+        "髋部和膝盖同时弯曲，向下坐在两脚跟之间",
+        "双脚同时均匀发力蹬地站起"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "杠铃轨迹",
+        "body": "杠铃应该沿着脚掌中部正上方的垂直直线移动。如果髋部先于其他部位抬起，深蹲就会变成髋关节铰链动作——应该是向下坐，而不是向后坐，让髋部和肩膀同步上升。"
       }
     },
     "cable-row": {
-      "name": "TODO",
+      "name": "坐姿划船",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "坐直，挺胸，起始位置稍微前倾",
+        "拉向下肋骨，手肘贴近身体",
+        "下一次动作前让肩胛骨完全前伸"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "用手肘引导发力",
+        "body": "每次动作都从手肘向后发力开始，而不是靠手臂弯曲把手柄拉近。真正拉动的是背部，二头肌只是负责抓握。"
       }
     },
     "lat-pulldown": {
-      "name": "TODO",
+      "name": "高位下拉",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "握距略宽于肩宽",
+        "把杆拉向上胸部，手肘向下向后发力",
+        "有控制地还原——不要让配重片把手臂拉上去"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "向下也向后，而不只是向下",
+        "body": "试着想象把手肘拉向裤子后口袋，而不只是把杆往下拉。这个意念能把发力点从手臂转移到背阔肌。"
       }
     },
     "barbell-hip-thrust": {
-      "name": "TODO",
+      "name": "杠铃臀桥",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "上背部靠在训练凳边缘，杠铃用护垫垫在髋部",
+        "蹬起时下巴微收，肋骨下沉",
+        "完全伸髋——顶点用力收紧臀部一秒"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "杠铃位置",
+        "body": "杠铃应该放在髋部的褶皱处，而不是下腹部——用厚护垫或折叠垫保护这个位置。如果感觉杠铃压得难受，通常是位置不对，而不是重量太大。"
       }
     },
     "dumbbell-lateral-raise": {
-      "name": "TODO",
+      "name": "哑铃侧平举",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "手肘保持微屈，全程不变",
+        "用手肘带动，抬到肩膀高度",
+        "缓慢下放——离心阶段才是这个动作真正见效的地方"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "轻重量，真幅度",
+        "body": "这不是一个追求大重量的动作——借助摆动把哑铃甩上去，会让肩膀失去张力，而张力恰恰是这个动作的全部意义。如果你需要借助身体倾斜或摆动才能举起，说明重量太重了。"
       }
     },
     "dumbbell-curl": {
-      "name": "TODO",
+      "name": "哑铃弯举",
       "cues": [
-        "TODO",
-        "TODO",
-        "TODO"
+        "整个动作过程中手肘固定在身体两侧",
+        "顶点收紧发力，不要借摆动把重量甩上去",
+        "有控制地下放，走完整个幅度"
       ],
       "teachingConcept": {
-        "title": "TODO",
-        "body": "TODO"
+        "title": "手肘位置决定一切",
+        "body": "如果重量变大时手肘往前移，前三角肌就会取代二头肌发力。整组动作都要让手肘保持在肩膀正下方，哪怕这意味着要选更轻的哑铃。"
       }
     }
   },
   "program": {
     "phase-1-home": {
-      "name": "TODO",
+      "name": "第一阶段 — 居家训练",
       "session": {
         "A": {
-          "name": "TODO",
-          "focus": "TODO",
+          "name": "训练 A",
+          "focus": "深蹲与拉",
           "exercise": {
             "goblet-squat": {
-              "note": "TODO"
+              "note": "下降用时3秒"
             },
             "romanian-deadlift": {
-              "note": "TODO"
+              "note": "缓慢离心——杠铃下降用时3秒"
             }
           }
         },
         "B": {
-          "name": "TODO",
-          "focus": "TODO",
+          "name": "训练 B",
+          "focus": "铰链与推举",
           "exercise": {
             "bent-over-row": {
-              "note": "TODO"
+              "note": "每次动作顶点稍作停顿"
             },
             "hip-thrust": {
-              "note": "TODO"
+              "note": "能稳定控制15次后，改为单腿版本"
             }
           }
         }

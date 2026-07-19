@@ -1,50 +1,50 @@
 {
   "readiness": {
     "signal": {
-      "sleep": "TODO",
-      "soreness": "TODO",
-      "energy": "TODO",
-      "stress": "TODO",
-      "motivation": "TODO"
+      "sleep": "睡眠不足",
+      "soreness": "肌肉酸痛",
+      "energy": "精力不足",
+      "stress": "压力较大",
+      "motivation": "动力不足"
     },
     "drivers": {
-      "none": "TODO",
-      "one": "TODO",
-      "two": "TODO",
-      "many": "TODO"
+      "none": "状态偏低",
+      "one": "$t(domain:readiness.signal.{{signal}})",
+      "two": "$t(domain:readiness.signal.{{signal1}})和$t(domain:readiness.signal.{{signal2}})",
+      "many": "整体状态都不太好"
     }
   },
   "adjustments": {
-    "effort": "TODO",
-    "volume": "TODO"
+    "effort": "今天多留一次余力——$t({{driversKey}})。",
+    "volume": "今天辅助动作减一组——$t({{driversKey}})。"
   },
   "progression": {
-    "start": "TODO",
-    "addReps": "TODO",
-    "consolidateNoReserve": "TODO",
-    "consolidateEasier": "TODO",
-    "addTechnique": "TODO",
-    "increaseLoad": "TODO"
+    "start": "第一次训练——从建议重量开始，做满整个次数范围。",
+    "addReps": "重量不变——为最弱的一组加一次。",
+    "consolidateNoReserve": "已经到次数上限，但太接近力竭——再巩固一次。",
+    "consolidateEasier": "你已经够格加重了，但今天不加——重量不变，把加重留到状态更好的一天。",
+    "addTechnique": "这个设置的重量已经到顶——用更慢的离心、增加停顿或加大幅度来进步。",
+    "increaseLoad": "每一组都做满次数范围，还有余力——是时候加重了。"
   },
   "highlight": {
-    "first": "TODO",
-    "load": "TODO",
-    "effortSeconds": "TODO",
-    "effortReps_other": "TODO",
-    "steady": "TODO"
+    "first": "首次",
+    "load": "+{{delta, number}} kg",
+    "effortSeconds": "+{{delta}}s",
+    "effortReps_other": "+{{count}} 次",
+    "steady": "保持稳定"
   },
   "coachInsight": {
-    "easier": "TODO",
-    "loadsUp_other": "TODO",
-    "effortsUp": "TODO",
-    "baselines": "TODO",
-    "consistent": "TODO"
+    "easier": "根据状态调整了，还是坚持完成——这种自律才是长期进步的关键。",
+    "loadsUp_other": "有{{count}}个动作加重了——双重递进在起作用。",
+    "effortsUp": "这次的次数比上次多——次数满了之后，下一步就是加重。",
+    "baselines": "基准数据已建立。从现在开始，一切都是进步。",
+    "consistent": "同样的数字，稳定地练——这才是长期积累的关键。"
   },
   "trends": {
-    "firstWeekInProgress": "TODO",
-    "noScheduledSessions": "TODO",
-    "needMoreStrengthData": "TODO",
-    "needMoreWaistData": "TODO",
-    "spreadWaistMeasurements": "TODO"
+    "firstWeekInProgress": "你的第一周还在进行中——过几天再回来看看。",
+    "noScheduledSessions": "这段时间内还没有安排的训练。",
+    "needMoreStrengthData": "多记录几次这个动作，才能看出力量趋势。",
+    "needMoreWaistData": "再多测量几次腰围，才能看出趋势。",
+    "spreadWaistMeasurements": "把测量时间分散在几周内，才能看出趋势。"
   }
 }

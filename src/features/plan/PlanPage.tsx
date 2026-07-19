@@ -198,11 +198,15 @@ function PhaseHeader({ program, locale }: { program: Program; locale: string }) 
     style: 'long',
     type: 'conjunction',
   }).format(uniqueRotation)
+  // Chinese doesn't use inter-word spacing — 'zh-CN' renders as
+  // "周一/周三/周五", not "周一 / 周三 / 周五" (that ASCII spacing reads as
+  // visibly foreign, the same class of bug as the joins above).
+  const weekdaySeparator = locale.startsWith('zh') ? '/' : ' / '
   const weekdaysLabel = program.trainingWeekdays
     .slice()
     .sort((a, b) => a - b)
     .map((d) => weekdayAbbr(d, locale))
-    .join(' / ')
+    .join(weekdaySeparator)
 
   const sessionsLine = program.sessions
     .map((s) => {

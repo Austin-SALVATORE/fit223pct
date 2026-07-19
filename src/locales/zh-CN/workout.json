@@ -1,54 +1,54 @@
 {
-  "noSession": "TODO",
-  "backToToday": "TODO",
-  "pauseAriaLabel": "TODO",
-  "progressAriaLabel": "TODO",
-  "progressValueText": "TODO",
+  "noSession": "目前没有进行中的训练。",
+  "backToToday": "返回今天",
+  "pauseAriaLabel": "暂停训练并返回今天",
+  "progressAriaLabel": "训练进度",
+  "progressValueText": "{{logged}} / {{total}} 组",
   "resting": {
-    "heading": "TODO",
-    "next": "TODO",
-    "nextUp": "TODO",
-    "ariaLabel": "TODO",
-    "setProgress": "TODO",
-    "plusThirty": "TODO",
-    "skip": "TODO"
+    "heading": "休息",
+    "next": "下一个",
+    "nextUp": "接下来",
+    "ariaLabel": "休息中。{{nextLabel}}：{{exerciseName}}，第 {{setIndex}} / {{totalSets}} 组",
+    "setProgress": "{{exerciseName}} — 第 {{setIndex}} / {{totalSets}} 组",
+    "plusThirty": "+30秒",
+    "skip": "跳过"
   },
   "holdTimer": {
-    "start": "TODO",
-    "stopAriaLabel": "TODO",
-    "stopSuffix": "TODO"
+    "start": "开始保持",
+    "stopAriaLabel": "停止保持",
+    "stopSuffix": "——停止"
   },
   "setScreen": {
-    "setProgress": "TODO",
-    "eachSide": "TODO",
-    "lastTimeFirst": "TODO",
-    "lastTimePrefix": "TODO",
-    "weightLabel": "TODO",
-    "holdLabel": "TODO",
-    "repsLabel": "TODO",
-    "logHold": "TODO",
-    "logSet": "TODO",
-    "technique": "TODO",
-    "swapExercise": "TODO",
-    "rirLabel": "TODO"
+    "setProgress": "第 {{setIndex}} / {{totalSets}} 组",
+    "eachSide": "每侧",
+    "lastTimeFirst": "第一次——下面的数据是你的起点。",
+    "lastTimePrefix": "上次",
+    "weightLabel": "重量",
+    "holdLabel": "保持",
+    "repsLabel": "次数",
+    "logHold": "记录保持",
+    "logSet": "记录这组",
+    "technique": "技术",
+    "swapExercise": "更换动作",
+    "rirLabel": "保留次数"
   },
   "swapSheet": {
-    "closeAriaLabel": "TODO",
-    "dialogAriaLabel": "TODO",
-    "heading": "TODO",
-    "noSubstitutions": "TODO",
-    "keep": "TODO"
+    "closeAriaLabel": "关闭",
+    "dialogAriaLabel": "更换{{exerciseName}}",
+    "heading": "把{{exerciseName}}换成",
+    "noSubstitutions": "这个动作没有替代选项——它已经是备选方案本身。",
+    "keep": "保留{{exerciseName}}"
   },
   "sessionSummary": {
-    "eyebrow": "TODO",
-    "heading": "TODO",
-    "statMinutes": "TODO",
-    "statSets": "TODO",
-    "statVolume": "TODO",
-    "setCount_other": "TODO",
-    "topWeightReps": "TODO",
-    "topSeconds": "TODO",
-    "topReps": "TODO",
-    "topSetLine": "TODO"
+    "eyebrow": "训练完成",
+    "heading": "干得漂亮。",
+    "statMinutes": "分钟",
+    "statSets": "组数",
+    "statVolume": "训练量",
+    "setCount_other": "{{count}} 组",
+    "topWeightReps": "{{reps}} × {{weight}} kg",
+    "topSeconds": "{{seconds}}秒保持",
+    "topReps": "{{reps}} 次",
+    "topSetLine": "{{countPhrase}} · 最佳 {{detail}}"
   }
 }

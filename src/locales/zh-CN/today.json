@@ -1,60 +1,60 @@
 {
   "sessionPreview": {
-    "perSideSuffix": "TODO"
+    "perSideSuffix": " /侧"
   },
   "trainingDay": {
-    "easedSubtitle": "TODO",
-    "readySubtitle": "TODO",
-    "adjustedBadge": "TODO",
-    "heading": "TODO",
-    "lowStreak_other": "TODO"
+    "easedSubtitle": "今天练轻松一点——$t({{driversKey}})。像这样的日子还坚持训练，价值翻倍。",
+    "readySubtitle": "好好热身。你的起始数据在下面——训练时会等着你。",
+    "adjustedBadge": "根据状态调整",
+    "heading": "今天",
+    "lowStreak_other": "已经连续 {{count}} 天状态偏低——把这天当作休息日完全没问题。你的训练会等着你。"
   },
-  "noProgram": "TODO",
+  "noProgram": "还没有设置训练计划。你的下一阶段会显示在这里。",
   "plannedDay": {
-    "startsIn_other": "TODO",
-    "upcomingSubtitle": "TODO",
-    "upcomingHeading": "TODO",
-    "restEyebrow": "TODO",
-    "restTitle": "TODO",
-    "restSubtitleEased": "TODO",
-    "restSubtitleReady": "TODO",
-    "restHeading": "TODO",
-    "endedEyebrow": "TODO",
-    "endedTitle": "TODO",
-    "endedSubtitle": "TODO"
+    "startsIn_other": "{{count}} 天后开始",
+    "upcomingSubtitle": "你的第一次训练已经准备好——从第一天开始，或者提前开始也可以。",
+    "upcomingHeading": "即将开始",
+    "restEyebrow": "休息日",
+    "restTitle": "休息也是进步",
+    "restSubtitleEased": "真正的休息日，时机刚好。好好充电——下一次训练会等着你。",
+    "restSubtitleReady": "游泳、玩耍、散步——或者什么都不做。你准备好的时候，下一次训练就在那里。",
+    "restHeading": "接下来",
+    "endedEyebrow": "阶段完成",
+    "endedTitle": "这个阶段圆满结束",
+    "endedSubtitle": "你的下一个计划开始后会显示在这里。"
   },
   "startButton": {
-    "quiet": "TODO",
-    "primary": "TODO"
+    "quiet": "现在开始这次训练",
+    "primary": "开始训练"
   },
   "inProgress": {
-    "eyebrow": "TODO",
-    "sessionFallback": "TODO",
-    "loggedSets_other": "TODO",
-    "waiting": "TODO",
-    "resume": "TODO",
-    "discard": "TODO",
-    "discardArmed": "TODO"
+    "eyebrow": "进行中",
+    "sessionFallback": "训练",
+    "loggedSets_other": "目前已记录 {{count}} 组。从上次的地方继续。",
+    "waiting": "你的训练已经开始，正在等你。",
+    "resume": "继续训练",
+    "discard": "放弃训练",
+    "discardArmed": "再次点击以放弃这次训练"
   },
   "doneToday": {
-    "eyebrow": "TODO",
-    "title": "TODO",
-    "sets_other": "TODO",
-    "inMinutes_other": "TODO",
-    "subtitle": "TODO"
+    "eyebrow": "训练完成",
+    "title": "今天完成了",
+    "sets_other": "{{count}} 组",
+    "inMinutes_other": "，用时 {{count}} 分钟",
+    "subtitle": "{{setsPhrase}}{{minutesPhrase}} · 共完成 {{volume}} kg"
   },
   "weeklyReview": {
-    "heading": "TODO",
-    "noSessionsScheduled": "TODO",
-    "quietWeek": "TODO",
-    "allDone": "TODO",
-    "partial": "TODO",
-    "statSessions": "TODO",
-    "statSets": "TODO",
-    "statVolume": "TODO",
-    "readinessReady": "TODO",
-    "readinessSteady": "TODO",
-    "readinessEased": "TODO",
-    "readinessNone": "TODO"
+    "heading": "上周",
+    "noSessionsScheduled": "上周没有安排训练。",
+    "quietWeek": "平静的一周——没有记录任何训练。",
+    "allDone": "所有安排的训练，全部完成。",
+    "partial": "已完成训练：{{completedCount}} / {{scheduledCount}}。",
+    "statSessions": "训练次数",
+    "statSets": "组数",
+    "statVolume": "训练量",
+    "readinessReady": "状态好：{{count}}",
+    "readinessSteady": "状态平稳：{{count}}",
+    "readinessEased": "有所调整：{{count}}",
+    "readinessNone": "没有记录状态数据。"
   }
 }

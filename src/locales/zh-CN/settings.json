@@ -1,14 +1,14 @@
 {
-  "heading": "TODO",
+  "heading": "设置",
   "language": {
-    "sectionLabel": "Language",
-    "heading": "Language"
+    "sectionLabel": "语言",
+    "heading": "语言"
   },
   "backup": {
-    "sectionLabel": "TODO",
-    "heading": "TODO",
-    "description": "TODO",
-    "exportButton": "TODO",
-    "saved": "TODO"
+    "sectionLabel": "备份",
+    "heading": "备份",
+    "description": "一个按日期命名的文件，包含所有计划、训练和状态记录——这是本地优先应用的手动备份方式。",
+    "exportButton": "导出所有数据",
+    "saved": "已保存备份。"
   }
 }

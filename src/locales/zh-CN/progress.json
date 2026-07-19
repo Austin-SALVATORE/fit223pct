@@ -1,30 +1,30 @@
 {
   "direction": {
-    "increasing": "TODO",
-    "steady": "TODO",
-    "decreasing": "TODO"
+    "increasing": "上升中",
+    "steady": "保持稳定",
+    "decreasing": "下降中"
   },
   "consistency": {
-    "sectionLabel": "TODO",
-    "noProgram": "TODO",
-    "summary": "TODO",
-    "windowLine": "TODO"
+    "sectionLabel": "训练规律",
+    "noProgram": "还没有设置训练计划。开始后，这里会显示训练规律。",
+    "summary": "已完成 {{completedCount}}/{{scheduledCount}} 次训练",
+    "windowLine": "过去 {{days}} 天内"
   },
   "strength": {
-    "sectionLabel": "TODO",
-    "noHistory": "TODO",
-    "stillGathering": "TODO",
-    "sessionsOfThree": "TODO",
+    "sectionLabel": "力量",
+    "noHistory": "记录几次训练后，这里会显示力量趋势。",
+    "stillGathering": "数据还不够",
+    "sessionsOfThree": "{{count}}/3 次训练",
     "stagnation": {
-      "noIncreasePrefix": "TODO",
-      "sessionCount_other": "TODO",
-      "excluded_other": "TODO",
-      "worthChange": "TODO",
-      "trySubstitution": "TODO"
+      "noIncreasePrefix": "没有增长，已持续",
+      "sessionCount_other": "{{count}} 次训练",
+      "excluded_other": "（{{count}} 次调整日未计入）",
+      "worthChange": "值得换个刺激方式了——",
+      "trySubstitution": "试试{{name}}"
     }
   },
   "waist": {
-    "sectionLabel": "TODO",
-    "rangeLine": "TODO"
+    "sectionLabel": "腰围",
+    "rangeLine": "{{firstDate}}：{{firstValue}} → {{lastDate}}：{{lastValue}}"
   }
 }

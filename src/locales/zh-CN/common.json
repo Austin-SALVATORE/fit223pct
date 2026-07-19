@@ -1,52 +1,52 @@
 {
   "nav": {
-    "today": "TODO",
-    "plan": "TODO",
-    "progress": "TODO",
-    "library": "TODO",
-    "workout": "TODO"
+    "today": "今天",
+    "plan": "计划",
+    "progress": "进度",
+    "library": "动作库",
+    "workout": "训练"
   },
   "muscle": {
-    "quads": "TODO",
-    "hamstrings": "TODO",
-    "glutes": "TODO",
-    "chest": "TODO",
-    "back": "TODO",
-    "shoulders": "TODO",
-    "biceps": "TODO",
-    "triceps": "TODO",
-    "core": "TODO"
+    "quads": "股四头肌",
+    "hamstrings": "腘绳肌",
+    "glutes": "臀肌",
+    "chest": "胸肌",
+    "back": "背肌",
+    "shoulders": "三角肌",
+    "biceps": "肱二头肌",
+    "triceps": "肱三头肌",
+    "core": "腹肌"
   },
   "activityKind": {
-    "recovery": "TODO",
-    "mobility": "TODO",
-    "cardio": "TODO",
-    "optional": "TODO",
-    "checkpoint": "TODO"
+    "recovery": "恢复",
+    "mobility": "活动度",
+    "cardio": "有氧",
+    "optional": "可选",
+    "checkpoint": "小结"
   },
-  "edit": "TODO",
-  "done": "TODO",
-  "settings": "TODO",
+  "edit": "编辑",
+  "done": "完成",
+  "settings": "设置",
   "stepper": {
-    "decrease": "TODO",
-    "increase": "TODO"
+    "decrease": "减少{{label}}",
+    "increase": "增加{{label}}"
   },
   "equipment": {
-    "barbell": "TODO",
-    "dumbbell": "TODO",
-    "bench": "TODO",
-    "band": "TODO",
-    "bodyweight": "TODO",
-    "machine": "TODO"
+    "barbell": "杠铃",
+    "dumbbell": "哑铃",
+    "bench": "训练凳",
+    "band": "弹力带",
+    "bodyweight": "自重",
+    "machine": "器械"
   },
   "routeTitle": {
-    "today": "TODO",
-    "library": "TODO",
-    "progress": "TODO",
-    "plan": "TODO",
-    "settings": "TODO",
-    "exercise": "TODO",
-    "workout": "TODO"
+    "today": "{{productName}}",
+    "library": "{{productName}} — 动作库",
+    "progress": "{{productName}} — 进度",
+    "plan": "{{productName}} — 计划",
+    "settings": "{{productName}} — 设置",
+    "exercise": "{{productName}} — 动作",
+    "workout": "{{productName}} — 训练"
   },
   "language": {
     "en": "English",
