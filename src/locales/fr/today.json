@@ -2,6 +2,61 @@
   "trainingDay": {
     "easedSubtitle": "TODO",
     "readySubtitle": "TODO",
-    "adjustedBadge": "TODO"
+    "adjustedBadge": "TODO",
+    "heading": "TODO",
+    "lowStreak_one": "TODO",
+    "lowStreak_other": "TODO"
+  },
+  "noProgram": "TODO",
+  "plannedDay": {
+    "startsIn_one": "TODO",
+    "startsIn_other": "TODO",
+    "upcomingSubtitle": "TODO",
+    "upcomingHeading": "TODO",
+    "restEyebrow": "TODO",
+    "restTitle": "TODO",
+    "restSubtitleEased": "TODO",
+    "restSubtitleReady": "TODO",
+    "restHeading": "TODO",
+    "endedEyebrow": "TODO",
+    "endedTitle": "TODO",
+    "endedSubtitle": "TODO"
+  },
+  "startButton": {
+    "quiet": "TODO",
+    "primary": "TODO"
+  },
+  "inProgress": {
+    "eyebrow": "TODO",
+    "sessionFallback": "TODO",
+    "loggedSets_one": "TODO",
+    "loggedSets_other": "TODO",
+    "waiting": "TODO",
+    "resume": "TODO",
+    "discard": "TODO",
+    "discardArmed": "TODO"
+  },
+  "doneToday": {
+    "eyebrow": "TODO",
+    "title": "TODO",
+    "sets_one": "TODO",
+    "sets_other": "TODO",
+    "inMinutes_one": "TODO",
+    "inMinutes_other": "TODO",
+    "subtitle": "TODO"
+  },
+  "weeklyReview": {
+    "heading": "TODO",
+    "noSessionsScheduled": "TODO",
+    "quietWeek": "TODO",
+    "allDone": "TODO",
+    "partial": "TODO",
+    "statSessions": "TODO",
+    "statSets": "TODO",
+    "statVolume": "TODO",
+    "readinessReady": "TODO",
+    "readinessSteady": "TODO",
+    "readinessEased": "TODO",
+    "readinessNone": "TODO"
   }
 }

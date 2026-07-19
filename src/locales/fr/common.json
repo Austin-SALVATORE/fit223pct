@@ -1,1 +1,15 @@
-{}
+{
+  "nav": {
+    "today": "TODO",
+    "plan": "TODO",
+    "progress": "TODO",
+    "library": "TODO"
+  },
+  "activityKind": {
+    "recovery": "TODO",
+    "mobility": "TODO",
+    "cardio": "TODO",
+    "optional": "TODO",
+    "checkpoint": "TODO"
+  }
+}

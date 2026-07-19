@@ -4,7 +4,7 @@ import { exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
 import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
 import { formatLongDate, parseDateKey, toDateKey } from '@/lib/dates'
-import { ACTIVITY_KIND_LABEL } from '@/lib/activityKindLabel'
+import { useActivityKindLabel } from '@/lib/activityKindLabel'
 import { SessionPreview } from '@/features/today/SessionPreview'
 import type { ActivityTemplate, Exercise, LoggedSet, SessionTemplate, Workout } from '@/domain/types'
 
@@ -167,9 +167,10 @@ function ProjectedDetail({
 }
 
 function ActivityDetail({ activity }: { activity: ActivityTemplate }) {
+  const kindLabel = useActivityKindLabel(activity.kind)
   return (
     <>
-      <p className="mt-1 text-sm font-medium text-amber">{ACTIVITY_KIND_LABEL[activity.kind]}</p>
+      <p className="mt-1 text-sm font-medium text-amber">{kindLabel}</p>
       <h2 className="text-display mt-1 text-2xl text-ink">{activity.title}</h2>
       <ul className="mt-4 space-y-2">
         {activity.items.map((item, index) => (

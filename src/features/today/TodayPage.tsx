@@ -10,7 +10,7 @@ import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readine
 import { applyReadiness } from '@/domain/adjustments'
 import { buildWeeklyReview, reviewIsUnseen, type WeeklyReview } from '@/domain/weeklyReview'
 import { formatLongDate, toDateKey } from '@/lib/dates'
-import { ACTIVITY_KIND_LABEL } from '@/lib/activityKindLabel'
+import { useActivityKindLabel } from '@/lib/activityKindLabel'
 import type { ActivityTemplate, CheckIn, Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
 import { CheckInCard } from '@/features/checkin/CheckInCard'
 import { MeasurementCard } from '@/features/checkin/MeasurementCard'
@@ -150,13 +150,18 @@ function TodayBody({
           checkInCard={checkInCard}
         />
       ) : (
-        <>
-          <p className="mt-10 text-ink-secondary">
-            No training program is set up yet. Your next phase will appear here.
-          </p>
-          {checkInCard}
-        </>
+        <NoProgram checkInCard={checkInCard} />
       )}
+    </>
+  )
+}
+
+function NoProgram({ checkInCard }: { checkInCard: ReactNode }) {
+  const { t } = useTranslation('today')
+  return (
+    <>
+      <p className="mt-10 text-ink-secondary">{t('noProgram')}</p>
+      {checkInCard}
     </>
   )
 }
@@ -180,6 +185,7 @@ function PlannedDay({
   readiness: Readiness
   checkInCard: ReactNode
 }) {
+  const { t } = useTranslation('today')
   const plan = resolveDayPlan(program, today, completedCount)
   const eased = readiness.tier === 'easier'
 
@@ -197,16 +203,12 @@ function PlannedDay({
           activity={null}
           hero={
             <Hero
-              eyebrow={
-                plan.daysUntilStart === 1
-                  ? 'Starts tomorrow'
-                  : `Starts in ${plan.daysUntilStart} days`
-              }
+              eyebrow={t('plannedDay.startsIn', { count: plan.daysUntilStart })}
               title={program.name}
-              subtitle="Your first session is ready — begin on day one, or jump in early if you can't wait."
+              subtitle={t('plannedDay.upcomingSubtitle')}
             />
           }
-          heading="First up"
+          heading={t('plannedDay.upcomingHeading')}
         />
       )}
 
@@ -236,26 +238,26 @@ function PlannedDay({
               <ActivityHero activity={plan.activity} />
             ) : (
               <Hero
-                eyebrow="Rest day"
-                title="Recovery is progress"
+                eyebrow={t('plannedDay.restEyebrow')}
+                title={t('plannedDay.restTitle')}
                 subtitle={
                   eased
-                    ? 'A genuine rest day, perfectly timed. Recharge — your next session will wait.'
-                    : 'Swim, play, walk — or do nothing at all. Your next session is ready when you are.'
+                    ? t('plannedDay.restSubtitleEased')
+                    : t('plannedDay.restSubtitleReady')
                 }
               />
             )
           }
-          heading="Next up"
+          heading={t('plannedDay.restHeading')}
         />
       )}
 
       {plan.kind === 'ended' && (
         <>
           <Hero
-            eyebrow="Phase complete"
-            title="That's a wrap on this phase"
-            subtitle="Your next program will appear here once it begins."
+            eyebrow={t('plannedDay.endedEyebrow')}
+            title={t('plannedDay.endedTitle')}
+            subtitle={t('plannedDay.endedSubtitle')}
           />
           {checkInCard}
         </>
@@ -304,14 +306,13 @@ function TrainingDay({
       />
       {readiness.consecutiveLowDays >= 2 && (
         <p className="mt-4 text-center text-sm leading-relaxed text-ink-secondary">
-          {readiness.consecutiveLowDays} low days in a row now — making this a
-          rest day is a completely fine choice. Your session will wait for you.
+          {t('trainingDay.lowStreak', { count: readiness.consecutiveLowDays })}
         </p>
       )}
       <SessionPreview
         session={adjusted.session}
         exerciseById={exerciseById}
-        heading="Today"
+        heading={t('trainingDay.heading')}
         badge={eased ? t('trainingDay.adjustedBadge') : undefined}
         reasons={eased ? adjusted.adjustments.map((a) => t(a.reason.key, a.reason.params)) : undefined}
       />
@@ -393,6 +394,7 @@ function StartButton({
   /** 'quiet' is the early-start affordance on unscheduled days — present, never insistent */
   variant?: 'primary' | 'quiet'
 }) {
+  const { t } = useTranslation('today')
   const navigate = useNavigate()
   const [starting, setStarting] = useState(false)
 
@@ -424,7 +426,7 @@ function StartButton({
         onClick={() => void start()}
         className="mt-6 w-full rounded-card border border-border py-3.5 text-center text-base font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink disabled:opacity-60"
       >
-        Start this session now
+        {t('startButton.quiet')}
       </button>
     )
   }
@@ -436,33 +438,35 @@ function StartButton({
       onClick={() => void start()}
       className="mt-8 w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg transition-transform active:scale-[0.98] disabled:opacity-60"
     >
-      Start session
+      {t('startButton.primary')}
     </button>
   )
 }
 
 function InProgress({ workout, program }: { workout: Workout; program?: Program }) {
+  const { t } = useTranslation('today')
   const [discardArmed, setDiscardArmed] = useState(false)
   const sessionName =
-    program?.sessions.find((s) => s.id === workout.sessionTemplateId)?.focus ?? 'Session'
+    program?.sessions.find((s) => s.id === workout.sessionTemplateId)?.focus ??
+    t('inProgress.sessionFallback')
   const loggedSets = workout.exercises.reduce((n, e) => n + e.sets.length, 0)
 
   return (
     <>
       <Hero
-        eyebrow="In progress"
+        eyebrow={t('inProgress.eyebrow')}
         title={sessionName}
         subtitle={
           loggedSets > 0
-            ? `${loggedSets} ${loggedSets === 1 ? 'set' : 'sets'} logged so far. Pick up right where you left off.`
-            : 'Your session is open and waiting.'
+            ? t('inProgress.loggedSets', { count: loggedSets })
+            : t('inProgress.waiting')
         }
       />
       <Link
         to="/workout"
         className="mt-8 block w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg transition-transform active:scale-[0.98]"
       >
-        Resume session
+        {t('inProgress.resume')}
       </Link>
       <button
         type="button"
@@ -472,25 +476,33 @@ function InProgress({ workout, program }: { workout: Workout; program?: Program 
         }}
         className="mt-4 w-full text-center text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
       >
-        {discardArmed ? 'Tap again to discard this session' : 'Discard session'}
+        {discardArmed ? t('inProgress.discardArmed') : t('inProgress.discard')}
       </button>
     </>
   )
 }
 
 function DoneToday({ workout }: { workout: Workout }) {
+  const { t } = useTranslation('today')
   const summary = summarizeWorkout(workout)
   const minutes = summary.durationMinutes
+  const setsPhrase = t('doneToday.sets', { count: summary.totalSets })
+  const minutesPhrase = minutes !== null ? t('doneToday.inMinutes', { count: minutes }) : ''
   return (
     <Hero
-      eyebrow="Session complete"
-      title="Done for today"
-      subtitle={`${summary.totalSets} ${summary.totalSets === 1 ? 'set' : 'sets'}${minutes !== null ? ` in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}` : ''} · ${Math.round(summary.volumeKg)} kg moved. Rest well — that's part of the plan.`}
+      eyebrow={t('doneToday.eyebrow')}
+      title={t('doneToday.title')}
+      subtitle={t('doneToday.subtitle', {
+        setsPhrase,
+        minutesPhrase,
+        volume: Math.round(summary.volumeKg),
+      })}
     />
   )
 }
 
 function Header({ date }: { date: Date }) {
+  const { t } = useTranslation('common')
   return (
     <header className="flex items-baseline justify-between">
       <p className="eyebrow">
@@ -501,19 +513,19 @@ function Header({ date }: { date: Date }) {
           to="/plan"
           className="text-sm font-medium text-ink-tertiary transition-colors hover:text-ink-secondary"
         >
-          Plan
+          {t('nav.plan')}
         </Link>
         <Link
           to="/progress"
           className="text-sm font-medium text-ink-tertiary transition-colors hover:text-ink-secondary"
         >
-          Progress
+          {t('nav.progress')}
         </Link>
         <Link
           to="/library"
           className="text-sm font-medium text-ink-tertiary transition-colors hover:text-ink-secondary"
         >
-          Library
+          {t('nav.library')}
         </Link>
       </nav>
     </header>
@@ -542,9 +554,10 @@ function Hero({ eyebrow, title, subtitle }: HeroProps) {
  * skipping is always fine, a checkbox here would be a streak mechanic).
  */
 function ActivityHero({ activity }: { activity: ActivityTemplate }) {
+  const kindLabel = useActivityKindLabel(activity.kind)
   return (
     <div className="mt-8">
-      <p className="text-sm font-medium text-amber">{ACTIVITY_KIND_LABEL[activity.kind]}</p>
+      <p className="text-sm font-medium text-amber">{kindLabel}</p>
       <h1 className="text-display mt-2 text-5xl text-ink">{activity.title}</h1>
       <ul className="mt-4 space-y-2">
         {activity.items.map((item, index) => (

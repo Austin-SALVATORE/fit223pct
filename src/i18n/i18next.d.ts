@@ -7,6 +7,8 @@ import type progress from '@/locales/en/progress.json'
 import type library from '@/locales/en/library.json'
 import type checkin from '@/locales/en/checkin.json'
 import type seed from '@/locales/en/seed.json'
+import type plan from '@/locales/en/plan.json'
+import type settings from '@/locales/en/settings.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -20,6 +22,8 @@ declare module 'i18next' {
       library: typeof library
       checkin: typeof checkin
       seed: typeof seed
+      plan: typeof plan
+      settings: typeof settings
     }
   }
 }

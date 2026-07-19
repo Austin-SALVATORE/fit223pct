@@ -14,6 +14,8 @@ export const NAMESPACES = [
   'library',
   'checkin',
   'seed',
+  'plan',
+  'settings',
 ] as const
 
 /** `fr-FR` → `fr`, `zh-Hans`/`zh-CN` → `zh-CN`, anything else → `en`. */

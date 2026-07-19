@@ -2,6 +2,61 @@
   "trainingDay": {
     "easedSubtitle": "Eased back a touch today — $t({{driversKey}}). Showing up on a day like this counts double.",
     "readySubtitle": "Warm up well. Your starting numbers are below — they'll be waiting in the session.",
-    "adjustedBadge": "Adjusted for readiness"
+    "adjustedBadge": "Adjusted for readiness",
+    "heading": "Today",
+    "lowStreak_one": "{{count}} low day in a row now — making this a rest day is a completely fine choice. Your session will wait for you.",
+    "lowStreak_other": "{{count}} low days in a row now — making this a rest day is a completely fine choice. Your session will wait for you."
+  },
+  "noProgram": "No training program is set up yet. Your next phase will appear here.",
+  "plannedDay": {
+    "startsIn_one": "Starts tomorrow",
+    "startsIn_other": "Starts in {{count}} days",
+    "upcomingSubtitle": "Your first session is ready — begin on day one, or jump in early if you can't wait.",
+    "upcomingHeading": "First up",
+    "restEyebrow": "Rest day",
+    "restTitle": "Recovery is progress",
+    "restSubtitleEased": "A genuine rest day, perfectly timed. Recharge — your next session will wait.",
+    "restSubtitleReady": "Swim, play, walk — or do nothing at all. Your next session is ready when you are.",
+    "restHeading": "Next up",
+    "endedEyebrow": "Phase complete",
+    "endedTitle": "That's a wrap on this phase",
+    "endedSubtitle": "Your next program will appear here once it begins."
+  },
+  "startButton": {
+    "quiet": "Start this session now",
+    "primary": "Start session"
+  },
+  "inProgress": {
+    "eyebrow": "In progress",
+    "sessionFallback": "Session",
+    "loggedSets_one": "{{count}} set logged so far. Pick up right where you left off.",
+    "loggedSets_other": "{{count}} sets logged so far. Pick up right where you left off.",
+    "waiting": "Your session is open and waiting.",
+    "resume": "Resume session",
+    "discard": "Discard session",
+    "discardArmed": "Tap again to discard this session"
+  },
+  "doneToday": {
+    "eyebrow": "Session complete",
+    "title": "Done for today",
+    "sets_one": "{{count}} set",
+    "sets_other": "{{count}} sets",
+    "inMinutes_one": " in {{count}} minute",
+    "inMinutes_other": " in {{count}} minutes",
+    "subtitle": "{{setsPhrase}}{{minutesPhrase}} · {{volume}} kg moved. Rest well — that's part of the plan."
+  },
+  "weeklyReview": {
+    "heading": "Last week",
+    "noSessionsScheduled": "No sessions were scheduled last week.",
+    "quietWeek": "A quiet week — no sessions logged.",
+    "allDone": "Every scheduled session, done.",
+    "partial": "{{completedCount}} of {{scheduledCount}} scheduled sessions completed.",
+    "statSessions": "Sessions",
+    "statSets": "Sets",
+    "statVolume": "Volume",
+    "readinessReady": "{{count}} ready",
+    "readinessSteady": "{{count}} steady",
+    "readinessEased": "{{count}} eased back",
+    "readinessNone": "No readiness check-ins recorded."
   }
 }
