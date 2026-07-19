@@ -11,14 +11,24 @@ export const exerciseRepo = {
 }
 
 export const programRepo = {
-  /** The program active on the given ISO date, or the next upcoming one. */
+  /**
+   * The program active on the given ISO date; the next upcoming one if
+   * today falls before any program starts; otherwise the most recently
+   * ended one, so a finished phase with no successor yet lined up still
+   * resolves to a program (and to `resolveDayPlan`'s 'ended' state) rather
+   * than reading as if no program had ever been set up.
+   */
   async getActive(dateKey: string): Promise<Program | undefined> {
     const programs = await db.programs.orderBy('startDate').toArray()
-    return (
-      programs.find(
-        (p) => p.startDate <= dateKey && (p.endDate === null || dateKey <= p.endDate),
-      ) ?? programs.find((p) => p.startDate > dateKey)
+    const current = programs.find(
+      (p) => p.startDate <= dateKey && (p.endDate === null || dateKey <= p.endDate),
     )
+    if (current) return current
+
+    const upcoming = programs.find((p) => p.startDate > dateKey)
+    if (upcoming) return upcoming
+
+    return [...programs].reverse().find((p) => p.startDate <= dateKey)
   },
 }
 

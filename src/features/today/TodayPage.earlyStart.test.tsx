@@ -97,11 +97,14 @@ describe('Early start on unscheduled days', () => {
   })
 
   it('offers no start of any kind once the phase has ended', async () => {
-    vi.setSystemTime(new Date(2026, 7, 11, 9, 0, 0)) // 11 Aug — after endDate
+    vi.setSystemTime(new Date(2026, 7, 11, 9, 0, 0)) // 11 Aug — after endDate, Phase 2 not authored yet
     renderApp()
 
-    // Post-phase, getActive returns no program — the next-phase message shows
-    expect(await screen.findByText(/next phase will appear here/)).toBeInTheDocument()
+    // getActive falls back to the ended program (not undefined), so the
+    // phase-complete state is reachable instead of reading as if no
+    // program had ever existed.
+    expect(await screen.findByText('Phase complete')).toBeInTheDocument()
+    expect(screen.getByText("That's a wrap on this phase")).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Start this session now' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Start session' })).toBeNull()
   })
