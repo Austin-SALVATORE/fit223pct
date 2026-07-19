@@ -85,21 +85,22 @@ completion tracking on activity days — skipping is always fine is
 non-negotiable. Extends the import format (optional, back-compatible);
 Phase 2's file gains its activity days as a content edit.
 
-## Milestone 7 — Internationalization
+## Milestone 7 — Internationalization ✓ (shipped 20 Jul)
 
 English, French, Simplified Chinese (docs/I18n.md). Not a string sweep:
-the deep work is refactoring domain functions to return message
+the deep work was refactoring domain functions to return message
 descriptors instead of English prose, and moving seeded content
 (exercise names, cues) to locale-keyed lookup — storage stays
-locale-free. Includes the app's first Settings surface (language only),
-auto-detection, persistence, live switching, English fallback.
-Terminology constraints (readiness, never wellness/medical) carry into
-every locale. Scheduled after the Daily Program milestone — that
-feature adds a large batch of strings and content which should
-stabilize before the descriptor refactor — and after M5 regardless,
-because it is the largest cross-cutting
-refactor since foundations and should not land mid-phase while the app
-is in daily training use.
+locale-free. Ships the app's first Settings surface, reachable from every
+page (a gear alongside Today's nav links, or in the corner of Plan's,
+Progress's, and Library's headings — never in Workout Mode), with
+auto-detection, `UserSettings.locale` persistence, live switching with no
+reload, and English fallback that's never silent (a missing key logs in
+dev). Terminology constraints (readiness, never wellness/medical) hold
+in French and Chinese too, each gated on a native reader's glossary
+review before being called shipped (docs/I18n-glossary-fr.md,
+docs/I18n-glossary-zh.md). docs/I18n-adding-a-locale.md documents what a
+fourth locale actually requires.
 
 ## Later (architecture-ready, not scheduled)
 
