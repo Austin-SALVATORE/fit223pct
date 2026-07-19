@@ -27,6 +27,10 @@
   "edit": "Edit",
   "done": "Done",
   "settings": "Settings",
+  "stepper": {
+    "decrease": "Decrease {{label}}",
+    "increase": "Increase {{label}}"
+  },
   "equipment": {
     "barbell": "Barbell",
     "dumbbell": "Dumbbell",

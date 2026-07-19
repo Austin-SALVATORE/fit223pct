@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface StepperProps {
   label: string
@@ -15,6 +16,7 @@ interface StepperProps {
  * should tap "+" ten times between sets.
  */
 export function Stepper({ label, value, step, min, max, unit, onChange }: StepperProps) {
+  const { t } = useTranslation('common')
   const repeat = useRef<ReturnType<typeof setInterval> | null>(null)
   const latest = useRef({ value, step, min, max, onChange })
   latest.current = { value, step, min, max, onChange }
@@ -46,7 +48,7 @@ export function Stepper({ label, value, step, min, max, unit, onChange }: Steppe
       <div className="flex items-center gap-1">
         <StepButton
           symbol="−"
-          ariaLabel={`Decrease ${label}`}
+          ariaLabel={t('stepper.decrease', { label })}
           onPress={() => startRepeat(-1)}
           onRelease={stopRepeat}
         />
@@ -60,7 +62,7 @@ export function Stepper({ label, value, step, min, max, unit, onChange }: Steppe
         </output>
         <StepButton
           symbol="+"
-          ariaLabel={`Increase ${label}`}
+          ariaLabel={t('stepper.increase', { label })}
           onPress={() => startRepeat(1)}
           onRelease={stopRepeat}
         />

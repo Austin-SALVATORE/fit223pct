@@ -1,1 +1,10 @@
-{}
+{
+  "heading": "Settings",
+  "backup": {
+    "sectionLabel": "Backup",
+    "heading": "Backup",
+    "description": "One dated file with every program, workout, and check-in — the manual backup story for a local-first app.",
+    "exportButton": "Export all data",
+    "saved": "Backup saved."
+  }
+}

@@ -27,6 +27,10 @@
   "edit": "TODO",
   "done": "TODO",
   "settings": "TODO",
+  "stepper": {
+    "decrease": "TODO",
+    "increase": "TODO"
+  },
   "equipment": {
     "barbell": "TODO",
     "dumbbell": "TODO",
