@@ -12,6 +12,7 @@
   "techniqueHeading": "Technique",
   "conceptSectionAriaLabel": "Concept",
   "whyItMatters": "Pourquoi c'est important — {{title}}",
+  "frameStepperAriaLabel": "Photos étape par étape : {{exerciseName}}",
   "substitutionsSectionAriaLabel": "Substitutions",
   "swapFor": "Remplacer par",
   "backLink": {

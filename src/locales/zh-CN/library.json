@@ -12,6 +12,7 @@
   "techniqueHeading": "技术",
   "conceptSectionAriaLabel": "概念",
   "whyItMatters": "为什么重要——{{title}}",
+  "frameStepperAriaLabel": "分步图片：{{exerciseName}}",
   "substitutionsSectionAriaLabel": "替代动作",
   "swapFor": "替换为",
   "backLink": {

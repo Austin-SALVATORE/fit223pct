@@ -29,3 +29,19 @@ describe('Settings entry', () => {
     expect(await screen.findByRole('heading', { name: 'Settings' })).toBeInTheDocument()
   })
 })
+
+describe('Exercise thumbnails', () => {
+  it('renders a mixed list — a real thumbnail next to the same-geometry empty tile', async () => {
+    renderApp()
+    // goblet-squat has a converted asset; band-pull-apart is one of the
+    // ~13 seeded exercises with no prompt yet (docs/design/
+    // ExerciseAssetPipeline.md's "Parked decisions") — both must render
+    // in the same list without one looking broken next to the other.
+    const withAsset = await screen.findByRole('link', { name: /Goblet squat/ })
+    const withoutAsset = await screen.findByRole('link', { name: /Band pull-apart/ })
+
+    expect(withAsset.querySelector('img')).not.toBeNull()
+    expect(withoutAsset.querySelector('img')).toBeNull()
+    expect(withoutAsset.querySelector('[aria-hidden="true"]')).toBeInTheDocument()
+  })
+})

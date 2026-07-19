@@ -5,6 +5,7 @@ import { exerciseRepo } from '@/data/repositories'
 import { useEquipmentLabel } from '@/lib/equipmentLabel'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { useLocale } from '@/i18n/useLocale'
+import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { SettingsLink } from '@/ui/SettingsLink'
 import type { Exercise, MuscleGroup } from '@/domain/types'
@@ -76,8 +77,13 @@ function ExerciseRow({ exercise }: { exercise: Exercise }) {
   const exerciseName = useExerciseName(exercise.id)
   return (
     <GroupedRow to={`/library/${exercise.id}`} state={{ from: 'library' }}>
-      <p className="font-medium text-ink">{exerciseName}</p>
-      <p className="shrink-0 text-sm text-ink-tertiary">{equipmentLabel}</p>
+      {/* self-center overrides the row's items-baseline — a thumbnail has
+          no text baseline to align the equipment label against. */}
+      <span className="flex min-w-0 items-center gap-3 self-center">
+        <ExerciseThumbnail exerciseId={exercise.id} />
+        <p className="truncate font-medium text-ink">{exerciseName}</p>
+      </span>
+      <p className="shrink-0 self-center text-sm text-ink-tertiary">{equipmentLabel}</p>
     </GroupedRow>
   )
 }

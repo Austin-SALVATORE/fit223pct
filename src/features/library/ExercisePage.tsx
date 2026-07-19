@@ -10,6 +10,7 @@ import {
 } from '@/i18n/seedExercise'
 import type { Exercise } from '@/domain/types'
 import { originTarget, resolveOrigin, type OriginState } from '@/lib/navigationOrigin'
+import { FrameStepper } from '@/ui/FrameStepper'
 
 export function ExercisePage() {
   const { t } = useTranslation('library')
@@ -58,6 +59,8 @@ export function ExercisePage() {
         </p>
         <h1 className="text-display mt-2 text-4xl text-ink">{exerciseName}</h1>
       </header>
+
+      <FrameStepper exerciseId={exercise.id} />
 
       <section className="mt-8" aria-label={t('techniqueSectionAriaLabel')}>
         <h2 className="eyebrow">{t('techniqueHeading')}</h2>

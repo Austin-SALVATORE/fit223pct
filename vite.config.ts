@@ -19,7 +19,21 @@ export default defineConfig({
       workbox: {
         // Default glob omits woff2 — the self-hosted Fraunces display font
         // would silently fall back to a system serif on a repeat offline visit.
+        // Exercise AVIFs are deliberately absent from this list (and so
+        // from precache) — docs/design/ExerciseAssetPipeline.md's ~100
+        // exercises would bloat the install-time download for content most
+        // sessions never open; runtimeCaching below caches them on first view.
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        runtimeCaching: [
+          {
+            urlPattern: /\/assets\/exercises\/.*\.avif$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'exercise-assets',
+              expiration: { maxEntries: 200 },
+            },
+          },
+        ],
       },
       manifest: {
         name: PRODUCT_NAME,
