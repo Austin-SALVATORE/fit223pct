@@ -7,8 +7,9 @@ and not the other. Meant to be writable on a phone.
 ## Structure
 
 YAML front matter for program-level fields, then one `## Session: <id>`
-section per session, each with a `Name:` / `Focus:` line and one table of
-exercises.
+section per session (each with a `Name:` / `Focus:` line and one table of
+exercises), plus an optional `## Activity: <Weekday>` section per activity
+day (see docs/DailyProgram.md).
 
 ```markdown
 ---
@@ -38,6 +39,19 @@ Focus: Hinge & press
 | Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note |
 |---|---|---|---|---|---|---|---|
 | romanian-deadlift | 3 | 10-15 | reps | 2 | 120 | 20/40/2.5 | - |
+
+## Activity: Tuesday
+Kind: recovery
+Title: Recovery walk & stretch
+
+- 30-minute easy walk — conversational pace
+- Hip flexor stretch — 45s per side
+
+## Activity: Sunday
+Kind: checkpoint
+Title: Weekly checkpoint
+
+- Weight and waist measurement — same time of day each week
 ```
 
 ## Front matter fields
@@ -73,6 +87,23 @@ default when omitted).
   substitutions the Library already lists for the exercise, never
   replacing them. Same rules as Exercise: every id must exist in the
   Library, none may repeat, and the exercise can't list itself.
+
+## Activity sections
+
+`## Activity: <Weekday>` — the full weekday name (`Monday` … `Sunday`,
+case-insensitive), never a number or abbreviation. Optional entirely; a
+file with no Activity sections behaves exactly as before. A weekday named
+here may **not** also appear in `trainingWeekdays` — import rejects the
+overlap, naming the weekday.
+
+- `Kind:` — one of `recovery`, `mobility`, `cardio`, `optional`,
+  `checkpoint`. Closed set; nothing else is accepted.
+- `Title:` — free text, shown in place of the bare rest day.
+- Items are a bullet list, one `- ` per line. `- Label — Detail` splits on
+  the first ` — ` (a real em dash, spaced) into `label`/`detail`; a line
+  with no ` — ` is `label` only. Every item must be as specific as a
+  technique note — generic wellness prompts ("hydrate well") are a review
+  rejection, not a format error, but write real content regardless.
 
 ## What's out of scope
 

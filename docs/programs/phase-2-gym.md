@@ -34,3 +34,33 @@ Focus: Hinge & press
 | dumbbell-lateral-raise | 2 | 12-20 | reps | 2 | 60 | 4/-/1 | - | accessory | | - |
 | dumbbell-curl | 2 | 12-20 | reps | 2 | 60 | 8/-/2 | - | accessory | | - |
 | side-plank | 2 | 20-40 | seconds | 2 | 60 | -/-/- | - | accessory | yes | - |
+
+## Activity: Tuesday
+Kind: recovery
+Title: Recovery walk & stretch
+
+- 30-minute easy walk — conversational pace
+- Hip flexor stretch — 45s per side
+- Foam roll quads and calves — 2 minutes each
+
+## Activity: Thursday
+Kind: mobility
+Title: Mobility & core
+
+- Thoracic rotations on all fours — 10 reps per side
+- 90/90 hip switches — 8 reps per side
+- Ankle rocks against a wall — 10 reps per side
+- Bird dog — 3 sets of 8 per side, pause 1 second at full extension
+
+## Activity: Saturday
+Kind: optional
+Title: Open activity
+
+- Tennis, swimming, or another sport you enjoy — 45-60 minutes at a conversational effort
+- Full rest is equally valid — optional means no obligation either way
+
+## Activity: Sunday
+Kind: checkpoint
+Title: Weekly checkpoint
+
+- Weight and waist measurement — same time of day, ideally fasted and before eating

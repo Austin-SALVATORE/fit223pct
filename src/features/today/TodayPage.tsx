@@ -9,8 +9,9 @@ import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readine
 import { applyReadiness } from '@/domain/adjustments'
 import { buildWeeklyReview, reviewIsUnseen, type WeeklyReview } from '@/domain/weeklyReview'
 import { formatLongDate, toDateKey } from '@/lib/dates'
-import type { CheckIn, Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
+import type { ActivityTemplate, CheckIn, Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
 import { CheckInCard } from '@/features/checkin/CheckInCard'
+import { MeasurementCard } from '@/features/checkin/MeasurementCard'
 import { SessionPreview } from './SessionPreview'
 import { WeeklyReviewCard } from './WeeklyReviewCard'
 
@@ -142,6 +143,7 @@ function TodayBody({
           exerciseById={exerciseById}
           today={today}
           todayKey={todayKey}
+          todayCheckIn={todayCheckIn}
           readiness={readiness}
           checkInCard={checkInCard}
         />
@@ -163,6 +165,7 @@ function PlannedDay({
   exerciseById,
   today,
   todayKey,
+  todayCheckIn,
   readiness,
   checkInCard,
 }: {
@@ -171,6 +174,7 @@ function PlannedDay({
   exerciseById: Map<string, Exercise>
   today: Date
   todayKey: string
+  todayCheckIn: CheckIn | undefined
   readiness: Readiness
   checkInCard: ReactNode
 }) {
@@ -185,8 +189,10 @@ function PlannedDay({
           session={plan.firstSession}
           exerciseById={exerciseById}
           todayKey={todayKey}
+          todayCheckIn={todayCheckIn}
           readiness={readiness}
           checkInCard={checkInCard}
+          activity={null}
           hero={
             <Hero
               eyebrow={
@@ -219,18 +225,24 @@ function PlannedDay({
           session={plan.nextSession}
           exerciseById={exerciseById}
           todayKey={todayKey}
+          todayCheckIn={todayCheckIn}
           readiness={readiness}
           checkInCard={checkInCard}
+          activity={plan.activity}
           hero={
-            <Hero
-              eyebrow="Rest day"
-              title="Recovery is progress"
-              subtitle={
-                eased
-                  ? 'A genuine rest day, perfectly timed. Recharge — your next session will wait.'
-                  : 'Swim, play, walk — or do nothing at all. Your next session is ready when you are.'
-              }
-            />
+            plan.activity ? (
+              <ActivityHero activity={plan.activity} />
+            ) : (
+              <Hero
+                eyebrow="Rest day"
+                title="Recovery is progress"
+                subtitle={
+                  eased
+                    ? 'A genuine rest day, perfectly timed. Recharge — your next session will wait.'
+                    : 'Swim, play, walk — or do nothing at all. Your next session is ready when you are.'
+                }
+              />
+            )
           }
           heading="Next up"
         />
@@ -317,8 +329,10 @@ function UnscheduledDay({
   session,
   exerciseById,
   todayKey,
+  todayCheckIn,
   readiness,
   checkInCard,
+  activity,
   hero,
   heading,
 }: {
@@ -326,8 +340,10 @@ function UnscheduledDay({
   session: SessionTemplate
   exerciseById: Map<string, Exercise>
   todayKey: string
+  todayCheckIn: CheckIn | undefined
   readiness: Readiness
   checkInCard: ReactNode
+  activity: ActivityTemplate | null
   hero: ReactNode
   heading: string
 }) {
@@ -337,6 +353,9 @@ function UnscheduledDay({
   return (
     <>
       {hero}
+      {activity?.kind === 'checkpoint' && (
+        <MeasurementCard dateKey={todayKey} checkIn={todayCheckIn} />
+      )}
       {checkInCard}
       <SessionPreview
         session={adjusted.session}
@@ -509,6 +528,36 @@ function Hero({ eyebrow, title, subtitle }: HeroProps) {
       <p className="text-sm font-medium text-amber">{eyebrow}</p>
       <h1 className="text-display mt-2 text-5xl text-ink">{title}</h1>
       <p className="mt-4 max-w-[34ch] leading-relaxed text-ink-secondary">{subtitle}</p>
+    </div>
+  )
+}
+
+const ACTIVITY_KIND_LABEL: Record<ActivityTemplate['kind'], string> = {
+  recovery: 'Recovery',
+  mobility: 'Mobility',
+  cardio: 'Cardio',
+  optional: 'Optional',
+  checkpoint: 'Checkpoint',
+}
+
+/**
+ * Replaces the bare rest hero on a day with an authored activity — same
+ * quiet tone, no completion state anywhere in it (see docs/DailyProgram.md:
+ * skipping is always fine, a checkbox here would be a streak mechanic).
+ */
+function ActivityHero({ activity }: { activity: ActivityTemplate }) {
+  return (
+    <div className="mt-8">
+      <p className="text-sm font-medium text-amber">{ACTIVITY_KIND_LABEL[activity.kind]}</p>
+      <h1 className="text-display mt-2 text-5xl text-ink">{activity.title}</h1>
+      <ul className="mt-4 space-y-2">
+        {activity.items.map((item, index) => (
+          <li key={index} className="leading-relaxed text-ink-secondary">
+            <span className="text-ink">{item.label}</span>
+            {item.detail && <span className="text-ink-tertiary"> — {item.detail}</span>}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

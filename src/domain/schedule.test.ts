@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { projectSchedule, resolveDayPlan } from './schedule'
-import type { Program, SessionTemplate, Workout } from './types'
+import type { ActivityTemplate, Program, SessionTemplate, Workout } from './types'
 
 const sessionA: SessionTemplate = {
   id: 'A',
@@ -24,6 +24,19 @@ const program: Program = {
   trainingWeekdays: [1, 3, 5],
   rotation: ['A', 'B'],
   sessions: [sessionA, sessionB],
+}
+
+const recoveryActivity: ActivityTemplate = {
+  kind: 'recovery',
+  title: 'Recovery walk & stretch',
+  items: [{ label: '20-minute easy walk — conversational pace' }],
+}
+
+// Tuesday (2) carries an activity; Thursday (4) and Saturday (6) do not —
+// exercises the "some non-training days have content, some stay bare" mix.
+const programWithActivity: Program = {
+  ...program,
+  weekdayActivities: { 2: recoveryActivity },
 }
 
 describe('resolveDayPlan', () => {
@@ -69,6 +82,26 @@ describe('resolveDayPlan', () => {
   it('reports the program as ended after its end date', () => {
     const plan = resolveDayPlan(program, new Date(2026, 7, 10), 9)
     expect(plan.kind).toBe('ended')
+  })
+
+  it('attaches the weekday activity on a rest day that has one', () => {
+    // Tuesday 21 Jul — a rest day with an authored activity.
+    const plan = resolveDayPlan(programWithActivity, new Date(2026, 6, 21), 0)
+    expect(plan.kind).toBe('rest')
+    if (plan.kind === 'rest') expect(plan.activity).toEqual(recoveryActivity)
+  })
+
+  it('leaves activity null on a rest day with nothing authored for it', () => {
+    // Thursday 23 Jul — a rest day, but no activity declared for weekday 4.
+    const plan = resolveDayPlan(programWithActivity, new Date(2026, 6, 23), 1)
+    expect(plan.kind).toBe('rest')
+    if (plan.kind === 'rest') expect(plan.activity).toBeNull()
+  })
+
+  it('leaves activity null on a program with no weekdayActivities at all — unchanged behavior', () => {
+    const plan = resolveDayPlan(program, new Date(2026, 6, 23), 1)
+    expect(plan.kind).toBe('rest')
+    if (plan.kind === 'rest') expect(plan.activity).toBeNull()
   })
 })
 
@@ -152,5 +185,37 @@ describe('projectSchedule', () => {
     const future = byDate(days, '2026-07-24')
     expect(future.projected).toBe(true)
     expect(future.workout).toBeNull()
+  })
+
+  it('includes an activity weekday in the day list even though it is not a training day', () => {
+    const days = projectSchedule(programWithActivity, [], new Date(2026, 6, 25))
+    // Tuesdays in range: 21 and 28 Jul.
+    const tuesday = byDate(days, '2026-07-21')
+    expect(tuesday.isTrainingDay).toBe(false)
+    expect(tuesday.session).toBeNull()
+    expect(tuesday.activity).toEqual(recoveryActivity)
+  })
+
+  it('leaves a plain rest day (no training, no activity) out of the list — unchanged', () => {
+    const days = projectSchedule(programWithActivity, [], new Date(2026, 6, 25))
+    // Thursday 23 Jul: not a training day, no activity authored for it.
+    expect(days.some((d) => d.date === '2026-07-23')).toBe(false)
+  })
+
+  it('never attaches an activity to a training day, even a same-weekday coincidence', () => {
+    const days = projectSchedule(program, [], new Date(2026, 6, 25))
+    const monday = byDate(days, '2026-07-27')
+    expect(monday.isTrainingDay).toBe(true)
+    expect(monday.activity).toBeNull()
+  })
+
+  it('carries the activity on a past date the same as a future one — nothing here is projected', () => {
+    const days = projectSchedule(programWithActivity, [], new Date(2026, 6, 25))
+    const pastTuesday = byDate(days, '2026-07-21') // before "today" (25 Jul)
+    const futureTuesday = byDate(days, '2026-07-28') // after "today"
+    expect(pastTuesday.activity).toEqual(recoveryActivity)
+    expect(futureTuesday.activity).toEqual(recoveryActivity)
+    expect(pastTuesday.projected).toBe(false)
+    expect(futureTuesday.projected).toBe(true)
   })
 })

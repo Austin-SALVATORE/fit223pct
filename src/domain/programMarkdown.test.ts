@@ -112,4 +112,75 @@ describe('parseProgramMarkdown', () => {
     expect(result.ok).toBe(false)
     if (!result.ok) expect(result.error).toMatch(/session/i)
   })
+
+  it('parses one or more "## Activity: <Weekday>" sections into weekdayActivities', () => {
+    const withActivities =
+      validMarkdown +
+      `
+## Activity: Tuesday
+Kind: recovery
+Title: Recovery walk & stretch
+
+- 30-minute easy walk — conversational pace
+- Hip flexor stretch — 45s per side
+
+## Activity: Sunday
+Kind: checkpoint
+Title: Weekly checkpoint
+
+- Weight and waist measurement
+`
+    const result = parseProgramMarkdown(withActivities)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    const weekdayActivities = (
+      result.data as {
+        weekdayActivities: Record<string, { kind: string; title: string; items: unknown[] }>
+      }
+    ).weekdayActivities
+    expect(weekdayActivities['2']).toEqual({
+      kind: 'recovery',
+      title: 'Recovery walk & stretch',
+      items: [
+        { label: '30-minute easy walk', detail: 'conversational pace' },
+        { label: 'Hip flexor stretch', detail: '45s per side' },
+      ],
+    })
+    expect(weekdayActivities['7']).toEqual({
+      kind: 'checkpoint',
+      title: 'Weekly checkpoint',
+      items: [{ label: 'Weight and waist measurement' }],
+    })
+  })
+
+  it('omits weekdayActivities entirely when no Activity section exists', () => {
+    const result = parseProgramMarkdown(validMarkdown)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.data).not.toHaveProperty('weekdayActivities')
+  })
+
+  it('rejects an Activity heading that is not a recognized weekday name', () => {
+    const bad =
+      validMarkdown +
+      '\n## Activity: Someday\nKind: recovery\nTitle: Recovery walk\n\n- 20-minute walk\n'
+    const result = parseProgramMarkdown(bad)
+    expect(result.ok).toBe(false)
+    if (!result.ok) expect(result.error).toMatch(/Someday/)
+  })
+
+  it('rejects an Activity section missing a Kind or Title line', () => {
+    const missingKind =
+      validMarkdown + '\n## Activity: Tuesday\nTitle: Recovery walk\n\n- 20-minute walk\n'
+    const result = parseProgramMarkdown(missingKind)
+    expect(result.ok).toBe(false)
+    if (!result.ok) expect(result.error).toMatch(/Kind/)
+  })
+
+  it('rejects an Activity section with no item bullets', () => {
+    const bad = validMarkdown + '\n## Activity: Tuesday\nKind: recovery\nTitle: Recovery walk\n'
+    const result = parseProgramMarkdown(bad)
+    expect(result.ok).toBe(false)
+    if (!result.ok) expect(result.error).toMatch(/item/i)
+  })
 })

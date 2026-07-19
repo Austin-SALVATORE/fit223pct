@@ -107,7 +107,7 @@ function DayRow({ day }: { day: ScheduleDay }) {
           {label} <span className="text-ink-tertiary">· Today</span>
         </span>
         <span className="shrink-0 text-sm text-ink-secondary">
-          {day.session ? day.session.name : 'Rest'}
+          {day.session ? day.session.name : (day.activity?.title ?? 'Rest')}
         </span>
       </GroupedRow>
     )
@@ -136,6 +136,18 @@ function DayRow({ day }: { day: ScheduleDay }) {
           {day.session.name}
           {day.projected && <span className="text-ink-tertiary"> · Projected</span>}
         </span>
+      </GroupedRow>
+    )
+  }
+
+  // Activity days are visually quieter than strength sessions (no
+  // font-medium/text-ink treatment) — and carry no completion state,
+  // because there's none to show: activities have no workout to complete.
+  if (day.activity) {
+    return (
+      <GroupedRow>
+        <span className="text-ink-secondary">{label}</span>
+        <span className="shrink-0 text-sm text-ink-tertiary">{day.activity.title}</span>
       </GroupedRow>
     )
   }

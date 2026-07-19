@@ -1,10 +1,10 @@
 import { addDays, isoWeekday, parseDateKey, toDateKey } from '@/lib/dates'
-import type { Program, SessionTemplate, Workout } from './types'
+import type { ActivityTemplate, Program, SessionTemplate, Workout } from './types'
 
 export type DayPlan =
   | { kind: 'upcoming'; daysUntilStart: number; firstSession: SessionTemplate }
   | { kind: 'training'; session: SessionTemplate }
-  | { kind: 'rest'; nextSession: SessionTemplate; nextDate: string }
+  | { kind: 'rest'; nextSession: SessionTemplate; nextDate: string; activity: ActivityTemplate | null }
   | { kind: 'ended' }
 
 /**
@@ -44,6 +44,7 @@ export function resolveDayPlan(
     kind: 'rest',
     nextSession,
     nextDate: nextTrainingDate(program, date),
+    activity: program.weekdayActivities?.[isoWeekday(date)] ?? null,
   }
 }
 
@@ -63,6 +64,8 @@ export interface ScheduleDay {
   session: SessionTemplate | null
   /** True only for a future date's session — an assumption that every scheduled day between now and then gets completed, never a stated fact */
   projected: boolean
+  /** Authored content for this weekday, on a non-training day only — never projected/actual, it's the same fixed content regardless of date */
+  activity: ActivityTemplate | null
 }
 
 /** No endDate set (an open-ended phase) still needs a projection horizon. */
@@ -100,7 +103,8 @@ export function projectSchedule(
     cursor = addDays(cursor, 1)
   ) {
     const dateKey = toDateKey(cursor)
-    if (program.trainingWeekdays.includes(isoWeekday(cursor))) {
+    const weekday = isoWeekday(cursor)
+    if (program.trainingWeekdays.includes(weekday) || program.weekdayActivities?.[weekday]) {
       dates.add(dateKey)
     }
   }
@@ -125,17 +129,21 @@ export function projectSchedule(
   return sortedDates.map((date): ScheduleDay => {
     const workout = workoutByDate.get(date) ?? null
     const isToday = date === todayKey
-    const isTrainingDay = program.trainingWeekdays.includes(isoWeekday(parseDateKey(date)))
+    const weekday = isoWeekday(parseDateKey(date))
+    const isTrainingDay = program.trainingWeekdays.includes(weekday)
+    // Mutually exclusive with isTrainingDay by construction (import
+    // validation rejects a weekday claimed by both).
+    const activity = isTrainingDay ? null : (program.weekdayActivities?.[weekday] ?? null)
 
     if (workout && workout.completedAt !== null) {
       const session = program.sessions.find((s) => s.id === workout.sessionTemplateId) ?? null
-      return { date, isToday, isTrainingDay, workout, session, projected: false }
+      return { date, isToday, isTrainingDay, workout, session, projected: false, activity }
     }
 
     if (date > todayKey) {
       const session = isTrainingDay ? sessionAt(program, completedCount + futureIndex) : null
       if (isTrainingDay) futureIndex += 1
-      return { date, isToday, isTrainingDay, workout: null, session, projected: true }
+      return { date, isToday, isTrainingDay, workout: null, session, projected: true, activity }
     }
 
     // Today (not yet trained) is deterministic, not projected — there is
@@ -148,11 +156,14 @@ export function projectSchedule(
         workout: null,
         session: sessionAt(program, completedCount),
         projected: false,
+        activity,
       }
     }
 
-    // A past scheduled day with no completed workout: skipped.
-    return { date, isToday, isTrainingDay, workout: null, session: null, projected: false }
+    // A past scheduled day with no completed workout: skipped. A non-
+    // training day still carries its activity, if any — there is no
+    // "skipped" state for an activity, since there's nothing to complete.
+    return { date, isToday, isTrainingDay, workout: null, session: null, projected: false, activity }
   })
 }
 

@@ -87,4 +87,39 @@ describe('Phase 2 (Fitness Park) program file', () => {
       expect(lift.maxWeightKg).toBeNull()
     }
   })
+
+  it('declares the four Milestone 6 activity days, none overlapping a training weekday', () => {
+    const parsed = parseProgramMarkdown(source)
+    if (!parsed.ok) throw new Error(parsed.error)
+    const result = validateProgramImport(parsed.data, libraryIds)
+    if (!result.ok) throw new Error(result.error)
+
+    const activities = result.program.weekdayActivities
+    expect(activities).toBeDefined()
+    expect(activities?.[2]?.kind).toBe('recovery') // Tuesday
+    expect(activities?.[4]?.kind).toBe('mobility') // Thursday
+    expect(activities?.[6]?.kind).toBe('optional') // Saturday
+    expect(activities?.[7]?.kind).toBe('checkpoint') // Sunday
+
+    // Every declared weekday is disjoint from the training rotation.
+    for (const weekday of Object.keys(activities ?? {}).map(Number)) {
+      expect(result.program.trainingWeekdays).not.toContain(weekday)
+    }
+  })
+
+  it('holds every activity item to the technique-note specificity bar — no generic wellness prompts', () => {
+    const parsed = parseProgramMarkdown(source)
+    if (!parsed.ok) throw new Error(parsed.error)
+    const result = validateProgramImport(parsed.data, libraryIds)
+    if (!result.ok) throw new Error(result.error)
+
+    const genericPhrases = /hydrate|drink water|sleep early|self-?care|listen to your body|stay active/i
+    const allItems = Object.values(result.program.weekdayActivities ?? {}).flatMap((a) => a.items)
+    expect(allItems.length).toBeGreaterThan(0)
+    for (const item of allItems) {
+      const fullText = item.detail ? `${item.label} — ${item.detail}` : item.label
+      expect(fullText).not.toMatch(genericPhrases)
+      expect(fullText.length).toBeGreaterThan(10) // long enough to carry real content, not a stub
+    }
+  })
 })

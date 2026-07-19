@@ -181,4 +181,96 @@ describe('validateProgramImport', () => {
       )
     }
   })
+
+  it('accepts a well-formed weekdayActivities map', () => {
+    const good = validProgram({
+      weekdayActivities: {
+        2: {
+          kind: 'recovery',
+          title: 'Recovery walk & stretch',
+          items: [{ label: '20-minute easy walk — conversational pace' }],
+        },
+        7: {
+          kind: 'checkpoint',
+          title: 'Weekly checkpoint',
+          items: [{ label: 'Weight and waist measurement', detail: 'Same time of day each week' }],
+        },
+      },
+    })
+    const result = validateProgramImport(good, libraryIds)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.program.weekdayActivities?.[2]?.title).toBe('Recovery walk & stretch')
+      expect(result.program.weekdayActivities?.[7]?.kind).toBe('checkpoint')
+    }
+  })
+
+  it('imports unchanged when weekdayActivities is absent', () => {
+    const result = validateProgramImport(validProgram(), libraryIds)
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.program.weekdayActivities).toBeUndefined()
+  })
+
+  it('rejects an activity kind outside the closed set', () => {
+    const bad = validProgram({
+      weekdayActivities: {
+        2: { kind: 'yoga', title: 'Yoga', items: [{ label: '20 minutes' }] },
+      },
+    })
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+  })
+
+  it('rejects an activity with an empty title', () => {
+    const bad = validProgram({
+      weekdayActivities: {
+        2: { kind: 'recovery', title: '', items: [{ label: '20-minute walk' }] },
+      },
+    })
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+  })
+
+  it('rejects an activity with no items', () => {
+    const bad = validProgram({
+      weekdayActivities: {
+        2: { kind: 'recovery', title: 'Recovery walk', items: [] },
+      },
+    })
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+  })
+
+  it('rejects an activity item with an empty label', () => {
+    const bad = validProgram({
+      weekdayActivities: {
+        2: { kind: 'recovery', title: 'Recovery walk', items: [{ label: '' }] },
+      },
+    })
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+  })
+
+  it('rejects a weekday key outside 1-7', () => {
+    const bad = validProgram({
+      weekdayActivities: {
+        8: { kind: 'recovery', title: 'Recovery walk', items: [{ label: '20-minute walk' }] },
+      },
+    })
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+  })
+
+  it('rejects an activity claiming a training weekday, naming it', () => {
+    const bad = validProgram({
+      weekdayActivities: {
+        1: { kind: 'recovery', title: 'Recovery walk', items: [{ label: '20-minute walk' }] },
+      },
+    })
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.error).toBe("Monday is a training day — it can't also carry an activity.")
+    }
+  })
 })

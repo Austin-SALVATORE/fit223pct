@@ -1,4 +1,5 @@
 import type { ReadinessSignal, ReadinessTier } from './readiness'
+import type { IsoWeekday } from '@/lib/dates'
 
 export type MuscleGroup =
   | 'quads'
@@ -62,6 +63,20 @@ export interface SessionTemplate {
   items: ExercisePrescription[]
 }
 
+export type ActivityKind = 'recovery' | 'mobility' | 'cardio' | 'optional' | 'checkpoint'
+
+export interface ActivityItem {
+  label: string
+  detail?: string
+}
+
+/** Free-text program content, not a Library reference — no weights, no logging, no prescription. */
+export interface ActivityTemplate {
+  kind: ActivityKind
+  title: string
+  items: ActivityItem[]
+}
+
 export interface Program {
   id: string
   name: string
@@ -74,6 +89,12 @@ export interface Program {
   /** Session ids cycled across training days, driven by completed count — missed days never skip a session */
   rotation: string[]
   sessions: SessionTemplate[]
+  /**
+   * Authored content for non-training weekdays — may never claim a weekday
+   * that's also in trainingWeekdays (import validation rejects the
+   * overlap). Absent = today's behavior, a bare rest day.
+   */
+  weekdayActivities?: Partial<Record<IsoWeekday, ActivityTemplate>>
 }
 
 export interface LoggedSet {

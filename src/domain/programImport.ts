@@ -35,6 +35,22 @@ const sessionTemplateSchema = z.object({
   items: z.array(exercisePrescriptionSchema).min(1, 'a session needs at least one exercise'),
 })
 
+const activityItemSchema = z.object({
+  label: z.string().min(1),
+  detail: z.string().min(1).optional(),
+})
+
+const activityTemplateSchema = z.object({
+  kind: z.enum(['recovery', 'mobility', 'cardio', 'optional', 'checkpoint']),
+  title: z.string().min(1),
+  items: z.array(activityItemSchema).min(1, 'an activity needs at least one item'),
+})
+
+const weekdayActivitiesSchema = z.record(
+  z.string().regex(/^[1-7]$/, 'weekday keys must be 1-7 (1 = Monday … 7 = Sunday)'),
+  activityTemplateSchema,
+)
+
 export const programSchema = z
   .object({
     id: z.string().min(1),
@@ -45,6 +61,7 @@ export const programSchema = z
     trainingWeekdays: z.array(z.number().int().min(1).max(7)).min(1),
     rotation: z.array(z.string().min(1)).min(1),
     sessions: z.array(sessionTemplateSchema).min(1),
+    weekdayActivities: weekdayActivitiesSchema.optional(),
   })
   .refine((p) => p.endDate === null || p.endDate >= p.startDate, {
     message: 'endDate must be on or after startDate',
@@ -103,7 +120,29 @@ export function validateProgramImport(
     }
   }
 
-  return { ok: true, program }
+  if (program.weekdayActivities) {
+    for (const key of Object.keys(program.weekdayActivities)) {
+      const weekday = Number(key)
+      if (program.trainingWeekdays.includes(weekday)) {
+        return {
+          ok: false,
+          error: `${WEEKDAY_NAMES[weekday]} is a training day — it can't also carry an activity.`,
+        }
+      }
+    }
+  }
+
+  return { ok: true, program: program as Program }
+}
+
+const WEEKDAY_NAMES: Record<number, string> = {
+  1: 'Monday',
+  2: 'Tuesday',
+  3: 'Wednesday',
+  4: 'Thursday',
+  5: 'Friday',
+  6: 'Saturday',
+  7: 'Sunday',
 }
 
 function validateSubstitutions(

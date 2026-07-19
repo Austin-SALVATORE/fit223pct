@@ -1,11 +1,12 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
 import { vi } from 'vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { seedProgram } from '@/data/seed/program'
+import { programRepo } from '@/data/repositories'
 import { createWorkout, logSet, completeWorkout } from '@/domain/workout'
 import { PlanPage } from './PlanPage'
 
@@ -115,5 +116,51 @@ describe('PlanPage', () => {
     const todayLink = await screen.findByRole('link', { name: /Today/ })
     await userEvent.click(todayLink)
     expect(await screen.findByText('TODAY PROBE')).toBeInTheDocument()
+  })
+})
+
+describe('PlanPage activity days', () => {
+  afterEach(async () => {
+    await programRepo.put(seedProgram) // restore the plain program
+  })
+
+  it('lists an activity day by title, visually quieter than a strength session row', async () => {
+    await programRepo.put({
+      ...seedProgram,
+      weekdayActivities: {
+        2: {
+          kind: 'recovery',
+          title: 'Recovery walk & stretch',
+          items: [{ label: '30-minute easy walk' }],
+        },
+      },
+    })
+    renderApp()
+
+    const activityRow = (await screen.findByText('Tue 28 Jul')).closest('li')
+    expect(activityRow).not.toBeNull()
+    expect(activityRow).toHaveTextContent('Recovery walk & stretch')
+    // Quieter than a strength row: the date label carries no font-medium class.
+    const dateLabel = within(activityRow!).getByText('Tue 28 Jul')
+    expect(dateLabel.className).not.toMatch(/font-medium/)
+    // No completion state — there is none to show for an activity.
+    expect(activityRow).not.toHaveTextContent('Projected')
+  })
+
+  it('leaves a plain rest day (no activity, no training) out of the list entirely — unchanged', async () => {
+    await programRepo.put({
+      ...seedProgram,
+      weekdayActivities: {
+        2: {
+          kind: 'recovery',
+          title: 'Recovery walk & stretch',
+          items: [{ label: '30-minute easy walk' }],
+        },
+      },
+    })
+    renderApp()
+    await screen.findByText('Tue 28 Jul') // wait for the list to render
+    // Thursday has no activity declared for it and isn't a training day.
+    expect(screen.queryByText(/30 Jul/)).toBeNull()
   })
 })

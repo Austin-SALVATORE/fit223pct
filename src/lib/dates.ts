@@ -12,9 +12,11 @@ export function parseDateKey(dateKey: string): Date {
 }
 
 /** ISO weekday: 1 = Monday … 7 = Sunday */
-export function isoWeekday(date: Date): number {
+export type IsoWeekday = 1 | 2 | 3 | 4 | 5 | 6 | 7
+
+export function isoWeekday(date: Date): IsoWeekday {
   const day = date.getDay()
-  return day === 0 ? 7 : day
+  return (day === 0 ? 7 : day) as IsoWeekday
 }
 
 export function addDays(date: Date, days: number): Date {

@@ -43,4 +43,28 @@ describe('toCanonicalProgramJson', () => {
       'tempo-bodyweight-squat',
     ])
   })
+
+  it('round-trips a weekdayActivities field', () => {
+    const withActivities = {
+      ...seedProgram,
+      weekdayActivities: {
+        2: {
+          kind: 'recovery' as const,
+          title: 'Recovery walk & stretch',
+          items: [{ label: '30-minute easy walk', detail: 'conversational pace' }],
+        },
+        7: {
+          kind: 'checkpoint' as const,
+          title: 'Weekly checkpoint',
+          items: [{ label: 'Weight and waist measurement' }],
+        },
+      },
+    }
+    const json = toCanonicalProgramJson(withActivities)
+    const result = validateProgramImport(JSON.parse(json), libraryIds)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.program).toEqual(withActivities)
+    expect(result.program.weekdayActivities?.[2]?.title).toBe('Recovery walk & stretch')
+  })
 })
