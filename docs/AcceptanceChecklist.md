@@ -30,6 +30,13 @@ Automated coverage is not a substitute for this pass.
 ## Layout
 
 - [ ] Mobile (~390px) and desktop widths.
+- [ ] No horizontal overflow at 390px on any changed screen — check every
+      row that pairs a fixed-width label with a fixed-width control
+      (`document.documentElement.scrollWidth > clientWidth` catches it fast).
+      A DOM/unit test cannot see this; only a rendered screenshot or live
+      measurement can. (Regression class: CheckInCard's RatingPicker row
+      overflowed the card at 390px — fixed by stacking label above picker,
+      the same pattern SetScreen's RirPicker already used correctly.)
 - [ ] First and last items of every list/group.
 - [ ] Longest seeded content (names, notes) — no truncation that destroys meaning.
 

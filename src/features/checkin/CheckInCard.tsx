@@ -68,16 +68,18 @@ export function CheckInCard({ dateKey, checkIn, readiness, locked = false }: Che
             <h2 className="eyebrow">Today's readiness</h2>
             <p className="text-xs text-ink-tertiary">1 low · 5 high</p>
           </div>
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-4">
             {SIGNAL_ROWS.map(({ signal, label }) => (
-              <div key={signal} className="flex items-center justify-between gap-3">
-                <span className="w-24 shrink-0 text-sm text-ink-secondary">{label}</span>
-                <RatingPicker
-                  label={label}
-                  options={RATING_OPTIONS}
-                  value={checkIn?.[signal] ?? null}
-                  onChange={(value) => void rate(signal, value as Rating)}
-                />
+              <div key={signal}>
+                <span className="text-sm text-ink-secondary">{label}</span>
+                <div className="mt-1.5">
+                  <RatingPicker
+                    label={label}
+                    options={RATING_OPTIONS}
+                    value={checkIn?.[signal] ?? null}
+                    onChange={(value) => void rate(signal, value as Rating)}
+                  />
+                </div>
               </div>
             ))}
           </div>
