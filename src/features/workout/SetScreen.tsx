@@ -7,6 +7,8 @@ import { RatingPicker } from '@/ui/RatingPicker'
 import { suggestProgression } from '@/domain/progression'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
+import { useExerciseName } from '@/i18n/seedExercise'
+import { usePrescriptionNote } from '@/i18n/seedProgram'
 import type { ReadinessTier } from '@/domain/readiness'
 import type { Exercise, LoggedSet, WorkoutExercise } from '@/domain/types'
 import { HoldTimer } from './HoldTimer'
@@ -19,6 +21,8 @@ interface SetScreenProps {
   previousSets: readonly LoggedSet[]
   exerciseById: Map<string, Exercise>
   readinessTier?: ReadinessTier
+  programId: string
+  sessionId: string
   onLog: (set: Omit<LoggedSet, 'setIndex'>) => void
   onSwap: (exerciseId: string) => void
 }
@@ -30,11 +34,15 @@ export function SetScreen({
   previousSets,
   exerciseById,
   readinessTier,
+  programId,
+  sessionId,
   onLog,
   onSwap,
 }: SetScreenProps) {
   const { t } = useTranslation('workout')
+  const exerciseName = useExerciseName(exercise.id)
   const { prescription } = workoutExercise
+  const note = usePrescriptionNote(programId, sessionId, prescription)
   const suggestion = suggestProgression(prescription, previousSets, readinessTier)
   const suggestionReason = useTranslatedMessage(suggestion.reason)
 
@@ -74,7 +82,7 @@ export function SetScreen({
           {prescription.perSide && ` · ${t('setScreen.eachSide')}`}
         </p>
         <h1 ref={headingRef} tabIndex={-1} className="text-display mt-2 text-4xl text-ink">
-          {exercise.name}
+          {exerciseName}
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-ink-secondary">
           <LastTime sets={previousSets} mode={prescription.mode} />
@@ -82,9 +90,7 @@ export function SetScreen({
         {suggestion.type !== 'start' && (
           <p className="mt-1 text-sm leading-relaxed text-amber">{suggestionReason}</p>
         )}
-        {prescription.note && (
-          <p className="mt-1 text-sm text-ink-tertiary">{prescription.note}</p>
-        )}
+        {note && <p className="mt-1 text-sm text-ink-tertiary">{note}</p>}
       </div>
 
       <div className="mt-auto pt-8">

@@ -6,7 +6,8 @@ import type { CheckIn, Exercise, Program, UserSettings, Workout } from '@/domain
  * directly. This is the seam where cloud sync will attach later.
  */
 export const exerciseRepo = {
-  getAll: (): Promise<Exercise[]> => db.exercises.orderBy('name').toArray(),
+  /** Unsorted — display order is locale-aware (Intl.Collator on the resolved name), not index order. */
+  getAll: (): Promise<Exercise[]> => db.exercises.toArray(),
   getById: (id: string): Promise<Exercise | undefined> => db.exercises.get(id),
 }
 

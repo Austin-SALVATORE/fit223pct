@@ -5,6 +5,7 @@ import { checkinRepo, exerciseRepo, programRepo, workoutRepo } from '@/data/repo
 import { consistencyTrend, strengthTrend, waistTrend } from '@/domain/trends'
 import { detectStagnation } from '@/domain/stagnation'
 import { toDateKey } from '@/lib/dates'
+import { useExerciseName } from '@/i18n/seedExercise'
 import type { Workout } from '@/domain/types'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { ConsistencyCard } from './ConsistencyCard'
@@ -114,19 +115,11 @@ export function ProgressPage() {
                         const exercise = exerciseById.get(exerciseId)
                         if (!exercise) return null
                         return (
-                          <GroupedRow
+                          <GatheringRow
                             key={exerciseId}
-                            to={`/library/${exercise.id}`}
-                            state={{ from: 'progress' }}
-                          >
-                            <span className="text-ink">{exercise.name}</span>
-                            <span
-                              className="shrink-0 text-sm text-ink-tertiary"
-                              data-numeric
-                            >
-                              {t('strength.sessionsOfThree', { count: sessionCount(exerciseId, completed) })}
-                            </span>
-                          </GroupedRow>
+                            exerciseId={exerciseId}
+                            sessionCount={sessionCount(exerciseId, completed)}
+                          />
                         )
                       })}
                     </GroupedList>
@@ -151,6 +144,25 @@ export function ProgressPage() {
 function sessionCount(exerciseId: string, workouts: readonly Workout[]): number {
   return workouts.filter((w) => w.exercises.some((e) => e.exerciseId === exerciseId && e.sets.length > 0))
     .length
+}
+
+function GatheringRow({
+  exerciseId,
+  sessionCount,
+}: {
+  exerciseId: string
+  sessionCount: number
+}) {
+  const { t } = useTranslation('progress')
+  const exerciseName = useExerciseName(exerciseId)
+  return (
+    <GroupedRow to={`/library/${exerciseId}`} state={{ from: 'progress' }}>
+      <span className="text-ink">{exerciseName}</span>
+      <span className="shrink-0 text-sm text-ink-tertiary" data-numeric>
+        {t('strength.sessionsOfThree', { count: sessionCount })}
+      </span>
+    </GroupedRow>
+  )
 }
 
 function Heading() {

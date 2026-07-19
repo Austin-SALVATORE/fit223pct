@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { exerciseRepo } from '@/data/repositories'
 import { useEquipmentLabel } from '@/lib/equipmentLabel'
+import { useExerciseName } from '@/i18n/seedExercise'
+import { useLocale } from '@/i18n/useLocale'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import type { Exercise, MuscleGroup } from '@/domain/types'
 
@@ -15,6 +17,8 @@ const groupOrder: { key: string; labelKey: string; muscles: MuscleGroup[] }[] = 
 
 export function LibraryPage() {
   const { t } = useTranslation('library')
+  const { t: tSeed } = useTranslation('seed')
+  const locale = useLocale()
   const exercises = useLiveQuery(() => exerciseRepo.getAll(), [])
 
   // Root stays a <div> in both states — swapping root element types on
@@ -28,10 +32,19 @@ export function LibraryPage() {
     )
   }
 
+  // Display order is locale-aware — alphabetizing by the resolved name
+  // (not an id or a fixed English order) means French/Chinese exercise
+  // lists sort correctly for that language, not English's.
+  const collator = new Intl.Collator(locale)
+  const nameOf = (exercise: Exercise) => tSeed(`exercise.${exercise.id}.name`)
+
   const grouped = groupOrder
     .map((group) => ({
       ...group,
-      exercises: exercises.filter((e) => group.muscles.includes(e.muscles[0])),
+      exercises: exercises
+        .filter((e) => group.muscles.includes(e.muscles[0]))
+        .slice()
+        .sort((a, b) => collator.compare(nameOf(a), nameOf(b))),
     }))
     .filter((group) => group.exercises.length > 0)
 
@@ -59,9 +72,10 @@ export function LibraryPage() {
 
 function ExerciseRow({ exercise }: { exercise: Exercise }) {
   const equipmentLabel = useEquipmentLabel(exercise.equipment[0])
+  const exerciseName = useExerciseName(exercise.id)
   return (
     <GroupedRow to={`/library/${exercise.id}`} state={{ from: 'library' }}>
-      <p className="font-medium text-ink">{exercise.name}</p>
+      <p className="font-medium text-ink">{exerciseName}</p>
       <p className="shrink-0 text-sm text-ink-tertiary">{equipmentLabel}</p>
     </GroupedRow>
   )

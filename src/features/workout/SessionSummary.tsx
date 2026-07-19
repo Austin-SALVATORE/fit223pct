@@ -5,6 +5,7 @@ import { summarizeWorkout } from '@/domain/workout'
 import { coachInsight, workoutHighlights, type Highlight } from '@/domain/highlights'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
+import { useExerciseName } from '@/i18n/seedExercise'
 import type { Exercise, Workout, WorkoutExercise } from '@/domain/types'
 
 interface SessionSummaryProps {
@@ -90,10 +91,11 @@ function ExerciseLine({
 }) {
   const label = useTranslatedMessage(highlight?.label ?? { key: 'domain:highlight.steady' })
   const topSet = useTopSetLabel(workoutExercise)
+  const exerciseName = useExerciseName(exercise?.id ?? workoutExercise.exerciseId)
   return (
     <li className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
       <div className="min-w-0">
-        <p className="text-ink">{exercise?.name ?? workoutExercise.exerciseId}</p>
+        <p className="text-ink">{exercise ? exerciseName : workoutExercise.exerciseId}</p>
         <p className="mt-0.5 text-sm text-ink-tertiary" data-numeric>
           {topSet}
         </p>

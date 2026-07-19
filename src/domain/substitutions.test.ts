@@ -4,10 +4,8 @@ import type { Exercise } from './types'
 
 const barbellSquat: Exercise = {
   id: 'barbell-squat',
-  name: 'Barbell back squat',
   muscles: ['quads'],
   equipment: ['barbell', 'machine'],
-  cues: [],
   substitutionIds: ['goblet-squat'],
   isUnilateral: false,
 }

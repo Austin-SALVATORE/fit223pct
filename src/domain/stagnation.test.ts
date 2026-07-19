@@ -4,10 +4,8 @@ import type { Exercise, Workout } from './types'
 
 const squat: Exercise = {
   id: 'goblet-squat',
-  name: 'Goblet squat',
   muscles: ['quads'],
   equipment: ['dumbbell'],
-  cues: [],
   substitutionIds: ['split-squat'],
   isUnilateral: false,
 }

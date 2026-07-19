@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
+import {
+  useExerciseCues,
+  useExerciseName,
+  useExerciseTeachingConcept,
+} from '@/i18n/seedExercise'
 import type { Exercise, Workout } from '@/domain/types'
 import type { WorkoutPosition } from '@/domain/workout'
 
@@ -40,6 +45,9 @@ export function RestScreen({
 
   const nextExercise = workout.exercises[position.exerciseIndex]
   const exercise = exerciseById.get(nextExercise.exerciseId)
+  // Called unconditionally, before the early return below, so hook order
+  // stays stable whether or not `exercise` resolves.
+  const exerciseName = useExerciseName(exercise?.id ?? '')
   if (!exercise) return null
 
   const total = Math.max(totalSeconds, Math.ceil((endsAt - Date.now()) / 1000))
@@ -53,7 +61,7 @@ export function RestScreen({
         className="eyebrow"
         aria-label={t('resting.ariaLabel', {
           nextLabel,
-          exerciseName: exercise.name,
+          exerciseName,
           setIndex: position.setIndex + 1,
           totalSets: nextExercise.prescription.sets,
         })}
@@ -72,7 +80,7 @@ export function RestScreen({
         <p className="text-sm text-ink-tertiary">{nextLabel}</p>
         <p className="mt-1 font-medium text-ink">
           {t('resting.setProgress', {
-            exerciseName: exercise.name,
+            exerciseName,
             setIndex: position.setIndex + 1,
             totalSets: nextExercise.prescription.sets,
           })}
@@ -149,7 +157,8 @@ function CoachingCard({
   setIndex: number
   isNew: boolean
 }) {
-  const concept = exercise.teachingConcept
+  const concept = useExerciseTeachingConcept(exercise.id)
+  const cues = useExerciseCues(exercise.id)
   if (isNew && concept) {
     return (
       <div className="mt-8 w-full rounded-card border border-border bg-surface p-5 text-left">
@@ -158,7 +167,7 @@ function CoachingCard({
       </div>
     )
   }
-  const cue = exercise.cues[setIndex % exercise.cues.length]
+  const cue = cues[setIndex % cues.length]
   if (!cue) return null
   return (
     <p className="mt-8 max-w-[32ch] text-sm leading-relaxed text-ink-secondary">“{cue}”</p>

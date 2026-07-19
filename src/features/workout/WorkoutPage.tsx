@@ -170,6 +170,8 @@ export function WorkoutPage() {
               previousSets={previousSets}
               exerciseById={exerciseById}
               readinessTier={workout.readiness?.tier}
+              programId={workout.programId}
+              sessionId={workout.sessionTemplateId}
               onLog={handleLog}
               onSwap={handleSwap}
             />

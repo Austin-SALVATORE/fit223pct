@@ -12,6 +12,7 @@ import { buildWeeklyReview, reviewIsUnseen, type WeeklyReview } from '@/domain/w
 import { formatLongDate, toDateKey } from '@/lib/dates'
 import { useActivityKindLabel } from '@/lib/activityKindLabel'
 import { useLocale } from '@/i18n/useLocale'
+import { useProgramName, useSessionFocus, useSessionName } from '@/i18n/seedProgram'
 import type { ActivityTemplate, CheckIn, Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
 import { CheckInCard } from '@/features/checkin/CheckInCard'
 import { MeasurementCard } from '@/features/checkin/MeasurementCard'
@@ -187,6 +188,7 @@ function PlannedDay({
   checkInCard: ReactNode
 }) {
   const { t } = useTranslation('today')
+  const programName = useProgramName(program)
   const plan = resolveDayPlan(program, today, completedCount)
   const eased = readiness.tier === 'easier'
 
@@ -205,7 +207,7 @@ function PlannedDay({
           hero={
             <Hero
               eyebrow={t('plannedDay.startsIn', { count: plan.daysUntilStart })}
-              title={program.name}
+              title={programName}
               subtitle={t('plannedDay.upcomingSubtitle')}
             />
           }
@@ -283,6 +285,8 @@ function TrainingDay({
   checkInCard: ReactNode
 }) {
   const { t } = useTranslation('today')
+  const sessionName = useSessionName(program.id, session)
+  const sessionFocus = useSessionFocus(program.id, session)
   const adjusted = applyReadiness(session, readiness)
   const eased = adjusted.adjustments.length > 0
   const because = describeDrivers(readiness.drivers)
@@ -290,8 +294,8 @@ function TrainingDay({
   return (
     <>
       <Hero
-        eyebrow={`${session.name} · ${session.focus}`}
-        title={session.focus}
+        eyebrow={`${sessionName} · ${sessionFocus}`}
+        title={sessionFocus}
         subtitle={
           eased
             ? t('trainingDay.easedSubtitle', { driversKey: because.key, ...because.params })
@@ -312,6 +316,7 @@ function TrainingDay({
       )}
       <SessionPreview
         session={adjusted.session}
+        programId={program.id}
         exerciseById={exerciseById}
         heading={t('trainingDay.heading')}
         badge={eased ? t('trainingDay.adjustedBadge') : undefined}
@@ -365,6 +370,7 @@ function UnscheduledDay({
       {checkInCard}
       <SessionPreview
         session={adjusted.session}
+        programId={program.id}
         exerciseById={exerciseById}
         heading={heading}
         badge={eased ? t('trainingDay.adjustedBadge') : undefined}

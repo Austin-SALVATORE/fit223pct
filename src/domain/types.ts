@@ -19,15 +19,19 @@ export interface TeachingConcept {
   body: string
 }
 
+/**
+ * The Library is fully closed, seeded content — no exerciseRepo.put/add
+ * exists. Display content (name, cues, teachingConcept) is locale-keyed
+ * by id in src/locales/*'/seed.json, resolved at render via
+ * src/i18n/seedExercise.ts — never persisted here, so it can't drift out
+ * of sync with the active locale.
+ */
 export interface Exercise {
   id: string
-  name: string
   muscles: MuscleGroup[]
   equipment: Equipment[]
-  cues: string[]
   substitutionIds: string[]
   isUnilateral: boolean
-  teachingConcept?: TeachingConcept
 }
 
 export type EffortMode = 'reps' | 'seconds'

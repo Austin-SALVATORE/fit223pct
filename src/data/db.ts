@@ -18,14 +18,23 @@ export class Fit223Database extends Dexie {
   checkins!: EntityTable<CheckIn, 'id'>
   settings!: EntityTable<UserSettings, 'id'>
 
-  constructor() {
-    super('fit223pct')
+  /** Name defaults to the real app database — overridable so migration tests can target an isolated one. */
+  constructor(name = 'fit223pct') {
+    super(name)
     this.version(1).stores({
       exercises: 'id, name',
       programs: 'id, phase, startDate',
       workouts: 'id, date, sessionTemplateId, completedAt',
       checkins: 'id, date',
       settings: 'id',
+    })
+    // Exercise.name moved to locale-keyed seed.json (see types.ts) — the
+    // Library no longer sorts by a `name` index (client-side Intl.Collator
+    // on the resolved display name instead), so the index itself is
+    // dropped. A genuine schema change even though no data is lost: Dexie
+    // diffs index declarations between versions, not object contents.
+    this.version(2).stores({
+      exercises: 'id',
     })
   }
 }

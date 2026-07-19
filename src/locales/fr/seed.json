@@ -1,1 +1,291 @@
-{}
+{
+  "exercise": {
+    "goblet-squat": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ],
+      "teachingConcept": {
+        "title": "TODO",
+        "body": "TODO"
+      }
+    },
+    "split-squat": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "tempo-bodyweight-squat": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "bench-press": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ],
+      "teachingConcept": {
+        "title": "TODO",
+        "body": "TODO"
+      }
+    },
+    "deficit-push-up": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "db-floor-press": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "single-arm-db-row": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "bent-over-row": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "band-row": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "romanian-deadlift": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ],
+      "teachingConcept": {
+        "title": "TODO",
+        "body": "TODO"
+      }
+    },
+    "single-leg-rdl": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "bulgarian-split-squat": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "overhead-press": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ],
+      "teachingConcept": {
+        "title": "TODO",
+        "body": "TODO"
+      }
+    },
+    "single-arm-db-press": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "hip-thrust": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "single-leg-hip-thrust": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "band-pull-apart": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "band-lateral-raise": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "band-curl": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "dead-bug": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "side-plank": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    "barbell-squat": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ],
+      "teachingConcept": {
+        "title": "TODO",
+        "body": "TODO"
+      }
+    },
+    "cable-row": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ],
+      "teachingConcept": {
+        "title": "TODO",
+        "body": "TODO"
+      }
+    },
+    "lat-pulldown": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ],
+      "teachingConcept": {
+        "title": "TODO",
+        "body": "TODO"
+      }
+    },
+    "barbell-hip-thrust": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ],
+      "teachingConcept": {
+        "title": "TODO",
+        "body": "TODO"
+      }
+    },
+    "dumbbell-lateral-raise": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ],
+      "teachingConcept": {
+        "title": "TODO",
+        "body": "TODO"
+      }
+    },
+    "dumbbell-curl": {
+      "name": "TODO",
+      "cues": [
+        "TODO",
+        "TODO",
+        "TODO"
+      ],
+      "teachingConcept": {
+        "title": "TODO",
+        "body": "TODO"
+      }
+    }
+  },
+  "program": {
+    "phase-1-home": {
+      "name": "TODO",
+      "session": {
+        "A": {
+          "name": "TODO",
+          "focus": "TODO",
+          "exercise": {
+            "goblet-squat": {
+              "note": "TODO"
+            },
+            "romanian-deadlift": {
+              "note": "TODO"
+            }
+          }
+        },
+        "B": {
+          "name": "TODO",
+          "focus": "TODO",
+          "exercise": {
+            "bent-over-row": {
+              "note": "TODO"
+            },
+            "hip-thrust": {
+              "note": "TODO"
+            }
+          }
+        }
+      }
+    }
+  }
+}

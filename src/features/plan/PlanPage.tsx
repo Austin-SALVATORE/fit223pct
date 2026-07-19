@@ -7,13 +7,29 @@ import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
 import { addDays, dateFormattingLocale, isoWeekday, parseDateKey, toDateKey } from '@/lib/dates'
 import { useLocale } from '@/i18n/useLocale'
+import { useProgramName, useSessionName } from '@/i18n/seedProgram'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { ProgramDataActions } from './ProgramDataActions'
-import type { Program } from '@/domain/types'
+import type { Program, SessionTemplate } from '@/domain/types'
 
 // A known Monday — used only to look up each ISO weekday's short name via
 // Intl.DateTimeFormat, never as a real date.
 const REFERENCE_MONDAY = new Date(2024, 0, 1)
+
+/** Never rendered — see DayRow's resolvedSessionName comment. */
+const EMPTY_SESSION: SessionTemplate = { id: '', name: '', focus: '', items: [] }
+
+/** Never rendered — see PhaseNav's previousName/nextName comment. */
+const EMPTY_PROGRAM: Program = {
+  id: '',
+  name: '',
+  phase: 0,
+  startDate: '',
+  endDate: null,
+  trainingWeekdays: [],
+  rotation: [],
+  sessions: [],
+}
 
 function weekdayAbbr(weekday: number, locale: string): string {
   return addDays(REFERENCE_MONDAY, weekday - 1).toLocaleDateString(dateFormattingLocale(locale), {
@@ -88,7 +104,7 @@ export function PlanPage() {
           <section key={week.weekStart} className="mt-6" aria-label={weekLabel}>
             <GroupedList label={weekLabel}>
               {week.days.map((day) => (
-                <DayRow key={day.date} day={day} locale={locale} />
+                <DayRow key={day.date} day={day} locale={locale} programId={program.id} />
               ))}
             </GroupedList>
           </section>
@@ -98,10 +114,14 @@ export function PlanPage() {
   )
 }
 
-function DayRow({ day, locale }: { day: ScheduleDay; locale: string }) {
+function DayRow({ day, locale, programId }: { day: ScheduleDay; locale: string; programId: string }) {
   const { t } = useTranslation('plan')
   const { t: tCommon } = useTranslation('common')
   const label = formatDayLabel(day.date, locale)
+  // Called unconditionally, before any of the state-specific returns below,
+  // so hook order stays stable across day states.
+  const resolvedSessionName = useSessionName(programId, day.session ?? EMPTY_SESSION)
+  const sessionName = day.session ? resolvedSessionName : t('sessionFallback')
 
   if (day.isToday) {
     return (
@@ -110,7 +130,7 @@ function DayRow({ day, locale }: { day: ScheduleDay; locale: string }) {
           {label} <span className="text-ink-tertiary">· {tCommon('nav.today')}</span>
         </span>
         <span className="shrink-0 text-sm text-ink-secondary">
-          {day.session ? day.session.name : (day.activity?.title ?? t('restFallback'))}
+          {day.session ? resolvedSessionName : (day.activity?.title ?? t('restFallback'))}
         </span>
       </GroupedRow>
     )
@@ -122,7 +142,7 @@ function DayRow({ day, locale }: { day: ScheduleDay; locale: string }) {
       <GroupedRow to={`/plan/${day.date}`}>
         <span className="font-medium text-ink">{label}</span>
         <span className="shrink-0 text-right text-sm text-ink-secondary">
-          {day.session?.name ?? t('sessionFallback')}
+          {sessionName}
           <span className="block text-ink-tertiary">
             {t('setsVolume', { count: summary.totalSets, volume: Math.round(summary.volumeKg) })}
           </span>
@@ -136,7 +156,7 @@ function DayRow({ day, locale }: { day: ScheduleDay; locale: string }) {
       <GroupedRow to={`/plan/${day.date}`}>
         <span className="font-medium text-ink">{label}</span>
         <span className="shrink-0 text-sm text-ink-secondary">
-          {day.session.name}
+          {resolvedSessionName}
           {day.projected && <span className="text-ink-tertiary"> · {t('projectedBadge')}</span>}
         </span>
       </GroupedRow>
@@ -167,6 +187,8 @@ function DayRow({ day, locale }: { day: ScheduleDay; locale: string }) {
 
 function PhaseHeader({ program, locale }: { program: Program; locale: string }) {
   const { t } = useTranslation('plan')
+  const { t: tSeed } = useTranslation('seed')
+  const programName = useProgramName(program)
   const uniqueRotation = [...new Set(program.rotation)]
   // Intl.ListFormat, not a hardcoded ' and ' join — the same latent i18n
   // bug the driver-phrase composition caught in Phase 2, here too: joining
@@ -181,17 +203,23 @@ function PhaseHeader({ program, locale }: { program: Program; locale: string }) 
     .map((d) => weekdayAbbr(d, locale))
     .join(' / ')
 
+  const sessionsLine = program.sessions
+    .map((s) => {
+      const name = tSeed(`program.${program.id}.session.${s.id}.name`, { defaultValue: s.name })
+      const focus = tSeed(`program.${program.id}.session.${s.id}.focus`, { defaultValue: s.focus })
+      return `${name} — ${focus}`
+    })
+    .join(' · ')
+
   return (
     <section className="mt-6">
-      <h2 className="eyebrow">{program.name}</h2>
+      <h2 className="eyebrow">{programName}</h2>
       <p className="mt-1 text-sm text-ink-secondary">
         {formatShortDate(program.startDate, locale)}
         {' – '}
         {program.endDate ? formatShortDate(program.endDate, locale) : t('ongoing')}
       </p>
-      <p className="mt-3 text-sm leading-relaxed text-ink-secondary">
-        {program.sessions.map((s) => `${s.name} — ${s.focus}`).join(' · ')}
-      </p>
+      <p className="mt-3 text-sm leading-relaxed text-ink-secondary">{sessionsLine}</p>
       <p className="mt-1 text-sm text-ink-tertiary">
         {t('rotationLine', { rotationList, weekdays: weekdaysLabel })}
       </p>
@@ -208,6 +236,10 @@ function PhaseNav({
   next: Program | null
   onSelect: (id: string) => void
 }) {
+  // Called unconditionally, before the early return below, so hook order
+  // stays stable whether or not previous/next resolve.
+  const previousName = useProgramName(previous ?? EMPTY_PROGRAM)
+  const nextName = useProgramName(next ?? EMPTY_PROGRAM)
   if (!previous && !next) return null
   return (
     <nav className="mt-4 flex items-center justify-between text-sm">
@@ -217,7 +249,7 @@ function PhaseNav({
           onClick={() => onSelect(previous.id)}
           className="text-ink-secondary transition-colors hover:text-ink"
         >
-          ← {previous.name}
+          ← {previousName}
         </button>
       ) : (
         <span />
@@ -228,7 +260,7 @@ function PhaseNav({
           onClick={() => onSelect(next.id)}
           className="text-ink-secondary transition-colors hover:text-ink"
         >
-          {next.name} →
+          {nextName} →
         </button>
       ) : (
         <span />

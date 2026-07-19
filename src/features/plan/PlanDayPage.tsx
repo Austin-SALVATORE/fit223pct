@@ -6,11 +6,16 @@ import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
 import { formatLongDate, parseDateKey, toDateKey } from '@/lib/dates'
 import { useActivityKindLabel } from '@/lib/activityKindLabel'
+import { useExerciseName } from '@/i18n/seedExercise'
+import { useSessionName } from '@/i18n/seedProgram'
 import { useLocale } from '@/i18n/useLocale'
 import { SessionPreview } from '@/features/today/SessionPreview'
 import type { ActivityTemplate, Exercise, LoggedSet, SessionTemplate, Workout } from '@/domain/types'
 
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+
+/** Never rendered — see CompletedDetail's resolvedSessionName comment. */
+const EMPTY_SESSION: SessionTemplate = { id: '', name: '', focus: '', items: [] }
 
 /**
  * Amendment (19 Jul) to docs/Plan.md: every day row is now clickable.
@@ -35,6 +40,7 @@ export function PlanDayPage() {
     return {
       day: days.find((d) => d.date === date) ?? null,
       exerciseById: new Map(exercises.map((e) => [e.id, e])),
+      programId: program.id,
     }
   }, [date, validDate])
 
@@ -47,7 +53,7 @@ export function PlanDayPage() {
     <div>
       <BackToPlan />
       <h1 className="text-display mt-6 text-4xl text-ink">{formatLongDate(parseDateKey(date), locale)}</h1>
-      <DayDetailBody day={data.day} exerciseById={data.exerciseById} date={date} />
+      <DayDetailBody day={data.day} exerciseById={data.exerciseById} date={date} programId={data.programId} />
     </div>
   )
 }
@@ -56,10 +62,12 @@ function DayDetailBody({
   day,
   exerciseById,
   date,
+  programId,
 }: {
   day: ScheduleDay
   exerciseById: Map<string, Exercise>
   date: string
+  programId: string
 }) {
   const { t } = useTranslation('plan')
 
@@ -67,7 +75,8 @@ function DayDetailBody({
     return (
       <CompletedDetail
         workout={day.workout}
-        sessionName={day.session?.name ?? t('sessionFallback')}
+        session={day.session ?? undefined}
+        programId={programId}
         exerciseById={exerciseById}
         date={date}
       />
@@ -79,7 +88,9 @@ function DayDetailBody({
   }
 
   if (day.session) {
-    return <ProjectedDetail session={day.session} exerciseById={exerciseById} date={date} />
+    return (
+      <ProjectedDetail session={day.session} programId={programId} exerciseById={exerciseById} date={date} />
+    )
   }
 
   return <p className="mt-6 leading-relaxed text-ink-secondary">{t('dayDetail.nothingLogged')}</p>
@@ -87,17 +98,25 @@ function DayDetailBody({
 
 function CompletedDetail({
   workout,
-  sessionName,
+  session,
+  programId,
   exerciseById,
   date,
 }: {
   workout: Workout
-  sessionName: string
+  session: SessionTemplate | undefined
+  programId: string
   exerciseById: Map<string, Exercise>
   date: string
 }) {
   const { t } = useTranslation('plan')
   const formatLoggedSet = useFormatLoggedSet()
+  // useSessionName always needs a SessionTemplate; a day.session-less
+  // workout is defensive-only (shouldn't happen in practice), so the
+  // empty placeholder below is never actually rendered — sessionFallback
+  // covers that case instead.
+  const resolvedSessionName = useSessionName(programId, session ?? EMPTY_SESSION)
+  const sessionName = session ? resolvedSessionName : t('sessionFallback')
   const summary = summarizeWorkout(workout)
   const loggedExercises = workout.exercises.filter((e) => e.sets.length > 0)
   const setsPhrase = t('dayDetail.sets', { count: summary.totalSets })
@@ -122,50 +141,74 @@ function CompletedDetail({
         aria-label={t('dayDetail.loggedExercisesAriaLabel')}
         className="mt-3 divide-y divide-border overflow-hidden rounded-card border border-border bg-surface"
       >
-        {loggedExercises.map((we) => {
-          const exercise = exerciseById.get(we.exerciseId)
-          return (
-            <li key={we.exerciseId} className="px-4 py-3.5">
-              {exercise ? (
-                <Link
-                  to={`/library/${exercise.id}`}
-                  state={{ from: 'plan-day', date }}
-                  className="font-medium text-ink transition-colors hover:text-amber"
-                >
-                  {exercise.name}
-                </Link>
-              ) : (
-                <p className="font-medium text-ink">{we.exerciseId}</p>
-              )}
-              <p className="mt-1 text-sm text-ink-secondary" data-numeric>
-                {we.sets.map((set) => formatLoggedSet(set, we.prescription.mode)).join(' · ')}
-              </p>
-            </li>
-          )
-        })}
+        {loggedExercises.map((we) => (
+          <LoggedExerciseRow
+            key={we.exerciseId}
+            workoutExercise={we}
+            exercise={exerciseById.get(we.exerciseId)}
+            date={date}
+            formatLoggedSet={formatLoggedSet}
+          />
+        ))}
       </ul>
     </>
   )
 }
 
+function LoggedExerciseRow({
+  workoutExercise,
+  exercise,
+  date,
+  formatLoggedSet,
+}: {
+  workoutExercise: Workout['exercises'][number]
+  exercise: Exercise | undefined
+  date: string
+  formatLoggedSet: (set: LoggedSet, mode: 'reps' | 'seconds') => string
+}) {
+  const exerciseName = useExerciseName(exercise?.id ?? '')
+  return (
+    <li className="px-4 py-3.5">
+      {exercise ? (
+        <Link
+          to={`/library/${exercise.id}`}
+          state={{ from: 'plan-day', date }}
+          className="font-medium text-ink transition-colors hover:text-amber"
+        >
+          {exerciseName}
+        </Link>
+      ) : (
+        <p className="font-medium text-ink">{workoutExercise.exerciseId}</p>
+      )}
+      <p className="mt-1 text-sm text-ink-secondary" data-numeric>
+        {workoutExercise.sets.map((set) => formatLoggedSet(set, workoutExercise.prescription.mode)).join(' · ')}
+      </p>
+    </li>
+  )
+}
+
 function ProjectedDetail({
   session,
+  programId,
   exerciseById,
   date,
 }: {
   session: SessionTemplate
+  programId: string
   exerciseById: Map<string, Exercise>
   date: string
 }) {
   const { t } = useTranslation('plan')
+  const sessionName = useSessionName(programId, session)
   return (
     <>
       <p className="mt-1 text-sm font-medium text-amber">{t('dayDetail.projectedLabel')}</p>
       <p className="mt-4 text-sm leading-relaxed text-ink-tertiary">{t('projectedNote')}</p>
       <SessionPreview
         session={session}
+        programId={programId}
         exerciseById={exerciseById}
-        heading={session.name}
+        heading={sessionName}
         origin={{ from: 'plan-day', date }}
       />
     </>

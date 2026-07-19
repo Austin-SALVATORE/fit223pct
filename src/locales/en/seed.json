@@ -1,1 +1,291 @@
-{}
+{
+  "exercise": {
+    "goblet-squat": {
+      "name": "Goblet squat",
+      "cues": [
+        "Hold the dumbbell tight against your chest",
+        "Sit down between your heels, not back",
+        "Elbows track inside your knees at the bottom"
+      ],
+      "teachingConcept": {
+        "title": "Bracing",
+        "body": "Before each rep, take a breath into your belly and gently tense your midsection — like preparing for a light poke. A braced trunk keeps your spine stable so your legs can do the work."
+      }
+    },
+    "split-squat": {
+      "name": "Split squat",
+      "cues": [
+        "Long stance, back heel free",
+        "Drop the back knee straight down",
+        "Front foot carries most of the weight"
+      ]
+    },
+    "tempo-bodyweight-squat": {
+      "name": "Tempo bodyweight squat",
+      "cues": [
+        "Three seconds down",
+        "Pause briefly at the bottom",
+        "Stand tall between reps"
+      ]
+    },
+    "bench-press": {
+      "name": "Barbell bench press",
+      "cues": [
+        "Pull your shoulder blades down and together",
+        "Slight arch, feet planted",
+        "Lower with control to mid-chest"
+      ],
+      "teachingConcept": {
+        "title": "Scapular position",
+        "body": "Set your shoulder blades down and back before unracking, and keep them there. A stable scapula turns the bench into a launch pad and protects your shoulders."
+      }
+    },
+    "deficit-push-up": {
+      "name": "Deficit push-up",
+      "cues": [
+        "Hands elevated on books or handles",
+        "Chest below hand level at the bottom",
+        "Body is one rigid line"
+      ]
+    },
+    "db-floor-press": {
+      "name": "Dumbbell floor press",
+      "cues": [
+        "Elbows touch the floor softly each rep",
+        "Press slightly inward",
+        "Wrists stacked over elbows"
+      ]
+    },
+    "single-arm-db-row": {
+      "name": "Single-arm dumbbell row",
+      "cues": [
+        "Flat back, hips square",
+        "Pull to your hip, not your armpit",
+        "Let the shoulder blade move — reach, then row"
+      ]
+    },
+    "bent-over-row": {
+      "name": "Barbell bent-over row",
+      "cues": [
+        "Hinge to ~45°",
+        "Pull to your lower ribs",
+        "Pause at the top"
+      ]
+    },
+    "band-row": {
+      "name": "Band row",
+      "cues": [
+        "Anchor at chest height",
+        "Squeeze the shoulder blades",
+        "Slow return"
+      ]
+    },
+    "romanian-deadlift": {
+      "name": "Romanian deadlift",
+      "cues": [
+        "Push your hips back, soft knees",
+        "Bar stays close to your legs",
+        "Stop when your hamstrings say stop"
+      ],
+      "teachingConcept": {
+        "title": "The hip hinge",
+        "body": "A hinge moves your hips backward while your spine stays long — it is a bow, not a squat. Mastering it loads your hamstrings and glutes instead of your lower back, and it carries into almost every lift."
+      }
+    },
+    "single-leg-rdl": {
+      "name": "Single-leg Romanian deadlift",
+      "cues": [
+        "Hips stay square to the floor",
+        "Reach the free leg back",
+        "Slow and balanced beats heavy"
+      ]
+    },
+    "bulgarian-split-squat": {
+      "name": "Bulgarian split squat",
+      "cues": [
+        "Rear foot on the bench, laces down",
+        "Torso tall, slight forward lean is fine",
+        "Drive through the whole front foot"
+      ]
+    },
+    "overhead-press": {
+      "name": "Barbell overhead press",
+      "cues": [
+        "Squeeze glutes, ribs down",
+        "Bar travels in a straight line — move your head, not the bar",
+        "Finish with biceps by your ears"
+      ],
+      "teachingConcept": {
+        "title": "Ribs down",
+        "body": "Overarching your lower back turns an overhead press into a lower-back exercise. Tuck your ribs toward your hips and squeeze your glutes — the press should come from shoulders, not spine."
+      }
+    },
+    "single-arm-db-press": {
+      "name": "Single-arm dumbbell press",
+      "cues": [
+        "Full-body tension",
+        "Press slightly back, not forward",
+        "Resist side-bending"
+      ]
+    },
+    "hip-thrust": {
+      "name": "Hip thrust",
+      "cues": [
+        "Shoulder blades on the bench edge",
+        "Chin tucked, ribs down at the top",
+        "Squeeze for a full second at lockout"
+      ]
+    },
+    "single-leg-hip-thrust": {
+      "name": "Single-leg hip thrust",
+      "cues": [
+        "Hips stay level",
+        "Drive through the heel",
+        "Slow on the way down"
+      ]
+    },
+    "band-pull-apart": {
+      "name": "Band pull-apart",
+      "cues": [
+        "Arms long, band to chest",
+        "Squeeze between the shoulder blades",
+        "Control the return"
+      ]
+    },
+    "band-lateral-raise": {
+      "name": "Band lateral raise",
+      "cues": [
+        "Lead with the elbows",
+        "Stop at shoulder height",
+        "No swinging"
+      ]
+    },
+    "band-curl": {
+      "name": "Band curl",
+      "cues": [
+        "Elbows pinned to your sides",
+        "Squeeze at the top",
+        "Three seconds down"
+      ]
+    },
+    "dead-bug": {
+      "name": "Dead bug",
+      "cues": [
+        "Lower back gently pressed into the floor",
+        "Opposite arm and leg reach away slowly",
+        "Exhale as you extend"
+      ]
+    },
+    "side-plank": {
+      "name": "Side plank",
+      "cues": [
+        "Elbow under shoulder",
+        "Hips tall — one straight line",
+        "Breathe steadily"
+      ]
+    },
+    "barbell-squat": {
+      "name": "Barbell back squat",
+      "cues": [
+        "Bar sits on your upper traps, not your neck",
+        "Break at the hips and knees together, sit between your heels",
+        "Drive the floor away evenly through both feet to stand"
+      ],
+      "teachingConcept": {
+        "title": "Bar path",
+        "body": "The bar should travel in a straight vertical line over the middle of your foot. If your hips shoot up first, you turn the squat into a hip hinge — sit down, not back, and let your hips and shoulders rise together."
+      }
+    },
+    "cable-row": {
+      "name": "Seated cable row",
+      "cues": [
+        "Sit tall, chest up, slight forward lean at the start",
+        "Pull to your lower ribs, elbows close to your body",
+        "Let your shoulder blades protract fully before the next rep"
+      ],
+      "teachingConcept": {
+        "title": "Lead with the elbow",
+        "body": "Initiate every rep by driving your elbow back, not by curling the handle in with your arm. Your back does the pulling; your bicep just holds on."
+      }
+    },
+    "lat-pulldown": {
+      "name": "Lat pulldown",
+      "cues": [
+        "Grip just outside shoulder width",
+        "Pull the bar to your upper chest, elbows driving down and back",
+        "Control the return — don't let the weight stack pull your arms up"
+      ],
+      "teachingConcept": {
+        "title": "Down and back, not just down",
+        "body": "Think about pulling your elbows toward your back pockets, not just pulling the bar down. That cue shifts the work into your lats instead of your arms."
+      }
+    },
+    "barbell-hip-thrust": {
+      "name": "Barbell hip thrust",
+      "cues": [
+        "Upper back braced on the bench edge, bar padded across your hips",
+        "Chin tucked, ribs down as you drive up",
+        "Full lockout — squeeze glutes hard for a second at the top"
+      ],
+      "teachingConcept": {
+        "title": "Bar placement",
+        "body": "The bar should sit in the crease of your hips, not on your lower belly — a thick pad or folded mat protects that spot. If it feels like it's crushing you, it's in the wrong place, not too heavy."
+      }
+    },
+    "dumbbell-lateral-raise": {
+      "name": "Dumbbell lateral raise",
+      "cues": [
+        "Slight bend in the elbows, held throughout",
+        "Raise to shoulder height, leading with the elbows",
+        "Lower slowly — the negative is where this exercise earns its keep"
+      ],
+      "teachingConcept": {
+        "title": "Light weight, real range",
+        "body": "This is not a heavy-load exercise — momentum from swinging the weight up removes tension from the shoulder, which is the entire point of the movement. If you need to lean or swing to lift it, the weight is too heavy."
+      }
+    },
+    "dumbbell-curl": {
+      "name": "Dumbbell curl",
+      "cues": [
+        "Elbows pinned to your sides through the whole rep",
+        "Squeeze at the top without swinging the weight up",
+        "Lower under control through the full range"
+      ],
+      "teachingConcept": {
+        "title": "Elbow position is everything",
+        "body": "If your elbows drift forward as the weight gets heavy, your front delts take over from your biceps. Keep them stacked under your shoulders for the whole set, even if that means picking a lighter dumbbell."
+      }
+    }
+  },
+  "program": {
+    "phase-1-home": {
+      "name": "Phase 1 — Home",
+      "session": {
+        "A": {
+          "name": "Session A",
+          "focus": "Squat & pull",
+          "exercise": {
+            "goblet-squat": {
+              "note": "3-second lowering"
+            },
+            "romanian-deadlift": {
+              "note": "Slow eccentric — the bar takes 3 seconds down"
+            }
+          }
+        },
+        "B": {
+          "name": "Session B",
+          "focus": "Hinge & press",
+          "exercise": {
+            "bent-over-row": {
+              "note": "Pause at the top of each rep"
+            },
+            "hip-thrust": {
+              "note": "Move to single-leg once 15 reps feel controlled"
+            }
+          }
+        }
+      }
+    }
+  }
+}

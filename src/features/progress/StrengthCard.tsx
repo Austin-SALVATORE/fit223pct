@@ -5,6 +5,7 @@ import type { StagnationEvidencePoint, StagnationResult } from '@/domain/stagnat
 import type { Trend } from '@/domain/trends'
 import type { Exercise } from '@/domain/types'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
+import { useExerciseName } from '@/i18n/seedExercise'
 import { formatValue, useDirectionPhrase } from './formatTrend'
 
 interface StrengthCardProps {
@@ -17,6 +18,8 @@ interface StrengthCardProps {
 export function StrengthCard({ exercise, trend, stagnation, substitution }: StrengthCardProps) {
   const { t } = useTranslation('progress')
   const directionPhrase = useDirectionPhrase(trend.status === 'insufficient-data' ? 'steady' : trend.status)
+  const exerciseName = useExerciseName(exercise.id)
+  const substitutionName = useExerciseName(substitution?.id ?? exercise.id)
 
   return (
     <div className="rounded-card border border-border bg-surface p-5">
@@ -25,7 +28,7 @@ export function StrengthCard({ exercise, trend, stagnation, substitution }: Stre
         state={{ from: 'progress' }}
         className="font-medium text-ink transition-colors hover:text-amber"
       >
-        {exercise.name}
+        {exerciseName}
       </Link>
 
       {trend.status === 'insufficient-data' ? (
@@ -57,7 +60,7 @@ export function StrengthCard({ exercise, trend, stagnation, substitution }: Stre
                 state={{ from: 'progress' }}
                 className="text-amber transition-colors hover:text-amber-deep"
               >
-                {t('strength.stagnation.trySubstitution', { name: substitution.name })}
+                {t('strength.stagnation.trySubstitution', { name: substitutionName })}
               </Link>
               .
             </p>
