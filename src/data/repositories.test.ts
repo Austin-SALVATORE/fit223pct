@@ -1,11 +1,12 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { db } from './db'
-import { programRepo, workoutRepo } from './repositories'
-import type { Program, Workout } from '@/domain/types'
+import { programRepo, settingsRepo, workoutRepo } from './repositories'
+import type { Program, UserSettings, Workout } from '@/domain/types'
 
 afterEach(async () => {
   await db.programs.clear()
   await db.workouts.clear()
+  await db.settings.clear()
 })
 
 function makeProgram(overrides: Partial<Program>): Program {
@@ -100,5 +101,43 @@ describe('workoutRepo.getAll', () => {
     await db.workouts.put(makeWorkout({ id: 'open', date: '2026-07-24' }))
     const all = await workoutRepo.getAll()
     expect(all.map((w) => w.id).sort()).toEqual(['done', 'open'])
+  })
+})
+
+function makeSettings(overrides: Partial<UserSettings> = {}): UserSettings {
+  return {
+    id: 'user',
+    name: 'Austin',
+    heightCm: 180,
+    weeklyGoal: 3,
+    lastSeenWeeklyReviewWeekStart: null,
+    ...overrides,
+  }
+}
+
+describe('settingsRepo.update', () => {
+  it('patches an existing record and persists it', async () => {
+    await db.settings.put(makeSettings())
+    await settingsRepo.update({ locale: 'fr' })
+    expect((await settingsRepo.get())?.locale).toBe('fr')
+  })
+
+  it('is a no-op when no settings record exists yet', async () => {
+    await settingsRepo.update({ locale: 'fr' })
+    expect(await settingsRepo.get()).toBeUndefined()
+  })
+
+  it('reads back a pre-M7 record with no locale field at all — get() never throws on the old shape', async () => {
+    const { locale: _unused, ...preM7Shape } = makeSettings()
+    await db.settings.put(preM7Shape as UserSettings)
+    const settings = await settingsRepo.get()
+    expect(settings?.locale).toBeUndefined()
+    expect(settings?.name).toBe('Austin')
+  })
+
+  it('markWeeklyReviewSeen still works, now routed through update()', async () => {
+    await db.settings.put(makeSettings())
+    await settingsRepo.markWeeklyReviewSeen('2026-07-20')
+    expect((await settingsRepo.get())?.lastSeenWeeklyReviewWeekStart).toBe('2026-07-20')
   })
 })

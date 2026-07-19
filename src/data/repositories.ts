@@ -84,10 +84,15 @@ export const checkinRepo = {
 export const settingsRepo = {
   get: (): Promise<UserSettings | undefined> => db.settings.get('user'),
 
-  /** Persists that a given week's review has been shown — it never reappears after this. */
-  async markWeeklyReviewSeen(weekStart: string): Promise<void> {
+  /** Patch-and-put — a no-op if seedDatabase's first-run record somehow doesn't exist yet. */
+  async update(patch: Partial<Omit<UserSettings, 'id'>>): Promise<void> {
     const existing = await db.settings.get('user')
     if (!existing) return
-    await db.settings.put({ ...existing, lastSeenWeeklyReviewWeekStart: weekStart })
+    await db.settings.put({ ...existing, ...patch })
+  },
+
+  /** Persists that a given week's review has been shown — it never reappears after this. */
+  markWeeklyReviewSeen(weekStart: string): Promise<void> {
+    return settingsRepo.update({ lastSeenWeeklyReviewWeekStart: weekStart })
   },
 }

@@ -154,6 +154,15 @@ export interface CheckIn {
   waistCm: number | null
 }
 
+/**
+ * Defined here, not in src/i18n/, so UserSettings.locale below can
+ * reference it without domain/ importing anything from the i18n/React
+ * layer — src/i18n/i18next.ts imports SupportedLocale from here instead
+ * of defining its own copy.
+ */
+export const SUPPORTED_LOCALES = ['en', 'fr', 'zh-CN'] as const
+export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number]
+
 export interface UserSettings {
   id: 'user'
   name: string
@@ -161,4 +170,6 @@ export interface UserSettings {
   weeklyGoal: number
   /** weekStart (Monday date key) of the last weekly review shown — null if none has been */
   lastSeenWeeklyReviewWeekStart: string | null
+  /** Absent on pre-M7 records and until LocaleSync's first-launch write lands one. */
+  locale?: SupportedLocale
 }

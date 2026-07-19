@@ -1,9 +1,11 @@
 import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import resourcesToBackend from 'i18next-resources-to-backend'
+import { SUPPORTED_LOCALES, type SupportedLocale } from '@/domain/types'
 
-export const SUPPORTED_LOCALES = ['en', 'fr', 'zh-CN'] as const
-export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number]
+// Re-exported for existing importers — domain/types.ts is the source of
+// truth (UserSettings.locale needs it without depending on this module).
+export { SUPPORTED_LOCALES, type SupportedLocale }
 
 export const NAMESPACES = [
   'common',
