@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { validateProgramImport } from './programImport'
 
-const libraryIds = new Set(['goblet-squat', 'bench-press'])
+const libraryIds = new Set(['goblet-squat', 'bench-press', 'split-squat', 'bulgarian-split-squat'])
 
 function validProgram(overrides: Record<string, unknown> = {}) {
   return {
@@ -123,5 +123,62 @@ describe('validateProgramImport', () => {
       'unknown-machine-row'
     const result = validateProgramImport(bad, libraryIds)
     expect(result.ok).toBe(false)
+  })
+
+  it('accepts a well-formed program-defined substitutionIds field', () => {
+    const good = validProgram()
+    ;(good.sessions[0].items[0] as Record<string, unknown>).substitutionIds = ['split-squat']
+    const result = validateProgramImport(good, libraryIds)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.program.sessions[0].items[0].substitutionIds).toEqual(['split-squat'])
+    }
+  })
+
+  it('imports unchanged when substitutionIds is absent', () => {
+    const result = validateProgramImport(validProgram(), libraryIds)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.program.sessions[0].items[0].substitutionIds).toBeUndefined()
+    }
+  })
+
+  it('rejects a substitution id that names the prescription\'s own exerciseId', () => {
+    const bad = validProgram()
+    ;(bad.sessions[0].items[0] as Record<string, unknown>).substitutionIds = ['goblet-squat']
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.error).toBe(
+        'Exercise "goblet-squat" in session "A" lists itself as a substitution.',
+      )
+    }
+  })
+
+  it('rejects a duplicate substitution id', () => {
+    const bad = validProgram()
+    ;(bad.sessions[0].items[0] as Record<string, unknown>).substitutionIds = [
+      'split-squat',
+      'split-squat',
+    ]
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.error).toBe(
+        'Exercise "goblet-squat" in session "A" lists substitution "split-squat" twice.',
+      )
+    }
+  })
+
+  it('rejects a substitution id that does not exist in the Library, naming it', () => {
+    const bad = validProgram()
+    ;(bad.sessions[0].items[0] as Record<string, unknown>).substitutionIds = ['leg-press']
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.error).toBe(
+        'Substitution "leg-press" for exercise "goblet-squat" in session "A" doesn\'t exist in the Library.',
+      )
+    }
   })
 })

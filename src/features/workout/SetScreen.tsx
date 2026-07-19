@@ -145,6 +145,7 @@ export function SetScreen({
       <SwapSheet
         open={swapOpen}
         exercise={exercise}
+        prescription={prescription}
         exerciseById={exerciseById}
         onSelect={(id) => {
           setSwapOpen(false)

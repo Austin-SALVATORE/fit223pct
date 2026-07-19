@@ -91,6 +91,20 @@ describe('detectStagnation', () => {
     if (result.status === 'stagnant') expect(result.suggestedSubstitutionId).toBe('split-squat')
   })
 
+  it('prefers a program-defined substitution over the Library generic when both are given', () => {
+    const result = detectStagnation(
+      squat,
+      [
+        workout('2026-07-06', 16, 10),
+        workout('2026-07-10', 16, 10),
+        workout('2026-07-13', 16, 9),
+      ],
+      { substitutionIds: ['bulgarian-split-squat'] },
+    )
+    expect(result.status).toBe('stagnant')
+    if (result.status === 'stagnant') expect(result.suggestedSubstitutionId).toBe('bulgarian-split-squat')
+  })
+
   it('offers no suggestion when the exercise has no substitutions', () => {
     const result = detectStagnation(noSubs, [
       workout('2026-07-06', 8, 15, undefined, 'band-curl'),

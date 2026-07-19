@@ -18,4 +18,29 @@ describe('toCanonicalProgramJson', () => {
   it('names the export file after the program id', () => {
     expect(programExportFilename(seedProgram)).toBe('phase-1-home.json')
   })
+
+  it('round-trips a program-defined substitutionIds field', () => {
+    const withSubs = {
+      ...seedProgram,
+      sessions: seedProgram.sessions.map((session, i) =>
+        i === 0
+          ? {
+              ...session,
+              items: session.items.map((item, j) =>
+                j === 0 ? { ...item, substitutionIds: ['split-squat', 'tempo-bodyweight-squat'] } : item,
+              ),
+            }
+          : session,
+      ),
+    }
+    const json = toCanonicalProgramJson(withSubs)
+    const result = validateProgramImport(JSON.parse(json), libraryIds)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.program).toEqual(withSubs)
+    expect(result.program.sessions[0].items[0].substitutionIds).toEqual([
+      'split-squat',
+      'tempo-bodyweight-squat',
+    ])
+  })
 })

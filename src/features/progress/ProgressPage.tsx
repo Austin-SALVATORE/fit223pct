@@ -35,15 +35,16 @@ export function ProgressPage() {
   const { program, exercises, completed, checkins } = data
   const exerciseById = new Map(exercises.map((e) => [e.id, e]))
 
-  const mainExerciseIds = program
-    ? [
-        ...new Set(
-          program.sessions.flatMap((s) =>
-            s.items.filter((i) => (i.role ?? 'main') === 'main').map((i) => i.exerciseId),
-          ),
-        ),
-      ]
+  const mainItems = program
+    ? program.sessions.flatMap((s) => s.items.filter((i) => (i.role ?? 'main') === 'main'))
     : []
+  const mainExerciseIds = [...new Set(mainItems.map((i) => i.exerciseId))]
+  // First prescription wins if the same exercise appears in more than one
+  // session — only its program-defined substitutionIds are needed here.
+  const prescriptionByExerciseId = new Map<string, (typeof mainItems)[number]>()
+  for (const item of mainItems) {
+    if (!prescriptionByExerciseId.has(item.exerciseId)) prescriptionByExerciseId.set(item.exerciseId, item)
+  }
 
   const consistency = program ? consistencyTrend(program, completed, new Date()) : null
   const waist = waistTrend(checkins)
@@ -84,7 +85,11 @@ export function ProgressPage() {
                 const exercise = exerciseById.get(exerciseId)
                 if (!exercise) return null
                 const trend = strengthTrend(exerciseId, completed)
-                const stagnation = detectStagnation(exercise, completed)
+                const stagnation = detectStagnation(
+                  exercise,
+                  completed,
+                  prescriptionByExerciseId.get(exerciseId),
+                )
                 return (
                   <StrengthCard
                     key={exerciseId}

@@ -1,4 +1,5 @@
-import type { Exercise, Workout } from './types'
+import { effectiveSubstitutions } from './substitutions'
+import type { Exercise, ExercisePrescription, Workout } from './types'
 
 export interface StagnationEvidencePoint {
   date: string
@@ -41,6 +42,7 @@ const REQUIRED_QUALIFYING_SESSIONS = 3
 export function detectStagnation(
   exercise: Exercise,
   workouts: readonly Workout[],
+  prescription?: Pick<ExercisePrescription, 'substitutionIds'>,
 ): StagnationResult {
   const sessions = workouts
     .filter((w) => w.completedAt !== null)
@@ -89,7 +91,7 @@ export function detectStagnation(
       effortMode: s.effortMode,
     })),
     excludedForReadiness,
-    suggestedSubstitutionId: exercise.substitutionIds[0] ?? null,
+    suggestedSubstitutionId: effectiveSubstitutions(prescription, exercise)[0] ?? null,
   }
 }
 

@@ -1,6 +1,7 @@
 import { useEffect, useRef, type KeyboardEvent } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import type { Exercise } from '@/domain/types'
+import { effectiveSubstitutions } from '@/domain/substitutions'
+import type { Exercise, ExercisePrescription } from '@/domain/types'
 
 const FOCUSABLE_SELECTOR =
   'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -8,16 +9,24 @@ const FOCUSABLE_SELECTOR =
 interface SwapSheetProps {
   open: boolean
   exercise: Exercise
+  prescription: Pick<ExercisePrescription, 'substitutionIds'>
   exerciseById: Map<string, Exercise>
   onSelect: (exerciseId: string) => void
   onClose: () => void
 }
 
-export function SwapSheet({ open, exercise, exerciseById, onSelect, onClose }: SwapSheetProps) {
+export function SwapSheet({
+  open,
+  exercise,
+  prescription,
+  exerciseById,
+  onSelect,
+  onClose,
+}: SwapSheetProps) {
   const reducedMotion = useReducedMotion()
   const panelRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLElement | null>(null)
-  const options = exercise.substitutionIds
+  const options = effectiveSubstitutions(prescription, exercise)
     .map((id) => exerciseById.get(id))
     .filter((sub): sub is Exercise => sub !== undefined)
 

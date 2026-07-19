@@ -68,6 +68,34 @@ program is the user's call to make — import gives them that control —
 but it is a *content* decision, and the evidence-informed default
 remains rest between same-pattern loading.
 
+## Amendment (19 Jul): program-defined substitutions
+
+Prescriptions gain optional `substitutionIds?: string[]` — *contextual*
+fallbacks a program declares per exercise (e.g. Phase 2's barbell squat
+falls back to goblet or split squat when the rack is taken), layered on
+top of the Library's generic `Exercise.substitutionIds`.
+
+- **One resolver in domain**: `effectiveSubstitutions(prescription,
+  exercise)` — program-defined first, then Library generics, deduped,
+  never the exercise itself. SwapSheet **and** stagnation's suggested
+  substitution both use it; nothing else may re-derive the merge.
+- **Import validation** (when present): array of non-empty strings, no
+  duplicates, must not contain the prescription's own `exerciseId`,
+  every id must exist in the Library. Optional — files without the
+  field import unchanged.
+- **Markdown parity**: the exercise table gains a `Substitutions`
+  column (comma-separated ids). One schema, two syntaxes — always.
+- **Export** includes the field when present; round-trip still the
+  acceptance test. Prescriptions are snapshotted into workouts, so
+  program-defined substitutions survive later program edits.
+
+**Deliberately rejected**: per-prescription `equipment` strings.
+`Exercise.equipment` (typed) already exists in the app-owned Library
+and answers the informational-display use case with zero format
+changes; a free-string shadow copy per prescription would be a second,
+weaker source of truth. Revisit only as explicit *override* semantics
+if a real program ever needs them.
+
 ## Out of scope (deliberate)
 
 Library import/editing (app-owned; revisit only if a real program

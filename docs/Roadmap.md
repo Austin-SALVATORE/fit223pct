@@ -73,7 +73,19 @@ being the recommendation — and a tap-to-start hold timer for seconds-mode
 sets (side plank and similar), which pre-fills the manual seconds Stepper
 on stop rather than replacing it.
 
-## Milestone 6 — Internationalization
+## Milestone 6 — Daily Program
+
+Programs evolve from strength calendars into daily fitness programs
+(docs/DailyProgram.md): every weekday can carry an authored activity —
+recovery, mobility, cardio, optional, or checkpoint — without touching
+the strength rotation or increasing training volume. Checkpoint days
+add the app's first weight/waist measurement input (the CheckIn columns
+have existed since M3 with no UI), unblocking the waist trend. No
+completion tracking on activity days — skipping is always fine is
+non-negotiable. Extends the import format (optional, back-compatible);
+Phase 2's file gains its activity days as a content edit.
+
+## Milestone 7 — Internationalization
 
 English, French, Simplified Chinese (docs/I18n.md). Not a string sweep:
 the deep work is refactoring domain functions to return message
@@ -82,7 +94,10 @@ descriptors instead of English prose, and moving seeded content
 locale-free. Includes the app's first Settings surface (language only),
 auto-detection, persistence, live switching, English fallback.
 Terminology constraints (readiness, never wellness/medical) carry into
-every locale. Scheduled after M5: it is the largest cross-cutting
+every locale. Scheduled after the Daily Program milestone — that
+feature adds a large batch of strings and content which should
+stabilize before the descriptor refactor — and after M5 regardless,
+because it is the largest cross-cutting
 refactor since foundations and should not land mid-phase while the app
 is in daily training use.
 

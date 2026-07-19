@@ -51,6 +51,8 @@ export interface ExercisePrescription {
   maxWeightKg: number | null
   weightStepKg: number | null
   note?: string
+  /** Contextual fallbacks this program declares for this slot (e.g. "rack's taken") — layered over the Library's generic Exercise.substitutionIds, never replacing it. See effectiveSubstitutions. */
+  substitutionIds?: string[]
 }
 
 export interface SessionTemplate {

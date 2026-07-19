@@ -52,6 +52,26 @@ describe('Phase 2 (Fitness Park) program file', () => {
     expect(usedIds).toContain('bench-press') // carried unchanged, per the review contract
   })
 
+  it('declares contextual fallbacks on the machine-dependent slots', () => {
+    const parsed = parseProgramMarkdown(source)
+    if (!parsed.ok) throw new Error(parsed.error)
+    const result = validateProgramImport(parsed.data, libraryIds)
+    if (!result.ok) throw new Error(result.error)
+
+    const itemById = new Map(
+      result.program.sessions.flatMap((s) => s.items).map((i) => [i.exerciseId, i]),
+    )
+    expect(itemById.get('barbell-squat')?.substitutionIds).toEqual([
+      'goblet-squat',
+      'bulgarian-split-squat',
+    ])
+    expect(itemById.get('cable-row')?.substitutionIds).toEqual([
+      'single-arm-db-row',
+      'bent-over-row',
+    ])
+    expect(itemById.get('lat-pulldown')?.substitutionIds).toEqual(['single-arm-db-row'])
+  })
+
   it('removes the home-equipment weight ceiling on every loaded main lift', () => {
     const parsed = parseProgramMarkdown(source)
     if (!parsed.ok) throw new Error(parsed.error)

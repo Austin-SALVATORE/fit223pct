@@ -92,6 +92,21 @@ describe('parseProgramMarkdown', () => {
     if (!result.ok) expect(result.error).toMatch(/rest/i)
   })
 
+  it('parses a comma-separated Substitutions column, treating "-" as none', () => {
+    const withSubs = validMarkdown
+      .replace(
+        '| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note |\n|---|---|---|---|---|---|---|---|\n| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | Goblet squat substitutes if the rack\'s busy |\n| plank | 2 | 20-40 | seconds | 2 | 60 | -/-/- | - |',
+        '| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note | Substitutions |\n|---|---|---|---|---|---|---|---|---|\n| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | - | goblet-squat, bulgarian-split-squat |\n| plank | 2 | 20-40 | seconds | 2 | 60 | -/-/- | - | - |',
+      )
+    const result = parseProgramMarkdown(withSubs)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    const sessions = (result.data as { sessions: Array<{ items: Array<Record<string, unknown>> }> })
+      .sessions
+    expect(sessions[0].items[0].substitutionIds).toEqual(['goblet-squat', 'bulgarian-split-squat'])
+    expect(sessions[0].items[1].substitutionIds).toBeUndefined()
+  })
+
   it('rejects markdown with no session sections', () => {
     const result = parseProgramMarkdown('---\nid: x\nname: X\nphase: 1\nstartDate: 2026-01-01\nendDate:\ntrainingWeekdays: [1]\nrotation: [A]\n---\n')
     expect(result.ok).toBe(false)

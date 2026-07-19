@@ -25,6 +25,7 @@ const exercisePrescriptionSchema = z.object({
   maxWeightKg: z.number().nonnegative().nullable(),
   weightStepKg: z.number().positive().nullable(),
   note: z.string().min(1).optional(),
+  substitutionIds: z.array(z.string().min(1)).optional(),
 })
 
 const sessionTemplateSchema = z.object({
@@ -96,10 +97,38 @@ export function validateProgramImport(
           error: `Exercise id "${item.exerciseId}" in session "${session.id}" doesn't exist in the Library.`,
         }
       }
+
+      const substitutionError = validateSubstitutions(item, session.id, libraryExerciseIds)
+      if (substitutionError) return { ok: false, error: substitutionError }
     }
   }
 
   return { ok: true, program }
+}
+
+function validateSubstitutions(
+  item: { exerciseId: string; substitutionIds?: string[] },
+  sessionId: string,
+  libraryExerciseIds: ReadonlySet<string>,
+): string | null {
+  if (!item.substitutionIds) return null
+
+  if (item.substitutionIds.includes(item.exerciseId)) {
+    return `Exercise "${item.exerciseId}" in session "${sessionId}" lists itself as a substitution.`
+  }
+
+  const duplicate = findDuplicate(item.substitutionIds)
+  if (duplicate) {
+    return `Exercise "${item.exerciseId}" in session "${sessionId}" lists substitution "${duplicate}" twice.`
+  }
+
+  for (const subId of item.substitutionIds) {
+    if (!libraryExerciseIds.has(subId)) {
+      return `Substitution "${subId}" for exercise "${item.exerciseId}" in session "${sessionId}" doesn't exist in the Library.`
+    }
+  }
+
+  return null
 }
 
 function findDuplicate(values: readonly string[]): string | null {

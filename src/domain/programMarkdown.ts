@@ -131,6 +131,7 @@ function parseSession(section: SessionSection): { ok: true; data: unknown } | { 
   }
   const roleIndex = header.findIndex((h) => h.toLowerCase() === 'role')
   const perSideIndex = header.findIndex((h) => h.toLowerCase() === 'per side')
+  const substitutionsIndex = header.findIndex((h) => h.toLowerCase() === 'substitutions')
 
   const items: unknown[] = []
   for (const rowLine of dataRows) {
@@ -166,6 +167,8 @@ function parseSession(section: SessionSection): { ok: true; data: unknown } | { 
     const note = get('Note')
     const role = roleIndex >= 0 ? cells[roleIndex]?.trim() : undefined
     const perSideCell = perSideIndex >= 0 ? cells[perSideIndex]?.trim().toLowerCase() : undefined
+    const substitutionIds =
+      substitutionsIndex >= 0 ? parseSubstitutions(cells[substitutionsIndex]) : undefined
 
     items.push({
       exerciseId,
@@ -180,6 +183,7 @@ function parseSession(section: SessionSection): { ok: true; data: unknown } | { 
       maxWeightKg: weights.max,
       weightStepKg: weights.step,
       ...(note && note !== '-' ? { note } : {}),
+      ...(substitutionIds ? { substitutionIds } : {}),
     })
   }
 
@@ -207,6 +211,13 @@ function parseRange(cell: string): { min: number; max: number } | null {
   const match = /^(\d+)\s*-\s*(\d+)$/.exec(cell.trim())
   if (!match) return null
   return { min: Number(match[1]), max: Number(match[2]) }
+}
+
+function parseSubstitutions(cell: string | undefined): string[] | undefined {
+  const trimmed = cell?.trim() ?? ''
+  if (trimmed === '' || trimmed === '-') return undefined
+  const ids = trimmed.split(',').map((id) => id.trim()).filter((id) => id.length > 0)
+  return ids.length > 0 ? ids : undefined
 }
 
 function parseWeights(cell: string): { start: number | null; max: number | null; step: number | null } | null {

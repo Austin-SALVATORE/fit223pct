@@ -25,11 +25,11 @@ rotation: [A, B]
 Name: Session A
 Focus: Squat & pull
 
-| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note |
-|---|---|---|---|---|---|---|---|
-| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | Goblet squat is the substitution if the rack's busy |
-| lat-pulldown | 3 | 8-12 | reps | 2 | 90 | 25/45/5 | - |
-| plank | 2 | 20-40 | seconds | 2 | 60 | -/-/- | - |
+| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note | Substitutions |
+|---|---|---|---|---|---|---|---|---|
+| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | - | goblet-squat, bulgarian-split-squat |
+| lat-pulldown | 3 | 8-12 | reps | 2 | 90 | 25/45/5 | - | single-arm-db-row |
+| plank | 2 | 20-40 | seconds | 2 | 60 | -/-/- | - | - |
 
 ## Session: B
 Name: Session B
@@ -52,7 +52,8 @@ Focus: Hinge & press
 
 Header-driven — column order doesn't matter, but names must match (case-
 insensitive). Required: `Exercise`, `Sets`, `Range`, `Mode`, `RIR`, `Rest`,
-`Weights`, `Note`. Optional: `Role`, `Per side` (both default when omitted).
+`Weights`, `Note`. Optional: `Role`, `Per side`, `Substitutions` (all
+default when omitted).
 
 - **Exercise** — an id from the Library. Unknown ids reject the whole
   import and name the offending id.
@@ -66,6 +67,12 @@ insensitive). Required: `Exercise`, `Sets`, `Range`, `Mode`, `RIR`, `Rest`,
 - **Note** — free text, or `-` for none.
 - **Role** *(optional)* — `main` or `accessory`. Omit for `main`.
 - **Per side** *(optional)* — `yes` or `no`. Omit for `no`.
+- **Substitutions** *(optional)* — comma-separated Library ids, or `-`
+  for none. These are *contextual* fallbacks this program declares for
+  this slot (e.g. "the rack's taken") — layered over whatever generic
+  substitutions the Library already lists for the exercise, never
+  replacing them. Same rules as Exercise: every id must exist in the
+  Library, none may repeat, and the exercise can't list itself.
 
 ## What's out of scope
 
