@@ -51,9 +51,6 @@ export const ASSET_ID_ALIASES: Readonly<Record<string, string>> = {
   'bent-over-row': 'barbell-row',
   'dumbbell-curl': 'dumbbell-biceps-curl',
   'dumbbell-lateral-raise': 'lateral-raise',
-  'barbell-hip-thrust': 'hip-thrust',
-  'single-arm-db-row': 'dumbbell-row',
-  'tempo-bodyweight-squat': 'bodyweight-squat',
 }
 
 /**

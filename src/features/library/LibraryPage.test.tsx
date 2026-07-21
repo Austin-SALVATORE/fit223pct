@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { seedDatabase } from '@/data/seed'
 import { SettingsPage } from '@/features/settings/SettingsPage'
+import { GroupedList, GroupedRow } from '@/ui/GroupedList'
+import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
 import { LibraryPage } from './LibraryPage'
 
 beforeAll(async () => {
@@ -31,14 +33,39 @@ describe('Settings entry', () => {
 })
 
 describe('Exercise thumbnails', () => {
-  it('renders a mixed list — a real thumbnail next to the same-geometry empty tile', async () => {
+  it('every real Library row now has a thumbnail — full asset coverage as of 7d764c1', async () => {
     renderApp()
-    // goblet-squat has a converted asset; band-pull-apart is one of the
-    // ~13 seeded exercises with no prompt yet (docs/design/
-    // ExerciseAssetPipeline.md's "Parked decisions") — both must render
-    // in the same list without one looking broken next to the other.
-    const withAsset = await screen.findByRole('link', { name: /Goblet squat/ })
-    const withoutAsset = await screen.findByRole('link', { name: /Band pull-apart/ })
+    // No real Library exercise is asset-less anymore (111/111 covered,
+    // see exerciseAsset.coverage.test.ts's empty KNOWN_MISSING) — this
+    // used to pair a real covered exercise against a real gap
+    // (band-pull-apart); the gap closed, so this now asserts the
+    // positive: every rendered row has an image, none fell back to the
+    // empty tile.
+    const goblet = await screen.findByRole('link', { name: /Goblet squat/ })
+    expect(goblet.querySelector('img')).not.toBeNull()
+
+    const allLinks = await screen.findAllByRole('link')
+    // Exercise rows link to /library/<id> — this excludes the "← Today"
+    // back link and the Settings gear, neither of which carry a thumbnail.
+    const exerciseRows = allLinks.filter((link) => link.getAttribute('href')?.startsWith('/library/'))
+    expect(exerciseRows.length).toBeGreaterThan(0)
+    for (const row of exerciseRows) {
+      expect(row.querySelector('img'), `${row.textContent} has no thumbnail`).not.toBeNull()
+    }
+  })
+
+  it('the empty tile stays under test as a designed state — a future Library addition or a load failure, not a data gap today', () => {
+    render(
+      <GroupedList>
+        <GroupedRow>
+          <ExerciseThumbnail exerciseId="goblet-squat" />
+        </GroupedRow>
+        <GroupedRow>
+          <ExerciseThumbnail exerciseId="a-future-exercise-with-no-asset-yet" />
+        </GroupedRow>
+      </GroupedList>,
+    )
+    const [withAsset, withoutAsset] = screen.getAllByRole('listitem')
 
     expect(withAsset.querySelector('img')).not.toBeNull()
     expect(withoutAsset.querySelector('img')).toBeNull()

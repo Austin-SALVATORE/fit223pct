@@ -4,28 +4,21 @@ import { seedExercises } from '@/data/seed/exercises'
 import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
 
 /**
- * Coverage audit for the exercise-asset-naming-reconciliation batch. Every
- * Library exercise must resolve an asset OR appear in KNOWN_MISSING below
- * — an unlisted gap (or a new Library exercise nobody added asset coverage
- * for) fails the suite instead of silently rendering the empty tile
- * forever. When a later generation batch lands an asset for one of these,
- * remove it from this list in the same reviewed commit.
+ * Coverage audit for the exercise-asset library. Every Library exercise
+ * must resolve an asset OR appear in KNOWN_MISSING below — an unlisted
+ * gap (or a new Library exercise nobody added asset coverage for) fails
+ * the suite instead of silently rendering the empty tile forever. When a
+ * later generation batch lands an asset for one of these, remove it from
+ * this list in the same reviewed commit.
  *
- * Ids explicitly NOT aliased despite a name that looks close — the
- * available asset is the wrong equipment/unilaterality for the
- * prescription, and a wrong illustration is worse than none:
- * single-arm-db-press (no two-arm asset substitutes for a one-arm cue).
+ * Empty as of 7d764c1 (111/111 Library exercises covered — the last 8
+ * landed in Batch 3, including the hip-thrust equipment split). This
+ * stays in place as infrastructure, not dead code: it refills the moment
+ * a Library exercise ships before its art does, which is the normal
+ * order of things going forward (new exercise first, asset generated
+ * after) — not a regression to fix, just this list doing its job again.
  */
-const KNOWN_MISSING = new Set([
-  'band-row',
-  'band-pull-apart',
-  'band-lateral-raise',
-  'band-curl',
-  'deficit-push-up',
-  'db-floor-press',
-  'single-leg-hip-thrust',
-  'single-arm-db-press',
-])
+const KNOWN_MISSING = new Set<string>()
 
 describe('exercise asset coverage', () => {
   it.each(seedExercises.map((e) => e.id))('%s resolves an asset or is in KNOWN_MISSING', (id) => {

@@ -56,15 +56,33 @@ describe('exerciseAsset', () => {
     ['bent-over-row', 'barbell-row'],
     ['dumbbell-curl', 'dumbbell-biceps-curl'],
     ['dumbbell-lateral-raise', 'lateral-raise'],
-    ['barbell-hip-thrust', 'hip-thrust'],
-    ['single-arm-db-row', 'dumbbell-row'],
-    ['tempo-bodyweight-squat', 'bodyweight-squat'],
   ])('resolves the seed’s %s through the asset pipeline’s %s alias', (seedId, assetId) => {
     const aliased = exerciseAsset(seedId, 'thumbnail')
     const direct = exerciseAsset(assetId, 'thumbnail')
     expect(aliased).not.toBeNull()
     expect(aliased).toEqual(direct)
     expect(aliased?.url).toBe(`/assets/exercises/${assetId}/thumbnail.avif`)
+  })
+
+  // barbell-hip-thrust, single-arm-db-row, and tempo-bodyweight-squat were
+  // aliases until 7d764c1 landed direct Library-id assets for all three
+  // (retiring the aliases per the shrinking-only policy). hip-thrust in
+  // particular used to BE the barbell-hip-thrust art under the wrong id —
+  // this is the regression guard for that miss-teach: the plain dumbbell
+  // hip-thrust and the barbell variant must never resolve to the same art.
+  it.each(['barbell-hip-thrust', 'single-arm-db-row', 'tempo-bodyweight-squat'])(
+    '%s now resolves directly under its own Library id, no alias needed',
+    (id) => {
+      const result = exerciseAsset(id, 'thumbnail')
+      expect(result).not.toBeNull()
+      expect(result?.url).toBe(`/assets/exercises/${id}/thumbnail.avif`)
+    },
+  )
+
+  it('hip-thrust (dumbbell) and barbell-hip-thrust resolve to different art', () => {
+    const dumbbell = exerciseAsset('hip-thrust', 'thumbnail')
+    const barbell = exerciseAsset('barbell-hip-thrust', 'thumbnail')
+    expect(dumbbell?.url).not.toBe(barbell?.url)
   })
 
   it('carries the newer referenceSize/frameSizes manifest fields, not just frameCount/thumbnailFrame', () => {
