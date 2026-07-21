@@ -4,10 +4,17 @@
  *
  * For each exercise id passed via --only (or all with a reference.png):
  *   1. Slice reference.png into frames at white-gutter midpoints.
- *   2. Encode runtime AVIFs: reference.avif, frames/NN.avif, thumbnail.avif.
- *   3. Write authoring metadata.json (media block + credits).
+ *   2. Background-removal matte each frame + the reference (border
+ *      flood-fill — see matte() — approved design direction, replaces
+ *      the baked-white treatment; see the Phase B prototype batch).
+ *   3. Encode runtime AVIFs, alpha preserved: reference.avif,
+ *      frames/NN.avif, thumbnail.avif.
+ *   4. Write authoring metadata.json (media block + credits).
  * Then aggregate all metadata.json into the runtime manifest
  * src/data/generated/asset-manifest.json (projection: media fields only).
+ * Run scripts/update-manifest-dims.mjs afterward to restore/recompute
+ * referenceSize/frameSizes — this script's metadata.json write only
+ * carries frameCount/thumbnailFrame, same as it always has.
  *
  * Frame count is read from the exercise's prompt.md ("Number of frames: N")
  * and validated against detected gutters — mismatch fails the exercise
@@ -36,6 +43,7 @@ const FRAME_PAD = 40     // px whitespace kept on each side of a sliced frame
 const THUMB_MAX = 320    // px — longest side of thumbnail
 const AVIF_QUALITY = '60'
 const TODAY = '2026-07-19'
+const MATTE_FUZZ = '8%'  // border-flood-fill tolerance — see matte()
 
 const args = process.argv.slice(2)
 const only = args.flatMap((a, i) => (a === '--only' && args[i + 1] ? [args[i + 1]] : []))
@@ -128,6 +136,29 @@ function toAvif(srcPng, dest, resizeMax) {
   execFileSync('magick', [srcPng, ...resize, '-quality', AVIF_QUALITY, dest])
 }
 
+/**
+ * Background-removal matte: flood-fills transparency in from the image
+ * border (guaranteed background after padding it white), not a global
+ * white threshold — a global threshold punches holes in near-white
+ * highlights *inside* the figure (hair sheen, metal weight reflections)
+ * since those aren't contiguous with the true background. Approved
+ * design direction (Phase B prototype batch) replacing the baked-white
+ * treatment; AVIF's alpha channel carries the result through to runtime.
+ */
+function matte(srcPng, destPng) {
+  execFileSync('magick', [
+    srcPng,
+    '-alpha', 'set',
+    '-bordercolor', 'white',
+    '-border', '3',
+    '-fuzz', MATTE_FUZZ,
+    '-fill', 'none',
+    '-floodfill', '+0+0', 'white',
+    '-shave', '3x3',
+    destPng,
+  ])
+}
+
 // ---------- per-exercise ----------
 function convert(id, tmp) {
   const dir = join(ROOT, id)
@@ -144,18 +175,24 @@ function convert(id, tmp) {
   const bounds = [0, ...cuts, img.width]
   const report = []
 
+  const mattedFrames = {}
   for (let k = 1; k <= frames; k++) {
     const png = slice(img, bounds[k - 1], bounds[k], ink)
     const tmpPng = join(tmp, `${id}-${k}.png`)
     writeFileSync(tmpPng, png)
+    const tmpAlpha = join(tmp, `${id}-${k}-alpha.png`)
+    matte(tmpPng, tmpAlpha)
+    mattedFrames[k] = tmpAlpha
     const dest = join(framesDir, `${String(k).padStart(2, '0')}.avif`)
-    toAvif(tmpPng, dest)
+    toAvif(tmpAlpha, dest)
     report.push(`frame ${k}: ${kb(dest)}`)
   }
 
-  toAvif(refPng, join(dir, 'reference.avif'))
+  const refAlpha = join(tmp, `${id}-ref-alpha.png`)
+  matte(refPng, refAlpha)
+  toAvif(refAlpha, join(dir, 'reference.avif'))
   const thumbFrame = Math.min(frames, Math.floor(frames / 2) + 1)
-  toAvif(join(tmp, `${id}-${thumbFrame}.png`), join(dir, 'thumbnail.avif'), THUMB_MAX)
+  toAvif(mattedFrames[thumbFrame], join(dir, 'thumbnail.avif'), THUMB_MAX)
 
   if (compareWebp) {
     const w = join(tmp, `${id}-ref.webp`)
