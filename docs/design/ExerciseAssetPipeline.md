@@ -100,6 +100,16 @@ Rules:
   build can't. The resolver still tolerates a stale/missing field either
   way (see src/lib/exerciseAsset.ts) — this rule is about not needing
   that tolerance in the first place.
+- **Naming policy:** for any exercise that exists in the Library, the
+  asset directory uses the **Library id verbatim**. The Library is the
+  datasource of record; asset ids don't get to diverge from it going
+  forward. `src/lib/exerciseAsset.ts`'s alias map exists only to bridge
+  already-shipped legacy asset names generated before this policy, and a
+  direct manifest hit under the Library id always wins over an alias —
+  so a later batch landing a correctly-named asset supersedes its alias
+  automatically, no code change. The map shrinks over time; it never
+  grows as policy. New Library exercises get their asset generated under
+  the Library id from day one, full stop.
 
 ## Offline / shipping
 

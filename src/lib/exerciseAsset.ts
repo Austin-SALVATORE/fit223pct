@@ -30,18 +30,43 @@ const ASSET_MANIFEST = manifest as unknown as Record<string, ManifestEntry>
 /**
  * Domain seed ids that name the same exercise as an asset-pipeline id
  * under a different string — reconciled here rather than renaming either
- * side, per docs/design/ExerciseAssetPipeline.md's "Parked decisions".
- * Approved pairs only: `single-leg-rdl` was the pipeline doc's own
- * original call-out; `barbell-squat`/`bent-over-row` were approved after
- * (owner review) once the asset side turned out to already cover them
- * under `barbell-back-squat`/`barbell-row`. No other seed/asset id
- * mismatch is a reconciliation target — the rest are exercises with no
- * prompt yet (see the same doc section).
+ * side, per docs/design/ExerciseAssetPipeline.md's "Parked decisions" and
+ * its naming policy. Every pair here was visually verified against its
+ * asset's reference.avif before being added, not assumed from the name
+ * match alone (see the exercise-asset-naming-reconciliation batch report
+ * for the per-pair verdicts) — a wrong illustration is worse than none,
+ * especially for a loaded main lift.
+ *
+ * This map only ever SHRINKS as policy: new Library exercises get their
+ * asset generated under the Library id from day one, and a direct
+ * manifest hit always wins over an alias (see resolveAssetId) — once a
+ * later batch lands a Library-id asset for one of these, the alias below
+ * becomes dead weight and must be deleted in that same commit. The
+ * coverage guard test (exerciseAsset.coverage.test.ts) asserts this map
+ * never contains an id that already has a direct manifest entry.
  */
-const ASSET_ID_ALIASES: Record<string, string> = {
+export const ASSET_ID_ALIASES: Readonly<Record<string, string>> = {
   'single-leg-rdl': 'single-leg-romanian-deadlift',
   'barbell-squat': 'barbell-back-squat',
   'bent-over-row': 'barbell-row',
+  'dumbbell-curl': 'dumbbell-biceps-curl',
+  'dumbbell-lateral-raise': 'lateral-raise',
+  'barbell-hip-thrust': 'hip-thrust',
+  'single-arm-db-row': 'dumbbell-row',
+  'tempo-bodyweight-squat': 'bodyweight-squat',
+}
+
+/**
+ * A direct manifest hit under the Library id always wins over an alias —
+ * load-bearing, not cosmetic: asset generation lands under true Library
+ * ids going forward (see docs/design/ExerciseAssetPipeline.md's naming
+ * policy), so a Library-id asset landing later must immediately supersede
+ * its legacy alias with no code change. The alias map exists only for
+ * already-shipped legacy names and is expected to shrink over time.
+ */
+function resolveAssetId(exerciseId: string): string {
+  if (ASSET_MANIFEST[exerciseId]) return exerciseId
+  return ASSET_ID_ALIASES[exerciseId] ?? exerciseId
 }
 
 /**
@@ -58,7 +83,7 @@ export function exerciseAsset(
   kind: ExerciseAssetKind,
   frame?: number,
 ): ExerciseAsset | null {
-  const assetId = ASSET_ID_ALIASES[exerciseId] ?? exerciseId
+  const assetId = resolveAssetId(exerciseId)
   const entry = ASSET_MANIFEST[assetId]
   if (!entry) return null
 
@@ -87,6 +112,6 @@ export function exerciseAsset(
 
 /** How many frames to step through — 0 for an unknown id (FrameStepper renders nothing). */
 export function exerciseAssetFrameCount(exerciseId: string): number {
-  const assetId = ASSET_ID_ALIASES[exerciseId] ?? exerciseId
+  const assetId = resolveAssetId(exerciseId)
   return ASSET_MANIFEST[assetId]?.frameCount ?? 0
 }

@@ -54,6 +54,11 @@ describe('exerciseAsset', () => {
     ['single-leg-rdl', 'single-leg-romanian-deadlift'],
     ['barbell-squat', 'barbell-back-squat'],
     ['bent-over-row', 'barbell-row'],
+    ['dumbbell-curl', 'dumbbell-biceps-curl'],
+    ['dumbbell-lateral-raise', 'lateral-raise'],
+    ['barbell-hip-thrust', 'hip-thrust'],
+    ['single-arm-db-row', 'dumbbell-row'],
+    ['tempo-bodyweight-squat', 'bodyweight-squat'],
   ])('resolves the seed’s %s through the asset pipeline’s %s alias', (seedId, assetId) => {
     const aliased = exerciseAsset(seedId, 'thumbnail')
     const direct = exerciseAsset(assetId, 'thumbnail')
