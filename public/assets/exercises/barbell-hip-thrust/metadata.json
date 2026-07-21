@@ -1,0 +1,42 @@
+{
+  "exerciseId": "barbell-hip-thrust",
+  "version": 1,
+  "media": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        324,
+        821
+      ],
+      [
+        315,
+        821
+      ],
+      [
+        321,
+        821
+      ],
+      [
+        332,
+        821
+      ],
+      [
+        308,
+        821
+      ],
+      [
+        315,
+        821
+      ]
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-19"
+  }
+}

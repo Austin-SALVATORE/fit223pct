@@ -1,0 +1,42 @@
+{
+  "exerciseId": "wide-grip-lat-pulldown",
+  "version": 1,
+  "media": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2067,
+      761
+    ],
+    "frameSizes": [
+      [
+        356,
+        761
+      ],
+      [
+        358,
+        761
+      ],
+      [
+        327,
+        761
+      ],
+      [
+        355,
+        761
+      ],
+      [
+        343,
+        761
+      ],
+      [
+        328,
+        761
+      ]
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-19"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "exerciseId": "db-floor-press",
+  "version": 1,
+  "media": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        327,
+        821
+      ],
+      [
+        307,
+        821
+      ],
+      [
+        315,
+        821
+      ],
+      [
+        323,
+        821
+      ],
+      [
+        334,
+        821
+      ],
+      [
+        309,
+        821
+      ]
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-19"
+  }
+}

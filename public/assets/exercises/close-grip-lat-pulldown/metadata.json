@@ -1,0 +1,42 @@
+{
+  "exerciseId": "close-grip-lat-pulldown",
+  "version": 1,
+  "media": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        331,
+        821
+      ],
+      [
+        321,
+        821
+      ],
+      [
+        295,
+        821
+      ],
+      [
+        308,
+        821
+      ],
+      [
+        294,
+        821
+      ],
+      [
+        329,
+        821
+      ]
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-19"
+  }
+}

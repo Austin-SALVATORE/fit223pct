@@ -136,6 +136,7 @@ Keep these descriptions identical wherever the equipment appears.
 | T-bar row | Brushed chrome bar anchored to the ground at one end, matte black plates and a simple black close-grip handle at the other |
 | Abductor / adductor machine | Matte black seated frame with two padded black knee pads on swinging arms |
 | Pec deck / rear delt machine | Matte black seated frame with an upright back pad and two vertical padded black arm levers |
+| Resistance band | Long matte near-black elastic resistance band with a smooth matte surface, drawn visibly taut under load |
 
 ## Status
 

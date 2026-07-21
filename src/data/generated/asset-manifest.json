@@ -119,6 +119,118 @@
       ]
     ]
   },
+  "band-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        288,
+        822
+      ],
+      [
+        296,
+        822
+      ],
+      [
+        276,
+        822
+      ],
+      [
+        287,
+        822
+      ]
+    ]
+  },
+  "band-lateral-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        279,
+        821
+      ],
+      [
+        527,
+        821
+      ],
+      [
+        598,
+        821
+      ],
+      [
+        274,
+        821
+      ]
+    ]
+  },
+  "band-pull-apart": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        272,
+        821
+      ],
+      [
+        521,
+        821
+      ],
+      [
+        622,
+        821
+      ],
+      [
+        274,
+        821
+      ]
+    ]
+  },
+  "band-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1918,
+      820
+    ],
+    "frameSizes": [
+      [
+        349,
+        820
+      ],
+      [
+        332,
+        820
+      ],
+      [
+        306,
+        820
+      ],
+      [
+        306,
+        820
+      ],
+      [
+        316,
+        820
+      ],
+      [
+        309,
+        820
+      ]
+    ]
+  },
   "barbell-back-squat": {
     "frameCount": 6,
     "thumbnailFrame": 4,
@@ -149,6 +261,40 @@
       ],
       [
         344,
+        821
+      ]
+    ]
+  },
+  "barbell-hip-thrust": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        324,
+        821
+      ],
+      [
+        315,
+        821
+      ],
+      [
+        321,
+        821
+      ],
+      [
+        332,
+        821
+      ],
+      [
+        308,
+        821
+      ],
+      [
+        315,
         821
       ]
     ]
@@ -475,6 +621,32 @@
       ]
     ]
   },
+  "cable-rear-delt-fly": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        438,
+        823
+      ],
+      [
+        435,
+        823
+      ],
+      [
+        502,
+        823
+      ],
+      [
+        449,
+        823
+      ]
+    ]
+  },
   "cable-row": {
     "frameCount": 6,
     "thumbnailFrame": 4,
@@ -637,6 +809,40 @@
       ]
     ]
   },
+  "close-grip-lat-pulldown": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        331,
+        821
+      ],
+      [
+        321,
+        821
+      ],
+      [
+        295,
+        821
+      ],
+      [
+        308,
+        821
+      ],
+      [
+        294,
+        821
+      ],
+      [
+        329,
+        821
+      ]
+    ]
+  },
   "concentration-curl": {
     "frameCount": 4,
     "thumbnailFrame": 3,
@@ -686,6 +892,40 @@
       [
         440,
         823
+      ]
+    ]
+  },
+  "db-floor-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        327,
+        821
+      ],
+      [
+        307,
+        821
+      ],
+      [
+        315,
+        821
+      ],
+      [
+        323,
+        821
+      ],
+      [
+        334,
+        821
+      ],
+      [
+        309,
+        821
       ]
     ]
   },
@@ -809,6 +1049,40 @@
       ],
       [
         322,
+        821
+      ]
+    ]
+  },
+  "deficit-push-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        347,
+        821
+      ],
+      [
+        331,
+        821
+      ],
+      [
+        318,
+        821
+      ],
+      [
+        260,
+        821
+      ],
+      [
+        339,
+        821
+      ],
+      [
+        320,
         821
       ]
     ]
@@ -1031,6 +1305,58 @@
       ],
       [
         271,
+        822
+      ]
+    ]
+  },
+  "dumbbell-shrug": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        309,
+        823
+      ],
+      [
+        305,
+        823
+      ],
+      [
+        305,
+        823
+      ],
+      [
+        306,
+        823
+      ]
+    ]
+  },
+  "ez-bar-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        396,
+        822
+      ],
+      [
+        388,
+        822
+      ],
+      [
+        372,
+        822
+      ],
+      [
+        386,
         822
       ]
     ]
@@ -1305,33 +1631,33 @@
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1915,
-      821
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        324,
-        821
+        327,
+        822
       ],
       [
-        315,
-        821
+        325,
+        822
       ],
       [
-        321,
-        821
+        307,
+        822
       ],
       [
-        332,
-        821
+        347,
+        822
       ],
       [
-        308,
-        821
+        314,
+        822
       ],
       [
-        315,
-        821
+        294,
+        822
       ]
     ]
   },
@@ -1591,6 +1917,32 @@
       ]
     ]
   },
+  "leaning-lateral-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        453,
+        821
+      ],
+      [
+        490,
+        821
+      ],
+      [
+        475,
+        821
+      ],
+      [
+        493,
+        821
+      ]
+    ]
+  },
   "leg-extension": {
     "frameCount": 4,
     "thumbnailFrame": 3,
@@ -1703,6 +2055,32 @@
       ]
     ]
   },
+  "machine-chest-fly": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        477,
+        821
+      ],
+      [
+        456,
+        821
+      ],
+      [
+        433,
+        821
+      ],
+      [
+        453,
+        821
+      ]
+    ]
+  },
   "machine-row": {
     "frameCount": 6,
     "thumbnailFrame": 4,
@@ -1768,6 +2146,40 @@
       [
         324,
         821
+      ]
+    ]
+  },
+  "neutral-grip-lat-pulldown": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1983,
+      793
+    ],
+    "frameSizes": [
+      [
+        337,
+        793
+      ],
+      [
+        310,
+        793
+      ],
+      [
+        327,
+        793
+      ],
+      [
+        330,
+        793
+      ],
+      [
+        332,
+        793
+      ],
+      [
+        316,
+        793
       ]
     ]
   },
@@ -2365,6 +2777,74 @@
       ]
     ]
   },
+  "single-arm-db-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        292,
+        822
+      ],
+      [
+        253,
+        822
+      ],
+      [
+        253,
+        822
+      ],
+      [
+        274,
+        822
+      ],
+      [
+        256,
+        822
+      ],
+      [
+        293,
+        822
+      ]
+    ]
+  },
+  "single-arm-db-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        345,
+        822
+      ],
+      [
+        330,
+        822
+      ],
+      [
+        321,
+        822
+      ],
+      [
+        307,
+        822
+      ],
+      [
+        311,
+        822
+      ],
+      [
+        294,
+        822
+      ]
+    ]
+  },
   "single-arm-triceps-pushdown": {
     "frameCount": 4,
     "thumbnailFrame": 3,
@@ -2388,6 +2868,40 @@
       [
         431,
         822
+      ]
+    ]
+  },
+  "single-leg-hip-thrust": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2032,
+      774
+    ],
+    "frameSizes": [
+      [
+        324,
+        774
+      ],
+      [
+        338,
+        774
+      ],
+      [
+        295,
+        774
+      ],
+      [
+        368,
+        774
+      ],
+      [
+        390,
+        774
+      ],
+      [
+        317,
+        774
       ]
     ]
   },
@@ -2673,6 +3187,40 @@
       ]
     ]
   },
+  "tempo-bodyweight-squat": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        253,
+        823
+      ],
+      [
+        317,
+        823
+      ],
+      [
+        351,
+        823
+      ],
+      [
+        301,
+        823
+      ],
+      [
+        318,
+        823
+      ],
+      [
+        246,
+        823
+      ]
+    ]
+  },
   "triceps-pushdown": {
     "frameCount": 4,
     "thumbnailFrame": 3,
@@ -2756,6 +3304,40 @@
       [
         262,
         821
+      ]
+    ]
+  },
+  "wide-grip-lat-pulldown": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2067,
+      761
+    ],
+    "frameSizes": [
+      [
+        356,
+        761
+      ],
+      [
+        358,
+        761
+      ],
+      [
+        327,
+        761
+      ],
+      [
+        355,
+        761
+      ],
+      [
+        343,
+        761
+      ],
+      [
+        328,
+        761
       ]
     ]
   }

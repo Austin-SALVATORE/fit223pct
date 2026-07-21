@@ -1,0 +1,42 @@
+{
+  "exerciseId": "single-arm-db-row",
+  "version": 1,
+  "media": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        345,
+        822
+      ],
+      [
+        330,
+        822
+      ],
+      [
+        321,
+        822
+      ],
+      [
+        307,
+        822
+      ],
+      [
+        311,
+        822
+      ],
+      [
+        294,
+        822
+      ]
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-19"
+  }
+}

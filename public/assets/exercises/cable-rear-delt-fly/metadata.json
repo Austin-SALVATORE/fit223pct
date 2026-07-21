@@ -1,0 +1,34 @@
+{
+  "exerciseId": "cable-rear-delt-fly",
+  "version": 1,
+  "media": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        438,
+        823
+      ],
+      [
+        435,
+        823
+      ],
+      [
+        502,
+        823
+      ],
+      [
+        449,
+        823
+      ]
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-19"
+  }
+}
