@@ -32,4 +32,14 @@ describe('FrameStepper', () => {
     const { container } = render(<FrameStepper exerciseId="not-a-real-exercise" />)
     expect(container).toBeEmptyDOMElement()
   })
+
+  it('drops the slide background — background-removed art sits directly on the page', () => {
+    render(<FrameStepper exerciseId="goblet-squat" />)
+    const images = screen
+      .getByRole('region', { name: 'Step-through photos: Goblet squat' })
+      .querySelectorAll('img')
+    for (const img of images) {
+      expect(img.parentElement).not.toHaveClass('bg-raised')
+    }
+  })
 })

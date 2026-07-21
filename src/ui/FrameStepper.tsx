@@ -68,7 +68,7 @@ export function FrameStepper({ exerciseId }: { exerciseId: string }) {
               ref={(el) => {
                 slideRefs.current[i] = el
               }}
-              className="shrink-0 snap-center overflow-hidden rounded-lg bg-raised"
+              className="shrink-0 snap-center overflow-hidden rounded-lg"
               style={{ width, height: STEPPER_HEIGHT }}
             >
               <img

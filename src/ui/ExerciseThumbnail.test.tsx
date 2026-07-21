@@ -15,7 +15,16 @@ describe('ExerciseThumbnail', () => {
   it('renders the quiet empty tile for an exercise with no manifest entry', () => {
     const { container } = render(<ExerciseThumbnail exerciseId="not-a-real-exercise" />)
     expect(container.querySelector('img')).toBeNull()
-    expect(container.querySelector('[aria-hidden="true"]')).toBeInTheDocument()
+    const tile = container.querySelector('[aria-hidden="true"]')
+    expect(tile).toBeInTheDocument()
+    // The empty tile is a designed placeholder — it keeps a visible box.
+    expect(tile).toHaveClass('bg-raised')
+  })
+
+  it('drops the tile background behind loaded art — background-removed art sits directly on the page', () => {
+    const { container } = render(<ExerciseThumbnail exerciseId="goblet-squat" />)
+    const img = container.querySelector('img')
+    expect(img?.parentElement).not.toHaveClass('bg-raised')
   })
 
   it('falls back to the same empty tile when the image fails to load', () => {

@@ -43,6 +43,21 @@ public/assets/exercises/<id>/
   time samples, and are not pixel-registered. True motion is a later era.
 - Frame slicing: white-gutter (ink-density minima) detection with a
   minimum-gutter-width rule; manual cut overrides allowed per exercise.
+- **Background removed, true alpha** (Phase B, superseding the original
+  baked-white treatment below this point in the doc's history): every
+  kind — frames, reference, thumbnail — is matted via border flood-fill
+  (transparency flood-filled in from the image edge, not a global white
+  threshold, so near-white highlights *inside* the figure like hair
+  sheen or a metal weight's reflection survive) before AVIF encoding.
+  Art sits directly on the page at runtime; no baked background color,
+  no compositing-time flatten. See `scripts/convert-assets.mjs`'s
+  `matte()`. Known limitation, not blocking: dark equipment (barbell
+  plates) loses contrast against the app's dark background, more
+  visible in FrameStepper's larger frames than at thumbnail size — a
+  source-render fix (rim-light/mid-value rule for dark equipment),
+  queued in the prompt system's style block, not a further compositing
+  pass (two halo variants were tried and rejected in the prototype
+  batch that established this direction).
 
 ## Metadata: authoring vs runtime
 

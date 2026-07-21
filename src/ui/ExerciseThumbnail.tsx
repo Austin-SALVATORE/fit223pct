@@ -1,7 +1,14 @@
 import { useState } from 'react'
 import { exerciseAsset } from '@/lib/exerciseAsset'
 
-const TILE_CLASS = 'h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-raised'
+const SIZE_CLASS = 'h-12 w-12 shrink-0 overflow-hidden rounded-lg'
+// The empty tile is a designed placeholder — it should read as a
+// reserved slot, so it keeps a visible box. Loaded art is background-
+// removed (see docs/design/ExerciseAssetPipeline.md's naming-policy-
+// adjacent App integration notes) and sits directly on the page: a
+// bg-raised box behind transparent art would just be a fainter version
+// of the baked-white-background problem that treatment replaced.
+const EMPTY_TILE_CLASS = `${SIZE_CLASS} bg-raised`
 
 /**
  * A fixed, designed tile for list rows — same geometry whether the
@@ -19,11 +26,11 @@ export function ExerciseThumbnail({ exerciseId }: { exerciseId: string }) {
   const [failed, setFailed] = useState(false)
 
   if (!asset || failed) {
-    return <div className={TILE_CLASS} aria-hidden="true" />
+    return <div className={EMPTY_TILE_CLASS} aria-hidden="true" />
   }
 
   return (
-    <div className={TILE_CLASS}>
+    <div className={SIZE_CLASS}>
       <img
         src={asset.url}
         width={asset.width}

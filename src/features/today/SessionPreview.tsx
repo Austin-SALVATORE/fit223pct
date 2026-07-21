@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { useSessionName, usePrescriptionNote } from '@/i18n/seedProgram'
@@ -91,11 +92,17 @@ function ItemRow({
   const perSideSuffix = item.perSide ? t('sessionPreview.perSideSuffix') : ''
   return (
     <GroupedRow to={`/library/${exercise.id}`} state={origin}>
-      <div className="min-w-0">
-        <p className="font-medium text-ink">{exerciseName}</p>
-        {note && <p className="mt-0.5 text-sm text-ink-tertiary">{note}</p>}
-      </div>
-      <p className="shrink-0 text-sm text-ink-secondary" data-numeric>
+      {/* self-center overrides the row's items-baseline — same reason as
+          LibraryPage's rows: a thumbnail has no text baseline to align
+          the numbers against. */}
+      <span className="flex min-w-0 items-center gap-3 self-center">
+        <ExerciseThumbnail exerciseId={exercise.id} />
+        <div className="min-w-0">
+          <p className="font-medium text-ink">{exerciseName}</p>
+          {note && <p className="mt-0.5 text-sm text-ink-tertiary">{note}</p>}
+        </div>
+      </span>
+      <p className="shrink-0 self-center text-sm text-ink-secondary" data-numeric>
         {formatPrescription(item, perSideSuffix)}
       </p>
     </GroupedRow>
