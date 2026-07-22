@@ -5,8 +5,9 @@
  * For each exercise id passed via --only (or all with a reference.png):
  *   1. Slice reference.png into frames at white-gutter midpoints.
  *   2. Background-removal matte each frame + the reference (border
- *      flood-fill — see matte() — approved design direction, replaces
- *      the baked-white treatment; see the Phase B prototype batch).
+ *      flood-fill, then enclosed-pocket removal — see matte() — approved
+ *      design direction, replaces the baked-white treatment; see the
+ *      Phase B prototype batch and the pocket-removal production fix).
  *   3. Encode runtime AVIFs, alpha preserved: reference.avif,
  *      frames/NN.avif, thumbnail.avif.
  *   4. Write authoring metadata.json (media block + credits).
@@ -15,6 +16,11 @@
  * Run scripts/update-manifest-dims.mjs afterward to restore/recompute
  * referenceSize/frameSizes — this script's metadata.json write only
  * carries frameCount/thumbnailFrame, same as it always has.
+ *
+ * QA gate: every matted file is re-scanned after pocket removal for any
+ * remaining opaque near-white component ≥ 1% of image area (see
+ * remainingPockets()). The run exits non-zero if any file is flagged —
+ * zero flagged files is the acceptance bar, not just "no fatal errors."
  *
  * Frame count is read from the exercise's prompt.md ("Number of frames: N")
  * and validated against detected gutters — mismatch fails the exercise
@@ -30,7 +36,7 @@ import { execFileSync } from 'node:child_process'
 import { join, dirname } from 'node:path'
 import { tmpdir } from 'node:os'
 import { fileURLToPath } from 'node:url'
-import { decodePng, encodePngRgb } from './lib/png-strip.mjs'
+import { decodePng, encodePngRgb, decodePngRgba, encodePngRgba } from './lib/png-strip.mjs'
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..')
 const ROOT = join(REPO, 'public', 'assets', 'exercises')
@@ -43,7 +49,9 @@ const FRAME_PAD = 40     // px whitespace kept on each side of a sliced frame
 const THUMB_MAX = 320    // px — longest side of thumbnail
 const AVIF_QUALITY = '60'
 const TODAY = '2026-07-19'
-const MATTE_FUZZ = '8%'  // border-flood-fill tolerance — see matte()
+const MATTE_FUZZ = '8%'          // border-flood-fill tolerance — see matte()
+const MATTE_FUZZ_FRACTION = 0.08 // same tolerance, as a 0..1 RGB-distance fraction — must match MATTE_FUZZ
+const POCKET_AREA_FRACTION = 0.01 // near-white components ≥ 1% of image area are treated as unreached background, not specular highlight — see removePockets()
 
 const args = process.argv.slice(2)
 const only = args.flatMap((a, i) => (a === '--only' && args[i + 1] ? [args[i + 1]] : []))
@@ -136,16 +144,95 @@ function toAvif(srcPng, dest, resizeMax) {
   execFileSync('magick', [srcPng, ...resize, '-quality', AVIF_QUALITY, dest])
 }
 
+/** True if an RGB pixel is within MATTE_FUZZ_FRACTION's distance of pure white — same metric ImageMagick's -fuzz applies. */
+function isNearWhite(r, g, b) {
+  const dr = 255 - r, dg = 255 - g, db = 255 - b
+  return Math.sqrt(dr * dr + dg * dg + db * db) <= MATTE_FUZZ_FRACTION * 255 * Math.sqrt(3)
+}
+
 /**
- * Background-removal matte: flood-fills transparency in from the image
- * border (guaranteed background after padding it white), not a global
- * white threshold — a global threshold punches holes in near-white
- * highlights *inside* the figure (hair sheen, metal weight reflections)
- * since those aren't contiguous with the true background. Approved
- * design direction (Phase B prototype batch) replacing the baked-white
- * treatment; AVIF's alpha channel carries the result through to runtime.
+ * Connected components (4-way) of opaque, near-white pixels in an RGBA
+ * buffer. After the border flood-fill, every border-reachable background
+ * pixel is already alpha=0 — so what this finds is exactly what the
+ * flood-fill couldn't reach: pockets fully enclosed by ink (band lines
+ * around a torso, gaps between plates and a bar) alongside genuine
+ * specular highlights (hair sheen, metal glint). Iterative BFS — a strip
+ * frame can be a few hundred thousand pixels, deep enough to blow a
+ * recursive stack.
  */
-function matte(srcPng, destPng) {
+function findNearWhiteComponents(rgba, width, height) {
+  const n = width * height
+  const visited = new Uint8Array(n)
+  const stack = new Int32Array(n)
+  const components = []
+  for (let start = 0; start < n; start++) {
+    if (visited[start]) continue
+    visited[start] = 1
+    const o = start * 4
+    if (rgba[o + 3] < 128 || !isNearWhite(rgba[o], rgba[o + 1], rgba[o + 2])) continue
+
+    const pixels = [start]
+    let sp = 0
+    stack[sp++] = start
+    while (sp > 0) {
+      const idx = stack[--sp]
+      const x = idx % width, y = (idx / width) | 0
+      const neighbors = []
+      if (x > 0) neighbors.push(idx - 1)
+      if (x < width - 1) neighbors.push(idx + 1)
+      if (y > 0) neighbors.push(idx - width)
+      if (y < height - 1) neighbors.push(idx + width)
+      for (const nb of neighbors) {
+        if (visited[nb]) continue
+        visited[nb] = 1
+        const no = nb * 4
+        if (rgba[no + 3] >= 128 && isNearWhite(rgba[no], rgba[no + 1], rgba[no + 2])) {
+          stack[sp++] = nb
+          pixels.push(nb)
+        }
+      }
+    }
+    components.push({ size: pixels.length, pixels })
+  }
+  return components
+}
+
+/** Zeroes alpha on every near-white component ≥ POCKET_AREA_FRACTION of the image; returns their sizes for logging. */
+function removePockets(rgba, width, height) {
+  const threshold = Math.round(width * height * POCKET_AREA_FRACTION)
+  const large = findNearWhiteComponents(rgba, width, height).filter(c => c.size >= threshold)
+  for (const c of large) for (const idx of c.pixels) rgba[idx * 4 + 3] = 0
+  return large.map(c => c.size)
+}
+
+/** Post-removal QA scan — should always return [] if removePockets did its job; a non-empty result is a bug, not an art problem. */
+function remainingPockets(rgba, width, height) {
+  const threshold = Math.round(width * height * POCKET_AREA_FRACTION)
+  return findNearWhiteComponents(rgba, width, height).filter(c => c.size >= threshold).map(c => c.size)
+}
+
+const qaFlags = []
+
+/**
+ * Background-removal matte, two stages:
+ *   1. Flood-fill transparency in from the image border (guaranteed
+ *      background after padding it white) — not a global white
+ *      threshold, since that punches holes in near-white highlights
+ *      *inside* the figure (hair sheen, metal weight reflections) that
+ *      aren't contiguous with the true background.
+ *   2. Remove enclosed background pockets the border flood-fill can't
+ *      reach — near-white regions fully surrounded by ink (band lines,
+ *      gaps between plates and a bar) — by size, so small near-white
+ *      components (genuine specular highlights) survive. Found in
+ *      production on band-lateral-raise: two triangles of baked-white
+ *      between the band lines and the body, never touching the frame
+ *      edge, so stage 1 alone left them opaque.
+ * Approved design direction (Phase B prototype batch) replacing the
+ * baked-white treatment; AVIF's alpha channel carries the result through
+ * to runtime.
+ */
+function matte(srcPng, destPng, label) {
+  const floodedPng = `${destPng}.flood.png`
   execFileSync('magick', [
     srcPng,
     '-alpha', 'set',
@@ -155,8 +242,22 @@ function matte(srcPng, destPng) {
     '-fill', 'none',
     '-floodfill', '+0+0', 'white',
     '-shave', '3x3',
-    destPng,
+    floodedPng,
   ])
+
+  const { width, height, rgba } = decodePngRgba(readFileSync(floodedPng))
+  rmSync(floodedPng, { force: true })
+
+  const area = width * height
+  const removed = removePockets(rgba, width, height)
+  for (const size of removed)
+    console.log(`     pocket removed: ${label} — ${size}px (${((size / area) * 100).toFixed(1)}% of image)`)
+
+  const remaining = remainingPockets(rgba, width, height)
+  for (const size of remaining)
+    qaFlags.push(`${label}: ${size}px (${((size / area) * 100).toFixed(1)}%) still opaque near-white after matte`)
+
+  writeFileSync(destPng, encodePngRgba(width, height, rgba))
 }
 
 // ---------- per-exercise ----------
@@ -181,7 +282,7 @@ function convert(id, tmp) {
     const tmpPng = join(tmp, `${id}-${k}.png`)
     writeFileSync(tmpPng, png)
     const tmpAlpha = join(tmp, `${id}-${k}-alpha.png`)
-    matte(tmpPng, tmpAlpha)
+    matte(tmpPng, tmpAlpha, `${id} frame ${k}`)
     mattedFrames[k] = tmpAlpha
     const dest = join(framesDir, `${String(k).padStart(2, '0')}.avif`)
     toAvif(tmpAlpha, dest)
@@ -189,7 +290,7 @@ function convert(id, tmp) {
   }
 
   const refAlpha = join(tmp, `${id}-ref-alpha.png`)
-  matte(refPng, refAlpha)
+  matte(refPng, refAlpha, `${id} reference`)
   toAvif(refAlpha, join(dir, 'reference.avif'))
   const thumbFrame = Math.min(frames, Math.floor(frames / 2) + 1)
   toAvif(mattedFrames[thumbFrame], join(dir, 'thumbnail.avif'), THUMB_MAX)
@@ -265,5 +366,13 @@ for (const id of ids) {
 
 const entries = buildManifest()
 console.log(`manifest: ${entries} entr${entries === 1 ? 'y' : 'ies'} → ${MANIFEST}`)
+
+if (qaFlags.length) {
+  console.error(`\nQA: ${qaFlags.length} file(s) still show an opaque near-white component ≥ ${(POCKET_AREA_FRACTION * 100).toFixed(0)}% of image area after matte:`)
+  qaFlags.forEach(f => console.error(`  FLAGGED  ${f}`))
+} else {
+  console.log(`\nQA: 0 flagged — no matted asset has a background pocket ≥ ${(POCKET_AREA_FRACTION * 100).toFixed(0)}% of image area. This is the acceptance bar for a conversion run.`)
+}
+
 rmSync(tmp, { recursive: true, force: true })
-process.exit(failed ? 1 : 0)
+process.exit(failed || qaFlags.length ? 1 : 0)

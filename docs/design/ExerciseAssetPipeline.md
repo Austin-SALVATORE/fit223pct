@@ -58,6 +58,18 @@ public/assets/exercises/<id>/
   queued in the prompt system's style block, not a further compositing
   pass (two halo variants were tried and rejected in the prototype
   batch that established this direction).
+- **Enclosed-pocket removal** (production fix after ship — border
+  flood-fill alone can't reach background pixels an artwork geometry
+  fully surrounds, e.g. band-lateral-raise's baked-white triangles
+  between the resistance-band lines and the body, which never touch the
+  image edge). `matte()` runs a second pass: connected-component
+  analysis (4-way, on the post-flood-fill alpha) finds remaining opaque
+  near-white regions and removes any ≥1% of image area, leaving smaller
+  ones untouched since those are genuine specular highlights, not
+  unreached background. Every conversion run ends with a QA scan
+  (`remainingPockets()`) that re-checks the same condition and exits
+  non-zero if any file is still flagged — zero flagged files is the
+  acceptance bar for a conversion run, not just "no fatal errors."
 
 ## Metadata: authoring vs runtime
 

@@ -1,7 +1,9 @@
 /**
  * Minimal pure-Node PNG decode/encode/stitch for exercise frame strips.
- * Supports 8-bit RGB (color type 2) and RGBA (color type 6) input;
- * outputs 8-bit RGB. No external dependencies.
+ * Supports 8-bit RGB (color type 2) and RGBA (color type 6) input.
+ * decodePng/encodePngRgb flatten to/emit RGB; decodePngRgba/encodePngRgba
+ * round-trip the alpha channel (used for post-matte pocket analysis — see
+ * convert-assets.mjs). No external dependencies.
  */
 
 import { inflateSync, deflateSync } from 'node:zlib'
@@ -27,8 +29,8 @@ const paeth = (a, b, c) => {
   return pa <= pb && pa <= pc ? a : pb <= pc ? b : c
 }
 
-/** Decode a PNG buffer to { width, height, rgb } — RGBA is flattened onto white. */
-export function decodePng(buf) {
+/** Decode a PNG buffer to { width, height, channels, data } — raw, unflattened. */
+function decodeRaw(buf) {
   if (buf.readUInt32BE(0) !== 0x89504e47) throw new Error('not a PNG')
   let off = 8
   let width = 0, height = 0, bitDepth = 0, colorType = 0
@@ -75,18 +77,38 @@ export function decodePng(buf) {
     }
     pos += stride
   }
+  return { width, height, channels, data: out }
+}
 
-  if (channels === 3) return { width, height, rgb: out }
+/** Decode a PNG buffer to { width, height, rgb } — RGBA is flattened onto white. */
+export function decodePng(buf) {
+  const { width, height, channels, data } = decodeRaw(buf)
+  if (channels === 3) return { width, height, rgb: data }
 
   // flatten RGBA onto white
   const rgb = Buffer.alloc(width * height * 3)
-  for (let i = 0, j = 0; i < out.length; i += 4, j += 3) {
-    const alpha = out[i + 3] / 255
-    rgb[j] = Math.round(out[i] * alpha + 255 * (1 - alpha))
-    rgb[j + 1] = Math.round(out[i + 1] * alpha + 255 * (1 - alpha))
-    rgb[j + 2] = Math.round(out[i + 2] * alpha + 255 * (1 - alpha))
+  for (let i = 0, j = 0; i < data.length; i += 4, j += 3) {
+    const alpha = data[i + 3] / 255
+    rgb[j] = Math.round(data[i] * alpha + 255 * (1 - alpha))
+    rgb[j + 1] = Math.round(data[i + 1] * alpha + 255 * (1 - alpha))
+    rgb[j + 2] = Math.round(data[i + 2] * alpha + 255 * (1 - alpha))
   }
   return { width, height, rgb }
+}
+
+/** Decode a PNG buffer to { width, height, rgba } — 4 channels, alpha preserved (opaque if the source had none). */
+export function decodePngRgba(buf) {
+  const { width, height, channels, data } = decodeRaw(buf)
+  if (channels === 4) return { width, height, rgba: data }
+
+  const rgba = Buffer.alloc(width * height * 4)
+  for (let i = 0, j = 0; i < data.length; i += 3, j += 4) {
+    rgba[j] = data[i]
+    rgba[j + 1] = data[i + 1]
+    rgba[j + 2] = data[i + 2]
+    rgba[j + 3] = 255
+  }
+  return { width, height, rgba }
 }
 
 // ---------- encode ----------
@@ -112,6 +134,27 @@ export function encodePngRgb(width, height, rgb) {
   ihdr.writeUInt32BE(height, 4)
   ihdr[8] = 8  // bit depth
   ihdr[9] = 2  // color type RGB
+  return Buffer.concat([
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    chunk('IHDR', ihdr),
+    chunk('IDAT', deflateSync(raw, { level: 9 })),
+    chunk('IEND', Buffer.alloc(0)),
+  ])
+}
+
+/** Encode raw RGBA pixels as a PNG buffer. */
+export function encodePngRgba(width, height, rgba) {
+  const stride = width * 4
+  const raw = Buffer.alloc(height * (stride + 1))
+  for (let y = 0; y < height; y++) {
+    raw[y * (stride + 1)] = 0 // filter: none
+    rgba.copy(raw, y * (stride + 1) + 1, y * stride, (y + 1) * stride)
+  }
+  const ihdr = Buffer.alloc(13)
+  ihdr.writeUInt32BE(width, 0)
+  ihdr.writeUInt32BE(height, 4)
+  ihdr[8] = 8  // bit depth
+  ihdr[9] = 6  // color type RGBA
   return Buffer.concat([
     Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
     chunk('IHDR', ihdr),
