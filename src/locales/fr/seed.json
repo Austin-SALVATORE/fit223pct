@@ -56,6 +56,18 @@
         "Poignets alignés au-dessus des coudes"
       ]
     },
+    "dumbbell-bench-press": {
+      "name": "Développé couché aux haltères",
+      "cues": [
+        "Garde les haltères à peu près à largeur d'épaules, sans jamais qu'ils se touchent",
+        "Les coudes restent à environ 45° du buste, jamais écartés à 90°",
+        "Les poignets restent alignés au-dessus des coudes jusqu'en bas"
+      ],
+      "teachingConcept": {
+        "title": "Un contrôle indépendant",
+        "body": "Deux haltères peuvent partir chacun de leur côté si tu n'y fais pas attention — pousse-les sur la même trajectoire à chaque répétition, pas seulement jusqu'à la même hauteur. C'est exactement cette stabilité indépendante que le développé aux haltères travaille, et qu'une barre ne peut pas t'apprendre."
+      }
+    },
     "single-arm-db-row": {
       "name": "Rowing haltère unilatéral",
       "cues": [
@@ -100,6 +112,18 @@
         "Lent et équilibré vaut mieux que lourd"
       ]
     },
+    "dumbbell-rdl": {
+      "name": "Soulevé de terre roumain aux haltères",
+      "cues": [
+        "La flexion des genoux se fixe en haut et ne bouge plus — c'est une charnière de hanche, pas un squat",
+        "Les haltères restent en contact avec tes jambes jusqu'en bas",
+        "Les hanches partent vers l'arrière, pas vers le bas — arrête-toi là où tes ischio-jambiers te disent stop"
+      ],
+      "teachingConcept": {
+        "title": "Même charnière, plus proche du corps",
+        "body": "Les haltères restent plus proches de tes jambes qu'une barre ne le serait — laisse-les glisser le long de tes cuisses et de tes tibias sur tout le mouvement, sans les laisser s'éloigner vers l'avant. Arrête-toi quand tes ischio-jambiers te disent stop, pas à une hauteur fixe."
+      }
+    },
     "bulgarian-split-squat": {
       "name": "Fente bulgare",
       "cues": [
@@ -128,6 +152,18 @@
         "Résiste à l'inclinaison latérale"
       ]
     },
+    "dumbbell-shoulder-press": {
+      "name": "Développé militaire aux haltères",
+      "cues": [
+        "Côtes basses — pas de bascule en arrière quand les haltères passent au-dessus de la tête",
+        "Les poignets restent alignés au-dessus des coudes jusqu'en haut",
+        "Les deux haltères terminent à la même hauteur, à chaque répétition"
+      ],
+      "teachingConcept": {
+        "title": "Côtes basses, pas de bascule",
+        "body": "Une fois que la charge devient lourde, la tentation est de basculer en arrière et de transformer le mouvement en développé incliné. Garde tes côtes rentrées vers les hanches du début à la fin — c'est ce qui garde la charge sur tes épaules plutôt que sur le bas du dos."
+      }
+    },
     "hip-thrust": {
       "name": "Hip thrust",
       "cues": [
@@ -151,6 +187,18 @@
         "Serre entre les omoplates",
         "Contrôle le retour"
       ]
+    },
+    "rear-delt-fly": {
+      "name": "Écarté buste penché aux haltères",
+      "cues": [
+        "L'angle de la charnière de hanche reste fixe — ne te redresse pas pour aider à lever la charge",
+        "La flexion du coude reste légère et constante — c'est un écarté, pas un rowing",
+        "Arrête-toi à hauteur du buste en haut, sans aller plus loin"
+      ],
+      "teachingConcept": {
+        "title": "Un écarté, pas un rowing",
+        "body": "Dès que tes coudes commencent à se plier pour tirer la charge vers toi, le mouvement arrête de cibler l'arrière de l'épaule et fait travailler le haut du dos à la place. Garde cet angle de coude verrouillé et laisse le mouvement partir de l'épaule."
+      }
     },
     "band-lateral-raise": {
       "name": "Élévation latérale à l'élastique",

@@ -56,6 +56,18 @@
         "Wrists stacked over elbows"
       ]
     },
+    "dumbbell-bench-press": {
+      "name": "Dumbbell bench press",
+      "cues": [
+        "Keep the dumbbells roughly shoulder-width apart, never touching",
+        "Elbows track at about 45° to your torso, not flared to 90°",
+        "Wrists stay stacked over the elbows all the way down"
+      ],
+      "teachingConcept": {
+        "title": "Independent control",
+        "body": "Two dumbbells can drift apart if you're not paying attention — press them on the same path every rep, not just to the same height. That independent stability is exactly what a dumbbell bench press trains that a barbell can't."
+      }
+    },
     "single-arm-db-row": {
       "name": "Single-arm dumbbell row",
       "cues": [
@@ -100,6 +112,18 @@
         "Slow and balanced beats heavy"
       ]
     },
+    "dumbbell-rdl": {
+      "name": "Dumbbell Romanian deadlift",
+      "cues": [
+        "Knee bend is set once at the top and doesn't change — this is a hinge, not a squat",
+        "Dumbbells stay in contact with your legs all the way down",
+        "Hips travel back, not down — stop where your hamstrings tell you to"
+      ],
+      "teachingConcept": {
+        "title": "Same hinge, closer to the body",
+        "body": "Dumbbells sit closer to your legs than a barbell would, so let them slide down your thighs and shins the whole way — don't let them drift forward. Stop when your hamstrings say stop, not at a fixed height."
+      }
+    },
     "bulgarian-split-squat": {
       "name": "Bulgarian split squat",
       "cues": [
@@ -128,6 +152,18 @@
         "Resist side-bending"
       ]
     },
+    "dumbbell-shoulder-press": {
+      "name": "Dumbbell shoulder press",
+      "cues": [
+        "Ribs stay down — no leaning back as the weights pass overhead",
+        "Wrists stay stacked over the elbows the whole way up",
+        "Both dumbbells finish at the same height, every rep"
+      ],
+      "teachingConcept": {
+        "title": "Ribs down, not back",
+        "body": "It's tempting to lean back and turn this into an incline press once the weight gets heavy. Keep your ribs pulled down toward your hips throughout — that's what keeps the load on your shoulders instead of your lower back."
+      }
+    },
     "hip-thrust": {
       "name": "Hip thrust",
       "cues": [
@@ -151,6 +187,18 @@
         "Squeeze between the shoulder blades",
         "Control the return"
       ]
+    },
+    "rear-delt-fly": {
+      "name": "Rear delt fly",
+      "cues": [
+        "Hip hinge angle stays fixed — don't rise to help lift the weight",
+        "Elbow bend stays soft and constant — this is a fly, not a row",
+        "Stop level with your torso at the top, don't swing past it"
+      ],
+      "teachingConcept": {
+        "title": "A fly, not a row",
+        "body": "The moment your elbows start bending to pull the weight in, the movement stops training your rear delts and starts recruiting your upper back instead. Keep that elbow angle locked and let the sweep come from the shoulder."
+      }
     },
     "band-lateral-raise": {
       "name": "Band lateral raise",

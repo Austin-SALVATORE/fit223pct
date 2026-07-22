@@ -17,8 +17,12 @@ import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
  * a Library exercise ships before its art does, which is the normal
  * order of things going forward (new exercise first, asset generated
  * after) — not a regression to fix, just this list doing its job again.
+ *
+ * dumbbell-rdl added with the Home equipment-tier Library batch — art is
+ * in the illustration queue but hasn't landed yet (see the exercise's
+ * prompt.md, status `planned`). Remove once its manifest entry exists.
  */
-const KNOWN_MISSING = new Set<string>()
+const KNOWN_MISSING = new Set<string>(['dumbbell-rdl'])
 
 describe('exercise asset coverage', () => {
   it.each(seedExercises.map((e) => e.id))('%s resolves an asset or is in KNOWN_MISSING', (id) => {
