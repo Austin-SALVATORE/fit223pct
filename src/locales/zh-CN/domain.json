@@ -21,10 +21,9 @@
   "progression": {
     "start": "第一次训练——从建议重量开始，做满整个次数范围。",
     "addReps": "重量不变——为最弱的一组加一次。",
-    "consolidateNoReserve": "已经到次数上限，但太接近力竭——再巩固一次。",
     "consolidateEasier": "你已经够格加重了，但今天不加——重量不变，把加重留到状态更好的一天。",
     "addTechnique": "这个设置的重量已经到顶——用更慢的离心、增加停顿或加大幅度来进步。",
-    "increaseLoad": "每一组都做满次数范围，还有余力——是时候加重了。"
+    "increaseLoad": "每一组都做满了次数范围——是时候加重了。"
   },
   "highlight": {
     "first": "首次",

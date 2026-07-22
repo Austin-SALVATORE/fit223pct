@@ -34,7 +34,7 @@ describe('suggestProgression', () => {
     expect(s.targetReps).toBe(8)
   })
 
-  it('adds load when every set hits the top of the range with reps in reserve', () => {
+  it('adds load when every set hits the top of the range', () => {
     const s = suggestProgression(prescription, [
       set(12, 16, 2),
       set(12, 16, 2),
@@ -56,14 +56,18 @@ describe('suggestProgression', () => {
     expect(s.targetReps).toBe(10)
   })
 
-  it('holds steady when top of range was reached but too close to failure', () => {
+  // The RIR reserve gate is deleted, not approximated (docs/PyramidProgression.md)
+  // — completion alone decides. Every set here is at the top of the range
+  // with a rir of 0, which used to force a 'consolidate' hold; it no
+  // longer has any bearing on the outcome at all.
+  it('advances on completion alone, regardless of how low the (now-unused) rir value is', () => {
     const s = suggestProgression(prescription, [
       set(12, 16, 0),
       set(12, 16, 0),
-      set(12, 16, 1),
+      set(12, 16, 0),
     ])
-    expect(s.type).toBe('consolidate')
-    expect(s.weightKg).toBe(16)
+    expect(s.type).toBe('increase-load')
+    expect(s.weightKg).toBe(18)
   })
 
   it('switches to technique progression at the equipment ceiling', () => {

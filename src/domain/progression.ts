@@ -18,9 +18,12 @@ export interface ProgressionSuggestion {
 
 /**
  * Double progression, equipment-aware (see docs/Training.md).
- * Fill the rep range first; add load once every set tops the range with
- * reps in reserve; at the home-equipment ceiling, progress through
- * technique (tempo, pauses, range of motion, unilateral work) instead.
+ * Fill the rep range first; add load once every set tops the range —
+ * completion alone is the gate (docs/PyramidProgression.md: the RIR
+ * reserve condition is deleted, not approximated, same as the ladder
+ * engine's completion-only gate at rung granularity); at the home-
+ * equipment ceiling, progress through technique (tempo, pauses, range of
+ * motion, unilateral work) instead.
  *
  * On an 'easier' readiness day, load increases are deferred (never lost —
  * the same earned increase is suggested next time), while filling the rep
@@ -31,7 +34,7 @@ export function suggestProgression(
   lastSets: readonly LoggedSet[],
   readinessTier?: ReadinessTier,
 ): ProgressionSuggestion {
-  const { range, targetRir } = prescription
+  const { range } = prescription
 
   if (lastSets.length === 0) {
     return {
@@ -45,7 +48,6 @@ export function suggestProgression(
   const efforts = lastSets.map((set) => effortOf(set, prescription))
   const lastWeight = maxWeight(lastSets) ?? prescription.startWeightKg
   const toppedOut = efforts.every((reps) => reps >= range.max)
-  const hadReserve = lastSets.every((set) => set.rir !== null && set.rir >= targetRir - 1)
 
   if (!toppedOut) {
     const weakest = Math.min(...efforts)
@@ -54,15 +56,6 @@ export function suggestProgression(
       weightKg: lastWeight,
       targetReps: Math.min(weakest + 1, range.max),
       reason: { key: 'domain:progression.addReps' },
-    }
-  }
-
-  if (!hadReserve) {
-    return {
-      type: 'consolidate',
-      weightKg: lastWeight,
-      targetReps: range.max,
-      reason: { key: 'domain:progression.consolidateNoReserve' },
     }
   }
 

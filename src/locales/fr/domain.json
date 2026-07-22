@@ -21,10 +21,9 @@
   "progression": {
     "start": "Première séance — pars de la charge prescrite et maîtrise l'amplitude complète.",
     "addReps": "Même charge — ajoute une répétition à ta série la plus faible.",
-    "consolidateNoReserve": "Haut de l'amplitude, mais trop proche de l'échec — assume-le une fois de plus.",
     "consolidateEasier": "Tu as mérité plus de charge, mais pas aujourd'hui — même charge, garde ce saut pour un jour plus frais.",
     "addTechnique": "La charge est au maximum pour cette configuration — progresse avec un tempo excentrique plus lent, une pause, ou plus d'amplitude.",
-    "increaseLoad": "Chaque série a atteint le haut de l'amplitude avec de la réserve de répétitions — il est temps d'augmenter la charge."
+    "increaseLoad": "Chaque série a atteint le haut de l'amplitude — il est temps d'augmenter la charge."
   },
   "highlight": {
     "first": "Première fois",
