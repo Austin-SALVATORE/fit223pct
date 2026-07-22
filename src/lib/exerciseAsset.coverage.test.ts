@@ -11,18 +11,15 @@ import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
  * later generation batch lands an asset for one of these, remove it from
  * this list in the same reviewed commit.
  *
- * Empty as of 7d764c1 (111/111 Library exercises covered — the last 8
- * landed in Batch 3, including the hip-thrust equipment split). This
- * stays in place as infrastructure, not dead code: it refills the moment
- * a Library exercise ships before its art does, which is the normal
- * order of things going forward (new exercise first, asset generated
- * after) — not a regression to fix, just this list doing its job again.
- *
- * dumbbell-rdl added with the Home equipment-tier Library batch — art is
- * in the illustration queue but hasn't landed yet (see the exercise's
- * prompt.md, status `planned`). Remove once its manifest entry exists.
+ * Empty as of d0b4fbb (112/112 Library exercises covered — dumbbell-rdl,
+ * the last gap from the Home equipment-tier batch, landed with the
+ * full-catalogue chroma-key regeneration). This stays in place as
+ * infrastructure, not dead code: it refills the moment a Library
+ * exercise ships before its art does, which is the normal order of
+ * things going forward (new exercise first, asset generated after) —
+ * not a regression to fix, just this list doing its job again.
  */
-const KNOWN_MISSING = new Set<string>(['dumbbell-rdl'])
+const KNOWN_MISSING = new Set<string>()
 
 describe('exercise asset coverage', () => {
   it.each(seedExercises.map((e) => e.id))('%s resolves an asset or is in KNOWN_MISSING', (id) => {

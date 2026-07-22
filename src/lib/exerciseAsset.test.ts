@@ -18,8 +18,8 @@ describe('exerciseAsset', () => {
     const result = exerciseAsset('goblet-squat', 'reference')
     expect(result).toEqual({
       url: `/assets/exercises/goblet-squat/reference.avif?v=${gobletSquat.referenceHash}`,
-      width: 1916,
-      height: 821,
+      width: 1914,
+      height: 822,
     })
   })
 
@@ -27,21 +27,21 @@ describe('exerciseAsset', () => {
     const result = exerciseAsset('goblet-squat', 'thumbnail')
     expect(result).toEqual({
       url: `/assets/exercises/goblet-squat/thumbnail.avif?v=${gobletSquat.thumbnailHash}`,
-      width: 304,
-      height: 821,
+      width: 300,
+      height: 822,
     })
   })
 
   it('resolves a 1-based, zero-padded frame, URL versioned by content hash', () => {
     expect(exerciseAsset('goblet-squat', 'frame', 1)).toEqual({
       url: `/assets/exercises/goblet-squat/frames/01.avif?v=${gobletSquat.frameHashes?.[0]}`,
-      width: 266,
-      height: 821,
+      width: 268,
+      height: 822,
     })
     expect(exerciseAsset('goblet-squat', 'frame', gobletSquat.frameCount)).toEqual({
       url: `/assets/exercises/goblet-squat/frames/0${gobletSquat.frameCount}.avif?v=${gobletSquat.frameHashes?.[gobletSquat.frameCount - 1]}`,
-      width: 267,
-      height: 821,
+      width: 269,
+      height: 822,
     })
   })
 
