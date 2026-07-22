@@ -29,13 +29,13 @@ export default defineConfig({
             urlPattern: /\/assets\/exercises\/.*\.avif$/,
             handler: 'CacheFirst',
             options: {
-              // Bumped for the background-removal regeneration (Phase B
-              // ship) — CacheFirst never revalidates, and every asset
+              // Bumped again for the enclosed-pocket matte fix (commit
+              // 1f6669e) — CacheFirst never revalidates, and every asset
               // kept its URL, so without a new cache name a phone that
               // already viewed an exercise keeps serving the old baked-
-              // white AVIF from cache indefinitely. Bump this name again
-              // any time a future regeneration reuses existing URLs.
-              cacheName: 'exercise-assets-v2',
+              // white-pocket AVIF from cache indefinitely. Bump this name
+              // again any time a future regeneration reuses existing URLs.
+              cacheName: 'exercise-assets-v3',
               expiration: { maxEntries: 200 },
             },
           },
