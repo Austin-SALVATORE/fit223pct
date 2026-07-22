@@ -65,6 +65,16 @@ export function logSet(
   }))
 }
 
+/**
+ * Sets logged so far in this slot belong to the exercise that was actually
+ * performed, not the one now replacing it — carrying them over would leave
+ * the substitute reading as partially (or fully) done before a single real
+ * set of it exists, corrupting both workoutPosition (which set is next) and
+ * this slot's own logged history. They reset to empty; the sets already
+ * performed stay attributed to nothing further (the model has one
+ * exerciseId per slot, so mid-session provenance beyond
+ * `substitutedForId` isn't representable) rather than silently misattributed.
+ */
 export function swapExercise(
   workout: Workout,
   exerciseIndex: number,
@@ -74,6 +84,7 @@ export function swapExercise(
     ...exercise,
     exerciseId: newExerciseId,
     substitutedForId: exercise.substitutedForId ?? exercise.exerciseId,
+    sets: [],
   }))
 }
 

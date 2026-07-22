@@ -107,6 +107,20 @@ describe('swapExercise', () => {
     expect(swapped.exercises[0].substitutedForId).toBe('goblet-squat')
     expect(swapped.exercises[0].prescription.startWeightKg).toBe(14)
   })
+
+  // Bug: swapping mid-session used to carry the original exercise's already
+  // -logged sets over to the substitute, so it read as partially (or fully)
+  // done before a single real set of it existed — workoutPosition would then
+  // skip straight to a later set index, or even the next exercise, for
+  // something the user hadn't actually started.
+  it('resets logged sets on swap — the substitute starts clean, not partially done', () => {
+    const oneSetLogged = logSet(makeWorkout(), 0, set(10, 14))
+    expect(workoutPosition(oneSetLogged)).toEqual({ exerciseIndex: 0, setIndex: 1 })
+
+    const swapped = swapExercise(oneSetLogged, 0, 'split-squat')
+    expect(swapped.exercises[0].sets).toHaveLength(0)
+    expect(workoutPosition(swapped)).toEqual({ exerciseIndex: 0, setIndex: 0 })
+  })
 })
 
 describe('summarizeWorkout', () => {
