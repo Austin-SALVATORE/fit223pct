@@ -15,7 +15,7 @@
     }
   },
   "adjustments": {
-    "effort": "今天多留一次余力——$t({{driversKey}})。",
+    "ladderTopSet": "今天跳过最重的一组——$t({{driversKey}})。",
     "volume": "今天辅助动作减一组——$t({{driversKey}})。"
   },
   "progression": {

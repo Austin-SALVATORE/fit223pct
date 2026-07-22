@@ -15,7 +15,7 @@
     }
   },
   "adjustments": {
-    "effort": "Keeping an extra rep in reserve today — $t({{driversKey}}).",
+    "ladderTopSet": "Skipping the top sets today — $t({{driversKey}}).",
     "volume": "One set less on the small stuff — $t({{driversKey}})."
   },
   "progression": {

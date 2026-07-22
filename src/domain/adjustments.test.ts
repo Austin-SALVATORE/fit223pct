@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { applyReadiness } from './adjustments'
 import type { Readiness } from './readiness'
-import type { ExercisePrescription, SessionTemplate } from './types'
+import type { LadderPrescription, RepRangePrescription, SessionTemplate } from './types'
 
 function prescription(
   exerciseId: string,
-  overrides: Partial<ExercisePrescription> = {},
-): ExercisePrescription {
+  overrides: Partial<RepRangePrescription> = {},
+): RepRangePrescription {
   return {
     exerciseId,
     sets: 3,
@@ -22,6 +22,31 @@ function prescription(
     ...overrides,
   }
 }
+
+function ladder(
+  exerciseId: string,
+  setPlan: LadderPrescription['setPlan'],
+  overrides: Partial<LadderPrescription> = {},
+): LadderPrescription {
+  return {
+    exerciseId,
+    sets: setPlan.length,
+    mode: 'reps',
+    restSeconds: 120,
+    perSide: false,
+    role: 'main',
+    setPlan,
+    maxWeightKg: 20,
+    weightStepKg: 2,
+    ...overrides,
+  }
+}
+
+const threeRungLadder = () => ladder('bench-press', [
+  { weightKg: 8, reps: 12 },
+  { weightKg: 10, reps: 10 },
+  { weightKg: 12, reps: 8 },
+])
 
 const session: SessionTemplate = {
   id: 'A',
@@ -51,23 +76,7 @@ describe('applyReadiness', () => {
     }
   })
 
-  it('adds one rep in reserve to every exercise on an easier day', () => {
-    const result = applyReadiness(session, readiness('easier'))
-    for (const item of result.session.items) {
-      expect(item.targetRir).toBe(3)
-    }
-  })
-
-  it('caps target RIR at 4', () => {
-    const highRir: SessionTemplate = {
-      ...session,
-      items: [prescription('goblet-squat', { targetRir: 4 })],
-    }
-    const result = applyReadiness(highRir, readiness('easier'))
-    expect(result.session.items[0].targetRir).toBe(4)
-  })
-
-  it('drops the last set of accessories only — never main lifts, never below one set', () => {
+  it('drops the last set of accessories only — never rep-range main lifts, never below one set', () => {
     const result = applyReadiness(session, readiness('easier'))
     const [main, accessory, singleSetAccessory] = result.session.items
     expect(main.sets).toBe(3)
@@ -82,6 +91,45 @@ describe('applyReadiness', () => {
     }
     const result = applyReadiness(legacy, readiness('easier'))
     expect(result.session.items[0].sets).toBe(3)
+  })
+
+  it('drops the top rung of a ladder on an easier day', () => {
+    const withLadder: SessionTemplate = { ...session, items: [threeRungLadder()] }
+    const result = applyReadiness(withLadder, readiness('easier'))
+    const item = result.session.items[0]
+    expect(item.setPlan).toEqual([
+      { weightKg: 8, reps: 12 },
+      { weightKg: 10, reps: 10 },
+    ])
+    expect(item.sets).toBe(2)
+  })
+
+  it('never drops a ladder below two rungs', () => {
+    const twoRung = ladder('bench-press', [
+      { weightKg: 8, reps: 12 },
+      { weightKg: 10, reps: 10 },
+    ])
+    const result = applyReadiness({ ...session, items: [twoRung] }, readiness('easier'))
+    const item = result.session.items[0]
+    expect(item.setPlan).toHaveLength(2)
+    expect(item.sets).toBe(2)
+  })
+
+  it('reports one adjustment line for a session with only ladder items', () => {
+    const result = applyReadiness({ ...session, items: [threeRungLadder()] }, readiness('easier'))
+    expect(result.adjustments).toHaveLength(1)
+  })
+
+  it('reports zero adjustments — honestly — when nothing in the session actually changes', () => {
+    // A ladder already at the 2-rung floor and no accessories: nothing left
+    // for readiness to ease off. The tier itself still displays elsewhere;
+    // this only governs the session-specific "Adjusted" badge.
+    const twoRung = ladder('bench-press', [
+      { weightKg: 8, reps: 12 },
+      { weightKg: 10, reps: 10 },
+    ])
+    const result = applyReadiness({ ...session, items: [twoRung] }, readiness('easier'))
+    expect(result.adjustments).toEqual([])
   })
 
   it('explains every adjustment with a driver-derived reason, keyed by signal — never a label', () => {

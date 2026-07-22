@@ -95,7 +95,8 @@ describe('Early start on unscheduled days', () => {
     const [workout] = await db.workouts.toArray()
     expect(workout.readiness?.tier).toBe('easier')
     expect(workout.readiness?.drivers).toContain('sleep')
-    expect(workout.exercises[0].prescription.targetRir).toBe(3)
+    const accessory = workout.exercises.find((e) => e.exerciseId === 'band-pull-apart')
+    expect(accessory?.prescription.sets).toBe(1)
 
     await db.checkins.clear()
   })

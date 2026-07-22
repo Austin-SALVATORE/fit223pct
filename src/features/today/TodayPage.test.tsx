@@ -71,7 +71,7 @@ describe('Readiness flowing into the plan', () => {
     // The canonical label and the concrete reasons appear next to the numbers
     expect(await screen.findByText('Adjusted for readiness')).toBeInTheDocument()
     expect(
-      await screen.findByText(/Keeping an extra rep in reserve today/),
+      await screen.findByText(/One set less on the small stuff/),
     ).toBeInTheDocument()
   })
 

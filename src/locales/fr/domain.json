@@ -15,7 +15,7 @@
     }
   },
   "adjustments": {
-    "effort": "On garde une répétition de plus en réserve aujourd'hui — $t({{driversKey}}).",
+    "ladderTopSet": "On saute la série la plus lourde aujourd'hui — $t({{driversKey}}).",
     "volume": "Un set en moins sur les accessoires aujourd'hui — $t({{driversKey}})."
   },
   "progression": {
