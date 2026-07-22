@@ -3,156 +3,156 @@
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
-      822
+      1672,
+      941
     ],
     "frameSizes": [
       [
-        402,
-        822
+        396,
+        941
       ],
       [
-        434,
-        822
+        441,
+        941
       ],
       [
-        494,
-        822
+        448,
+        941
       ],
       [
-        419,
-        822
+        387,
+        941
       ]
     ],
-    "referenceHash": "ce9114d769",
-    "thumbnailHash": "6404070951",
+    "referenceHash": "0fbe1c4180",
+    "thumbnailHash": "a49d4ae9c3",
     "frameHashes": [
-      "2ca2aebe16",
-      "3cefdcd51e",
-      "b224e88d32",
-      "60ecf3c05c"
+      "4edbf180a1",
+      "95f2f50f00",
+      "cc58b0c473",
+      "ca3664b099"
     ]
   },
   "adductor-machine": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1915,
-      821
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        486,
-        821
+        490,
+        823
       ],
       [
-        481,
-        821
+        443,
+        823
       ],
       [
-        388,
-        821
+        407,
+        823
       ],
       [
-        478,
-        821
+        505,
+        823
       ]
     ],
-    "referenceHash": "5b6a1380e7",
-    "thumbnailHash": "bbe2deffc4",
+    "referenceHash": "c02e0c6e0c",
+    "thumbnailHash": "e27eed6dea",
     "frameHashes": [
-      "dc2de05131",
-      "88427b2ea1",
-      "1b0da3d1e2",
-      "44af70e338"
+      "a9c571435a",
+      "1f5456193d",
+      "95f3f847ea",
+      "4ca07d030c"
     ]
   },
   "arnold-press": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1914,
+      1913,
       822
     ],
     "frameSizes": [
       [
-        248,
+        259,
         822
       ],
       [
-        329,
+        331,
         822
       ],
       [
-        336,
+        351,
         822
       ],
       [
-        278,
+        259,
         822
       ],
       [
-        315,
+        332,
         822
       ],
       [
-        248,
+        257,
         822
       ]
     ],
-    "referenceHash": "aa652f0b5a",
-    "thumbnailHash": "e6a2040bb1",
+    "referenceHash": "1059a3ef2b",
+    "thumbnailHash": "488a7d7de0",
     "frameHashes": [
-      "fb500b5ff1",
-      "312c0917c5",
-      "45e766e7ff",
-      "76c87c7335",
-      "e7ebadfd62",
-      "f63f705f14"
+      "8b169b8237",
+      "a489598458",
+      "4f9a691b20",
+      "4036496bec",
+      "5c016f4b0f",
+      "9fa35dc199"
     ]
   },
   "assisted-pull-up": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1804,
-      872
+      1774,
+      887
     ],
     "frameSizes": [
       [
-        337,
-        872
+        267,
+        887
       ],
       [
-        316,
-        872
+        322,
+        887
       ],
       [
-        276,
-        872
+        289,
+        887
       ],
       [
-        283,
-        872
+        308,
+        887
       ],
       [
-        283,
-        872
+        293,
+        887
       ],
       [
-        309,
-        872
+        295,
+        887
       ]
     ],
-    "referenceHash": "f15092f2b8",
-    "thumbnailHash": "e95174168b",
+    "referenceHash": "84394fbeef",
+    "thumbnailHash": "bc33fa22c9",
     "frameHashes": [
-      "72a64400b5",
-      "fa92e038db",
-      "3b8d81bd7e",
-      "387a72a11f",
-      "4de91aeeab",
-      "24aee97144"
+      "bf5db7fee8",
+      "0b914e02f0",
+      "d94f54548b",
+      "f6284ca6dc",
+      "327e1c91fa",
+      "dda1f2cf98"
     ]
   },
   "band-curl": {
@@ -164,29 +164,29 @@
     ],
     "frameSizes": [
       [
-        288,
-        822
-      ],
-      [
-        296,
-        822
-      ],
-      [
         276,
         822
       ],
       [
         287,
         822
+      ],
+      [
+        269,
+        822
+      ],
+      [
+        277,
+        822
       ]
     ],
-    "referenceHash": "916c1d5aa4",
-    "thumbnailHash": "1fdb9e9394",
+    "referenceHash": "031883c826",
+    "thumbnailHash": "f9faf732f6",
     "frameHashes": [
-      "4b1d5013aa",
-      "ac3f848ca3",
-      "243df0b0a7",
-      "a82c07ede5"
+      "442bc8a737",
+      "e376d5b2ad",
+      "01d2c07864",
+      "46bbc93797"
     ]
   },
   "band-lateral-raise": {
@@ -198,63 +198,63 @@
     ],
     "frameSizes": [
       [
-        279,
+        265,
         821
       ],
       [
-        527,
+        514,
         821
       ],
       [
-        598,
+        579,
         821
       ],
       [
-        274,
+        265,
         821
       ]
     ],
-    "referenceHash": "0c6500da58",
-    "thumbnailHash": "b9fb704084",
+    "referenceHash": "c9031dc2ae",
+    "thumbnailHash": "270dfc2869",
     "frameHashes": [
-      "6d703eda1d",
-      "e6f06aaa12",
-      "40513f7b41",
-      "e3251b619d"
+      "b56539624f",
+      "e216bfcf14",
+      "cd41a0da44",
+      "a1f162505c"
     ]
   },
   "band-pull-apart": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1915,
-      821
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        272,
-        821
+        294,
+        822
       ],
       [
-        521,
-        821
+        534,
+        822
       ],
       [
-        622,
-        821
+        616,
+        822
       ],
       [
-        274,
-        821
+        290,
+        822
       ]
     ],
-    "referenceHash": "0e659f06f1",
-    "thumbnailHash": "5212ec9d33",
+    "referenceHash": "322cd9966a",
+    "thumbnailHash": "50ed1020bc",
     "frameHashes": [
-      "207c5dbaf5",
-      "81b9ef11a3",
-      "4b94d0541a",
-      "e897841f6b"
+      "a3f0984c00",
+      "b36bd1eb18",
+      "01b09a619c",
+      "3492c504fe"
     ]
   },
   "band-row": {
@@ -266,39 +266,39 @@
     ],
     "frameSizes": [
       [
-        349,
+        360,
         820
       ],
       [
-        332,
+        320,
         820
       ],
       [
-        306,
+        298,
         820
       ],
       [
-        306,
-        820
-      ],
-      [
-        316,
+        284,
         820
       ],
       [
         309,
         820
+      ],
+      [
+        347,
+        820
       ]
     ],
-    "referenceHash": "d10a41094e",
-    "thumbnailHash": "7d1ce25bff",
+    "referenceHash": "cdfff2c18d",
+    "thumbnailHash": "965c5fb961",
     "frameHashes": [
-      "a67503ed02",
-      "d636c6be40",
-      "202db9b26c",
-      "84a04e081f",
-      "23d6f4cba0",
-      "a0cd3636fc"
+      "e216ac535c",
+      "b9ee664186",
+      "9acd8aa636",
+      "112acc96a7",
+      "5622e17282",
+      "e08b0d4e63"
     ]
   },
   "barbell-back-squat": {
@@ -310,99 +310,7 @@
     ],
     "frameSizes": [
       [
-        361,
-        821
-      ],
-      [
-        330,
-        821
-      ],
-      [
-        297,
-        821
-      ],
-      [
-        305,
-        821
-      ],
-      [
-        278,
-        821
-      ],
-      [
-        344,
-        821
-      ]
-    ],
-    "referenceHash": "5014d89984",
-    "thumbnailHash": "3dc11ecf1d",
-    "frameHashes": [
-      "7174fa8ebf",
-      "26ab922c2a",
-      "d27b0c04f2",
-      "4f8d3da0a8",
-      "19293885f9",
-      "28e8e1ad6c"
-    ]
-  },
-  "barbell-hip-thrust": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        324,
-        821
-      ],
-      [
-        315,
-        821
-      ],
-      [
-        321,
-        821
-      ],
-      [
-        332,
-        821
-      ],
-      [
-        308,
-        821
-      ],
-      [
-        315,
-        821
-      ]
-    ],
-    "referenceHash": "95c76d5395",
-    "thumbnailHash": "d553fe1431",
-    "frameHashes": [
-      "1a6fd48e20",
-      "cf644c4665",
-      "8e05381f9c",
-      "f30830dd87",
-      "2d57b2eecb",
-      "32c0c6c9ad"
-    ]
-  },
-  "barbell-row": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        336,
-        821
-      ],
-      [
-        315,
+        349,
         821
       ],
       [
@@ -410,405 +318,351 @@
         821
       ],
       [
-        320,
+        317,
         821
       ],
       [
-        309,
+        293,
         821
       ],
       [
-        312,
+        282,
+        821
+      ],
+      [
+        344,
         821
       ]
     ],
-    "referenceHash": "d150e7314b",
-    "thumbnailHash": "cb675476ea",
+    "referenceHash": "dcd80f89fe",
+    "thumbnailHash": "47e0a4d203",
     "frameHashes": [
-      "c227bfacdd",
-      "41340ea218",
-      "ff7ecbcac4",
-      "dcd06c39e6",
-      "f688b88d71",
-      "b8845e894e"
+      "390d761349",
+      "5d87678d27",
+      "0fd4a7be76",
+      "adeda59183",
+      "120fbb677c",
+      "bedb3856de"
+    ]
+  },
+  "barbell-hip-thrust": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1910,
+      823
+    ],
+    "frameSizes": [
+      [
+        330,
+        823
+      ],
+      [
+        297,
+        823
+      ],
+      [
+        309,
+        823
+      ],
+      [
+        339,
+        823
+      ],
+      [
+        318,
+        823
+      ],
+      [
+        317,
+        823
+      ]
+    ],
+    "referenceHash": "b1760dbe17",
+    "thumbnailHash": "2ae74cb3d8",
+    "frameHashes": [
+      "165195baa9",
+      "10c6320065",
+      "3a13a4f756",
+      "1aacf63131",
+      "32affd2dde",
+      "e2251e7e1f"
+    ]
+  },
+  "barbell-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        353,
+        822
+      ],
+      [
+        312,
+        822
+      ],
+      [
+        309,
+        822
+      ],
+      [
+        317,
+        822
+      ],
+      [
+        303,
+        822
+      ],
+      [
+        320,
+        822
+      ]
+    ],
+    "referenceHash": "b6006fd70d",
+    "thumbnailHash": "acf76de643",
+    "frameHashes": [
+      "ef35d4959e",
+      "89a5144c7e",
+      "e7a873d889",
+      "a7501c6167",
+      "d097d01fdd",
+      "84d943b19a"
     ]
   },
   "bench-dip": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1942,
-      809
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        565,
-        809
+        489,
+        822
       ],
       [
-        445,
-        809
+        387,
+        822
       ],
       [
-        414,
-        809
+        472,
+        822
       ],
       [
-        477,
-        809
+        566,
+        822
       ]
     ],
-    "referenceHash": "f75fe6200c",
-    "thumbnailHash": "baa68d96d9",
+    "referenceHash": "7d516ffce9",
+    "thumbnailHash": "eaa9b4dbc7",
     "frameHashes": [
-      "d3d3e187d5",
-      "ce018ce16f",
-      "aded48953d",
-      "c3a9a57d95"
+      "016be356b1",
+      "85c2ccaf56",
+      "cd6da14f33",
+      "02ef9cd71f"
     ]
   },
   "bench-press": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      2172,
-      724
+      1916,
+      821
     ],
     "frameSizes": [
       [
-        371,
-        724
+        349,
+        821
       ],
       [
-        350,
-        724
+        324,
+        821
       ],
       [
-        369,
-        724
+        313,
+        821
       ],
       [
-        356,
-        724
+        329,
+        821
       ],
       [
-        375,
-        724
+        313,
+        821
       ],
       [
-        351,
-        724
+        288,
+        821
       ]
     ],
-    "referenceHash": "1e9c20ae4a",
-    "thumbnailHash": "e166e16940",
+    "referenceHash": "70059d24dd",
+    "thumbnailHash": "e5614e8946",
     "frameHashes": [
-      "05a9bbb992",
-      "0d11d32d2f",
-      "009f81b4f2",
-      "1751d76ee3",
-      "5d0efb9766",
-      "604dbfa285"
+      "8b181e51f5",
+      "9ec289c99f",
+      "f223408ac9",
+      "64386f3d0c",
+      "165849d8d6",
+      "08002a0afa"
     ]
   },
   "biceps-curl": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1913,
-      822
+      1919,
+      820
     ],
     "frameSizes": [
       [
-        494,
-        822
+        467,
+        820
       ],
       [
-        473,
-        822
+        459,
+        820
       ],
       [
-        456,
-        822
+        444,
+        820
       ],
       [
-        476,
-        822
+        464,
+        820
       ]
     ],
-    "referenceHash": "cecbd3fba6",
-    "thumbnailHash": "225a75e5e9",
+    "referenceHash": "929772ec68",
+    "thumbnailHash": "22218c3d51",
     "frameHashes": [
-      "8b1caec908",
-      "e3242e3396",
-      "9ec8a547dc",
-      "984e70c9d0"
+      "92519f3b51",
+      "c15f08cdac",
+      "3feba24b7e",
+      "5e61361526"
     ]
   },
   "bird-dog": {
     "frameCount": 3,
     "thumbnailFrame": 2,
     "referenceSize": [
-      1915,
-      821
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        509,
-        821
+        516,
+        823
       ],
       [
-        688,
-        821
+        669,
+        823
       ],
       [
-        686,
-        821
+        679,
+        823
       ]
     ],
-    "referenceHash": "d97f0bdb19",
-    "thumbnailHash": "ef06999cb4",
+    "referenceHash": "93b35374ea",
+    "thumbnailHash": "19450cd279",
     "frameHashes": [
-      "18f0a62cdd",
-      "5cac7626da",
-      "fb4b68c47d"
+      "ee1005d2e5",
+      "9776aff768",
+      "ca22a16e9d"
     ]
   },
   "bodyweight-squat": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1914,
-      822
+      1921,
+      819
     ],
     "frameSizes": [
       [
-        251,
-        822
+        277,
+        819
       ],
       [
-        348,
-        822
+        339,
+        819
       ],
       [
-        335,
-        822
+        321,
+        819
       ],
       [
-        336,
-        822
+        326,
+        819
       ],
       [
-        260,
-        822
+        316,
+        819
       ],
       [
-        251,
-        822
+        262,
+        819
       ]
     ],
-    "referenceHash": "662678efea",
-    "thumbnailHash": "e8ce470f08",
+    "referenceHash": "e4f11e297c",
+    "thumbnailHash": "46678bd036",
     "frameHashes": [
-      "2f218fbb0a",
-      "d0207dd8d9",
-      "2b0f1f50b2",
-      "00345742a3",
-      "bf4eecfd76",
-      "e62006fb1b"
+      "eec298b78a",
+      "04ef51ffb4",
+      "b37be1d175",
+      "31a2dd3ebe",
+      "268fdb1879",
+      "9dc077d7a6"
     ]
   },
   "bulgarian-split-squat": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      2172,
-      724
+      1923,
+      818
     ],
     "frameSizes": [
       [
-        360,
-        724
+        268,
+        818
       ],
       [
-        356,
-        724
+        337,
+        818
       ],
       [
-        351,
-        724
+        332,
+        818
       ],
       [
-        346,
-        724
+        335,
+        818
       ],
       [
-        393,
-        724
+        313,
+        818
       ],
       [
-        325,
-        724
+        338,
+        818
       ]
     ],
-    "referenceHash": "c2927da822",
-    "thumbnailHash": "e752889e62",
+    "referenceHash": "27f7da5ab9",
+    "thumbnailHash": "a57371182b",
     "frameHashes": [
-      "582cb1ab4c",
-      "8daa3af2ef",
-      "eff913cc6a",
-      "f64a44c258",
-      "e35ea89e6c",
-      "83ef1a3284"
+      "bf4b0f921c",
+      "70b4e484a9",
+      "e518b4dfc5",
+      "4ebedf891e",
+      "41da8b3b90",
+      "15481ed7ef"
     ]
   },
   "cable-curl": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1914,
-      822
-    ],
-    "frameSizes": [
-      [
-        409,
-        822
-      ],
-      [
-        408,
-        822
-      ],
-      [
-        391,
-        822
-      ],
-      [
-        391,
-        822
-      ]
-    ],
-    "referenceHash": "f59848bf94",
-    "thumbnailHash": "bf2819c8ee",
-    "frameHashes": [
-      "878a843cb0",
-      "464cd266d6",
-      "eba54a654d",
-      "3172bda0d8"
-    ]
-  },
-  "cable-fly": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        541,
-        821
-      ],
-      [
-        468,
-        821
-      ],
-      [
-        455,
-        821
-      ],
-      [
-        442,
-        821
-      ]
-    ],
-    "referenceHash": "09acb2cb92",
-    "thumbnailHash": "4d0c9757ef",
-    "frameHashes": [
-      "56e23d64b0",
-      "6c6bd93259",
-      "cc29dee1d7",
-      "a5ca35a3da"
-    ]
-  },
-  "cable-lateral-raise": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        400,
-        821
-      ],
-      [
-        441,
-        821
-      ],
-      [
-        460,
-        821
-      ],
-      [
-        457,
-        821
-      ]
-    ],
-    "referenceHash": "db063f7cbe",
-    "thumbnailHash": "58ea246c73",
-    "frameHashes": [
-      "8b7d517cdf",
-      "6cb6db0db6",
-      "f806353983",
-      "263ceac250"
-    ]
-  },
-  "cable-pull-through": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1947,
-      808
-    ],
-    "frameSizes": [
-      [
-        294,
-        808
-      ],
-      [
-        314,
-        808
-      ],
-      [
-        326,
-        808
-      ],
-      [
-        341,
-        808
-      ],
-      [
-        345,
-        808
-      ],
-      [
-        276,
-        808
-      ]
-    ],
-    "referenceHash": "5f4dac5b5a",
-    "thumbnailHash": "32c929688f",
-    "frameHashes": [
-      "ca0322b3aa",
-      "51980c2369",
-      "edc0d26a93",
-      "024245cf48",
-      "fb51464d27",
-      "c43ac086c2"
-    ]
-  },
-  "cable-rear-delt-fly": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
@@ -821,423 +675,174 @@
         823
       ],
       [
-        435,
+        425,
         823
       ],
       [
-        502,
+        405,
         823
       ],
       [
-        449,
+        426,
         823
       ]
     ],
-    "referenceHash": "70c83f79e1",
-    "thumbnailHash": "cf7cdc7af9",
+    "referenceHash": "485abb1585",
+    "thumbnailHash": "77c0d72189",
     "frameHashes": [
-      "b78e5cf424",
-      "825ae01f2e",
-      "c84b3c676a",
-      "5dcd083180"
+      "d923f8fbef",
+      "5f9876a9af",
+      "f9b9f158d8",
+      "a0bb744a95"
     ]
   },
-  "cable-row": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1713,
-      918
-    ],
-    "frameSizes": [
-      [
-        316,
-        918
-      ],
-      [
-        295,
-        918
-      ],
-      [
-        278,
-        918
-      ],
-      [
-        254,
-        918
-      ],
-      [
-        272,
-        918
-      ],
-      [
-        298,
-        918
-      ]
-    ],
-    "referenceHash": "be38c17b8b",
-    "thumbnailHash": "4d0eacd4a1",
-    "frameHashes": [
-      "6d962a68f9",
-      "406fa293d4",
-      "ba42aecb4e",
-      "f9008513e0",
-      "be04930662",
-      "1fb3bc3ac0"
-    ]
-  },
-  "cable-woodchop": {
+  "cable-fly": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1915,
-      821
+      1774,
+      887
     ],
     "frameSizes": [
       [
-        609,
-        821
+        496,
+        887
       ],
       [
-        378,
-        821
+        421,
+        887
       ],
       [
-        380,
-        821
+        423,
+        887
+      ],
+      [
+        432,
+        887
+      ]
+    ],
+    "referenceHash": "0968f2336c",
+    "thumbnailHash": "104434caa0",
+    "frameHashes": [
+      "0b22fe0c1d",
+      "72bb6fa917",
+      "82a49d6278",
+      "3df41366fb"
+    ]
+  },
+  "cable-lateral-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1868,
+      842
+    ],
+    "frameSizes": [
+      [
+        369,
+        842
       ],
       [
         417,
-        821
+        842
+      ],
+      [
+        462,
+        842
+      ],
+      [
+        469,
+        842
       ]
     ],
-    "referenceHash": "826c378164",
-    "thumbnailHash": "59007cb4cd",
+    "referenceHash": "85d062f1c2",
+    "thumbnailHash": "c26cce31ee",
     "frameHashes": [
-      "b0b9f777fb",
-      "fadb628729",
-      "db22082a91",
-      "c319538611"
+      "b1dfdb2c45",
+      "6cb0404157",
+      "0ea967cdab",
+      "dbbf3b3302"
     ]
   },
-  "chest-press-machine": {
+  "cable-pull-through": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1915,
-      821
+      1942,
+      809
     ],
     "frameSizes": [
       [
-        315,
-        821
-      ],
-      [
-        338,
-        821
-      ],
-      [
-        300,
-        821
-      ],
-      [
-        332,
-        821
-      ],
-      [
-        314,
-        821
-      ],
-      [
-        316,
-        821
-      ]
-    ],
-    "referenceHash": "157aa78fad",
-    "thumbnailHash": "9c52a9f72d",
-    "frameHashes": [
-      "cfc750bfb9",
-      "938f2da051",
-      "d4bde9f843",
-      "779c85f360",
-      "2a83af7058",
-      "eb32826fea"
-    ]
-  },
-  "chest-supported-row": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      2172,
-      724
-    ],
-    "frameSizes": [
-      [
-        380,
-        724
-      ],
-      [
-        358,
-        724
-      ],
-      [
-        351,
-        724
-      ],
-      [
-        343,
-        724
-      ],
-      [
-        353,
-        724
-      ],
-      [
-        387,
-        724
-      ]
-    ],
-    "referenceHash": "7a138d888a",
-    "thumbnailHash": "133f554a51",
-    "frameHashes": [
-      "0519540785",
-      "fc75060f52",
-      "cb926e949a",
-      "f93cac4665",
-      "51b74f3482",
-      "2ecad17ec7"
-    ]
-  },
-  "close-grip-bench-press": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      2034,
-      773
-    ],
-    "frameSizes": [
-      [
-        374,
-        773
-      ],
-      [
-        345,
-        773
+        319,
+        809
       ],
       [
         326,
-        773
+        809
       ],
       [
-        312,
-        773
+        326,
+        809
       ],
       [
-        321,
-        773
+        324,
+        809
       ],
       [
-        356,
-        773
-      ]
-    ],
-    "referenceHash": "ca6db0a3c7",
-    "thumbnailHash": "5413ad3db5",
-    "frameHashes": [
-      "26b874b5e7",
-      "02ea03ed74",
-      "ef652a43cb",
-      "8fccea9e97",
-      "d0303f469d",
-      "f62bf0471b"
-    ]
-  },
-  "close-grip-lat-pulldown": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        331,
-        821
-      ],
-      [
-        321,
-        821
-      ],
-      [
-        295,
-        821
-      ],
-      [
-        308,
-        821
-      ],
-      [
-        294,
-        821
-      ],
-      [
-        329,
-        821
-      ]
-    ],
-    "referenceHash": "b6be46b1f3",
-    "thumbnailHash": "389a6707c9",
-    "frameHashes": [
-      "1021cb27a0",
-      "529e6466cb",
-      "b6253eb86a",
-      "0ddeb4175f",
-      "8c839fcd8f",
-      "442b075432"
-    ]
-  },
-  "concentration-curl": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        494,
-        821
-      ],
-      [
-        482,
-        821
-      ],
-      [
-        473,
-        821
-      ],
-      [
-        466,
-        821
-      ]
-    ],
-    "referenceHash": "0625f615de",
-    "thumbnailHash": "a1c5726a2a",
-    "frameHashes": [
-      "806e3bef30",
-      "18ef4f6523",
-      "32c0d74b82",
-      "92c6a29e7d"
-    ]
-  },
-  "crunch": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1912,
-      823
-    ],
-    "frameSizes": [
-      [
-        537,
-        823
-      ],
-      [
-        475,
-        823
-      ],
-      [
-        460,
-        823
-      ],
-      [
-        440,
-        823
-      ]
-    ],
-    "referenceHash": "e2b7ad9457",
-    "thumbnailHash": "7c557fcad5",
-    "frameHashes": [
-      "087e626ef7",
-      "6e832859a1",
-      "83fcd2e50c",
-      "fa35304772"
-    ]
-  },
-  "db-floor-press": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        327,
-        821
-      ],
-      [
-        307,
-        821
-      ],
-      [
-        315,
-        821
-      ],
-      [
-        323,
-        821
-      ],
-      [
-        334,
-        821
+        338,
+        809
       ],
       [
         309,
-        821
+        809
       ]
     ],
-    "referenceHash": "963d11d996",
-    "thumbnailHash": "29dd515017",
+    "referenceHash": "5f5d06eaba",
+    "thumbnailHash": "e1c5f9cabb",
     "frameHashes": [
-      "9628828eb5",
-      "6a790427a1",
-      "73eac28452",
-      "25e592709b",
-      "23473fdc5c",
-      "8ba2b5948a"
+      "315d79a50b",
+      "b0e51ac1e1",
+      "a6f3eb6b76",
+      "97e3a0ff9a",
+      "a303e2002c",
+      "d096bfecdd"
     ]
   },
-  "dead-bug": {
-    "frameCount": 3,
-    "thumbnailFrame": 2,
+  "cable-rear-delt-fly": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1918,
-      820
+      1909,
+      824
     ],
     "frameSizes": [
       [
-        558,
-        820
+        181,
+        824
       ],
       [
-        698,
-        820
+        468,
+        824
       ],
       [
-        662,
-        820
+        752,
+        824
+      ],
+      [
+        462,
+        824
       ]
     ],
-    "referenceHash": "00827c1748",
-    "thumbnailHash": "1b1b32b8a3",
+    "referenceHash": "e4894d12c5",
+    "thumbnailHash": "8df7870205",
     "frameHashes": [
-      "0074493c07",
-      "1714b2ab6b",
-      "5aed8b1efb"
+      "b1ea57dbd7",
+      "ff4a52539e",
+      "7ef4a591b1",
+      "bc6d2d556b"
     ]
   },
-  "deadlift": {
+  "cable-row": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
@@ -1246,218 +851,164 @@
     ],
     "frameSizes": [
       [
-        336,
+        343,
         822
       ],
       [
-        313,
+        497,
         822
       ],
       [
-        300,
+        131,
         822
       ],
       [
-        291,
+        190,
         822
       ],
       [
-        301,
+        420,
         822
       ],
       [
-        320,
+        333,
         822
       ]
     ],
-    "referenceHash": "99d101f776",
-    "thumbnailHash": "b9e41d4602",
+    "referenceHash": "0475978abd",
+    "thumbnailHash": "74a75b5a53",
     "frameHashes": [
-      "1a56603aa5",
-      "f5cedd4877",
-      "c10028aae3",
-      "eec84c60aa",
-      "6e750f5797",
-      "99a7120078"
+      "53cbdd942a",
+      "e3606cc3f5",
+      "f7e256d1ae",
+      "d913e08744",
+      "2369d75494",
+      "3fb3377ce8"
     ]
   },
-  "decline-bench-press": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+  "cable-woodchop": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      2172,
-      724
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        372,
-        724
+        597,
+        822
       ],
       [
-        355,
-        724
+        317,
+        822
       ],
       [
-        368,
-        724
+        481,
+        822
       ],
       [
-        364,
-        724
-      ],
-      [
-        360,
-        724
-      ],
-      [
-        341,
-        724
+        421,
+        822
       ]
     ],
-    "referenceHash": "ce3d422dc1",
-    "thumbnailHash": "5f4698408f",
+    "referenceHash": "b01b020882",
+    "thumbnailHash": "3bf63e8e1a",
     "frameHashes": [
-      "c79717cca0",
-      "5a1ca85077",
-      "6bb516db51",
-      "ede05dced6",
-      "f041c999a5",
-      "3a66d246dd"
+      "394a9f8c76",
+      "735ad10f1f",
+      "8a69e3d8ad",
+      "7ff0e6ef5a"
     ]
   },
-  "decline-dumbbell-press": {
+  "chest-press-machine": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1915,
-      821
+      1912,
+      823
     ],
     "frameSizes": [
-      [
-        335,
-        821
-      ],
-      [
-        316,
-        821
-      ],
-      [
-        316,
-        821
-      ],
-      [
-        320,
-        821
-      ],
-      [
-        306,
-        821
-      ],
       [
         322,
-        821
-      ]
-    ],
-    "referenceHash": "ea58230cf2",
-    "thumbnailHash": "851009d017",
-    "frameHashes": [
-      "1a1a0a4b85",
-      "4c1abaf97e",
-      "f25009467b",
-      "d07eab63bb",
-      "0fdb42a9e7",
-      "d2d5f08109"
-    ]
-  },
-  "deficit-push-up": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        347,
-        821
+        823
       ],
       [
         331,
-        821
+        823
+      ],
+      [
+        302,
+        823
+      ],
+      [
+        335,
+        823
+      ],
+      [
+        304,
+        823
       ],
       [
         318,
-        821
-      ],
-      [
-        260,
-        821
-      ],
-      [
-        339,
-        821
-      ],
-      [
-        320,
-        821
+        823
       ]
     ],
-    "referenceHash": "bf361826b9",
-    "thumbnailHash": "4259e84eda",
+    "referenceHash": "391a104cb5",
+    "thumbnailHash": "4019ce43ae",
     "frameHashes": [
-      "46d72f2d4a",
-      "bab4a27d48",
-      "d4153cd284",
-      "9fd428afc6",
-      "632381b9c3",
-      "a69d253a81"
+      "7408401de1",
+      "746d5f4e3f",
+      "e1cbda93b3",
+      "729477cd79",
+      "a2e9c57b52",
+      "104636b5b9"
     ]
   },
-  "diamond-push-up": {
+  "chest-supported-row": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1915,
-      821
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        353,
-        821
+        322,
+        822
       ],
       [
-        327,
-        821
+        324,
+        822
       ],
       [
-        303,
-        821
+        319,
+        822
       ],
       [
-        294,
-        821
+        302,
+        822
       ],
       [
-        300,
-        821
+        308,
+        822
       ],
       [
-        338,
-        821
+        339,
+        822
       ]
     ],
-    "referenceHash": "bf5b662f18",
-    "thumbnailHash": "cde20a9b62",
+    "referenceHash": "2d6b109cd5",
+    "thumbnailHash": "ee55161327",
     "frameHashes": [
-      "1c7601f2ed",
-      "871f9c07a7",
-      "e36153c00e",
-      "4fff2a252f",
-      "9b43655ed2",
-      "dd36766eae"
+      "d28d7c0fe1",
+      "79e9f1e3ca",
+      "90983db361",
+      "da8d1eba4e",
+      "4ce193da74",
+      "28ad228f0d"
     ]
   },
-  "dip": {
+  "close-grip-bench-press": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
@@ -1466,15 +1017,368 @@
     ],
     "frameSizes": [
       [
-        328,
+        344,
         822
       ],
       [
-        317,
+        308,
         822
       ],
       [
-        305,
+        322,
+        822
+      ],
+      [
+        323,
+        822
+      ],
+      [
+        318,
+        822
+      ],
+      [
+        298,
+        822
+      ]
+    ],
+    "referenceHash": "37c4fa09e9",
+    "thumbnailHash": "3ea1116196",
+    "frameHashes": [
+      "cbcf804d71",
+      "f07201d3b2",
+      "4817778643",
+      "2a89897905",
+      "91190733ec",
+      "5b7d066ccc"
+    ]
+  },
+  "close-grip-lat-pulldown": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1893,
+      831
+    ],
+    "frameSizes": [
+      [
+        352,
+        831
+      ],
+      [
+        303,
+        831
+      ],
+      [
+        288,
+        831
+      ],
+      [
+        304,
+        831
+      ],
+      [
+        302,
+        831
+      ],
+      [
+        344,
+        831
+      ]
+    ],
+    "referenceHash": "a2a878c6c4",
+    "thumbnailHash": "4fefeceb4c",
+    "frameHashes": [
+      "f288283c39",
+      "6d5bdc7c90",
+      "64f43bad19",
+      "940778ca3a",
+      "9361ac6485",
+      "8ef10fc4b6"
+    ]
+  },
+  "concentration-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        494,
+        822
+      ],
+      [
+        459,
+        822
+      ],
+      [
+        446,
+        822
+      ],
+      [
+        483,
+        822
+      ]
+    ],
+    "referenceHash": "9de5fc8a8f",
+    "thumbnailHash": "b287b7e447",
+    "frameHashes": [
+      "8dc6259e26",
+      "7f6acfdfb0",
+      "00bd367568",
+      "64a44500be"
+    ]
+  },
+  "crunch": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1908,
+      824
+    ],
+    "frameSizes": [
+      [
+        514,
+        824
+      ],
+      [
+        468,
+        824
+      ],
+      [
+        445,
+        824
+      ],
+      [
+        481,
+        824
+      ]
+    ],
+    "referenceHash": "c672a00560",
+    "thumbnailHash": "63c3f09b87",
+    "frameHashes": [
+      "379cf205cc",
+      "4047cd0eda",
+      "17c79bbba6",
+      "6a0adc703e"
+    ]
+  },
+  "db-floor-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        329,
+        822
+      ],
+      [
+        315,
+        822
+      ],
+      [
+        325,
+        822
+      ],
+      [
+        307,
+        822
+      ],
+      [
+        323,
+        822
+      ],
+      [
+        315,
+        822
+      ]
+    ],
+    "referenceHash": "d1df1a3976",
+    "thumbnailHash": "7691e5dca1",
+    "frameHashes": [
+      "cebcf04cbc",
+      "445b29544e",
+      "b33cb31b03",
+      "f3f65f2a04",
+      "bb7ca0484b",
+      "d6bc77ee51"
+    ]
+  },
+  "dead-bug": {
+    "frameCount": 3,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1916,
+      821
+    ],
+    "frameSizes": [
+      [
+        559,
+        821
+      ],
+      [
+        689,
+        821
+      ],
+      [
+        668,
+        821
+      ]
+    ],
+    "referenceHash": "69560a8e44",
+    "thumbnailHash": "6880e8cb8b",
+    "frameHashes": [
+      "b6bdc618f6",
+      "c47aa5f44f",
+      "62969391ee"
+    ]
+  },
+  "deadlift": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        340,
+        822
+      ],
+      [
+        327,
+        822
+      ],
+      [
+        312,
+        822
+      ],
+      [
+        298,
+        822
+      ],
+      [
+        302,
+        822
+      ],
+      [
+        334,
+        822
+      ]
+    ],
+    "referenceHash": "3a1c47f7d9",
+    "thumbnailHash": "9f9e496ace",
+    "frameHashes": [
+      "9713b806e6",
+      "67863a5dfa",
+      "d38b326256",
+      "36fc6971f7",
+      "60e5333f31",
+      "0674fc02de"
+    ]
+  },
+  "decline-bench-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1984,
+      793
+    ],
+    "frameSizes": [
+      [
+        330,
+        793
+      ],
+      [
+        318,
+        793
+      ],
+      [
+        336,
+        793
+      ],
+      [
+        346,
+        793
+      ],
+      [
+        335,
+        793
+      ],
+      [
+        319,
+        793
+      ]
+    ],
+    "referenceHash": "f565648c66",
+    "thumbnailHash": "ca2b8f3dc3",
+    "frameHashes": [
+      "1ecf11da99",
+      "b3e19af2e8",
+      "e708525674",
+      "b1f1481ea2",
+      "03001b1e5b",
+      "d70061b06a"
+    ]
+  },
+  "decline-dumbbell-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1921,
+      819
+    ],
+    "frameSizes": [
+      [
+        346,
+        819
+      ],
+      [
+        320,
+        819
+      ],
+      [
+        313,
+        819
+      ],
+      [
+        318,
+        819
+      ],
+      [
+        322,
+        819
+      ],
+      [
+        302,
+        819
+      ]
+    ],
+    "referenceHash": "97944493e3",
+    "thumbnailHash": "b87b93f249",
+    "frameHashes": [
+      "264567cdd2",
+      "1b8b491e20",
+      "3adcd6b2eb",
+      "0d605e9e89",
+      "6dc1cb521e",
+      "e65e0b1633"
+    ]
+  },
+  "deficit-push-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        330,
         822
       ],
       [
@@ -1482,26 +1386,278 @@
         822
       ],
       [
-        293,
+        328,
         822
       ],
       [
-        336,
+        330,
+        822
+      ],
+      [
+        302,
+        822
+      ],
+      [
+        300,
         822
       ]
     ],
-    "referenceHash": "44db0be1be",
-    "thumbnailHash": "231333a7df",
+    "referenceHash": "cbe19bf738",
+    "thumbnailHash": "a816161e95",
     "frameHashes": [
-      "94ee2467fe",
-      "c9ae2ec48d",
-      "8bd2165f4a",
-      "d3e866bf3d",
-      "67e7a15461",
-      "bbfb6262b3"
+      "c0c11c04fa",
+      "d500a9401f",
+      "9a7650d9e8",
+      "30b2c83f88",
+      "d238f9f320",
+      "0880f9f8c9"
+    ]
+  },
+  "diamond-push-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        240,
+        822
+      ],
+      [
+        328,
+        822
+      ],
+      [
+        429,
+        822
+      ],
+      [
+        324,
+        822
+      ],
+      [
+        339,
+        822
+      ],
+      [
+        253,
+        822
+      ]
+    ],
+    "referenceHash": "49abf53f4b",
+    "thumbnailHash": "218a65d304",
+    "frameHashes": [
+      "a089187ed0",
+      "c7bc155d29",
+      "7de1ff4143",
+      "89c4af910f",
+      "c0553d8e79",
+      "74baa10591"
+    ]
+  },
+  "dip": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        328,
+        823
+      ],
+      [
+        310,
+        823
+      ],
+      [
+        270,
+        823
+      ],
+      [
+        325,
+        823
+      ],
+      [
+        314,
+        823
+      ],
+      [
+        365,
+        823
+      ]
+    ],
+    "referenceHash": "ee983503b1",
+    "thumbnailHash": "73c62d6661",
+    "frameHashes": [
+      "e7a7179366",
+      "cca31a4919",
+      "76f9e22e23",
+      "8194557d91",
+      "764ae32738",
+      "3c3a5719eb"
     ]
   },
   "dumbbell-bench-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        332,
+        822
+      ],
+      [
+        310,
+        822
+      ],
+      [
+        316,
+        822
+      ],
+      [
+        324,
+        822
+      ],
+      [
+        335,
+        822
+      ],
+      [
+        297,
+        822
+      ]
+    ],
+    "referenceHash": "0562b741bb",
+    "thumbnailHash": "a83d244d32",
+    "frameHashes": [
+      "ec5873df52",
+      "ce01402159",
+      "bb731f2869",
+      "bd7de8ec98",
+      "7866ba329f",
+      "78b3269947"
+    ]
+  },
+  "dumbbell-biceps-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1918,
+      820
+    ],
+    "frameSizes": [
+      [
+        348,
+        820
+      ],
+      [
+        363,
+        820
+      ],
+      [
+        340,
+        820
+      ],
+      [
+        354,
+        820
+      ]
+    ],
+    "referenceHash": "5cdb94a5a7",
+    "thumbnailHash": "840344343f",
+    "frameHashes": [
+      "372cc90900",
+      "c67596ebe6",
+      "723d82ee13",
+      "fc091ce82a"
+    ]
+  },
+  "dumbbell-fly": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1916,
+      821
+    ],
+    "frameSizes": [
+      [
+        488,
+        821
+      ],
+      [
+        455,
+        821
+      ],
+      [
+        505,
+        821
+      ],
+      [
+        468,
+        821
+      ]
+    ],
+    "referenceHash": "83597dc158",
+    "thumbnailHash": "60f5961674",
+    "frameHashes": [
+      "59ffb7621b",
+      "05459f5db2",
+      "ed7f1c1493",
+      "a586344f30"
+    ]
+  },
+  "dumbbell-rdl": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1910,
+      823
+    ],
+    "frameSizes": [
+      [
+        237,
+        823
+      ],
+      [
+        292,
+        823
+      ],
+      [
+        360,
+        823
+      ],
+      [
+        364,
+        823
+      ],
+      [
+        313,
+        823
+      ],
+      [
+        236,
+        823
+      ]
+    ],
+    "referenceHash": "9fc480eeb9",
+    "thumbnailHash": "04a2a96364",
+    "frameHashes": [
+      "73e1d8c96f",
+      "420f445355",
+      "df3439dce8",
+      "afada7ec22",
+      "6c554302ca",
+      "a4cfc17114"
+    ]
+  },
+  "dumbbell-row": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
@@ -1510,19 +1666,15 @@
     ],
     "frameSizes": [
       [
-        335,
+        348,
         821
       ],
       [
-        322,
+        312,
         821
       ],
       [
-        329,
-        821
-      ],
-      [
-        319,
+        311,
         821
       ],
       [
@@ -1530,131 +1682,23 @@
         821
       ],
       [
-        303,
+        326,
+        821
+      ],
+      [
+        311,
         821
       ]
     ],
-    "referenceHash": "e38a75a643",
-    "thumbnailHash": "24d9658833",
+    "referenceHash": "48cf13c160",
+    "thumbnailHash": "24d0c30d19",
     "frameHashes": [
-      "69beb84b73",
-      "c527a41676",
-      "82cdbc4040",
-      "ba8880a4d2",
-      "1986fc6194",
-      "cef31f4bb4"
-    ]
-  },
-  "dumbbell-biceps-curl": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        345,
-        821
-      ],
-      [
-        365,
-        821
-      ],
-      [
-        330,
-        821
-      ],
-      [
-        333,
-        821
-      ]
-    ],
-    "referenceHash": "04da83059a",
-    "thumbnailHash": "0e28f0b726",
-    "frameHashes": [
-      "e00cce47dc",
-      "f18a7dd32d",
-      "f7d11273c9",
-      "035a9d0713"
-    ]
-  },
-  "dumbbell-fly": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        457,
-        821
-      ],
-      [
-        478,
-        821
-      ],
-      [
-        553,
-        821
-      ],
-      [
-        427,
-        821
-      ]
-    ],
-    "referenceHash": "269149909d",
-    "thumbnailHash": "02bd416122",
-    "frameHashes": [
-      "d5180e1447",
-      "c5673e6949",
-      "edf6c33298",
-      "1d740c62c1"
-    ]
-  },
-  "dumbbell-row": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1774,
-      887
-    ],
-    "frameSizes": [
-      [
-        321,
-        887
-      ],
-      [
-        295,
-        887
-      ],
-      [
-        291,
-        887
-      ],
-      [
-        283,
-        887
-      ],
-      [
-        287,
-        887
-      ],
-      [
-        297,
-        887
-      ]
-    ],
-    "referenceHash": "6ce50337e4",
-    "thumbnailHash": "15431df5aa",
-    "frameHashes": [
-      "e948010c4a",
-      "75fd4e6065",
-      "7daae3a30b",
-      "3b6aa40214",
-      "3da1d81e33",
-      "581e399d5d"
+      "b324daae18",
+      "e19927c067",
+      "9eb881aca2",
+      "81622b8afb",
+      "1c60fe3539",
+      "c0c26ccefb"
     ]
   },
   "dumbbell-shoulder-press": {
@@ -1666,141 +1710,141 @@
     ],
     "frameSizes": [
       [
-        273,
+        321,
         822
       ],
       [
-        279,
+        300,
         822
       ],
       [
-        282,
+        275,
         822
       ],
       [
-        267,
+        250,
         822
       ],
       [
-        278,
+        303,
         822
       ],
       [
-        271,
+        314,
         822
       ]
     ],
-    "referenceHash": "e3c64382f8",
-    "thumbnailHash": "768cb13227",
+    "referenceHash": "0cfbbcf598",
+    "thumbnailHash": "1e3da7c09e",
     "frameHashes": [
-      "9ac6d58995",
-      "586622fcb0",
-      "c7f3cba00b",
-      "1fcdba9507",
-      "bba3e3d0b9",
-      "2c2c404593"
+      "88778d20bf",
+      "e8deabd048",
+      "c722e28ca1",
+      "026344737d",
+      "64854337d9",
+      "3089b3a391"
     ]
   },
   "dumbbell-shrug": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1912,
-      823
+      1774,
+      887
     ],
     "frameSizes": [
       [
-        309,
-        823
-      ],
-      [
-        305,
-        823
-      ],
-      [
-        305,
-        823
-      ],
-      [
         306,
-        823
+        887
+      ],
+      [
+        304,
+        887
+      ],
+      [
+        299,
+        887
+      ],
+      [
+        305,
+        887
       ]
     ],
-    "referenceHash": "c6b08a54a7",
-    "thumbnailHash": "249c7ef6ff",
+    "referenceHash": "148449d470",
+    "thumbnailHash": "3b7d472a8f",
     "frameHashes": [
-      "09cdcd8998",
-      "dc3c8c0b8f",
-      "f0c428ae42",
-      "2c1458517f"
+      "c7720d4326",
+      "2413d2c660",
+      "0e45aee441",
+      "55ed30c3e0"
     ]
   },
   "ez-bar-curl": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
-      822
+      1825,
+      862
     ],
     "frameSizes": [
       [
-        396,
-        822
+        448,
+        862
       ],
       [
-        388,
-        822
+        448,
+        862
       ],
       [
-        372,
-        822
+        419,
+        862
       ],
       [
-        386,
-        822
+        421,
+        862
       ]
     ],
-    "referenceHash": "593b1e51b3",
-    "thumbnailHash": "163e7c4c8a",
+    "referenceHash": "867da4c490",
+    "thumbnailHash": "d21c258d65",
     "frameHashes": [
-      "40d4aea06f",
-      "fe71df3ba9",
-      "c6600b3723",
-      "453e4dee16"
+      "da23654d62",
+      "315cc808e1",
+      "5252f6c363",
+      "f69a221bc9"
     ]
   },
   "face-pull": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1915,
-      821
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        492,
-        821
+        459,
+        822
       ],
       [
-        442,
-        821
+        460,
+        822
       ],
       [
-        464,
-        821
+        466,
+        822
       ],
       [
-        488,
-        821
+        493,
+        822
       ]
     ],
-    "referenceHash": "da6f6ebcfa",
-    "thumbnailHash": "56323b8e79",
+    "referenceHash": "935e075f00",
+    "thumbnailHash": "6ba8eddb34",
     "frameHashes": [
-      "691a1b400a",
-      "3066dbcf0c",
-      "6b3daf1f03",
-      "3170778010"
+      "bd4b2935b9",
+      "44ed59782c",
+      "a48dfbba03",
+      "1e3731e9b9"
     ]
   },
   "front-raise": {
@@ -1820,302 +1864,102 @@
         821
       ],
       [
-        407,
+        427,
         821
       ],
       [
-        350,
+        384,
         821
       ]
     ],
-    "referenceHash": "f4c1cc0cd5",
-    "thumbnailHash": "88a1ab2420",
+    "referenceHash": "c8eecfe8cf",
+    "thumbnailHash": "6be3dfbb51",
     "frameHashes": [
-      "3b1fa01b7e",
-      "291bf7c00a",
-      "8a378527e8",
-      "5aba3a6eaf"
+      "8f270ea450",
+      "def854506a",
+      "4bedf46464",
+      "d339bf30c5"
     ]
   },
   "front-squat": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1916,
-      821
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        363,
-        821
+        351,
+        823
       ],
       [
-        315,
-        821
+        299,
+        823
+      ],
+      [
+        314,
+        823
+      ],
+      [
+        291,
+        823
       ],
       [
         312,
-        821
+        823
       ],
       [
-        288,
-        821
-      ],
-      [
-        302,
-        821
-      ],
-      [
-        336,
-        821
+        345,
+        823
       ]
     ],
-    "referenceHash": "26c317e508",
-    "thumbnailHash": "034b2814c5",
+    "referenceHash": "7e9fa89fa4",
+    "thumbnailHash": "57d9fa8804",
     "frameHashes": [
-      "d2cefc0826",
-      "914f2223ae",
-      "0b14ed9c34",
-      "6c60782914",
-      "111529dff7",
-      "cc812536a6"
+      "8f270248be",
+      "73ee5edcc0",
+      "3aa0f11849",
+      "1cc872f232",
+      "4b091688b7",
+      "115d97a03e"
     ]
   },
   "glute-bridge": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        503,
-        821
-      ],
-      [
-        440,
-        821
-      ],
-      [
-        471,
-        821
-      ],
-      [
-        501,
-        821
-      ]
-    ],
-    "referenceHash": "8223c567b7",
-    "thumbnailHash": "e8312d9f0d",
-    "frameHashes": [
-      "eb97a89923",
-      "74534f79eb",
-      "64ba692785",
-      "a53584c9f6"
-    ]
-  },
-  "goblet-squat": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
       1916,
       821
     ],
     "frameSizes": [
       [
-        266,
+        486,
         821
       ],
       [
-        282,
+        464,
         821
       ],
       [
-        294,
+        468,
         821
       ],
       [
-        304,
-        821
-      ],
-      [
-        288,
-        821
-      ],
-      [
-        267,
+        498,
         821
       ]
     ],
-    "referenceHash": "51fdef951f",
-    "thumbnailHash": "b3ba2ee598",
+    "referenceHash": "e12fb20dfe",
+    "thumbnailHash": "960f2fc533",
     "frameHashes": [
-      "b70ca538f7",
-      "6a6a64340a",
-      "1e4befb04b",
-      "b6fcee56c5",
-      "9753b5bade",
-      "f09db8fa3b"
+      "8c8a53aa5e",
+      "ddc81d4b2b",
+      "ffd6d69b32",
+      "3c62ec8f64"
     ]
   },
-  "good-morning": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1913,
-      822
-    ],
-    "frameSizes": [
-      [
-        291,
-        822
-      ],
-      [
-        294,
-        822
-      ],
-      [
-        316,
-        822
-      ],
-      [
-        363,
-        822
-      ],
-      [
-        284,
-        822
-      ],
-      [
-        279,
-        822
-      ]
-    ],
-    "referenceHash": "c3ccefa705",
-    "thumbnailHash": "e02219dde2",
-    "frameHashes": [
-      "57ba2ebca2",
-      "66377658f5",
-      "b6b3456217",
-      "ab2e8395f5",
-      "4980ac4645",
-      "69d323de30"
-    ]
-  },
-  "hack-squat": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1913,
-      822
-    ],
-    "frameSizes": [
-      [
-        308,
-        822
-      ],
-      [
-        312,
-        822
-      ],
-      [
-        328,
-        822
-      ],
-      [
-        322,
-        822
-      ],
-      [
-        330,
-        822
-      ],
-      [
-        313,
-        822
-      ]
-    ],
-    "referenceHash": "86c2e3fc8d",
-    "thumbnailHash": "01b370f995",
-    "frameHashes": [
-      "247fc5858e",
-      "e2338497e9",
-      "66498e2dff",
-      "27f004df3a",
-      "50209161ab",
-      "d76c270a0f"
-    ]
-  },
-  "hammer-curl": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        295,
-        821
-      ],
-      [
-        286,
-        821
-      ],
-      [
-        273,
-        821
-      ],
-      [
-        292,
-        821
-      ]
-    ],
-    "referenceHash": "a3cb42dc8d",
-    "thumbnailHash": "00fd22b5e6",
-    "frameHashes": [
-      "adaf420b46",
-      "f9f7881208",
-      "75cecc6cfc",
-      "b07c699a21"
-    ]
-  },
-  "hanging-leg-raise": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        405,
-        821
-      ],
-      [
-        587,
-        821
-      ],
-      [
-        482,
-        821
-      ],
-      [
-        441,
-        821
-      ]
-    ],
-    "referenceHash": "85f6f18f00",
-    "thumbnailHash": "633dd89b9e",
-    "frameHashes": [
-      "c36ec91168",
-      "fa42a6933f",
-      "3ec2c83b79",
-      "14facb601c"
-    ]
-  },
-  "hip-thrust": {
+  "goblet-squat": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
@@ -2124,117 +1968,317 @@
     ],
     "frameSizes": [
       [
-        327,
+        268,
         822
       ],
       [
-        325,
+        286,
         822
       ],
       [
-        307,
+        297,
         822
       ],
       [
-        347,
+        300,
         822
       ],
       [
-        314,
+        291,
         822
       ],
       [
-        294,
+        269,
         822
       ]
     ],
-    "referenceHash": "2ee0bddcd5",
-    "thumbnailHash": "f0521b9d87",
+    "referenceHash": "a9f5fd8895",
+    "thumbnailHash": "513f9c2360",
     "frameHashes": [
-      "2d4b1d37eb",
-      "6d6624512f",
-      "9bfd69c6b1",
-      "06ccceff28",
-      "d990b7bb4e",
-      "64d7172ed5"
+      "694c3118e6",
+      "77374d774e",
+      "c36df782a4",
+      "830d976f5d",
+      "0ad179d9d3",
+      "6c38db829a"
     ]
   },
-  "incline-bench-press": {
+  "good-morning": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1915,
-      821
+      1921,
+      819
     ],
     "frameSizes": [
       [
-        359,
-        821
+        327,
+        819
       ],
       [
         311,
-        821
+        819
       ],
       [
-        328,
-        821
+        321,
+        819
       ],
       [
-        318,
-        821
+        349,
+        819
       ],
       [
-        312,
-        821
+        273,
+        819
       ],
       [
-        287,
-        821
+        310,
+        819
       ]
     ],
-    "referenceHash": "11de500d9f",
-    "thumbnailHash": "ef233bddab",
+    "referenceHash": "fe9b5371ff",
+    "thumbnailHash": "42e85b5f66",
     "frameHashes": [
-      "9056b02d85",
-      "39e69fde53",
-      "c88b521b1f",
-      "60d9ae9fe3",
-      "a0b481fd0a",
-      "d16833b5c6"
+      "9bec1d855e",
+      "36641abb6d",
+      "0b4e4fa510",
+      "dabe16645b",
+      "d6a0227bb7",
+      "e521b94a8d"
     ]
   },
-  "incline-dumbbell-curl": {
+  "hack-squat": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1869,
+      842
+    ],
+    "frameSizes": [
+      [
+        325,
+        842
+      ],
+      [
+        291,
+        842
+      ],
+      [
+        276,
+        842
+      ],
+      [
+        317,
+        842
+      ],
+      [
+        323,
+        842
+      ],
+      [
+        337,
+        842
+      ]
+    ],
+    "referenceHash": "96fcacafa1",
+    "thumbnailHash": "27423b85b4",
+    "frameHashes": [
+      "ff06f127b2",
+      "73929c4cd1",
+      "ba75d8a5a0",
+      "d655a629d8",
+      "180c0b1b18",
+      "203d1bb050"
+    ]
+  },
+  "hammer-curl": {
     "frameCount": 4,
     "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        296,
+        822
+      ],
+      [
+        299,
+        822
+      ],
+      [
+        281,
+        822
+      ],
+      [
+        292,
+        822
+      ]
+    ],
+    "referenceHash": "961caeb335",
+    "thumbnailHash": "7df0643252",
+    "frameHashes": [
+      "a54923dc87",
+      "42f0353acf",
+      "053ea59ef0",
+      "3c33252714"
+    ]
+  },
+  "hanging-leg-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1691,
+      930
+    ],
+    "frameSizes": [
+      [
+        324,
+        930
+      ],
+      [
+        499,
+        930
+      ],
+      [
+        448,
+        930
+      ],
+      [
+        420,
+        930
+      ]
+    ],
+    "referenceHash": "dbe21d1769",
+    "thumbnailHash": "fa8c19b600",
+    "frameHashes": [
+      "573be5b489",
+      "52e68fbbcb",
+      "26f3e9a8af",
+      "21590e01c3"
+    ]
+  },
+  "hip-thrust": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
     "referenceSize": [
       1912,
       823
     ],
     "frameSizes": [
       [
-        500,
+        312,
         823
       ],
       [
-        475,
+        339,
         823
       ],
       [
-        481,
+        232,
         823
       ],
       [
-        456,
+        404,
+        823
+      ],
+      [
+        324,
+        823
+      ],
+      [
+        301,
         823
       ]
     ],
-    "referenceHash": "8d9bfdb12b",
-    "thumbnailHash": "2ced094b5e",
+    "referenceHash": "c709cc748b",
+    "thumbnailHash": "56f1628b3a",
     "frameHashes": [
-      "b8f5e7fb76",
-      "e162c09705",
-      "d064a36fda",
-      "64ae615685"
+      "cff592ea37",
+      "86550c02a9",
+      "f0713a1f34",
+      "33119f191e",
+      "a1d4043aeb",
+      "3decb10a00"
+    ]
+  },
+  "incline-bench-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1919,
+      820
+    ],
+    "frameSizes": [
+      [
+        353,
+        820
+      ],
+      [
+        308,
+        820
+      ],
+      [
+        306,
+        820
+      ],
+      [
+        332,
+        820
+      ],
+      [
+        330,
+        820
+      ],
+      [
+        290,
+        820
+      ]
+    ],
+    "referenceHash": "7b47025cf5",
+    "thumbnailHash": "462b3b7c53",
+    "frameHashes": [
+      "931a75b08b",
+      "8b622227c9",
+      "fc57f78d54",
+      "a7c0459816",
+      "4f5c76494f",
+      "a03a94f8f1"
+    ]
+  },
+  "incline-dumbbell-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        483,
+        822
+      ],
+      [
+        464,
+        822
+      ],
+      [
+        472,
+        822
+      ],
+      [
+        477,
+        822
+      ]
+    ],
+    "referenceHash": "97f1412887",
+    "thumbnailHash": "016d858d4a",
+    "frameHashes": [
+      "7e9d7ca71a",
+      "ee1559340c",
+      "785112c53e",
+      "1a54080ed9"
     ]
   },
   "incline-dumbbell-press": {
@@ -2246,42 +2290,86 @@
     ],
     "frameSizes": [
       [
-        321,
+        353,
         821
       ],
       [
-        349,
+        303,
         821
       ],
       [
-        336,
+        317,
         821
       ],
       [
-        269,
+        341,
         821
       ],
       [
-        366,
+        304,
         821
       ],
       [
-        274,
+        297,
         821
       ]
     ],
-    "referenceHash": "473d662ffe",
-    "thumbnailHash": "e9939a11c5",
+    "referenceHash": "d9e2039e6d",
+    "thumbnailHash": "4880528c01",
     "frameHashes": [
-      "b296512cff",
-      "1b51309787",
-      "6b6f29a42d",
-      "72d451c5d7",
-      "2925f8fae4",
-      "43f1ab1e4b"
+      "139cb5ce4f",
+      "35162b5f5b",
+      "7879d3df2f",
+      "f0dbb3b378",
+      "2857d772cb",
+      "a0f32ffc70"
     ]
   },
   "incline-push-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1873,
+      840
+    ],
+    "frameSizes": [
+      [
+        331,
+        840
+      ],
+      [
+        306,
+        840
+      ],
+      [
+        315,
+        840
+      ],
+      [
+        297,
+        840
+      ],
+      [
+        309,
+        840
+      ],
+      [
+        315,
+        840
+      ]
+    ],
+    "referenceHash": "a34b1cc51c",
+    "thumbnailHash": "86fbf82380",
+    "frameHashes": [
+      "b127aa62ee",
+      "3f7d1e124d",
+      "0a7d7527e6",
+      "b2e324934c",
+      "528628f2cf",
+      "31d0dd832a"
+    ]
+  },
+  "inverted-row": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
@@ -2290,11 +2378,103 @@
     ],
     "frameSizes": [
       [
-        360,
+        343,
         821
       ],
       [
-        314,
+        298,
+        821
+      ],
+      [
+        317,
+        821
+      ],
+      [
+        323,
+        821
+      ],
+      [
+        349,
+        821
+      ],
+      [
+        285,
+        821
+      ]
+    ],
+    "referenceHash": "66689bd4c4",
+    "thumbnailHash": "766014fd3e",
+    "frameHashes": [
+      "ffad4430fb",
+      "fa809feffa",
+      "188a9413bd",
+      "31fa717091",
+      "5c1dd23fbc",
+      "ac85519a34"
+    ]
+  },
+  "kettlebell-swing": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1910,
+      823
+    ],
+    "frameSizes": [
+      [
+        243,
+        823
+      ],
+      [
+        328,
+        823
+      ],
+      [
+        386,
+        823
+      ],
+      [
+        330,
+        823
+      ],
+      [
+        235,
+        823
+      ],
+      [
+        335,
+        823
+      ]
+    ],
+    "referenceHash": "0e2fc266ce",
+    "thumbnailHash": "142fbab555",
+    "frameHashes": [
+      "05bef41284",
+      "31a9e7f1f2",
+      "293cebd46e",
+      "a677a1b810",
+      "17baeb2806",
+      "e5e502ddfc"
+    ]
+  },
+  "lat-pulldown": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        347,
+        821
+      ],
+      [
+        310,
+        821
+      ],
+      [
+        299,
         821
       ],
       [
@@ -2302,196 +2482,26 @@
         821
       ],
       [
-        318,
+        322,
         821
       ],
       [
-        286,
-        821
-      ],
-      [
-        326,
+        321,
         821
       ]
     ],
-    "referenceHash": "3530b5b3c0",
-    "thumbnailHash": "31fe664f40",
+    "referenceHash": "476fb97d4a",
+    "thumbnailHash": "a647af29b6",
     "frameHashes": [
-      "1fee9440c1",
-      "900de8c786",
-      "38e4f93334",
-      "34b131167b",
-      "d7177501ef",
-      "6c78a29232"
-    ]
-  },
-  "inverted-row": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1919,
-      820
-    ],
-    "frameSizes": [
-      [
-        341,
-        820
-      ],
-      [
-        326,
-        820
-      ],
-      [
-        330,
-        820
-      ],
-      [
-        284,
-        820
-      ],
-      [
-        297,
-        820
-      ],
-      [
-        341,
-        820
-      ]
-    ],
-    "referenceHash": "013c11e705",
-    "thumbnailHash": "29f739adbb",
-    "frameHashes": [
-      "508eaa9cc3",
-      "fcdbb74bcb",
-      "5b10c9e4db",
-      "376c370b4a",
-      "f3e747fbbb",
-      "2c1fa23e80"
-    ]
-  },
-  "kettlebell-swing": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1914,
-      822
-    ],
-    "frameSizes": [
-      [
-        307,
-        822
-      ],
-      [
-        279,
-        822
-      ],
-      [
-        343,
-        822
-      ],
-      [
-        342,
-        822
-      ],
-      [
-        309,
-        822
-      ],
-      [
-        291,
-        822
-      ]
-    ],
-    "referenceHash": "0571b8f3c9",
-    "thumbnailHash": "965ac22c48",
-    "frameHashes": [
-      "3f01b90bd4",
-      "a73d3f570d",
-      "1a9aa3342f",
-      "dae1278d2b",
-      "40571a5c2b",
-      "302695c6fe"
-    ]
-  },
-  "lat-pulldown": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      2172,
-      724
-    ],
-    "frameSizes": [
-      [
-        414,
-        724
-      ],
-      [
-        381,
-        724
-      ],
-      [
-        365,
-        724
-      ],
-      [
-        378,
-        724
-      ],
-      [
-        349,
-        724
-      ],
-      [
-        285,
-        724
-      ]
-    ],
-    "referenceHash": "8b151ec208",
-    "thumbnailHash": "7af6b7dd1d",
-    "frameHashes": [
-      "294b20456f",
-      "7de5b58907",
-      "23c5958fa6",
-      "b9c3e96b58",
-      "436d5090fa",
-      "738e7878b0"
+      "188b492c45",
+      "2517b67547",
+      "c1e3d4144f",
+      "c8af982f47",
+      "a969140dad",
+      "543593ee88"
     ]
   },
   "lateral-raise": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1836,
-      857
-    ],
-    "frameSizes": [
-      [
-        305,
-        857
-      ],
-      [
-        497,
-        857
-      ],
-      [
-        558,
-        857
-      ],
-      [
-        422,
-        857
-      ]
-    ],
-    "referenceHash": "1ff5c8dc2d",
-    "thumbnailHash": "3f0e8fac78",
-    "frameHashes": [
-      "7401599d21",
-      "95351746cb",
-      "743e391440",
-      "f2b1b4bd25"
-    ]
-  },
-  "leaning-lateral-raise": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
@@ -2500,29 +2510,63 @@
     ],
     "frameSizes": [
       [
-        453,
+        283,
         821
       ],
       [
-        490,
+        609,
         821
       ],
       [
-        475,
+        388,
         821
       ],
       [
-        493,
+        521,
         821
       ]
     ],
-    "referenceHash": "5cc4accc18",
-    "thumbnailHash": "831f5c5c82",
+    "referenceHash": "6fccbd134b",
+    "thumbnailHash": "4a924b45cc",
     "frameHashes": [
-      "3eeaa124ac",
-      "eac3869dac",
-      "38d3368963",
-      "4add694284"
+      "0c0a9446f3",
+      "bdc518c68c",
+      "ee7616831f",
+      "91138eac3d"
+    ]
+  },
+  "leaning-lateral-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        408,
+        822
+      ],
+      [
+        453,
+        822
+      ],
+      [
+        464,
+        822
+      ],
+      [
+        448,
+        822
+      ]
+    ],
+    "referenceHash": "3d1914b8c5",
+    "thumbnailHash": "01d013a5b2",
+    "frameHashes": [
+      "35876bc58b",
+      "9440b84b47",
+      "1f76cdac8c",
+      "b9a7c9d285"
     ]
   },
   "leg-extension": {
@@ -2534,29 +2578,29 @@
     ],
     "frameSizes": [
       [
-        446,
+        411,
         821
       ],
       [
-        476,
+        491,
         821
       ],
       [
-        499,
+        498,
         821
       ],
       [
-        458,
+        472,
         821
       ]
     ],
-    "referenceHash": "4b1fb53e15",
-    "thumbnailHash": "d9846be3b9",
+    "referenceHash": "ec2800c487",
+    "thumbnailHash": "e1b2559a92",
     "frameHashes": [
-      "327ed4f044",
-      "b814408009",
-      "41a1fdd238",
-      "3e1a1d0fcf"
+      "9b06de8c8e",
+      "518809270a",
+      "25dcf54ecf",
+      "7b42811cb6"
     ]
   },
   "leg-press": {
@@ -2572,209 +2616,19 @@
         821
       ],
       [
-        315,
+        318,
         821
       ],
       [
-        311,
+        317,
         821
       ],
       [
-        313,
+        301,
         821
       ],
       [
-        326,
-        821
-      ],
-      [
-        314,
-        821
-      ]
-    ],
-    "referenceHash": "a738f5c296",
-    "thumbnailHash": "7027be2aa4",
-    "frameHashes": [
-      "8aedb5196b",
-      "204188a6f3",
-      "ed9010e4a0",
-      "c61a6dbed7",
-      "15b41a377d",
-      "fb160a0d01"
-    ]
-  },
-  "leg-raise": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        529,
-        821
-      ],
-      [
-        441,
-        821
-      ],
-      [
-        385,
-        821
-      ],
-      [
-        560,
-        821
-      ]
-    ],
-    "referenceHash": "3e87fb1e5e",
-    "thumbnailHash": "0f0a28b28d",
-    "frameHashes": [
-      "db9663e952",
-      "069a0a209d",
-      "642ec5e61a",
-      "f89a1d5e68"
-    ]
-  },
-  "lying-leg-curl": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        493,
-        821
-      ],
-      [
-        470,
-        821
-      ],
-      [
-        447,
-        821
-      ],
-      [
-        480,
-        821
-      ]
-    ],
-    "referenceHash": "6cb7b75c97",
-    "thumbnailHash": "6bde2e56d1",
-    "frameHashes": [
-      "522060402b",
-      "2c076d695d",
-      "1fc6ea58e4",
-      "67ecb6d1c8"
-    ]
-  },
-  "machine-chest-fly": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        477,
-        821
-      ],
-      [
-        456,
-        821
-      ],
-      [
-        433,
-        821
-      ],
-      [
-        453,
-        821
-      ]
-    ],
-    "referenceHash": "1ebaf7585a",
-    "thumbnailHash": "9220ce91b8",
-    "frameHashes": [
-      "3666f76ec4",
-      "0afb8562fe",
-      "0244e6551c",
-      "966c61d082"
-    ]
-  },
-  "machine-row": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      2030,
-      775
-    ],
-    "frameSizes": [
-      [
-        361,
-        775
-      ],
-      [
-        339,
-        775
-      ],
-      [
-        308,
-        775
-      ],
-      [
-        329,
-        775
-      ],
-      [
-        353,
-        775
-      ],
-      [
-        340,
-        775
-      ]
-    ],
-    "referenceHash": "06db61371c",
-    "thumbnailHash": "79ad7e7bd9",
-    "frameHashes": [
-      "dca3c7b3af",
-      "31997aab53",
-      "702407145e",
-      "30830b9e5a",
-      "2ebdff523e",
-      "af4063d5ea"
-    ]
-  },
-  "machine-shoulder-press": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        350,
-        821
-      ],
-      [
-        322,
-        821
-      ],
-      [
-        309,
-        821
-      ],
-      [
-        306,
-        821
-      ],
-      [
-        304,
+        319,
         821
       ],
       [
@@ -2782,320 +2636,164 @@
         821
       ]
     ],
-    "referenceHash": "a1653a0eac",
-    "thumbnailHash": "283810a67d",
+    "referenceHash": "19223985a4",
+    "thumbnailHash": "0b228a4e31",
     "frameHashes": [
-      "bd829997a1",
-      "47f45dab9f",
-      "e17b7c076a",
-      "a7f9a7fa84",
-      "b494950b39",
-      "f2f7c53924"
+      "094d13887a",
+      "eede797ed1",
+      "8482127560",
+      "6195a3e6e2",
+      "8f978859b6",
+      "03105f07a6"
     ]
   },
-  "neutral-grip-lat-pulldown": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1983,
-      793
-    ],
-    "frameSizes": [
-      [
-        337,
-        793
-      ],
-      [
-        310,
-        793
-      ],
-      [
-        327,
-        793
-      ],
-      [
-        330,
-        793
-      ],
-      [
-        332,
-        793
-      ],
-      [
-        316,
-        793
-      ]
-    ],
-    "referenceHash": "d6e53ca3f3",
-    "thumbnailHash": "21521d8c66",
-    "frameHashes": [
-      "96c4e4e87e",
-      "61edb4ec0f",
-      "032f99bbea",
-      "b7f922ed53",
-      "63f6498e70",
-      "d91ca6eeb3"
-    ]
-  },
-  "one-arm-cable-row": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1914,
-      822
-    ],
-    "frameSizes": [
-      [
-        673,
-        822
-      ],
-      [
-        207,
-        822
-      ],
-      [
-        111,
-        822
-      ],
-      [
-        205,
-        822
-      ],
-      [
-        301,
-        822
-      ],
-      [
-        417,
-        822
-      ]
-    ],
-    "referenceHash": "4274b2079f",
-    "thumbnailHash": "255673f541",
-    "frameHashes": [
-      "60a3c15471",
-      "a3a71dab59",
-      "02f11e5049",
-      "3ce1301b9b",
-      "514fde3ea2",
-      "c403172f8d"
-    ]
-  },
-  "overhead-press": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      2172,
-      724
-    ],
-    "frameSizes": [
-      [
-        396,
-        724
-      ],
-      [
-        352,
-        724
-      ],
-      [
-        352,
-        724
-      ],
-      [
-        342,
-        724
-      ],
-      [
-        350,
-        724
-      ],
-      [
-        368,
-        724
-      ]
-    ],
-    "referenceHash": "5f7b3c0f9e",
-    "thumbnailHash": "faf6a8b90a",
-    "frameHashes": [
-      "4dbcc57ec1",
-      "af37560a43",
-      "7cb3419257",
-      "5f7e6dc3b3",
-      "5b80fd50ca",
-      "4e60b0f81b"
-    ]
-  },
-  "overhead-triceps-extension": {
+  "leg-raise": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1918,
-      820
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        219,
-        820
-      ],
-      [
-        239,
-        820
-      ],
-      [
-        257,
-        820
-      ],
-      [
-        218,
-        820
-      ]
-    ],
-    "referenceHash": "ef1c5a0bfb",
-    "thumbnailHash": "8abc8afc0f",
-    "frameHashes": [
-      "f31941cd53",
-      "4c47c5c6ce",
-      "77161aaabe",
-      "a5c31b1155"
-    ]
-  },
-  "pec-deck": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1914,
-      822
-    ],
-    "frameSizes": [
-      [
-        513,
-        822
+        520,
+        823
       ],
       [
         447,
-        822
+        823
       ],
       [
-        418,
-        822
+        362,
+        823
       ],
       [
-        507,
-        822
+        540,
+        823
       ]
     ],
-    "referenceHash": "64ad78e668",
-    "thumbnailHash": "7464564dc9",
+    "referenceHash": "a395733865",
+    "thumbnailHash": "8936cafd9b",
     "frameHashes": [
-      "c1bf8a3725",
-      "657ce764f0",
-      "06a8d4729c",
-      "a13216f48c"
+      "c12da1a2f9",
+      "dcfc83b58a",
+      "a4a180b179",
+      "1076082e5d"
     ]
   },
-  "plank": {
-    "frameCount": 2,
-    "thumbnailFrame": 2,
-    "referenceSize": [
-      2172,
-      724
-    ],
-    "frameSizes": [
-      [
-        1019,
-        724
-      ],
-      [
-        1081,
-        724
-      ]
-    ],
-    "referenceHash": "1d103cc573",
-    "thumbnailHash": "2b8b26e2a0",
-    "frameHashes": [
-      "0fea9db3ba",
-      "cef5e8a4ee"
-    ]
-  },
-  "preacher-curl": {
+  "lying-leg-curl": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1915,
-      821
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        490,
-        821
+        502,
+        822
       ],
       [
-        473,
-        821
+        462,
+        822
       ],
       [
-        449,
-        821
+        458,
+        822
       ],
       [
-        451,
-        821
+        492,
+        822
       ]
     ],
-    "referenceHash": "3f878e912f",
-    "thumbnailHash": "48fe6f7d2a",
+    "referenceHash": "06509db8d2",
+    "thumbnailHash": "098d901a93",
     "frameHashes": [
-      "aed109e156",
-      "ebcac11bea",
-      "5d3855fcc9",
-      "69aa0bdfa5"
+      "e54b9a318e",
+      "df3d0579cc",
+      "930847da26",
+      "ca82422a64"
     ]
   },
-  "pull-up": {
+  "machine-chest-fly": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        498,
+        822
+      ],
+      [
+        438,
+        822
+      ],
+      [
+        438,
+        822
+      ],
+      [
+        505,
+        822
+      ]
+    ],
+    "referenceHash": "7697e7f5ef",
+    "thumbnailHash": "a80f349988",
+    "frameHashes": [
+      "3a357ee2fe",
+      "7ae0c6b60b",
+      "2c945b56f7",
+      "b70c127fbc"
+    ]
+  },
+  "machine-row": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1904,
-      826
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        321,
-        826
+        339,
+        823
       ],
       [
-        290,
-        826
+        295,
+        823
       ],
       [
-        253,
-        826
+        308,
+        823
       ],
       [
-        414,
-        826
+        316,
+        823
       ],
       [
-        267,
-        826
+        330,
+        823
       ],
       [
-        359,
-        826
+        324,
+        823
       ]
     ],
-    "referenceHash": "b4c5d3f809",
-    "thumbnailHash": "2b8f809fa2",
+    "referenceHash": "22b043c868",
+    "thumbnailHash": "def1493da6",
     "frameHashes": [
-      "05950e3c57",
-      "84c884ebfa",
-      "1d41a11f9d",
-      "5c73b09602",
-      "81fc17ab92",
-      "bc6af3113a"
+      "7f6d0bd744",
+      "acf53bbb20",
+      "54f454aaba",
+      "f3fe311bd5",
+      "83fe3a23f3",
+      "0c97481832"
     ]
   },
-  "push-up": {
+  "machine-shoulder-press": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
@@ -3104,76 +2802,174 @@
     ],
     "frameSizes": [
       [
-        399,
+        324,
         820
       ],
       [
-        166,
+        323,
         820
       ],
       [
-        410,
+        319,
         820
       ],
       [
-        311,
+        309,
         820
       ],
       [
-        286,
+        309,
         820
       ],
       [
-        347,
+        335,
         820
       ]
     ],
-    "referenceHash": "f1acb6ddb1",
-    "thumbnailHash": "fcdb8ba7ca",
+    "referenceHash": "2248147ee3",
+    "thumbnailHash": "a2bc92e334",
     "frameHashes": [
-      "625aacc7e9",
-      "f9ad7108a4",
-      "61de35968c",
-      "a3d08b9ee5",
-      "0857794461",
-      "16a1b07c1f"
+      "a3965c2d12",
+      "fe2f2c7166",
+      "f2e7763484",
+      "f338e34684",
+      "4174334b3e",
+      "9422ef2f5d"
     ]
   },
-  "rear-delt-fly": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
+  "neutral-grip-lat-pulldown": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      2076,
+      758
+    ],
+    "frameSizes": [
+      [
+        365,
+        758
+      ],
+      [
+        340,
+        758
+      ],
+      [
+        332,
+        758
+      ],
+      [
+        332,
+        758
+      ],
+      [
+        334,
+        758
+      ],
+      [
+        373,
+        758
+      ]
+    ],
+    "referenceHash": "5eeba06cee",
+    "thumbnailHash": "6aae629c1a",
+    "frameHashes": [
+      "9b7098c1a0",
+      "347acb5057",
+      "3fbc91e113",
+      "04d04a88e6",
+      "4464a173bd",
+      "9c1adba923"
+    ]
+  },
+  "one-arm-cable-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1877,
+      838
+    ],
+    "frameSizes": [
+      [
+        320,
+        838
+      ],
+      [
+        317,
+        838
+      ],
+      [
+        308,
+        838
+      ],
+      [
+        315,
+        838
+      ],
+      [
+        311,
+        838
+      ],
+      [
+        306,
+        838
+      ]
+    ],
+    "referenceHash": "33750c8b76",
+    "thumbnailHash": "27b016436b",
+    "frameHashes": [
+      "024fab0580",
+      "0e0cd189f0",
+      "752b4571c5",
+      "aa84bb30df",
+      "b2e2e473ea",
+      "b4ca106c4f"
+    ]
+  },
+  "overhead-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
     "referenceSize": [
       1915,
       821
     ],
     "frameSizes": [
       [
-        376,
+        277,
         821
       ],
       [
-        497,
+        305,
         821
       ],
       [
-        559,
+        290,
         821
       ],
       [
-        413,
+        281,
+        821
+      ],
+      [
+        293,
+        821
+      ],
+      [
+        276,
         821
       ]
     ],
-    "referenceHash": "0bbc39d590",
-    "thumbnailHash": "d23a21bef4",
+    "referenceHash": "54ab21a81a",
+    "thumbnailHash": "4f0e5905fc",
     "frameHashes": [
-      "ca5aa77dac",
-      "e3cfeffd3f",
-      "d1440cbf3f",
-      "ca451274c4"
+      "3df2ac137f",
+      "532b0d5b55",
+      "ebafbda0ba",
+      "5dd4c1a733",
+      "c953df28c9",
+      "5477db5f18"
     ]
   },
-  "rear-delt-machine": {
+  "overhead-triceps-extension": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
@@ -3182,29 +2978,277 @@
     ],
     "frameSizes": [
       [
-        389,
+        207,
         822
       ],
       [
-        449,
+        253,
         822
       ],
       [
-        509,
+        259,
         822
       ],
       [
-        457,
+        227,
         822
       ]
     ],
-    "referenceHash": "cd51388bae",
-    "thumbnailHash": "4134f613f9",
+    "referenceHash": "ab78bb9b33",
+    "thumbnailHash": "32ce62f2ba",
     "frameHashes": [
-      "1e71d9615f",
-      "8ee356a682",
-      "027d353f6c",
-      "9b11f68dd8"
+      "d0f8a2b984",
+      "beab62b7b8",
+      "9a415a2549",
+      "1d3dd49d16"
+    ]
+  },
+  "pec-deck": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        519,
+        822
+      ],
+      [
+        444,
+        822
+      ],
+      [
+        418,
+        822
+      ],
+      [
+        500,
+        822
+      ]
+    ],
+    "referenceHash": "4aea5a7217",
+    "thumbnailHash": "dca2358999",
+    "frameHashes": [
+      "13a5cf478e",
+      "3f9a1b2064",
+      "4dabeb4938",
+      "580161f60e"
+    ]
+  },
+  "plank": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        905,
+        821
+      ],
+      [
+        951,
+        821
+      ]
+    ],
+    "referenceHash": "c68b5bce0c",
+    "thumbnailHash": "020f915857",
+    "frameHashes": [
+      "e990ad1597",
+      "5ea5ded45c"
+    ]
+  },
+  "preacher-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        476,
+        822
+      ],
+      [
+        479,
+        822
+      ],
+      [
+        469,
+        822
+      ],
+      [
+        482,
+        822
+      ]
+    ],
+    "referenceHash": "44d9aacc1c",
+    "thumbnailHash": "7d2bb6b032",
+    "frameHashes": [
+      "8c5b8657ff",
+      "4d4c5963da",
+      "bf66367a45",
+      "6e172a8130"
+    ]
+  },
+  "pull-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        395,
+        822
+      ],
+      [
+        242,
+        822
+      ],
+      [
+        307,
+        822
+      ],
+      [
+        266,
+        822
+      ],
+      [
+        373,
+        822
+      ],
+      [
+        331,
+        822
+      ]
+    ],
+    "referenceHash": "c152498358",
+    "thumbnailHash": "03c83621e5",
+    "frameHashes": [
+      "617e0d785f",
+      "fbc76078b8",
+      "412be7fb4e",
+      "1d26ca1003",
+      "83524dace5",
+      "bc5c880388"
+    ]
+  },
+  "push-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1918,
+      820
+    ],
+    "frameSizes": [
+      [
+        366,
+        820
+      ],
+      [
+        311,
+        820
+      ],
+      [
+        308,
+        820
+      ],
+      [
+        303,
+        820
+      ],
+      [
+        289,
+        820
+      ],
+      [
+        341,
+        820
+      ]
+    ],
+    "referenceHash": "d08be7cf49",
+    "thumbnailHash": "9ecc70e9d2",
+    "frameHashes": [
+      "5f755800bf",
+      "f658d53580",
+      "a78409acce",
+      "9ca5415ea4",
+      "6a64b7dd3b",
+      "189c1e0d79"
+    ]
+  },
+  "rear-delt-fly": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        358,
+        822
+      ],
+      [
+        524,
+        822
+      ],
+      [
+        532,
+        822
+      ],
+      [
+        455,
+        822
+      ]
+    ],
+    "referenceHash": "65bb48c332",
+    "thumbnailHash": "b7eac19fb7",
+    "frameHashes": [
+      "ba68505cc0",
+      "0baf04edb4",
+      "3dbc1955fc",
+      "8172e64164"
+    ]
+  },
+  "rear-delt-machine": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        463,
+        821
+      ],
+      [
+        439,
+        821
+      ],
+      [
+        527,
+        821
+      ],
+      [
+        481,
+        821
+      ]
+    ],
+    "referenceHash": "da7380657b",
+    "thumbnailHash": "cd7f35be52",
+    "frameHashes": [
+      "eccdc94c8b",
+      "61d7165018",
+      "ec11c1a9eb",
+      "20b6bf1352"
     ]
   },
   "reverse-crunch": {
@@ -3216,232 +3260,154 @@
     ],
     "frameSizes": [
       [
-        511,
+        449,
         822
       ],
       [
-        467,
+        503,
         822
       ],
       [
-        414,
+        420,
         822
       ],
       [
-        504,
+        526,
         822
       ]
     ],
-    "referenceHash": "bc6c8e8a6f",
-    "thumbnailHash": "b9027e35b3",
+    "referenceHash": "5920d576d1",
+    "thumbnailHash": "00f6b56dcb",
     "frameHashes": [
-      "3288ae4d61",
-      "eacd3d0839",
-      "4829db9020",
-      "fa513c9b43"
+      "4ead0f45ef",
+      "736d8cca87",
+      "6195603263",
+      "06eefe5375"
     ]
   },
   "reverse-lunge": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1919,
-      820
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        261,
-        820
+        268,
+        823
       ],
       [
-        348,
-        820
+        334,
+        823
       ],
       [
-        329,
-        820
+        322,
+        823
       ],
       [
-        310,
-        820
+        351,
+        823
       ],
       [
-        319,
-        820
+        285,
+        823
       ],
       [
-        275,
-        820
+        285,
+        823
       ]
     ],
-    "referenceHash": "8fb73424c4",
-    "thumbnailHash": "c9a4f778f8",
+    "referenceHash": "6cda5973a6",
+    "thumbnailHash": "005af0c634",
     "frameHashes": [
-      "37ecfb57f3",
-      "b611dd1531",
-      "e8245c953f",
-      "39657e5df9",
-      "8b00fb7e90",
-      "ac8783f0b3"
+      "453600ff4a",
+      "6011e62d85",
+      "10d974bb3a",
+      "48d37006c9",
+      "11435f6d97",
+      "defdfb6eb9"
     ]
   },
   "romanian-deadlift": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1774,
-      887
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        301,
-        887
+        304,
+        822
       ],
       [
-        274,
-        887
+        308,
+        822
       ],
       [
-        301,
-        887
+        329,
+        822
       ],
       [
-        341,
-        887
+        347,
+        822
       ],
       [
-        273,
-        887
+        285,
+        822
       ],
       [
-        281,
-        887
+        300,
+        822
       ]
     ],
-    "referenceHash": "429117abc1",
-    "thumbnailHash": "47931b6341",
+    "referenceHash": "452c901eb7",
+    "thumbnailHash": "782a019f12",
     "frameHashes": [
-      "2f47410f4c",
-      "c0fda9bed7",
-      "2692eb9493",
-      "9b1e11f4c6",
-      "18e492c517",
-      "66ef915022"
+      "20e61f5e42",
+      "a04e6f150b",
+      "495f9e0308",
+      "245319e633",
+      "b9e6f8ab68",
+      "4c3d3ebabf"
     ]
   },
   "rope-triceps-pushdown": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
-      822
+      1915,
+      821
     ],
     "frameSizes": [
       [
-        398,
-        822
+        423,
+        821
       ],
       [
-        426,
-        822
+        438,
+        821
       ],
       [
-        408,
-        822
+        439,
+        821
       ],
       [
-        407,
-        822
+        433,
+        821
       ]
     ],
-    "referenceHash": "26c3998e67",
-    "thumbnailHash": "564a28916b",
+    "referenceHash": "1ac8ea7a98",
+    "thumbnailHash": "c0d972ca74",
     "frameHashes": [
-      "e3774c009e",
-      "c33b0cb5bd",
-      "8eee035f70",
-      "c3ad8fb54f"
+      "94a5e61d83",
+      "43bc7d03a5",
+      "9e7f624ed0",
+      "c425a56dee"
     ]
   },
   "russian-twist": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1914,
-      822
-    ],
-    "frameSizes": [
-      [
-        483,
-        822
-      ],
-      [
-        489,
-        822
-      ],
-      [
-        462,
-        822
-      ],
-      [
-        444,
-        822
-      ]
-    ],
-    "referenceHash": "07ec27eb19",
-    "thumbnailHash": "489895e6ff",
-    "frameHashes": [
-      "5f08e26dc0",
-      "a1d1ffc213",
-      "54ab9a4f64",
-      "564d1296e6"
-    ]
-  },
-  "seated-cable-row": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1909,
-      824
-    ],
-    "frameSizes": [
-      [
-        360,
-        824
-      ],
-      [
-        311,
-        824
-      ],
-      [
-        303,
-        824
-      ],
-      [
-        298,
-        824
-      ],
-      [
-        316,
-        824
-      ],
-      [
-        321,
-        824
-      ]
-    ],
-    "referenceHash": "c667730738",
-    "thumbnailHash": "62f88ca19f",
-    "frameHashes": [
-      "5900daff5c",
-      "08dcd8788f",
-      "0bbcc5bcfd",
-      "a4f10bdd20",
-      "db81d2b0b1",
-      "0a8c08f791"
-    ]
-  },
-  "seated-calf-raise": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
@@ -3450,29 +3416,107 @@
     ],
     "frameSizes": [
       [
-        459,
+        487,
         822
       ],
       [
-        464,
+        483,
         822
       ],
       [
-        443,
+        454,
         822
       ],
       [
-        484,
+        347,
         822
       ]
     ],
-    "referenceHash": "cfc3665c3b",
-    "thumbnailHash": "01d81e1269",
+    "referenceHash": "575c49575a",
+    "thumbnailHash": "2f807de41d",
     "frameHashes": [
-      "269667ee60",
-      "4319d4e3da",
-      "7c982aaf1d",
-      "e24ee7a41b"
+      "d460ade385",
+      "f867ec164d",
+      "35ff516a4a",
+      "52a6ea654e"
+    ]
+  },
+  "seated-cable-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        362,
+        822
+      ],
+      [
+        299,
+        822
+      ],
+      [
+        306,
+        822
+      ],
+      [
+        300,
+        822
+      ],
+      [
+        309,
+        822
+      ],
+      [
+        338,
+        822
+      ]
+    ],
+    "referenceHash": "38b523e23a",
+    "thumbnailHash": "463daafa1c",
+    "frameHashes": [
+      "7ce5f3f2a4",
+      "0bee10bf34",
+      "336d4c1397",
+      "5a068cc50c",
+      "e868b5bfdb",
+      "ac2eff9b23"
+    ]
+  },
+  "seated-calf-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1918,
+      820
+    ],
+    "frameSizes": [
+      [
+        462,
+        820
+      ],
+      [
+        454,
+        820
+      ],
+      [
+        424,
+        820
+      ],
+      [
+        470,
+        820
+      ]
+    ],
+    "referenceHash": "c407b5b86f",
+    "thumbnailHash": "71ac5a5037",
+    "frameHashes": [
+      "c9aa5b2467",
+      "9ac678905c",
+      "be2015d68f",
+      "43ec0e1234"
     ]
   },
   "seated-dumbbell-shoulder-press": {
@@ -3484,51 +3528,231 @@
     ],
     "frameSizes": [
       [
-        358,
+        376,
         822
       ],
       [
-        321,
+        333,
         822
       ],
       [
-        318,
+        315,
         822
       ],
       [
-        296,
+        292,
         822
       ],
       [
-        303,
+        301,
         822
       ],
       [
-        318,
+        297,
         822
       ]
     ],
-    "referenceHash": "df5e23ee9b",
-    "thumbnailHash": "a2f0976c51",
+    "referenceHash": "10bf4120af",
+    "thumbnailHash": "2d21bbaaec",
     "frameHashes": [
-      "f7812be5a7",
-      "18c9a74519",
-      "1a3761367d",
-      "5ea01fc66f",
-      "5e86c7c9f1",
-      "a14a6b3be7"
+      "30b728ad96",
+      "d2513a559b",
+      "f6b3b97354",
+      "5d0ab31b65",
+      "c093f6c929",
+      "40a25cbd86"
     ]
   },
   "seated-leg-curl": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        457,
+        822
+      ],
+      [
+        411,
+        822
+      ],
+      [
+        412,
+        822
+      ],
+      [
+        454,
+        822
+      ]
+    ],
+    "referenceHash": "122ca6023d",
+    "thumbnailHash": "119b3abf76",
+    "frameHashes": [
+      "038fb8aeff",
+      "50502aaa2f",
+      "acf6a0b833",
+      "a73c7c0696"
+    ]
+  },
+  "shrug": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        483,
+        822
+      ],
+      [
+        470,
+        822
+      ],
+      [
+        466,
+        822
+      ],
+      [
+        480,
+        822
+      ]
+    ],
+    "referenceHash": "5363cf78ba",
+    "thumbnailHash": "0dbe6e260f",
+    "frameHashes": [
+      "b82dc7663c",
+      "6c5eec6def",
+      "af9dc9bba1",
+      "14fff15804"
+    ]
+  },
+  "side-plank": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        764,
+        822
+      ],
+      [
+        923,
+        822
+      ]
+    ],
+    "referenceHash": "cee0f4dd44",
+    "thumbnailHash": "9a838c1d37",
+    "frameHashes": [
+      "7dcd67a680",
+      "97cc9869ad"
+    ]
+  },
+  "single-arm-db-press": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
       1915,
       821
     ],
     "frameSizes": [
       [
-        495,
+        250,
+        821
+      ],
+      [
+        249,
+        821
+      ],
+      [
+        250,
+        821
+      ],
+      [
+        256,
+        821
+      ],
+      [
+        248,
+        821
+      ],
+      [
+        249,
+        821
+      ]
+    ],
+    "referenceHash": "240c151a31",
+    "thumbnailHash": "26afcb1409",
+    "frameHashes": [
+      "1b19d7bb3c",
+      "59c6377826",
+      "602767d417",
+      "660c21d27a",
+      "259aa6ee7e",
+      "0efd251877"
+    ]
+  },
+  "single-arm-db-row": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        342,
+        821
+      ],
+      [
+        321,
+        821
+      ],
+      [
+        322,
+        821
+      ],
+      [
+        301,
+        821
+      ],
+      [
+        296,
+        821
+      ],
+      [
+        333,
+        821
+      ]
+    ],
+    "referenceHash": "73d9d325ff",
+    "thumbnailHash": "1f19b56def",
+    "frameHashes": [
+      "6b911feeab",
+      "3e7f655510",
+      "98858a763a",
+      "72566693bd",
+      "f3f6c3d67a",
+      "0e066c95cc"
+    ]
+  },
+  "single-arm-triceps-pushdown": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1916,
+      821
+    ],
+    "frameSizes": [
+      [
+        460,
         821
       ],
       [
@@ -3536,7 +3760,7 @@
         821
       ],
       [
-        438,
+        425,
         821
       ],
       [
@@ -3544,162 +3768,304 @@
         821
       ]
     ],
-    "referenceHash": "1ea02772f1",
-    "thumbnailHash": "fa47cb99cf",
+    "referenceHash": "2fd4ec1a3e",
+    "thumbnailHash": "c98395c725",
     "frameHashes": [
-      "746819c5d6",
-      "922a907fee",
-      "93a9b793fb",
-      "2bbb5d6716"
+      "005cf66bb1",
+      "79dca5d224",
+      "6b6ef8ab7b",
+      "bae38bf25a"
     ]
   },
-  "shrug": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
+  "single-leg-hip-thrust": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        326,
+        823
+      ],
+      [
+        280,
+        823
+      ],
+      [
+        319,
+        823
+      ],
+      [
+        310,
+        823
+      ],
+      [
+        348,
+        823
+      ],
+      [
+        329,
+        823
+      ]
+    ],
+    "referenceHash": "ea5462f4da",
+    "thumbnailHash": "7cf51aa69f",
+    "frameHashes": [
+      "7872d5faea",
+      "6782d50418",
+      "8a902d5186",
+      "33e1695833",
+      "9c56515172",
+      "228d531d17"
+    ]
+  },
+  "single-leg-romanian-deadlift": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
     "referenceSize": [
       1915,
       821
     ],
     "frameSizes": [
       [
-        473,
+        215,
         821
       ],
       [
-        448,
+        373,
         821
       ],
       [
-        447,
+        342,
         821
       ],
       [
-        482,
+        411,
         821
-      ]
-    ],
-    "referenceHash": "0f13cc398e",
-    "thumbnailHash": "e035edb5fd",
-    "frameHashes": [
-      "326f4e88b4",
-      "ab8ef76cec",
-      "9cc8f7b23a",
-      "f8738648b1"
-    ]
-  },
-  "side-plank": {
-    "frameCount": 2,
-    "thumbnailFrame": 2,
-    "referenceSize": [
-      1672,
-      941
-    ],
-    "frameSizes": [
-      [
-        668,
-        941
-      ],
-      [
-        810,
-        941
-      ]
-    ],
-    "referenceHash": "d0c4c7ee34",
-    "thumbnailHash": "c575e64f72",
-    "frameHashes": [
-      "30c35c631f",
-      "341774f589"
-    ]
-  },
-  "single-arm-db-press": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1914,
-      822
-    ],
-    "frameSizes": [
-      [
-        292,
-        822
-      ],
-      [
-        253,
-        822
-      ],
-      [
-        253,
-        822
-      ],
-      [
-        274,
-        822
-      ],
-      [
-        256,
-        822
-      ],
-      [
-        293,
-        822
-      ]
-    ],
-    "referenceHash": "42da125433",
-    "thumbnailHash": "4f15cc944e",
-    "frameHashes": [
-      "4345acc532",
-      "085504ee93",
-      "e9e9ecf649",
-      "122e8abfba",
-      "116cdba0da",
-      "91e154b0bd"
-    ]
-  },
-  "single-arm-db-row": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1914,
-      822
-    ],
-    "frameSizes": [
-      [
-        345,
-        822
-      ],
-      [
-        330,
-        822
       ],
       [
         321,
+        821
+      ],
+      [
+        212,
+        821
+      ]
+    ],
+    "referenceHash": "8fe33c7951",
+    "thumbnailHash": "3d775a185b",
+    "frameHashes": [
+      "341c3d0276",
+      "4944716ad5",
+      "675f2e9a8c",
+      "70f5f19a70",
+      "49dec8d8be",
+      "1e83df332e"
+    ]
+  },
+  "skull-crusher": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        487,
         822
       ],
       [
-        307,
+        470,
         822
       ],
+      [
+        431,
+        822
+      ],
+      [
+        505,
+        822
+      ]
+    ],
+    "referenceHash": "2481aa5479",
+    "thumbnailHash": "54da618d7b",
+    "frameHashes": [
+      "66d24ced98",
+      "7184ed9ede",
+      "cb2cf8a99e",
+      "9e1ee8fafb"
+    ]
+  },
+  "smith-machine-squat": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
       [
         311,
         822
       ],
       [
-        294,
+        323,
+        822
+      ],
+      [
+        316,
+        822
+      ],
+      [
+        306,
+        822
+      ],
+      [
+        315,
+        822
+      ],
+      [
+        342,
         822
       ]
     ],
-    "referenceHash": "cda302a914",
-    "thumbnailHash": "21f45e41ce",
+    "referenceHash": "3135ca24ac",
+    "thumbnailHash": "d3b5d5217c",
     "frameHashes": [
-      "3c37e4ec6c",
-      "be69f45a8e",
-      "912d21b5d8",
-      "2f42f156d3",
-      "bf74f16da4",
-      "62a5874d71"
+      "3a3eb821b6",
+      "2933669aba",
+      "3ca1d48fad",
+      "d7ca7c7677",
+      "566306166e",
+      "33cadb347a"
     ]
   },
-  "single-arm-triceps-pushdown": {
+  "split-squat": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        329,
+        822
+      ],
+      [
+        316,
+        822
+      ],
+      [
+        291,
+        822
+      ],
+      [
+        300,
+        822
+      ],
+      [
+        317,
+        822
+      ],
+      [
+        332,
+        822
+      ]
+    ],
+    "referenceHash": "5e39cc8659",
+    "thumbnailHash": "699630a396",
+    "frameHashes": [
+      "ad42be0639",
+      "79b9d1c08c",
+      "05e15f8c56",
+      "b8fd6de1e6",
+      "13ffc08882",
+      "7619a670aa"
+    ]
+  },
+  "standing-calf-raise": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1918,
+      820
+    ],
+    "frameSizes": [
+      [
+        325,
+        820
+      ],
+      [
+        325,
+        820
+      ],
+      [
+        328,
+        820
+      ],
+      [
+        321,
+        820
+      ]
+    ],
+    "referenceHash": "5c149e102e",
+    "thumbnailHash": "0de2da677b",
+    "frameHashes": [
+      "1ed1d2942c",
+      "352d54c475",
+      "b1c7d66411",
+      "e358d71085"
+    ]
+  },
+  "step-up": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        339,
+        822
+      ],
+      [
+        301,
+        822
+      ],
+      [
+        308,
+        822
+      ],
+      [
+        281,
+        822
+      ],
+      [
+        333,
+        822
+      ],
+      [
+        300,
+        822
+      ]
+    ],
+    "referenceHash": "5a9dd6be94",
+    "thumbnailHash": "af3b9bfd74",
+    "frameHashes": [
+      "ddbd1eed26",
+      "a892faa032",
+      "31a47941ca",
+      "ece33e169d",
+      "eeece37076",
+      "f0a067bd71"
+    ]
+  },
+  "straight-arm-pulldown": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
@@ -3712,272 +4078,28 @@
         822
       ],
       [
+        477,
+        822
+      ],
+      [
+        471,
+        822
+      ],
+      [
         441,
         822
-      ],
-      [
-        393,
-        822
-      ],
-      [
-        431,
-        822
       ]
     ],
-    "referenceHash": "73c03aeec5",
-    "thumbnailHash": "a9c6d09a64",
+    "referenceHash": "3d048145cb",
+    "thumbnailHash": "4e107db1f0",
     "frameHashes": [
-      "d2f96f63d0",
-      "b6a07f3182",
-      "ebed72e470",
-      "d888cb3553"
+      "ff1f45ea1d",
+      "9ae51b3c66",
+      "e4ebbcc6bc",
+      "4345231a11"
     ]
   },
-  "single-leg-hip-thrust": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      2032,
-      774
-    ],
-    "frameSizes": [
-      [
-        324,
-        774
-      ],
-      [
-        338,
-        774
-      ],
-      [
-        295,
-        774
-      ],
-      [
-        368,
-        774
-      ],
-      [
-        390,
-        774
-      ],
-      [
-        317,
-        774
-      ]
-    ],
-    "referenceHash": "257b1f7c9b",
-    "thumbnailHash": "a30f329ecd",
-    "frameHashes": [
-      "3ef8001542",
-      "1624eeb2c2",
-      "9a8a41673d",
-      "ca95f45995",
-      "7d0a72b48f",
-      "a9b1ca4179"
-    ]
-  },
-  "single-leg-romanian-deadlift": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        221,
-        821
-      ],
-      [
-        327,
-        821
-      ],
-      [
-        402,
-        821
-      ],
-      [
-        293,
-        821
-      ],
-      [
-        393,
-        821
-      ],
-      [
-        227,
-        821
-      ]
-    ],
-    "referenceHash": "687ede49bc",
-    "thumbnailHash": "07f978f429",
-    "frameHashes": [
-      "1262f25c64",
-      "dae53e3727",
-      "cfc846c99a",
-      "8bf390ff1e",
-      "4c32519978",
-      "7714930f1b"
-    ]
-  },
-  "skull-crusher": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1918,
-      820
-    ],
-    "frameSizes": [
-      [
-        485,
-        820
-      ],
-      [
-        461,
-        820
-      ],
-      [
-        474,
-        820
-      ],
-      [
-        483,
-        820
-      ]
-    ],
-    "referenceHash": "03e971ae9c",
-    "thumbnailHash": "5537e2d88e",
-    "frameHashes": [
-      "5d558156f5",
-      "1202bdaea1",
-      "65ef72fa1f",
-      "548c79208f"
-    ]
-  },
-  "smith-machine-squat": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      2103,
-      748
-    ],
-    "frameSizes": [
-      [
-        356,
-        748
-      ],
-      [
-        347,
-        748
-      ],
-      [
-        348,
-        748
-      ],
-      [
-        335,
-        748
-      ],
-      [
-        335,
-        748
-      ],
-      [
-        379,
-        748
-      ]
-    ],
-    "referenceHash": "2a17efa6a3",
-    "thumbnailHash": "8bb5586930",
-    "frameHashes": [
-      "c76246cc9e",
-      "dc14d7c82b",
-      "82c62988c1",
-      "8b38c8574c",
-      "fea3116965",
-      "abc1b94e77"
-    ]
-  },
-  "split-squat": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1914,
-      822
-    ],
-    "frameSizes": [
-      [
-        321,
-        822
-      ],
-      [
-        317,
-        822
-      ],
-      [
-        314,
-        822
-      ],
-      [
-        313,
-        822
-      ],
-      [
-        316,
-        822
-      ],
-      [
-        327,
-        822
-      ]
-    ],
-    "referenceHash": "25761cec90",
-    "thumbnailHash": "646209765d",
-    "frameHashes": [
-      "14812d742c",
-      "0dc4970931",
-      "d46ac742d9",
-      "36cf1ee3d1",
-      "09507fe486",
-      "d0d63eb59a"
-    ]
-  },
-  "standing-calf-raise": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1914,
-      822
-    ],
-    "frameSizes": [
-      [
-        369,
-        822
-      ],
-      [
-        370,
-        822
-      ],
-      [
-        372,
-        822
-      ],
-      [
-        369,
-        822
-      ]
-    ],
-    "referenceHash": "d6467eac86",
-    "thumbnailHash": "9d074523d4",
-    "frameHashes": [
-      "9520a7ed29",
-      "584f650f8b",
-      "e045e025c5",
-      "59ed6cd8d1"
-    ]
-  },
-  "step-up": {
+  "sumo-deadlift": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
@@ -3986,161 +4108,83 @@
     ],
     "frameSizes": [
       [
-        323,
+        367,
         821
       ],
       [
-        305,
+        326,
         821
       ],
       [
-        269,
+        321,
         821
       ],
       [
-        230,
+        286,
         821
       ],
       [
-        350,
-        821
-      ],
-      [
-        216,
-        821
-      ]
-    ],
-    "referenceHash": "ca577c773d",
-    "thumbnailHash": "324990f5d4",
-    "frameHashes": [
-      "358cdecb81",
-      "c2011a78de",
-      "4b82d7dbae",
-      "b9e22e1b1a",
-      "ee5ccbf5e0",
-      "76664bb16f"
-    ]
-  },
-  "straight-arm-pulldown": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        473,
-        821
-      ],
-      [
-        443,
-        821
-      ],
-      [
-        440,
-        821
-      ],
-      [
-        448,
-        821
-      ]
-    ],
-    "referenceHash": "a64b7410c8",
-    "thumbnailHash": "37491aeecd",
-    "frameHashes": [
-      "e5dbd12873",
-      "1b1d2bc158",
-      "7040849c28",
-      "0ab3221919"
-    ]
-  },
-  "sumo-deadlift": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1915,
-      821
-    ],
-    "frameSizes": [
-      [
-        383,
+        287,
         821
       ],
       [
         329,
         821
-      ],
-      [
-        310,
-        821
-      ],
-      [
-        301,
-        821
-      ],
-      [
-        298,
-        821
-      ],
-      [
-        294,
-        821
       ]
     ],
-    "referenceHash": "1299cacdca",
-    "thumbnailHash": "4e22667d20",
+    "referenceHash": "2b04a7dd4d",
+    "thumbnailHash": "8d619f403c",
     "frameHashes": [
-      "fd22a8e305",
-      "05fe45e0a5",
-      "bc4357c75f",
-      "30eed32650",
-      "be3cb6dcae",
-      "1856f71ab4"
+      "08dd656e55",
+      "2b27972977",
+      "6169469d00",
+      "553c11a9da",
+      "880d87823e",
+      "5c309b6b8b"
     ]
   },
   "t-bar-row": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1918,
-      820
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        341,
-        820
+        299,
+        822
       ],
       [
-        313,
-        820
-      ],
-      [
-        298,
-        820
-      ],
-      [
-        318,
-        820
+        297,
+        822
       ],
       [
         308,
-        820
+        822
       ],
       [
-        340,
-        820
+        333,
+        822
+      ],
+      [
+        319,
+        822
+      ],
+      [
+        313,
+        822
       ]
     ],
-    "referenceHash": "175b468397",
-    "thumbnailHash": "ca9533b0c1",
+    "referenceHash": "c2af5fa394",
+    "thumbnailHash": "e9adde0ed7",
     "frameHashes": [
-      "17cec3f6fe",
-      "c6f2c5de9b",
-      "4b0598ad0b",
-      "580164081a",
-      "2c191b2b3c",
-      "0781e92a21"
+      "989d872da9",
+      "1c192ff9f5",
+      "5199be082f",
+      "008ec71a79",
+      "2199dcb206",
+      "a32e65b3db"
     ]
   },
   "tempo-bodyweight-squat": {
@@ -4156,69 +4200,69 @@
         823
       ],
       [
-        317,
-        823
-      ],
-      [
         351,
         823
       ],
       [
-        301,
+        317,
         823
       ],
       [
-        318,
+        335,
         823
       ],
       [
-        246,
+        269,
+        823
+      ],
+      [
+        255,
         823
       ]
     ],
-    "referenceHash": "e29791c824",
-    "thumbnailHash": "1b4d9eb9b4",
+    "referenceHash": "a9fc196683",
+    "thumbnailHash": "3ad6784138",
     "frameHashes": [
-      "5e97dbd28e",
-      "246a77a1ca",
-      "9dfdc605d7",
-      "b80ce8aa3a",
-      "f91367e036",
-      "5022fc742e"
+      "9edbc4ed7e",
+      "7d3f98175c",
+      "0a06956127",
+      "76b97a5804",
+      "3d2558a3bf",
+      "e1895b857c"
     ]
   },
   "triceps-pushdown": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1908,
-      824
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        442,
-        824
+        447,
+        822
       ],
       [
-        431,
-        824
+        447,
+        822
       ],
       [
-        432,
-        824
+        445,
+        822
       ],
       [
-        435,
-        824
+        448,
+        822
       ]
     ],
-    "referenceHash": "285b2b94d3",
-    "thumbnailHash": "4100bd35aa",
+    "referenceHash": "aa78a8dc42",
+    "thumbnailHash": "4d4dac58ac",
     "frameHashes": [
-      "989219679a",
-      "316a0fe53b",
-      "f7118db1f9",
-      "d6717da07b"
+      "9a18f51cab",
+      "d248b4390d",
+      "d485c4baf5",
+      "72fc4a5fe1"
     ]
   },
   "upright-row": {
@@ -4230,117 +4274,117 @@
     ],
     "frameSizes": [
       [
-        467,
+        433,
         822
       ],
       [
-        460,
+        434,
         822
       ],
       [
-        466,
+        432,
         822
       ],
       [
-        465,
+        434,
         822
       ]
     ],
-    "referenceHash": "132cb0f2ff",
-    "thumbnailHash": "556cf00247",
+    "referenceHash": "86712374d6",
+    "thumbnailHash": "04a229dbed",
     "frameHashes": [
-      "953a684cf1",
-      "feb8606b08",
-      "fe5309351e",
-      "363095cbfb"
+      "8b574617e1",
+      "db8252735d",
+      "2c6a16ffe7",
+      "062e51348d"
     ]
   },
   "walking-lunge": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      1915,
-      821
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        256,
-        821
+        259,
+        822
       ],
       [
-        389,
-        821
+        378,
+        822
       ],
       [
-        323,
-        821
+        347,
+        822
       ],
       [
         300,
-        821
+        822
       ],
       [
-        341,
-        821
+        365,
+        822
       ],
       [
-        262,
-        821
+        259,
+        822
       ]
     ],
-    "referenceHash": "d0c56aaa27",
-    "thumbnailHash": "d4008089f1",
+    "referenceHash": "d8020ce75f",
+    "thumbnailHash": "6fe3763da0",
     "frameHashes": [
-      "44c0789b49",
-      "7963c4745f",
-      "61849f6755",
-      "b0d144e173",
-      "e09cf45d78",
-      "312e1a25ec"
+      "6167976cd2",
+      "427caaa946",
+      "82cde27409",
+      "e91486fd86",
+      "df6a12d066",
+      "dc143aba89"
     ]
   },
   "wide-grip-lat-pulldown": {
     "frameCount": 6,
     "thumbnailFrame": 4,
     "referenceSize": [
-      2067,
-      761
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        356,
-        761
+        318,
+        822
       ],
       [
-        358,
-        761
+        296,
+        822
+      ],
+      [
+        301,
+        822
       ],
       [
         327,
-        761
+        822
       ],
       [
-        355,
-        761
+        336,
+        822
       ],
       [
-        343,
-        761
-      ],
-      [
-        328,
-        761
+        335,
+        822
       ]
     ],
-    "referenceHash": "2a80fd3a82",
-    "thumbnailHash": "a5963479d9",
+    "referenceHash": "97ac90bec8",
+    "thumbnailHash": "2b2cb98016",
     "frameHashes": [
-      "aec0a2afef",
-      "5d2432a3f3",
-      "16579258a6",
-      "f4112f114a",
-      "d3a147459f",
-      "9c669feded"
+      "685ccfbff7",
+      "ba6a980285",
+      "bfab882084",
+      "9e0a38f0ef",
+      "8646f24690",
+      "5044244ac2"
     ]
   }
 }

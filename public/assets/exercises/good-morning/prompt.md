@@ -23,8 +23,13 @@ artwork. Even neutral studio lighting from the front-left. Soft form shading
 only — no cast shadow on the ground, no dark occlusion pooling.
 
 BACKGROUND:
-Pure flat white #FFFFFF, completely empty. No floor, no ground line, no shadow,
-no gym environment, no gradient, no vignette, no frame or border.
+Single flat solid chroma-key magenta #FF00FF, completely uniform and empty.
+No floor, no ground line, no shadow cast onto the background, no gym
+environment, no gradient, no vignette, no frame or border. The magenta is
+ONLY the background: no magenta may appear anywhere in the artwork itself —
+not in skin, hair, clothing, or equipment. No drop shadow, no glow, and no
+halo of any kind may surround the figure or equipment — artwork edges end
+crisply at the artwork, with pure background touching them directly.
 
 CHARACTER (must be the same woman in every image and every frame):
 One adult woman, athletic and lean, visible but not exaggerated muscle
@@ -44,21 +49,24 @@ No visible socks, no jewelry, no watch, no logos, no text or graphics on any
 clothing.
 
 EQUIPMENT RENDERING:
-Matte near-black metal #1D2025 with brushed chrome shafts and handles #EFEFEF.
-Upholstery and bench pads matte near-black #1D2025. Simple, clean, realistic
+Matte dark charcoal metal #1D2025 with brushed chrome shafts and handles
+#EFEFEF. Weight plates are mid-value charcoal gray #4A5058, never pure black.
+Upholstery and bench pads matte near-black #1D2025. Every dark surface
+carries a subtle cool rim light along its upper and outer edges so equipment
+stays legible against dark app backgrounds. Simple, clean, realistic
 proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear white gaps between them. No figure overlaps,
+scale, evenly spaced with clear background gaps between them. No figure overlaps,
 touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous white margin above and below. Eye-level camera at
+including both feet. Generous background margin above and below. Eye-level camera at
 an identical angle and distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
 lines, grids, watermarks, logos, background objects, mirrors, other people,
-extra or missing limbs, distorted hands, broken or hyperextended joints.
+extra or missing limbs, distorted hands, any magenta on the figure, clothing or equipment, drop shadows or glow halos around the figure, broken or hyperextended joints.
 
 MOVEMENT FOR THIS IMAGE:
 Exercise: Good Morning

@@ -5,38 +5,38 @@
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1915,
-      821
+      1914,
+      822
     ],
     "frameSizes": [
       [
         494,
-        821
+        822
       ],
       [
-        482,
-        821
+        459,
+        822
       ],
       [
-        473,
-        821
+        446,
+        822
       ],
       [
-        466,
-        821
+        483,
+        822
       ]
     ],
-    "referenceHash": "0625f615de",
-    "thumbnailHash": "a1c5726a2a",
+    "referenceHash": "9de5fc8a8f",
+    "thumbnailHash": "b287b7e447",
     "frameHashes": [
-      "806e3bef30",
-      "18ef4f6523",
-      "32c0d74b82",
-      "92c6a29e7d"
+      "8dc6259e26",
+      "7f6acfdfb0",
+      "00bd367568",
+      "64a44500be"
     ]
   },
   "credits": {
     "source": "gpt-5.6-sol",
-    "generated": "2026-07-19"
+    "generated": "2026-07-22"
   }
 }

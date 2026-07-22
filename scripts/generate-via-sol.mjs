@@ -105,7 +105,10 @@ async function generate(key, anchorB64, prompt) {
             type: 'input_text',
             text:
               'Match the exact art style, character, and rendering of the attached ' +
-              'reference image. Then generate one widescreen landscape image ' +
+              'reference image — but NOT its background: the reference predates the ' +
+              'chroma-key change, and the background MUST be the single flat solid ' +
+              'magenta #FF00FF the specification demands, with no magenta anywhere ' +
+              'in the artwork itself. Generate one widescreen landscape image ' +
               'following this specification exactly:\n\n' + prompt,
           },
         ],

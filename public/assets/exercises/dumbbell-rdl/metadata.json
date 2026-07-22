@@ -1,0 +1,52 @@
+{
+  "exerciseId": "dumbbell-rdl",
+  "version": 1,
+  "media": {
+    "frameCount": 6,
+    "thumbnailFrame": 4,
+    "referenceSize": [
+      1910,
+      823
+    ],
+    "frameSizes": [
+      [
+        237,
+        823
+      ],
+      [
+        292,
+        823
+      ],
+      [
+        360,
+        823
+      ],
+      [
+        364,
+        823
+      ],
+      [
+        313,
+        823
+      ],
+      [
+        236,
+        823
+      ]
+    ],
+    "referenceHash": "9fc480eeb9",
+    "thumbnailHash": "04a2a96364",
+    "frameHashes": [
+      "73e1d8c96f",
+      "420f445355",
+      "df3439dce8",
+      "afada7ec22",
+      "6c554302ca",
+      "a4cfc17114"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}
