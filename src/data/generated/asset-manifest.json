@@ -23,6 +23,14 @@
         419,
         822
       ]
+    ],
+    "referenceHash": "ce9114d769",
+    "thumbnailHash": "6404070951",
+    "frameHashes": [
+      "2ca2aebe16",
+      "3cefdcd51e",
+      "b224e88d32",
+      "60ecf3c05c"
     ]
   },
   "adductor-machine": {
@@ -49,6 +57,14 @@
         478,
         821
       ]
+    ],
+    "referenceHash": "5b6a1380e7",
+    "thumbnailHash": "bbe2deffc4",
+    "frameHashes": [
+      "dc2de05131",
+      "88427b2ea1",
+      "1b0da3d1e2",
+      "44af70e338"
     ]
   },
   "arnold-press": {
@@ -83,6 +99,16 @@
         248,
         822
       ]
+    ],
+    "referenceHash": "aa652f0b5a",
+    "thumbnailHash": "e6a2040bb1",
+    "frameHashes": [
+      "fb500b5ff1",
+      "312c0917c5",
+      "45e766e7ff",
+      "76c87c7335",
+      "e7ebadfd62",
+      "f63f705f14"
     ]
   },
   "assisted-pull-up": {
@@ -117,6 +143,16 @@
         309,
         872
       ]
+    ],
+    "referenceHash": "f15092f2b8",
+    "thumbnailHash": "e95174168b",
+    "frameHashes": [
+      "72a64400b5",
+      "fa92e038db",
+      "3b8d81bd7e",
+      "387a72a11f",
+      "4de91aeeab",
+      "24aee97144"
     ]
   },
   "band-curl": {
@@ -143,6 +179,14 @@
         287,
         822
       ]
+    ],
+    "referenceHash": "916c1d5aa4",
+    "thumbnailHash": "1fdb9e9394",
+    "frameHashes": [
+      "4b1d5013aa",
+      "ac3f848ca3",
+      "243df0b0a7",
+      "a82c07ede5"
     ]
   },
   "band-lateral-raise": {
@@ -169,6 +213,14 @@
         274,
         821
       ]
+    ],
+    "referenceHash": "0c6500da58",
+    "thumbnailHash": "b9fb704084",
+    "frameHashes": [
+      "6d703eda1d",
+      "e6f06aaa12",
+      "40513f7b41",
+      "e3251b619d"
     ]
   },
   "band-pull-apart": {
@@ -195,6 +247,14 @@
         274,
         821
       ]
+    ],
+    "referenceHash": "0e659f06f1",
+    "thumbnailHash": "5212ec9d33",
+    "frameHashes": [
+      "207c5dbaf5",
+      "81b9ef11a3",
+      "4b94d0541a",
+      "e897841f6b"
     ]
   },
   "band-row": {
@@ -229,6 +289,16 @@
         309,
         820
       ]
+    ],
+    "referenceHash": "d10a41094e",
+    "thumbnailHash": "7d1ce25bff",
+    "frameHashes": [
+      "a67503ed02",
+      "d636c6be40",
+      "202db9b26c",
+      "84a04e081f",
+      "23d6f4cba0",
+      "a0cd3636fc"
     ]
   },
   "barbell-back-squat": {
@@ -263,6 +333,16 @@
         344,
         821
       ]
+    ],
+    "referenceHash": "5014d89984",
+    "thumbnailHash": "3dc11ecf1d",
+    "frameHashes": [
+      "7174fa8ebf",
+      "26ab922c2a",
+      "d27b0c04f2",
+      "4f8d3da0a8",
+      "19293885f9",
+      "28e8e1ad6c"
     ]
   },
   "barbell-hip-thrust": {
@@ -297,6 +377,16 @@
         315,
         821
       ]
+    ],
+    "referenceHash": "95c76d5395",
+    "thumbnailHash": "d553fe1431",
+    "frameHashes": [
+      "1a6fd48e20",
+      "cf644c4665",
+      "8e05381f9c",
+      "f30830dd87",
+      "2d57b2eecb",
+      "32c0c6c9ad"
     ]
   },
   "barbell-row": {
@@ -331,6 +421,16 @@
         312,
         821
       ]
+    ],
+    "referenceHash": "d150e7314b",
+    "thumbnailHash": "cb675476ea",
+    "frameHashes": [
+      "c227bfacdd",
+      "41340ea218",
+      "ff7ecbcac4",
+      "dcd06c39e6",
+      "f688b88d71",
+      "b8845e894e"
     ]
   },
   "bench-dip": {
@@ -357,6 +457,14 @@
         477,
         809
       ]
+    ],
+    "referenceHash": "f75fe6200c",
+    "thumbnailHash": "baa68d96d9",
+    "frameHashes": [
+      "d3d3e187d5",
+      "ce018ce16f",
+      "aded48953d",
+      "c3a9a57d95"
     ]
   },
   "bench-press": {
@@ -391,6 +499,16 @@
         351,
         724
       ]
+    ],
+    "referenceHash": "1e9c20ae4a",
+    "thumbnailHash": "e166e16940",
+    "frameHashes": [
+      "05a9bbb992",
+      "0d11d32d2f",
+      "009f81b4f2",
+      "1751d76ee3",
+      "5d0efb9766",
+      "604dbfa285"
     ]
   },
   "biceps-curl": {
@@ -417,6 +535,14 @@
         476,
         822
       ]
+    ],
+    "referenceHash": "cecbd3fba6",
+    "thumbnailHash": "225a75e5e9",
+    "frameHashes": [
+      "8b1caec908",
+      "e3242e3396",
+      "9ec8a547dc",
+      "984e70c9d0"
     ]
   },
   "bird-dog": {
@@ -439,6 +565,13 @@
         686,
         821
       ]
+    ],
+    "referenceHash": "d97f0bdb19",
+    "thumbnailHash": "ef06999cb4",
+    "frameHashes": [
+      "18f0a62cdd",
+      "5cac7626da",
+      "fb4b68c47d"
     ]
   },
   "bodyweight-squat": {
@@ -473,6 +606,16 @@
         251,
         822
       ]
+    ],
+    "referenceHash": "662678efea",
+    "thumbnailHash": "e8ce470f08",
+    "frameHashes": [
+      "2f218fbb0a",
+      "d0207dd8d9",
+      "2b0f1f50b2",
+      "00345742a3",
+      "bf4eecfd76",
+      "e62006fb1b"
     ]
   },
   "bulgarian-split-squat": {
@@ -507,6 +650,16 @@
         325,
         724
       ]
+    ],
+    "referenceHash": "c2927da822",
+    "thumbnailHash": "e752889e62",
+    "frameHashes": [
+      "582cb1ab4c",
+      "8daa3af2ef",
+      "eff913cc6a",
+      "f64a44c258",
+      "e35ea89e6c",
+      "83ef1a3284"
     ]
   },
   "cable-curl": {
@@ -533,6 +686,14 @@
         391,
         822
       ]
+    ],
+    "referenceHash": "f59848bf94",
+    "thumbnailHash": "bf2819c8ee",
+    "frameHashes": [
+      "878a843cb0",
+      "464cd266d6",
+      "eba54a654d",
+      "3172bda0d8"
     ]
   },
   "cable-fly": {
@@ -559,6 +720,14 @@
         442,
         821
       ]
+    ],
+    "referenceHash": "09acb2cb92",
+    "thumbnailHash": "4d0c9757ef",
+    "frameHashes": [
+      "56e23d64b0",
+      "6c6bd93259",
+      "cc29dee1d7",
+      "a5ca35a3da"
     ]
   },
   "cable-lateral-raise": {
@@ -585,6 +754,14 @@
         457,
         821
       ]
+    ],
+    "referenceHash": "db063f7cbe",
+    "thumbnailHash": "58ea246c73",
+    "frameHashes": [
+      "8b7d517cdf",
+      "6cb6db0db6",
+      "f806353983",
+      "263ceac250"
     ]
   },
   "cable-pull-through": {
@@ -619,6 +796,16 @@
         276,
         808
       ]
+    ],
+    "referenceHash": "5f4dac5b5a",
+    "thumbnailHash": "32c929688f",
+    "frameHashes": [
+      "ca0322b3aa",
+      "51980c2369",
+      "edc0d26a93",
+      "024245cf48",
+      "fb51464d27",
+      "c43ac086c2"
     ]
   },
   "cable-rear-delt-fly": {
@@ -645,6 +832,14 @@
         449,
         823
       ]
+    ],
+    "referenceHash": "70c83f79e1",
+    "thumbnailHash": "cf7cdc7af9",
+    "frameHashes": [
+      "b78e5cf424",
+      "825ae01f2e",
+      "c84b3c676a",
+      "5dcd083180"
     ]
   },
   "cable-row": {
@@ -679,6 +874,16 @@
         298,
         918
       ]
+    ],
+    "referenceHash": "be38c17b8b",
+    "thumbnailHash": "4d0eacd4a1",
+    "frameHashes": [
+      "6d962a68f9",
+      "406fa293d4",
+      "ba42aecb4e",
+      "f9008513e0",
+      "be04930662",
+      "1fb3bc3ac0"
     ]
   },
   "cable-woodchop": {
@@ -705,6 +910,14 @@
         417,
         821
       ]
+    ],
+    "referenceHash": "826c378164",
+    "thumbnailHash": "59007cb4cd",
+    "frameHashes": [
+      "b0b9f777fb",
+      "fadb628729",
+      "db22082a91",
+      "c319538611"
     ]
   },
   "chest-press-machine": {
@@ -739,6 +952,16 @@
         316,
         821
       ]
+    ],
+    "referenceHash": "157aa78fad",
+    "thumbnailHash": "9c52a9f72d",
+    "frameHashes": [
+      "cfc750bfb9",
+      "938f2da051",
+      "d4bde9f843",
+      "779c85f360",
+      "2a83af7058",
+      "eb32826fea"
     ]
   },
   "chest-supported-row": {
@@ -773,6 +996,16 @@
         387,
         724
       ]
+    ],
+    "referenceHash": "7a138d888a",
+    "thumbnailHash": "133f554a51",
+    "frameHashes": [
+      "0519540785",
+      "fc75060f52",
+      "cb926e949a",
+      "f93cac4665",
+      "51b74f3482",
+      "2ecad17ec7"
     ]
   },
   "close-grip-bench-press": {
@@ -807,6 +1040,16 @@
         356,
         773
       ]
+    ],
+    "referenceHash": "ca6db0a3c7",
+    "thumbnailHash": "5413ad3db5",
+    "frameHashes": [
+      "26b874b5e7",
+      "02ea03ed74",
+      "ef652a43cb",
+      "8fccea9e97",
+      "d0303f469d",
+      "f62bf0471b"
     ]
   },
   "close-grip-lat-pulldown": {
@@ -841,6 +1084,16 @@
         329,
         821
       ]
+    ],
+    "referenceHash": "b6be46b1f3",
+    "thumbnailHash": "389a6707c9",
+    "frameHashes": [
+      "1021cb27a0",
+      "529e6466cb",
+      "b6253eb86a",
+      "0ddeb4175f",
+      "8c839fcd8f",
+      "442b075432"
     ]
   },
   "concentration-curl": {
@@ -867,6 +1120,14 @@
         466,
         821
       ]
+    ],
+    "referenceHash": "0625f615de",
+    "thumbnailHash": "a1c5726a2a",
+    "frameHashes": [
+      "806e3bef30",
+      "18ef4f6523",
+      "32c0d74b82",
+      "92c6a29e7d"
     ]
   },
   "crunch": {
@@ -893,6 +1154,14 @@
         440,
         823
       ]
+    ],
+    "referenceHash": "e2b7ad9457",
+    "thumbnailHash": "7c557fcad5",
+    "frameHashes": [
+      "087e626ef7",
+      "6e832859a1",
+      "83fcd2e50c",
+      "fa35304772"
     ]
   },
   "db-floor-press": {
@@ -927,6 +1196,16 @@
         309,
         821
       ]
+    ],
+    "referenceHash": "963d11d996",
+    "thumbnailHash": "29dd515017",
+    "frameHashes": [
+      "9628828eb5",
+      "6a790427a1",
+      "73eac28452",
+      "25e592709b",
+      "23473fdc5c",
+      "8ba2b5948a"
     ]
   },
   "dead-bug": {
@@ -949,6 +1228,13 @@
         662,
         820
       ]
+    ],
+    "referenceHash": "00827c1748",
+    "thumbnailHash": "1b1b32b8a3",
+    "frameHashes": [
+      "0074493c07",
+      "1714b2ab6b",
+      "5aed8b1efb"
     ]
   },
   "deadlift": {
@@ -983,6 +1269,16 @@
         320,
         822
       ]
+    ],
+    "referenceHash": "99d101f776",
+    "thumbnailHash": "b9e41d4602",
+    "frameHashes": [
+      "1a56603aa5",
+      "f5cedd4877",
+      "c10028aae3",
+      "eec84c60aa",
+      "6e750f5797",
+      "99a7120078"
     ]
   },
   "decline-bench-press": {
@@ -1017,6 +1313,16 @@
         341,
         724
       ]
+    ],
+    "referenceHash": "ce3d422dc1",
+    "thumbnailHash": "5f4698408f",
+    "frameHashes": [
+      "c79717cca0",
+      "5a1ca85077",
+      "6bb516db51",
+      "ede05dced6",
+      "f041c999a5",
+      "3a66d246dd"
     ]
   },
   "decline-dumbbell-press": {
@@ -1051,6 +1357,16 @@
         322,
         821
       ]
+    ],
+    "referenceHash": "ea58230cf2",
+    "thumbnailHash": "851009d017",
+    "frameHashes": [
+      "1a1a0a4b85",
+      "4c1abaf97e",
+      "f25009467b",
+      "d07eab63bb",
+      "0fdb42a9e7",
+      "d2d5f08109"
     ]
   },
   "deficit-push-up": {
@@ -1085,6 +1401,16 @@
         320,
         821
       ]
+    ],
+    "referenceHash": "bf361826b9",
+    "thumbnailHash": "4259e84eda",
+    "frameHashes": [
+      "46d72f2d4a",
+      "bab4a27d48",
+      "d4153cd284",
+      "9fd428afc6",
+      "632381b9c3",
+      "a69d253a81"
     ]
   },
   "diamond-push-up": {
@@ -1119,6 +1445,16 @@
         338,
         821
       ]
+    ],
+    "referenceHash": "bf5b662f18",
+    "thumbnailHash": "cde20a9b62",
+    "frameHashes": [
+      "1c7601f2ed",
+      "871f9c07a7",
+      "e36153c00e",
+      "4fff2a252f",
+      "9b43655ed2",
+      "dd36766eae"
     ]
   },
   "dip": {
@@ -1153,6 +1489,16 @@
         336,
         822
       ]
+    ],
+    "referenceHash": "44db0be1be",
+    "thumbnailHash": "231333a7df",
+    "frameHashes": [
+      "94ee2467fe",
+      "c9ae2ec48d",
+      "8bd2165f4a",
+      "d3e866bf3d",
+      "67e7a15461",
+      "bbfb6262b3"
     ]
   },
   "dumbbell-bench-press": {
@@ -1187,6 +1533,16 @@
         303,
         821
       ]
+    ],
+    "referenceHash": "e38a75a643",
+    "thumbnailHash": "24d9658833",
+    "frameHashes": [
+      "69beb84b73",
+      "c527a41676",
+      "82cdbc4040",
+      "ba8880a4d2",
+      "1986fc6194",
+      "cef31f4bb4"
     ]
   },
   "dumbbell-biceps-curl": {
@@ -1213,6 +1569,14 @@
         333,
         821
       ]
+    ],
+    "referenceHash": "04da83059a",
+    "thumbnailHash": "0e28f0b726",
+    "frameHashes": [
+      "e00cce47dc",
+      "f18a7dd32d",
+      "f7d11273c9",
+      "035a9d0713"
     ]
   },
   "dumbbell-fly": {
@@ -1239,6 +1603,14 @@
         427,
         821
       ]
+    ],
+    "referenceHash": "269149909d",
+    "thumbnailHash": "02bd416122",
+    "frameHashes": [
+      "d5180e1447",
+      "c5673e6949",
+      "edf6c33298",
+      "1d740c62c1"
     ]
   },
   "dumbbell-row": {
@@ -1273,6 +1645,16 @@
         297,
         887
       ]
+    ],
+    "referenceHash": "6ce50337e4",
+    "thumbnailHash": "15431df5aa",
+    "frameHashes": [
+      "e948010c4a",
+      "75fd4e6065",
+      "7daae3a30b",
+      "3b6aa40214",
+      "3da1d81e33",
+      "581e399d5d"
     ]
   },
   "dumbbell-shoulder-press": {
@@ -1307,6 +1689,16 @@
         271,
         822
       ]
+    ],
+    "referenceHash": "e3c64382f8",
+    "thumbnailHash": "768cb13227",
+    "frameHashes": [
+      "9ac6d58995",
+      "586622fcb0",
+      "c7f3cba00b",
+      "1fcdba9507",
+      "bba3e3d0b9",
+      "2c2c404593"
     ]
   },
   "dumbbell-shrug": {
@@ -1333,6 +1725,14 @@
         306,
         823
       ]
+    ],
+    "referenceHash": "c6b08a54a7",
+    "thumbnailHash": "249c7ef6ff",
+    "frameHashes": [
+      "09cdcd8998",
+      "dc3c8c0b8f",
+      "f0c428ae42",
+      "2c1458517f"
     ]
   },
   "ez-bar-curl": {
@@ -1359,6 +1759,14 @@
         386,
         822
       ]
+    ],
+    "referenceHash": "593b1e51b3",
+    "thumbnailHash": "163e7c4c8a",
+    "frameHashes": [
+      "40d4aea06f",
+      "fe71df3ba9",
+      "c6600b3723",
+      "453e4dee16"
     ]
   },
   "face-pull": {
@@ -1385,6 +1793,14 @@
         488,
         821
       ]
+    ],
+    "referenceHash": "da6f6ebcfa",
+    "thumbnailHash": "56323b8e79",
+    "frameHashes": [
+      "691a1b400a",
+      "3066dbcf0c",
+      "6b3daf1f03",
+      "3170778010"
     ]
   },
   "front-raise": {
@@ -1411,6 +1827,14 @@
         350,
         821
       ]
+    ],
+    "referenceHash": "f4c1cc0cd5",
+    "thumbnailHash": "88a1ab2420",
+    "frameHashes": [
+      "3b1fa01b7e",
+      "291bf7c00a",
+      "8a378527e8",
+      "5aba3a6eaf"
     ]
   },
   "front-squat": {
@@ -1445,6 +1869,16 @@
         336,
         821
       ]
+    ],
+    "referenceHash": "26c317e508",
+    "thumbnailHash": "034b2814c5",
+    "frameHashes": [
+      "d2cefc0826",
+      "914f2223ae",
+      "0b14ed9c34",
+      "6c60782914",
+      "111529dff7",
+      "cc812536a6"
     ]
   },
   "glute-bridge": {
@@ -1471,6 +1905,14 @@
         501,
         821
       ]
+    ],
+    "referenceHash": "8223c567b7",
+    "thumbnailHash": "e8312d9f0d",
+    "frameHashes": [
+      "eb97a89923",
+      "74534f79eb",
+      "64ba692785",
+      "a53584c9f6"
     ]
   },
   "goblet-squat": {
@@ -1505,6 +1947,16 @@
         267,
         821
       ]
+    ],
+    "referenceHash": "51fdef951f",
+    "thumbnailHash": "b3ba2ee598",
+    "frameHashes": [
+      "b70ca538f7",
+      "6a6a64340a",
+      "1e4befb04b",
+      "b6fcee56c5",
+      "9753b5bade",
+      "f09db8fa3b"
     ]
   },
   "good-morning": {
@@ -1539,6 +1991,16 @@
         279,
         822
       ]
+    ],
+    "referenceHash": "c3ccefa705",
+    "thumbnailHash": "e02219dde2",
+    "frameHashes": [
+      "57ba2ebca2",
+      "66377658f5",
+      "b6b3456217",
+      "ab2e8395f5",
+      "4980ac4645",
+      "69d323de30"
     ]
   },
   "hack-squat": {
@@ -1573,6 +2035,16 @@
         313,
         822
       ]
+    ],
+    "referenceHash": "86c2e3fc8d",
+    "thumbnailHash": "01b370f995",
+    "frameHashes": [
+      "247fc5858e",
+      "e2338497e9",
+      "66498e2dff",
+      "27f004df3a",
+      "50209161ab",
+      "d76c270a0f"
     ]
   },
   "hammer-curl": {
@@ -1599,6 +2071,14 @@
         292,
         821
       ]
+    ],
+    "referenceHash": "a3cb42dc8d",
+    "thumbnailHash": "00fd22b5e6",
+    "frameHashes": [
+      "adaf420b46",
+      "f9f7881208",
+      "75cecc6cfc",
+      "b07c699a21"
     ]
   },
   "hanging-leg-raise": {
@@ -1625,6 +2105,14 @@
         441,
         821
       ]
+    ],
+    "referenceHash": "85f6f18f00",
+    "thumbnailHash": "633dd89b9e",
+    "frameHashes": [
+      "c36ec91168",
+      "fa42a6933f",
+      "3ec2c83b79",
+      "14facb601c"
     ]
   },
   "hip-thrust": {
@@ -1659,6 +2147,16 @@
         294,
         822
       ]
+    ],
+    "referenceHash": "2ee0bddcd5",
+    "thumbnailHash": "f0521b9d87",
+    "frameHashes": [
+      "2d4b1d37eb",
+      "6d6624512f",
+      "9bfd69c6b1",
+      "06ccceff28",
+      "d990b7bb4e",
+      "64d7172ed5"
     ]
   },
   "incline-bench-press": {
@@ -1693,6 +2191,16 @@
         287,
         821
       ]
+    ],
+    "referenceHash": "11de500d9f",
+    "thumbnailHash": "ef233bddab",
+    "frameHashes": [
+      "9056b02d85",
+      "39e69fde53",
+      "c88b521b1f",
+      "60d9ae9fe3",
+      "a0b481fd0a",
+      "d16833b5c6"
     ]
   },
   "incline-dumbbell-curl": {
@@ -1719,6 +2227,14 @@
         456,
         823
       ]
+    ],
+    "referenceHash": "8d9bfdb12b",
+    "thumbnailHash": "2ced094b5e",
+    "frameHashes": [
+      "b8f5e7fb76",
+      "e162c09705",
+      "d064a36fda",
+      "64ae615685"
     ]
   },
   "incline-dumbbell-press": {
@@ -1753,6 +2269,16 @@
         274,
         821
       ]
+    ],
+    "referenceHash": "473d662ffe",
+    "thumbnailHash": "e9939a11c5",
+    "frameHashes": [
+      "b296512cff",
+      "1b51309787",
+      "6b6f29a42d",
+      "72d451c5d7",
+      "2925f8fae4",
+      "43f1ab1e4b"
     ]
   },
   "incline-push-up": {
@@ -1787,6 +2313,16 @@
         326,
         821
       ]
+    ],
+    "referenceHash": "3530b5b3c0",
+    "thumbnailHash": "31fe664f40",
+    "frameHashes": [
+      "1fee9440c1",
+      "900de8c786",
+      "38e4f93334",
+      "34b131167b",
+      "d7177501ef",
+      "6c78a29232"
     ]
   },
   "inverted-row": {
@@ -1821,6 +2357,16 @@
         341,
         820
       ]
+    ],
+    "referenceHash": "013c11e705",
+    "thumbnailHash": "29f739adbb",
+    "frameHashes": [
+      "508eaa9cc3",
+      "fcdbb74bcb",
+      "5b10c9e4db",
+      "376c370b4a",
+      "f3e747fbbb",
+      "2c1fa23e80"
     ]
   },
   "kettlebell-swing": {
@@ -1855,6 +2401,16 @@
         291,
         822
       ]
+    ],
+    "referenceHash": "0571b8f3c9",
+    "thumbnailHash": "965ac22c48",
+    "frameHashes": [
+      "3f01b90bd4",
+      "a73d3f570d",
+      "1a9aa3342f",
+      "dae1278d2b",
+      "40571a5c2b",
+      "302695c6fe"
     ]
   },
   "lat-pulldown": {
@@ -1889,6 +2445,16 @@
         285,
         724
       ]
+    ],
+    "referenceHash": "8b151ec208",
+    "thumbnailHash": "7af6b7dd1d",
+    "frameHashes": [
+      "294b20456f",
+      "7de5b58907",
+      "23c5958fa6",
+      "b9c3e96b58",
+      "436d5090fa",
+      "738e7878b0"
     ]
   },
   "lateral-raise": {
@@ -1915,6 +2481,14 @@
         422,
         857
       ]
+    ],
+    "referenceHash": "1ff5c8dc2d",
+    "thumbnailHash": "3f0e8fac78",
+    "frameHashes": [
+      "7401599d21",
+      "95351746cb",
+      "743e391440",
+      "f2b1b4bd25"
     ]
   },
   "leaning-lateral-raise": {
@@ -1941,6 +2515,14 @@
         493,
         821
       ]
+    ],
+    "referenceHash": "5cc4accc18",
+    "thumbnailHash": "831f5c5c82",
+    "frameHashes": [
+      "3eeaa124ac",
+      "eac3869dac",
+      "38d3368963",
+      "4add694284"
     ]
   },
   "leg-extension": {
@@ -1967,6 +2549,14 @@
         458,
         821
       ]
+    ],
+    "referenceHash": "4b1fb53e15",
+    "thumbnailHash": "d9846be3b9",
+    "frameHashes": [
+      "327ed4f044",
+      "b814408009",
+      "41a1fdd238",
+      "3e1a1d0fcf"
     ]
   },
   "leg-press": {
@@ -2001,6 +2591,16 @@
         314,
         821
       ]
+    ],
+    "referenceHash": "a738f5c296",
+    "thumbnailHash": "7027be2aa4",
+    "frameHashes": [
+      "8aedb5196b",
+      "204188a6f3",
+      "ed9010e4a0",
+      "c61a6dbed7",
+      "15b41a377d",
+      "fb160a0d01"
     ]
   },
   "leg-raise": {
@@ -2027,6 +2627,14 @@
         560,
         821
       ]
+    ],
+    "referenceHash": "3e87fb1e5e",
+    "thumbnailHash": "0f0a28b28d",
+    "frameHashes": [
+      "db9663e952",
+      "069a0a209d",
+      "642ec5e61a",
+      "f89a1d5e68"
     ]
   },
   "lying-leg-curl": {
@@ -2053,6 +2661,14 @@
         480,
         821
       ]
+    ],
+    "referenceHash": "6cb7b75c97",
+    "thumbnailHash": "6bde2e56d1",
+    "frameHashes": [
+      "522060402b",
+      "2c076d695d",
+      "1fc6ea58e4",
+      "67ecb6d1c8"
     ]
   },
   "machine-chest-fly": {
@@ -2079,6 +2695,14 @@
         453,
         821
       ]
+    ],
+    "referenceHash": "1ebaf7585a",
+    "thumbnailHash": "9220ce91b8",
+    "frameHashes": [
+      "3666f76ec4",
+      "0afb8562fe",
+      "0244e6551c",
+      "966c61d082"
     ]
   },
   "machine-row": {
@@ -2113,6 +2737,16 @@
         340,
         775
       ]
+    ],
+    "referenceHash": "06db61371c",
+    "thumbnailHash": "79ad7e7bd9",
+    "frameHashes": [
+      "dca3c7b3af",
+      "31997aab53",
+      "702407145e",
+      "30830b9e5a",
+      "2ebdff523e",
+      "af4063d5ea"
     ]
   },
   "machine-shoulder-press": {
@@ -2147,6 +2781,16 @@
         324,
         821
       ]
+    ],
+    "referenceHash": "a1653a0eac",
+    "thumbnailHash": "283810a67d",
+    "frameHashes": [
+      "bd829997a1",
+      "47f45dab9f",
+      "e17b7c076a",
+      "a7f9a7fa84",
+      "b494950b39",
+      "f2f7c53924"
     ]
   },
   "neutral-grip-lat-pulldown": {
@@ -2181,6 +2825,16 @@
         316,
         793
       ]
+    ],
+    "referenceHash": "d6e53ca3f3",
+    "thumbnailHash": "21521d8c66",
+    "frameHashes": [
+      "96c4e4e87e",
+      "61edb4ec0f",
+      "032f99bbea",
+      "b7f922ed53",
+      "63f6498e70",
+      "d91ca6eeb3"
     ]
   },
   "one-arm-cable-row": {
@@ -2215,6 +2869,16 @@
         417,
         822
       ]
+    ],
+    "referenceHash": "4274b2079f",
+    "thumbnailHash": "255673f541",
+    "frameHashes": [
+      "60a3c15471",
+      "a3a71dab59",
+      "02f11e5049",
+      "3ce1301b9b",
+      "514fde3ea2",
+      "c403172f8d"
     ]
   },
   "overhead-press": {
@@ -2249,6 +2913,16 @@
         368,
         724
       ]
+    ],
+    "referenceHash": "5f7b3c0f9e",
+    "thumbnailHash": "faf6a8b90a",
+    "frameHashes": [
+      "4dbcc57ec1",
+      "af37560a43",
+      "7cb3419257",
+      "5f7e6dc3b3",
+      "5b80fd50ca",
+      "4e60b0f81b"
     ]
   },
   "overhead-triceps-extension": {
@@ -2275,6 +2949,14 @@
         218,
         820
       ]
+    ],
+    "referenceHash": "ef1c5a0bfb",
+    "thumbnailHash": "8abc8afc0f",
+    "frameHashes": [
+      "f31941cd53",
+      "4c47c5c6ce",
+      "77161aaabe",
+      "a5c31b1155"
     ]
   },
   "pec-deck": {
@@ -2301,6 +2983,14 @@
         507,
         822
       ]
+    ],
+    "referenceHash": "64ad78e668",
+    "thumbnailHash": "7464564dc9",
+    "frameHashes": [
+      "c1bf8a3725",
+      "657ce764f0",
+      "06a8d4729c",
+      "a13216f48c"
     ]
   },
   "plank": {
@@ -2319,6 +3009,12 @@
         1081,
         724
       ]
+    ],
+    "referenceHash": "1d103cc573",
+    "thumbnailHash": "2b8b26e2a0",
+    "frameHashes": [
+      "0fea9db3ba",
+      "cef5e8a4ee"
     ]
   },
   "preacher-curl": {
@@ -2345,6 +3041,14 @@
         451,
         821
       ]
+    ],
+    "referenceHash": "3f878e912f",
+    "thumbnailHash": "48fe6f7d2a",
+    "frameHashes": [
+      "aed109e156",
+      "ebcac11bea",
+      "5d3855fcc9",
+      "69aa0bdfa5"
     ]
   },
   "pull-up": {
@@ -2379,6 +3083,16 @@
         359,
         826
       ]
+    ],
+    "referenceHash": "b4c5d3f809",
+    "thumbnailHash": "2b8f809fa2",
+    "frameHashes": [
+      "05950e3c57",
+      "84c884ebfa",
+      "1d41a11f9d",
+      "5c73b09602",
+      "81fc17ab92",
+      "bc6af3113a"
     ]
   },
   "push-up": {
@@ -2413,6 +3127,16 @@
         347,
         820
       ]
+    ],
+    "referenceHash": "f1acb6ddb1",
+    "thumbnailHash": "fcdb8ba7ca",
+    "frameHashes": [
+      "625aacc7e9",
+      "f9ad7108a4",
+      "61de35968c",
+      "a3d08b9ee5",
+      "0857794461",
+      "16a1b07c1f"
     ]
   },
   "rear-delt-fly": {
@@ -2439,6 +3163,14 @@
         413,
         821
       ]
+    ],
+    "referenceHash": "0bbc39d590",
+    "thumbnailHash": "d23a21bef4",
+    "frameHashes": [
+      "ca5aa77dac",
+      "e3cfeffd3f",
+      "d1440cbf3f",
+      "ca451274c4"
     ]
   },
   "rear-delt-machine": {
@@ -2465,6 +3197,14 @@
         457,
         822
       ]
+    ],
+    "referenceHash": "cd51388bae",
+    "thumbnailHash": "4134f613f9",
+    "frameHashes": [
+      "1e71d9615f",
+      "8ee356a682",
+      "027d353f6c",
+      "9b11f68dd8"
     ]
   },
   "reverse-crunch": {
@@ -2491,6 +3231,14 @@
         504,
         822
       ]
+    ],
+    "referenceHash": "bc6c8e8a6f",
+    "thumbnailHash": "b9027e35b3",
+    "frameHashes": [
+      "3288ae4d61",
+      "eacd3d0839",
+      "4829db9020",
+      "fa513c9b43"
     ]
   },
   "reverse-lunge": {
@@ -2525,6 +3273,16 @@
         275,
         820
       ]
+    ],
+    "referenceHash": "8fb73424c4",
+    "thumbnailHash": "c9a4f778f8",
+    "frameHashes": [
+      "37ecfb57f3",
+      "b611dd1531",
+      "e8245c953f",
+      "39657e5df9",
+      "8b00fb7e90",
+      "ac8783f0b3"
     ]
   },
   "romanian-deadlift": {
@@ -2559,6 +3317,16 @@
         281,
         887
       ]
+    ],
+    "referenceHash": "429117abc1",
+    "thumbnailHash": "47931b6341",
+    "frameHashes": [
+      "2f47410f4c",
+      "c0fda9bed7",
+      "2692eb9493",
+      "9b1e11f4c6",
+      "18e492c517",
+      "66ef915022"
     ]
   },
   "rope-triceps-pushdown": {
@@ -2585,6 +3353,14 @@
         407,
         822
       ]
+    ],
+    "referenceHash": "26c3998e67",
+    "thumbnailHash": "564a28916b",
+    "frameHashes": [
+      "e3774c009e",
+      "c33b0cb5bd",
+      "8eee035f70",
+      "c3ad8fb54f"
     ]
   },
   "russian-twist": {
@@ -2611,6 +3387,14 @@
         444,
         822
       ]
+    ],
+    "referenceHash": "07ec27eb19",
+    "thumbnailHash": "489895e6ff",
+    "frameHashes": [
+      "5f08e26dc0",
+      "a1d1ffc213",
+      "54ab9a4f64",
+      "564d1296e6"
     ]
   },
   "seated-cable-row": {
@@ -2645,6 +3429,16 @@
         321,
         824
       ]
+    ],
+    "referenceHash": "c667730738",
+    "thumbnailHash": "62f88ca19f",
+    "frameHashes": [
+      "5900daff5c",
+      "08dcd8788f",
+      "0bbcc5bcfd",
+      "a4f10bdd20",
+      "db81d2b0b1",
+      "0a8c08f791"
     ]
   },
   "seated-calf-raise": {
@@ -2671,6 +3465,14 @@
         484,
         822
       ]
+    ],
+    "referenceHash": "cfc3665c3b",
+    "thumbnailHash": "01d81e1269",
+    "frameHashes": [
+      "269667ee60",
+      "4319d4e3da",
+      "7c982aaf1d",
+      "e24ee7a41b"
     ]
   },
   "seated-dumbbell-shoulder-press": {
@@ -2705,6 +3507,16 @@
         318,
         822
       ]
+    ],
+    "referenceHash": "df5e23ee9b",
+    "thumbnailHash": "a2f0976c51",
+    "frameHashes": [
+      "f7812be5a7",
+      "18c9a74519",
+      "1a3761367d",
+      "5ea01fc66f",
+      "5e86c7c9f1",
+      "a14a6b3be7"
     ]
   },
   "seated-leg-curl": {
@@ -2731,6 +3543,14 @@
         479,
         821
       ]
+    ],
+    "referenceHash": "1ea02772f1",
+    "thumbnailHash": "fa47cb99cf",
+    "frameHashes": [
+      "746819c5d6",
+      "922a907fee",
+      "93a9b793fb",
+      "2bbb5d6716"
     ]
   },
   "shrug": {
@@ -2757,6 +3577,14 @@
         482,
         821
       ]
+    ],
+    "referenceHash": "0f13cc398e",
+    "thumbnailHash": "e035edb5fd",
+    "frameHashes": [
+      "326f4e88b4",
+      "ab8ef76cec",
+      "9cc8f7b23a",
+      "f8738648b1"
     ]
   },
   "side-plank": {
@@ -2775,6 +3603,12 @@
         810,
         941
       ]
+    ],
+    "referenceHash": "d0c4c7ee34",
+    "thumbnailHash": "c575e64f72",
+    "frameHashes": [
+      "30c35c631f",
+      "341774f589"
     ]
   },
   "single-arm-db-press": {
@@ -2809,6 +3643,16 @@
         293,
         822
       ]
+    ],
+    "referenceHash": "42da125433",
+    "thumbnailHash": "4f15cc944e",
+    "frameHashes": [
+      "4345acc532",
+      "085504ee93",
+      "e9e9ecf649",
+      "122e8abfba",
+      "116cdba0da",
+      "91e154b0bd"
     ]
   },
   "single-arm-db-row": {
@@ -2843,6 +3687,16 @@
         294,
         822
       ]
+    ],
+    "referenceHash": "cda302a914",
+    "thumbnailHash": "21f45e41ce",
+    "frameHashes": [
+      "3c37e4ec6c",
+      "be69f45a8e",
+      "912d21b5d8",
+      "2f42f156d3",
+      "bf74f16da4",
+      "62a5874d71"
     ]
   },
   "single-arm-triceps-pushdown": {
@@ -2869,6 +3723,14 @@
         431,
         822
       ]
+    ],
+    "referenceHash": "73c03aeec5",
+    "thumbnailHash": "a9c6d09a64",
+    "frameHashes": [
+      "d2f96f63d0",
+      "b6a07f3182",
+      "ebed72e470",
+      "d888cb3553"
     ]
   },
   "single-leg-hip-thrust": {
@@ -2903,6 +3765,16 @@
         317,
         774
       ]
+    ],
+    "referenceHash": "257b1f7c9b",
+    "thumbnailHash": "a30f329ecd",
+    "frameHashes": [
+      "3ef8001542",
+      "1624eeb2c2",
+      "9a8a41673d",
+      "ca95f45995",
+      "7d0a72b48f",
+      "a9b1ca4179"
     ]
   },
   "single-leg-romanian-deadlift": {
@@ -2937,6 +3809,16 @@
         227,
         821
       ]
+    ],
+    "referenceHash": "687ede49bc",
+    "thumbnailHash": "07f978f429",
+    "frameHashes": [
+      "1262f25c64",
+      "dae53e3727",
+      "cfc846c99a",
+      "8bf390ff1e",
+      "4c32519978",
+      "7714930f1b"
     ]
   },
   "skull-crusher": {
@@ -2963,6 +3845,14 @@
         483,
         820
       ]
+    ],
+    "referenceHash": "03e971ae9c",
+    "thumbnailHash": "5537e2d88e",
+    "frameHashes": [
+      "5d558156f5",
+      "1202bdaea1",
+      "65ef72fa1f",
+      "548c79208f"
     ]
   },
   "smith-machine-squat": {
@@ -2997,6 +3887,16 @@
         379,
         748
       ]
+    ],
+    "referenceHash": "2a17efa6a3",
+    "thumbnailHash": "8bb5586930",
+    "frameHashes": [
+      "c76246cc9e",
+      "dc14d7c82b",
+      "82c62988c1",
+      "8b38c8574c",
+      "fea3116965",
+      "abc1b94e77"
     ]
   },
   "split-squat": {
@@ -3031,6 +3931,16 @@
         327,
         822
       ]
+    ],
+    "referenceHash": "25761cec90",
+    "thumbnailHash": "646209765d",
+    "frameHashes": [
+      "14812d742c",
+      "0dc4970931",
+      "d46ac742d9",
+      "36cf1ee3d1",
+      "09507fe486",
+      "d0d63eb59a"
     ]
   },
   "standing-calf-raise": {
@@ -3057,6 +3967,14 @@
         369,
         822
       ]
+    ],
+    "referenceHash": "d6467eac86",
+    "thumbnailHash": "9d074523d4",
+    "frameHashes": [
+      "9520a7ed29",
+      "584f650f8b",
+      "e045e025c5",
+      "59ed6cd8d1"
     ]
   },
   "step-up": {
@@ -3091,6 +4009,16 @@
         216,
         821
       ]
+    ],
+    "referenceHash": "ca577c773d",
+    "thumbnailHash": "324990f5d4",
+    "frameHashes": [
+      "358cdecb81",
+      "c2011a78de",
+      "4b82d7dbae",
+      "b9e22e1b1a",
+      "ee5ccbf5e0",
+      "76664bb16f"
     ]
   },
   "straight-arm-pulldown": {
@@ -3117,6 +4045,14 @@
         448,
         821
       ]
+    ],
+    "referenceHash": "a64b7410c8",
+    "thumbnailHash": "37491aeecd",
+    "frameHashes": [
+      "e5dbd12873",
+      "1b1d2bc158",
+      "7040849c28",
+      "0ab3221919"
     ]
   },
   "sumo-deadlift": {
@@ -3151,6 +4087,16 @@
         294,
         821
       ]
+    ],
+    "referenceHash": "1299cacdca",
+    "thumbnailHash": "4e22667d20",
+    "frameHashes": [
+      "fd22a8e305",
+      "05fe45e0a5",
+      "bc4357c75f",
+      "30eed32650",
+      "be3cb6dcae",
+      "1856f71ab4"
     ]
   },
   "t-bar-row": {
@@ -3185,6 +4131,16 @@
         340,
         820
       ]
+    ],
+    "referenceHash": "175b468397",
+    "thumbnailHash": "ca9533b0c1",
+    "frameHashes": [
+      "17cec3f6fe",
+      "c6f2c5de9b",
+      "4b0598ad0b",
+      "580164081a",
+      "2c191b2b3c",
+      "0781e92a21"
     ]
   },
   "tempo-bodyweight-squat": {
@@ -3219,6 +4175,16 @@
         246,
         823
       ]
+    ],
+    "referenceHash": "e29791c824",
+    "thumbnailHash": "1b4d9eb9b4",
+    "frameHashes": [
+      "5e97dbd28e",
+      "246a77a1ca",
+      "9dfdc605d7",
+      "b80ce8aa3a",
+      "f91367e036",
+      "5022fc742e"
     ]
   },
   "triceps-pushdown": {
@@ -3245,6 +4211,14 @@
         435,
         824
       ]
+    ],
+    "referenceHash": "285b2b94d3",
+    "thumbnailHash": "4100bd35aa",
+    "frameHashes": [
+      "989219679a",
+      "316a0fe53b",
+      "f7118db1f9",
+      "d6717da07b"
     ]
   },
   "upright-row": {
@@ -3271,6 +4245,14 @@
         465,
         822
       ]
+    ],
+    "referenceHash": "132cb0f2ff",
+    "thumbnailHash": "556cf00247",
+    "frameHashes": [
+      "953a684cf1",
+      "feb8606b08",
+      "fe5309351e",
+      "363095cbfb"
     ]
   },
   "walking-lunge": {
@@ -3305,6 +4287,16 @@
         262,
         821
       ]
+    ],
+    "referenceHash": "d0c56aaa27",
+    "thumbnailHash": "d4008089f1",
+    "frameHashes": [
+      "44c0789b49",
+      "7963c4745f",
+      "61849f6755",
+      "b0d144e173",
+      "e09cf45d78",
+      "312e1a25ec"
     ]
   },
   "wide-grip-lat-pulldown": {
@@ -3339,6 +4331,16 @@
         328,
         761
       ]
+    ],
+    "referenceHash": "2a80fd3a82",
+    "thumbnailHash": "a5963479d9",
+    "frameHashes": [
+      "aec0a2afef",
+      "5d2432a3f3",
+      "16579258a6",
+      "f4112f114a",
+      "d3a147459f",
+      "9c669feded"
     ]
   }
 }
