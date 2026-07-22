@@ -34,7 +34,7 @@ export const seedExercises: Exercise[] = [
     id: 'bench-press',
     muscles: ['chest', 'triceps', 'shoulders'],
     equipment: ['barbell', 'bench'],
-    substitutionIds: ['deficit-push-up', 'db-floor-press', 'dumbbell-bench-press'],
+    substitutionIds: ['deficit-push-up', 'db-floor-press', 'dumbbell-bench-press', 'incline-dumbbell-press'],
     isUnilateral: false,
   },
   {
@@ -55,7 +55,14 @@ export const seedExercises: Exercise[] = [
     id: 'dumbbell-bench-press',
     muscles: ['chest', 'triceps', 'shoulders'],
     equipment: ['dumbbell', 'bench'],
-    substitutionIds: ['bench-press', 'db-floor-press'],
+    substitutionIds: ['bench-press', 'db-floor-press', 'incline-dumbbell-press'],
+    isUnilateral: false,
+  },
+  {
+    id: 'incline-dumbbell-press',
+    muscles: ['chest', 'triceps', 'shoulders'],
+    equipment: ['dumbbell', 'bench'],
+    substitutionIds: ['dumbbell-bench-press', 'bench-press'],
     isUnilateral: false,
   },
   {

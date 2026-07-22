@@ -68,6 +68,18 @@
         "body": "Deux haltères peuvent partir chacun de leur côté si tu n'y fais pas attention — pousse-les sur la même trajectoire à chaque répétition, pas seulement jusqu'à la même hauteur. C'est exactement cette stabilité indépendante que le développé aux haltères travaille, et qu'une barre ne peut pas t'apprendre."
       }
     },
+    "incline-dumbbell-press": {
+      "name": "Développé incliné aux haltères",
+      "cues": [
+        "Le banc est réglé à environ 30° — la poussée suit la ligne du buste, pas la verticale",
+        "Les coudes restent à environ 45° du buste, repliés sous les poignets en bas",
+        "Les haltères terminent au-dessus du haut de la poitrine, pas du visage"
+      ],
+      "teachingConcept": {
+        "title": "La ligne du buste, pas la verticale",
+        "body": "Sur un banc incliné, la trajectoire de poussée n'est pas verticale — elle suit l'angle du banc, pour terminer au-dessus du haut de la poitrine et des clavicules. Pousser vers le visage fait perdre tout l'intérêt de l'inclinaison : décaler le travail vers le haut de la poitrine."
+      }
+    },
     "single-arm-db-row": {
       "name": "Rowing haltère unilatéral",
       "cues": [

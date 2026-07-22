@@ -68,6 +68,18 @@
         "body": "Two dumbbells can drift apart if you're not paying attention — press them on the same path every rep, not just to the same height. That independent stability is exactly what a dumbbell bench press trains that a barbell can't."
       }
     },
+    "incline-dumbbell-press": {
+      "name": "Incline dumbbell press",
+      "cues": [
+        "Bench set to roughly 30° — press stays along the line of the torso, not straight up",
+        "Elbows track at about 45° to your torso, tucked under the wrists at the bottom",
+        "Dumbbells finish over your upper chest, not your face"
+      ],
+      "teachingConcept": {
+        "title": "Torso line, not vertical",
+        "body": "On an incline the press path isn't straight up — it follows the angle of the bench, finishing over your upper chest and collarbones. Press toward your face and you lose the whole point of the incline: shifting emphasis to the upper chest."
+      }
+    },
     "single-arm-db-row": {
       "name": "Single-arm dumbbell row",
       "cues": [
