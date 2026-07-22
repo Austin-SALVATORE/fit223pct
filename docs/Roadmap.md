@@ -102,6 +102,27 @@ review before being called shipped (docs/I18n-glossary-fr.md,
 docs/I18n-glossary-zh.md). docs/I18n-adding-a-locale.md documents what a
 fourth locale actually requires.
 
+## Milestone 8 — Pyramid Progression
+
+Owner-directed pivot after the first real workout (docs/
+PyramidProgression.md): loaded lifts move from RIR-gated double
+progression to classical ascending-weight set ladders — explicit
+per-set weight×rep targets, ladder-steps-up-on-completion progression,
+RIR removed from the logging UI (data preserved). Readiness's easing
+lever becomes "drop the top set." Bodyweight, band, and timed work keep
+the rep-range model — pyramid is the primary model for loaded lifts,
+not the only model. Import/export gain the ladder syntax,
+back-compatible.
+
+Rides with M8 (owner decision, same first-workout feedback): the **Home
+equipment tier** — Home programs assume adjustable dumbbells + bench
+only; no barbell, rack, cables, bands, or spotter-dependent lifts.
+Requires a **Library expansion** first: promote dumbbell-bench-press,
+dumbbell-shoulder-press, and rear-delt-fly (art exists, no Library
+entries) and add dumbbell-rdl (needs art). Phase 1 is then re-authored
+by the owner's coach as a pyramid, dumbbell-only import file; the seed
+program follows in the same batch.
+
 ## Later (architecture-ready, not scheduled)
 
 Cloud sync · Apple Watch · nutrition · wearables · advanced analytics.
