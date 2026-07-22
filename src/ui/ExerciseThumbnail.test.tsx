@@ -1,12 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
+import manifest from '@/data/generated/asset-manifest.json'
 import { ExerciseThumbnail } from './ExerciseThumbnail'
+
+const gobletSquatThumbnailHash = (manifest as Record<string, { thumbnailHash?: string }>)['goblet-squat']
+  .thumbnailHash
 
 describe('ExerciseThumbnail', () => {
   it('renders the asset image for a known id, decorative and lazy', () => {
     render(<ExerciseThumbnail exerciseId="goblet-squat" />)
     const img = screen.getByRole('presentation', { hidden: true })
-    expect(img).toHaveAttribute('src', '/assets/exercises/goblet-squat/thumbnail.avif')
+    expect(img).toHaveAttribute(
+      'src',
+      `/assets/exercises/goblet-squat/thumbnail.avif?v=${gobletSquatThumbnailHash}`,
+    )
     expect(img).toHaveAttribute('alt', '')
     expect(img).toHaveAttribute('loading', 'lazy')
     expect(img).toHaveAttribute('decoding', 'async')

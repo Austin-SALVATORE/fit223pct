@@ -26,16 +26,20 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
         runtimeCaching: [
           {
-            urlPattern: /\/assets\/exercises\/.*\.avif$/,
+            // Matches the `?v=<hash>` query param too — see
+            // src/lib/exerciseAsset.ts's withHash() and
+            // scripts/update-manifest-dims.mjs. CacheFirst keys strictly
+            // by full URL, so this is the actual cache-busting mechanism
+            // now: a regenerated file gets a new hash and therefore a new
+            // URL, fetched fresh automatically; an unchanged file keeps
+            // its hash and stays cached. cacheName is a stable name,
+            // permanently — versioning moved into the URL itself after
+            // three manual bumps (v1 through v3) for the same class of
+            // "asset content changed, cache didn't know" incident.
+            urlPattern: /\/assets\/exercises\/.*\.avif(\?.*)?$/,
             handler: 'CacheFirst',
             options: {
-              // Bumped again for the enclosed-pocket matte fix (commit
-              // 1f6669e) — CacheFirst never revalidates, and every asset
-              // kept its URL, so without a new cache name a phone that
-              // already viewed an exercise keeps serving the old baked-
-              // white-pocket AVIF from cache indefinitely. Bump this name
-              // again any time a future regeneration reuses existing URLs.
-              cacheName: 'exercise-assets-v3',
+              cacheName: 'exercise-assets',
               expiration: { maxEntries: 200 },
             },
           },

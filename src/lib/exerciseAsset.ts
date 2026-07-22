@@ -20,6 +20,19 @@ interface ManifestEntry {
   // below tolerates either field being absent.
   referenceSize?: [number, number]
   frameSizes?: [number, number][]
+  // Content hash per file (scripts/update-manifest-dims.mjs), appended as
+  // a `?v=` query param — this is the cache-busting mechanism (see
+  // withHash below and vite.config.ts's runtime cache comment). Optional
+  // for the same staleness reason as the size fields: a hash-less entry
+  // just resolves to a plain, unversioned URL rather than failing.
+  referenceHash?: string
+  thumbnailHash?: string
+  frameHashes?: string[]
+}
+
+/** Appends `?v=<hash>` when a hash is available, otherwise returns the URL unchanged. */
+export function withHash(url: string, hash: string | undefined): string {
+  return hash ? `${url}?v=${hash}` : url
 }
 
 // The generated manifest's JSON types are plain number[]/number[][] —
@@ -89,13 +102,13 @@ export function exerciseAsset(
   if (kind === 'reference') {
     if (!entry.referenceSize) return null
     const [width, height] = entry.referenceSize
-    return { url: `${base}/reference.avif`, width, height }
+    return { url: withHash(`${base}/reference.avif`, entry.referenceHash), width, height }
   }
 
   if (kind === 'thumbnail') {
     const size = entry.frameSizes?.[entry.thumbnailFrame - 1]
     if (!size) return null
-    return { url: `${base}/thumbnail.avif`, width: size[0], height: size[1] }
+    return { url: withHash(`${base}/thumbnail.avif`, entry.thumbnailHash), width: size[0], height: size[1] }
   }
 
   // kind === 'frame' — 1-based, must fall within the strip this exercise
@@ -104,7 +117,7 @@ export function exerciseAsset(
   const size = entry.frameSizes?.[frame - 1]
   if (!size) return null
   const padded = String(frame).padStart(2, '0')
-  return { url: `${base}/frames/${padded}.avif`, width: size[0], height: size[1] }
+  return { url: withHash(`${base}/frames/${padded}.avif`, entry.frameHashes?.[frame - 1]), width: size[0], height: size[1] }
 }
 
 /** How many frames to step through — 0 for an unknown id (FrameStepper renders nothing). */

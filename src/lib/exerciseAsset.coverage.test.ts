@@ -52,4 +52,19 @@ describe('exercise asset coverage', () => {
       ).toBe(false)
     }
   })
+
+  it('every manifest entry carries a content hash per kind — reference, thumbnail, and each frame (cache-busting invariant)', () => {
+    const entries = manifest as unknown as Record<
+      string,
+      { frameCount: number; referenceHash?: string; thumbnailHash?: string; frameHashes?: string[] }
+    >
+    for (const [id, entry] of Object.entries(entries)) {
+      expect(entry.referenceHash, `${id} has no referenceHash`).toBeTruthy()
+      expect(entry.thumbnailHash, `${id} has no thumbnailHash`).toBeTruthy()
+      expect(entry.frameHashes?.length, `${id}'s frameHashes count doesn't match frameCount`).toBe(
+        entry.frameCount,
+      )
+      entry.frameHashes?.forEach((hash, i) => expect(hash, `${id} frame ${i + 1} has no hash`).toBeTruthy())
+    }
+  })
 })

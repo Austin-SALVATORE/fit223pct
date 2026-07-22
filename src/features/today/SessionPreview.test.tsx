@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
+import manifest from '@/data/generated/asset-manifest.json'
 import { SessionPreview } from './SessionPreview'
 import type { Exercise, ExercisePrescription, SessionTemplate } from '@/domain/types'
+
+const gobletSquatThumbnailHash = (manifest as Record<string, { thumbnailHash?: string }>)['goblet-squat']
+  .thumbnailHash
 
 const withAsset: Exercise = {
   id: 'goblet-squat',
@@ -64,7 +68,7 @@ describe('SessionPreview thumbnails', () => {
     const row = await screen.findByRole('link', { name: /Goblet squat/ })
     const img = row.querySelector('img')
     expect(img).not.toBeNull()
-    expect(img).toHaveAttribute('src', '/assets/exercises/goblet-squat/thumbnail.avif')
+    expect(img).toHaveAttribute('src', `/assets/exercises/goblet-squat/thumbnail.avif?v=${gobletSquatThumbnailHash}`)
     expect(img).toHaveAttribute('alt', '')
   })
 
