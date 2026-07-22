@@ -1,6 +1,6 @@
 import type { MessageDescriptor } from './message'
 import type { ReadinessTier } from './readiness'
-import type { ExercisePrescription, LoggedSet } from './types'
+import type { ExercisePrescription, LadderPrescription, RepRangePrescription, SetTarget, LoggedSet } from './types'
 
 export type ProgressionType =
   | 'start'
@@ -27,7 +27,7 @@ export interface ProgressionSuggestion {
  * range remains allowed.
  */
 export function suggestProgression(
-  prescription: ExercisePrescription,
+  prescription: RepRangePrescription,
   lastSets: readonly LoggedSet[],
   readinessTier?: ReadinessTier,
 ): ProgressionSuggestion {
@@ -95,6 +95,61 @@ export function suggestProgression(
     weightKg: lastWeight + weightStepKg,
     targetReps: range.min,
     reason: { key: 'domain:progression.increaseLoad' },
+  }
+}
+
+export type LadderProgressionResult =
+  | { type: 'advance'; setPlan: SetTarget[] }
+  | { type: 'repeat'; setPlan: SetTarget[] }
+  | { type: 'at-equipment-max'; setPlan: SetTarget[] }
+
+/**
+ * Classical ascending pyramid (docs/PyramidProgression.md) — completion
+ * only, no reserve gate. Every rung's target reps hit → the whole ladder
+ * steps up by weightStepKg together; falling short on any rung → repeat
+ * the same targets. At the equipment ceiling (the top rung can't take
+ * another step), the whole ladder holds unchanged rather than partially
+ * advancing the lower rungs — see docs/PyramidProgression.md's Question B
+ * for why: it's the same "surface the ceiling honestly" philosophy
+ * suggestProgression's add-technique branch already uses, and clamping the
+ * top while raising the rest would quietly collapse the coach-authored
+ * rung spacing into flat sets nobody decided to ship.
+ */
+export function suggestLadderProgression(
+  prescription: LadderPrescription,
+  lastSets: readonly LoggedSet[],
+): LadderProgressionResult {
+  const { setPlan, maxWeightKg, weightStepKg } = prescription
+
+  if (lastSets.length === 0) {
+    return { type: 'repeat', setPlan }
+  }
+
+  const completed = setPlan.every((rung, index) => {
+    const logged = lastSets.find((set) => set.setIndex === index)
+    return logged !== undefined && (logged.reps ?? 0) >= rung.reps
+  })
+  if (!completed) {
+    return { type: 'repeat', setPlan }
+  }
+
+  const topRung = setPlan.at(-1)
+  if (
+    topRung === undefined ||
+    weightStepKg === null ||
+    maxWeightKg === null ||
+    topRung.weightKg === null ||
+    topRung.weightKg + weightStepKg > maxWeightKg
+  ) {
+    return { type: 'at-equipment-max', setPlan }
+  }
+
+  return {
+    type: 'advance',
+    setPlan: setPlan.map((rung) => ({
+      ...rung,
+      weightKg: rung.weightKg === null ? null : rung.weightKg + weightStepKg,
+    })),
   }
 }
 

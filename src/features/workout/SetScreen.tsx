@@ -46,21 +46,30 @@ export function SetScreen({
   const exerciseName = useExerciseName(exercise.id)
   const { prescription } = workoutExercise
   const note = usePrescriptionNote(programId, sessionId, prescription, programOrigin)
-  const suggestion = suggestProgression(prescription, previousSets, readinessTier)
-  const suggestionReason = useTranslatedMessage(suggestion.reason)
+  // Ladder pre-fill/suggestion wiring (suggestLadderProgression) and real
+  // ladder-position copy land in M8 Phase 7 — this reads the plain
+  // prescribed rung directly as an interim, compile-safe default. No
+  // seeded/imported data carries setPlan yet (Phase 8/10), so this branch
+  // is provably unreachable in production before Phase 7 ships.
+  const ladderRung = prescription.setPlan?.[setIndex] ?? null
+  const suggestion = prescription.setPlan
+    ? null
+    : suggestProgression(prescription, previousSets, readinessTier)
+  const suggestionReason = useTranslatedMessage(suggestion?.reason ?? { key: 'domain:progression.start' })
 
   // Within a session, people keep the weight they just used.
   const lastSetThisSession = workoutExercise.sets.at(-1)
   const defaultWeight =
-    lastSetThisSession?.weightKg ?? suggestion.weightKg ?? prescription.startWeightKg
+    lastSetThisSession?.weightKg ??
+    (prescription.setPlan ? (ladderRung?.weightKg ?? null) : (suggestion?.weightKg ?? prescription.startWeightKg))
 
   const [weightKg, setWeightKg] = useState(defaultWeight)
   const [effort, setEffort] = useState(
     lastSetThisSession
       ? effortValue(lastSetThisSession, prescription.mode)
-      : suggestion.targetReps,
+      : (prescription.setPlan ? (ladderRung?.reps ?? 0) : (suggestion?.targetReps ?? 0)),
   )
-  const [rir, setRir] = useState(prescription.targetRir)
+  const [rir, setRir] = useState(prescription.targetRir ?? 2)
   const [swapOpen, setSwapOpen] = useState(false)
 
   const isSeconds = prescription.mode === 'seconds'
@@ -90,7 +99,7 @@ export function SetScreen({
         <p className="mt-3 text-sm leading-relaxed text-ink-secondary">
           <LastTime sets={previousSets} mode={prescription.mode} />
         </p>
-        {suggestion.type !== 'start' && (
+        {suggestion && suggestion.type !== 'start' && (
           <p className="mt-1 text-sm leading-relaxed text-amber">{suggestionReason}</p>
         )}
         {note && <p className="mt-1 text-sm text-ink-tertiary">{note}</p>}

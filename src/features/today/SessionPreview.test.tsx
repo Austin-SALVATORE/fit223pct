@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import manifest from '@/data/generated/asset-manifest.json'
 import { SessionPreview } from './SessionPreview'
-import type { Exercise, ExercisePrescription, SessionTemplate } from '@/domain/types'
+import type { Exercise, ExercisePrescription, LadderPrescription, SessionTemplate } from '@/domain/types'
 
 const gobletSquatThumbnailHash = (manifest as Record<string, { thumbnailHash?: string }>)['goblet-squat']
   .thumbnailHash
@@ -79,5 +79,41 @@ describe('SessionPreview thumbnails', () => {
     expect(withoutAssetRow).toBeDefined()
     expect(withoutAssetRow?.querySelector('img')).toBeNull()
     expect(withoutAssetRow?.querySelector('[aria-hidden="true"]')).toBeInTheDocument()
+  })
+})
+
+describe('SessionPreview ladder prescriptions', () => {
+  it('renders a setPlan item as a climbing-weight, descending-reps line', async () => {
+    const ladder: LadderPrescription = {
+      exerciseId: 'goblet-squat',
+      sets: 3,
+      mode: 'reps',
+      restSeconds: 120,
+      perSide: false,
+      setPlan: [
+        { weightKg: 8, reps: 12 },
+        { weightKg: 10, reps: 10 },
+        { weightKg: 12, reps: 8 },
+      ],
+      maxWeightKg: 14,
+      weightStepKg: 2,
+    }
+    const ladderSession: SessionTemplate = {
+      id: 'A',
+      name: 'Session A',
+      focus: 'Push',
+      items: [ladder],
+    }
+    render(
+      <MemoryRouter>
+        <SessionPreview
+          session={ladderSession}
+          programId="phase-1-home"
+          exerciseById={new Map([['goblet-squat', withAsset]])}
+          heading="Today"
+        />
+      </MemoryRouter>,
+    )
+    expect(await screen.findByText('8→10→12 kg · 12/10/8')).toBeInTheDocument()
   })
 })

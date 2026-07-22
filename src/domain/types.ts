@@ -41,24 +41,59 @@ export interface RepRange {
   max: number
 }
 
-export interface ExercisePrescription {
+/** One rung of a pyramid ladder — weight climbs, reps descend, in prescription order. */
+export interface SetTarget {
+  weightKg: number | null
+  reps: number
+}
+
+interface ExercisePrescriptionBase {
   exerciseId: string
   sets: number
   mode: EffortMode
-  range: RepRange
-  targetRir: number
   restSeconds: number
   perSide: boolean
   /** Volume adjustments only ever trim accessories; absent means 'main' (older snapshots) */
   role?: 'main' | 'accessory'
-  startWeightKg: number | null
-  /** Hard equipment ceiling at home; null = load is not the lever (bands, bodyweight) */
-  maxWeightKg: number | null
-  weightStepKg: number | null
   note?: string
   /** Contextual fallbacks this program declares for this slot (e.g. "rack's taken") — layered over the Library's generic Exercise.substitutionIds, never replacing it. See effectiveSubstitutions. */
   substitutionIds?: string[]
 }
+
+/**
+ * The two progression models (docs/PyramidProgression.md), chosen by
+ * `setPlan` presence — never inferred from equipment or role. Rep-range
+ * covers bodyweight/band/timed work and loaded isolation accessories;
+ * setPlan ladders are primary compound lifts only.
+ *
+ * `targetRir` is a deliberately temporary carryover on this branch only —
+ * RIR is being purged from the app entirely (M8 Phase 6 deletes it from
+ * here, from LoggedSet, and migrates stored data); until then it's still
+ * read by the reserve gate in progression.ts and the RIR-bump in
+ * adjustments.ts. Ladders never had a use for it, so LadderPrescription
+ * never carries it.
+ */
+export interface RepRangePrescription extends ExercisePrescriptionBase {
+  range: RepRange
+  targetRir: number
+  startWeightKg: number | null
+  /** Hard equipment ceiling at home; null = load is not the lever (bands, bodyweight) */
+  maxWeightKg: number | null
+  weightStepKg: number | null
+  setPlan?: undefined
+}
+
+export interface LadderPrescription extends ExercisePrescriptionBase {
+  setPlan: SetTarget[]
+  /** Hard equipment ceiling at home — the top rung's cap, see suggestLadderProgression */
+  maxWeightKg: number | null
+  weightStepKg: number | null
+  range?: undefined
+  targetRir?: undefined
+  startWeightKg?: undefined
+}
+
+export type ExercisePrescription = RepRangePrescription | LadderPrescription
 
 export interface SessionTemplate {
   id: string

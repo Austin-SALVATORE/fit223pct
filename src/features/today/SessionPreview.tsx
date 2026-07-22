@@ -110,6 +110,11 @@ function ItemRow({
 }
 
 function formatPrescription(item: ExercisePrescription, perSideSuffix: string): string {
+  if (item.setPlan) {
+    const weights = item.setPlan.map((rung) => (rung.weightKg !== null ? String(rung.weightKg) : '–'))
+    const reps = item.setPlan.map((rung) => String(rung.reps))
+    return `${weights.join('→')} kg · ${reps.join('/')}${perSideSuffix}`
+  }
   const unit = item.mode === 'seconds' ? 's' : ''
   const load = item.startWeightKg !== null ? ` · ${item.startWeightKg} kg` : ''
   return `${item.sets} × ${item.range.min}–${item.range.max}${unit}${perSideSuffix}${load}`

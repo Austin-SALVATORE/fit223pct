@@ -9,8 +9,8 @@ import {
   workoutPosition,
 } from './workout'
 import type {
-  ExercisePrescription,
   LoggedSet,
+  RepRangePrescription,
   SessionTemplate,
   Workout,
 } from './types'
@@ -18,8 +18,8 @@ import type {
 function prescription(
   exerciseId: string,
   sets: number,
-  overrides: Partial<ExercisePrescription> = {},
-): ExercisePrescription {
+  overrides: Partial<RepRangePrescription> = {},
+): RepRangePrescription {
   return {
     exerciseId,
     sets,

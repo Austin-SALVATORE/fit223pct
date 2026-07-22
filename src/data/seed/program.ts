@@ -1,4 +1,4 @@
-import type { ExercisePrescription, Program } from '@/domain/types'
+import type { Program, RepRangePrescription } from '@/domain/types'
 
 const defaults = {
   mode: 'reps' as const,
@@ -13,8 +13,8 @@ function reps(
   min: number,
   max: number,
   weights: { start: number | null; max: number | null; step: number | null },
-  overrides: Partial<ExercisePrescription> = {},
-): ExercisePrescription {
+  overrides: Partial<RepRangePrescription> = {},
+): RepRangePrescription {
   return {
     ...defaults,
     exerciseId,

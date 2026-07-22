@@ -3,6 +3,7 @@ import { coachInsight, workoutHighlights } from './highlights'
 import type {
   ExercisePrescription,
   LoggedSet,
+  RepRangePrescription,
   SessionTemplate,
   Workout,
 } from './types'
@@ -10,8 +11,8 @@ import { completeWorkout, createWorkout, logSet } from './workout'
 
 function prescription(
   exerciseId: string,
-  overrides: Partial<ExercisePrescription> = {},
-): ExercisePrescription {
+  overrides: Partial<RepRangePrescription> = {},
+): RepRangePrescription {
   return {
     exerciseId,
     sets: 2,
