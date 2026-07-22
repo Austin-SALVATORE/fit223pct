@@ -280,8 +280,8 @@
             "bent-over-row": {
               "note": "每次动作顶点稍作停顿"
             },
-            "hip-thrust": {
-              "note": "能稳定控制15次后，改为单腿版本"
+            "single-leg-hip-thrust": {
+              "note": "保持髋部水平——自由腿保持伸直"
             }
           }
         }

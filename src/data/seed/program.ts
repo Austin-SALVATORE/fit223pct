@@ -51,11 +51,11 @@ export const seedProgram: Program = {
       name: 'Session A',
       focus: 'Squat & pull',
       items: [
-        reps('goblet-squat', 3, 8, 12, { start: 14, max: 20, step: 2 }, {
+        reps('goblet-squat', 3, 8, 12, { start: 16, max: 20, step: 2 }, {
           note: '3-second lowering',
         }),
         reps('bench-press', 3, 8, 15, { start: 25, max: 30, step: 2.5 }),
-        reps('single-arm-db-row', 3, 8, 12, { start: 14, max: 20, step: 2 }, {
+        reps('single-arm-db-row', 3, 8, 12, { start: 16, max: 20, step: 2 }, {
           perSide: true,
           restSeconds: 90,
         }),
@@ -82,11 +82,17 @@ export const seedProgram: Program = {
         reps('bent-over-row', 3, 10, 15, { start: 25, max: 30, step: 2.5 }, {
           note: 'Pause at the top of each rep',
         }),
-        reps('hip-thrust', 3, 10, 15, { start: 20, max: 20, step: 2 }, {
-          note: 'Move to single-leg once 15 reps feel controlled',
+        reps('single-leg-hip-thrust', 3, 10, 15, bodyweight, {
+          perSide: true,
+          note: 'Keep the hips level — the free leg stays extended',
+          substitutionIds: ['hip-thrust'],
         }),
         reps('band-lateral-raise', 2, 12, 20, band, { restSeconds: 60, role: 'accessory' }),
-        reps('band-curl', 2, 12, 20, band, { restSeconds: 60, role: 'accessory' }),
+        reps('dumbbell-curl', 2, 12, 20, { start: 8, max: null, step: 2 }, {
+          restSeconds: 60,
+          role: 'accessory',
+          substitutionIds: ['band-curl'],
+        }),
         reps('side-plank', 2, 20, 40, bodyweight, {
           mode: 'seconds',
           perSide: true,
@@ -96,4 +102,51 @@ export const seedProgram: Program = {
       ],
     },
   ],
+  weekdayActivities: {
+    2: {
+      kind: 'recovery',
+      title: 'Recovery walk & stretch',
+      items: [
+        { label: '30-minute easy walk', detail: 'Conversational pace' },
+        {
+          label: '10-minute stretch',
+          detail: 'Hips, hamstrings, chest, shoulders',
+        },
+      ],
+    },
+    4: {
+      kind: 'recovery',
+      title: 'Mobility & easy cardio',
+      items: [
+        {
+          label: '10-minute mobility routine',
+          detail: 'Ankles, hips, thoracic spine, shoulders',
+        },
+        {
+          label: '20–30 minutes of Zone 2',
+          detail: 'Brisk walk, easy cycle, or relaxed swim',
+        },
+      ],
+    },
+    6: {
+      kind: 'optional',
+      title: 'Optional sport',
+      items: [
+        {
+          label: 'One enjoyable activity',
+          detail: 'Tennis, swimming, cycling, or a long walk — keep it recreational',
+        },
+        { label: 'Complete rest is a fine choice too' },
+      ],
+    },
+    7: {
+      kind: 'checkpoint',
+      title: 'Weekly checkpoint',
+      items: [
+        { label: 'Weigh in', detail: 'Same conditions each week — morning, before eating' },
+        { label: 'Measure your waist', detail: 'Same spot, same conditions as last week' },
+        { label: 'Prepare the coming week', detail: 'Confirm training times and any sport plans' },
+      ],
+    },
+  },
 }

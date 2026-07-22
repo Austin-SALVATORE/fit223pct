@@ -84,6 +84,9 @@ describe('Today on an activity day', () => {
   })
 
   it('shows the plain rest hero unchanged when the program has no activity for the weekday', async () => {
+    // The seed program now ships with activity days (22 Jul revision), so
+    // the bare-rest state needs a program that genuinely has none.
+    await programRepo.put({ ...seedProgram, weekdayActivities: undefined })
     renderApp()
     expect(await screen.findByRole('heading', { name: 'Recovery is progress' })).toBeInTheDocument()
   })

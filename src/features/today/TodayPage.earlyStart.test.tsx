@@ -44,7 +44,11 @@ describe('Early start on unscheduled days', () => {
     vi.setSystemTime(new Date(2026, 6, 23, 9, 0, 0)) // Thursday — rest day
     renderApp()
 
-    expect(await screen.findByText('Recovery is progress')).toBeInTheDocument()
+    // Thursday carries the seed's mobility activity (22 Jul revision) —
+    // the early-start affordance must coexist with the activity hero.
+    expect(
+      await screen.findByRole('heading', { name: 'Mobility & easy cardio' }),
+    ).toBeInTheDocument()
     const early = await screen.findByRole('button', { name: 'Start this session now' })
     await userEvent.click(early)
 
