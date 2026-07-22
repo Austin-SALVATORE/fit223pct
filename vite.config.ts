@@ -24,6 +24,21 @@ export default defineConfig({
         // exercises would bloat the install-time download for content most
         // sessions never open; runtimeCaching below caches them on first view.
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        // globPatterns' png/svg entries also match authoring-lineage files
+        // that were never meant to ship at all: each of the ~112 exercise
+        // folders carries a reference.png (the pre-conversion source the
+        // AVIFs are generated from — see scripts/convert-assets.mjs) and
+        // public/assets/brand/app-icon/ carries the app-icon design
+        // lineage (mark-alpha.png, concept renders, the pure mark.svg/
+        // mark-small.svg source files consumed only by
+        // scripts/generate-app-icon-raster.mjs at build time, not by the
+        // running app). None of this is runtime-fetched — the actual
+        // exercise AVIFs are served by runtimeCaching below, and the
+        // actual icons are the pwa-*.png/apple-touch-icon.png files at
+        // the public root, outside this ignore. Left in, this was 159
+        // precache entries / ~148 MB on every fresh install — almost
+        // entirely these two directories.
+        globIgnores: ['assets/exercises/**', 'assets/brand/**'],
         runtimeCaching: [
           {
             // Matches the `?v=<hash>` query param too — see
@@ -56,7 +71,7 @@ export default defineConfig({
         icons: [
           { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: 'pwa-512-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
     }),
