@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
 import { Stepper } from '@/ui/Stepper'
-import { suggestProgression } from '@/domain/progression'
+import { suggestLadderProgression, suggestProgression } from '@/domain/progression'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { useExerciseName } from '@/i18n/seedExercise'
@@ -45,16 +45,19 @@ export function SetScreen({
   const exerciseName = useExerciseName(exercise.id)
   const { prescription } = workoutExercise
   const note = usePrescriptionNote(programId, sessionId, prescription, programOrigin)
-  // Ladder pre-fill/suggestion wiring (suggestLadderProgression) and real
-  // ladder-position copy land in M8 Phase 7 — this reads the plain
-  // prescribed rung directly as an interim, compile-safe default. No
-  // seeded/imported data carries setPlan yet (Phase 8/10), so this branch
-  // is provably unreachable in production before Phase 7 ships.
-  const ladderRung = prescription.setPlan?.[setIndex] ?? null
+  const ladderResult = prescription.setPlan
+    ? suggestLadderProgression(prescription, previousSets)
+    : null
+  const ladderRung = ladderResult?.setPlan[setIndex] ?? null
   const suggestion = prescription.setPlan
     ? null
     : suggestProgression(prescription, previousSets, readinessTier)
   const suggestionReason = useTranslatedMessage(suggestion?.reason ?? { key: 'domain:progression.start' })
+  const ladderReason = useTranslatedMessage(
+    ladderResult?.type === 'at-equipment-max'
+      ? { key: 'domain:progression.atEquipmentMax' }
+      : { key: 'domain:progression.start' },
+  )
 
   // Within a session, people keep the weight they just used.
   const lastSetThisSession = workoutExercise.sets.at(-1)
@@ -88,6 +91,7 @@ export function SetScreen({
       <div className="mt-8">
         <p className="eyebrow">
           {t('setScreen.setProgress', { setIndex: setIndex + 1, totalSets: prescription.sets })}
+          {ladderRung && ` — ${ladderRung.weightKg ?? '–'} kg × ${ladderRung.reps}`}
           {prescription.perSide && ` · ${t('setScreen.eachSide')}`}
         </p>
         <h1 ref={headingRef} tabIndex={-1} className="text-display mt-2 text-4xl text-ink">
@@ -98,6 +102,9 @@ export function SetScreen({
         </p>
         {suggestion && suggestion.type !== 'start' && (
           <p className="mt-1 text-sm leading-relaxed text-amber">{suggestionReason}</p>
+        )}
+        {ladderResult?.type === 'at-equipment-max' && (
+          <p className="mt-1 text-sm leading-relaxed text-amber">{ladderReason}</p>
         )}
         {note && <p className="mt-1 text-sm text-ink-tertiary">{note}</p>}
       </div>

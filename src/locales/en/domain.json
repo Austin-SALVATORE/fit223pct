@@ -23,7 +23,8 @@
     "addReps": "Same weight — add a rep to your weakest set.",
     "consolidateEasier": "You've earned more load, but not today — same weight, save the jump for a fresher day.",
     "addTechnique": "Load is maxed for this setup — progress with a slower eccentric, a pause, or more range.",
-    "increaseLoad": "Every set topped the range — time to add load."
+    "increaseLoad": "Every set topped the range — time to add load.",
+    "atEquipmentMax": "Every rung is maxed for this setup — hold the ladder and own the reps."
   },
   "highlight": {
     "first": "First time",

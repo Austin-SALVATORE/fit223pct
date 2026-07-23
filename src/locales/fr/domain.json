@@ -23,7 +23,8 @@
     "addReps": "Même charge — ajoute une répétition à ta série la plus faible.",
     "consolidateEasier": "Tu as mérité plus de charge, mais pas aujourd'hui — même charge, garde ce saut pour un jour plus frais.",
     "addTechnique": "La charge est au maximum pour cette configuration — progresse avec un tempo excentrique plus lent, une pause, ou plus d'amplitude.",
-    "increaseLoad": "Chaque série a atteint le haut de l'amplitude — il est temps d'augmenter la charge."
+    "increaseLoad": "Chaque série a atteint le haut de l'amplitude — il est temps d'augmenter la charge.",
+    "atEquipmentMax": "Chaque palier est au maximum pour cette configuration — maintiens l'échelle et maîtrise les répétitions."
   },
   "highlight": {
     "first": "Première fois",
