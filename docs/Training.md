@@ -7,50 +7,62 @@ No influencer programming. No fabricated claims. No promised outcomes.
 
 ## Principles applied
 
-- Each major muscle group ~2×/week → 3 full-body days (Mon/Wed/Fri), A/B alternating.
-- 1–3 reps in reserve on working sets; no failure on technical compound lifts.
-- Double progression: work within a rep range, add reps first, then load.
-- Load is capped at home (30 kg barbell, 20 kg DB) — so progression also uses
-  tempo (slow eccentrics), pauses, range of motion, unilateral variants, and volume.
-- Tennis and swimming count as conditioning; strength days respect them —
-  volume adjusts to recovery signals rather than forcing adherence.
+- Each major muscle group receives direct weekly stimulus.
+- Every training day has a single, clear identity — the user should always be
+  able to answer "what did I train today?"
+- Compound lifts come first, isolation follows, core finishes.
+- Progression is completion-gated, not reserve-gated: RIR was purged
+  entirely from the app (22 Jul, `docs/PyramidProgression.md`) — a session
+  advances because it was completed as prescribed, never because of a
+  self-rated number.
+- Load is capped at home (15 kg per hand, adjustable dumbbells only, 30 kg
+  combined) — a ladder that reaches this ceiling holds there and says so,
+  rather than quietly faking further progress.
 - Recovery is tracked (sleep, energy, soreness, stress, motivation) and is a
-  first-class input to training decisions.
+  first-class input to training decisions — an 'easier' day drops the
+  heaviest set of each ladder and trims accessory volume, never load.
 
-## Phase 1 program (21 Jul – 9 Aug, home gym)
+## Two progression models
 
-Session A — Squat focus
-| Exercise | Sets × reps | Notes |
-|---|---|---|
-| Goblet squat (20 kg DB) | 3 × 8–12 | 3s eccentric; teach bracing |
-| Floor/bench press or deficit push-up | 3 × 8–15 | tempo when load is light |
-| Single-arm DB row (20 kg) | 3 × 8–12 /side | |
-| Romanian deadlift (barbell 30 kg) | 3 × 10–15 | slow eccentric; teach hip hinge |
-| Band pull-apart | 2 × 15–20 | shoulder health |
-| Dead bug | 2 × 8–10 /side | |
+Every prescription is one of exactly two shapes (`docs/PyramidProgression.md`
+is the full spec; this section is the summary).
 
-Session B — Hinge/press focus
-| Exercise | Sets × reps | Notes |
-|---|---|---|
-| Bulgarian split squat (DBs) | 3 × 8–12 /side | unilateral loading beats load cap |
-| Overhead press (barbell) | 3 × 6–10 | teach rib-down bracing |
-| Bent-over barbell row (30 kg) | 3 × 10–15 | pause at chest |
-| Hip thrust (DB on hips) | 3 × 10–15 | single-leg when easy |
-| Band lateral raise + band curl | 2 × 12–20 | accessory superset |
-| Side plank | 2 × 20–40s /side | |
+**Pyramid / ladder (`setPlan`)** — primary compound lifts. An explicit,
+ascending set-by-set plan: weight climbs, reps descend
+(e.g. `8×12 → 10×10 → 12×8`). When every set in the ladder hits its target
+reps, the whole ladder steps up by a fixed weight increment next session.
+Falling short on any set repeats the same targets. At the equipment ceiling
+the whole ladder holds — never a partial advance of the lower sets, which
+would quietly collapse the coach-authored spacing between sets.
 
-Week pattern: Mon A · Wed B · Fri A, then Mon B · Wed A · Fri B (alternate).
-Tennis/swimming on non-lifting days as desired.
+**Rep-range (existing shape, minus RIR)** — bodyweight, band, timed
+(seconds-mode) work, and loaded isolation accessories (curls, lateral
+raises, flies). Fill the rep range first (add reps to the weakest set);
+once every set tops the range, add load. Isolation work stays on two
+straight working sets rather than a ladder — the goal there is quality
+contraction across a short session, not per-session progressive overload.
 
-## Progression rules (encoded in `domain/progression`)
+An 'easier' readiness day defers load increases (rep-range) and drops the
+top set of each ladder — filling the rep range, or the remaining lower sets
+of a ladder, is still expected.
 
-1. All sets at top of rep range with ≤2 RIR → increase load next time
-   (smallest available increment; if load capped → add tempo/pause/ROM/unilateral step).
-2. Otherwise → aim +1 rep on weakest set.
-3. Two sessions of no improvement + poor recovery signals → reduce volume, don't push.
+## Phase 1 program (20 Jul – 9 Aug, home gym)
+
+The authoritative content is the coach's specification:
+[`docs/programs/phase-1-home-v3-coach-spec.md`](./programs/phase-1-home-v3-coach-spec.md),
+transcribed into the app's seed program — see that file for the full
+session-by-session breakdown (Mon Chest & Back, Wed Legs & Core, Fri
+Shoulders & Arms), equipment tier, and weekly calendar. This doc doesn't
+duplicate that table; treat the coach spec as the source of truth and this
+section as the "why," not the "what."
+
+Scheduling is weekday-pinned, not A/B-rotated (`Program.schedulingMode`) —
+every training weekday always offers the same session identity, so a
+missed day never shifts what a later day offers.
 
 ## Phase 2 (10 Aug →, Fitness Park)
 
-Program to be designed near the date; same principles, machine/heavier-barbell
-progressions unlock, likely 4-day upper/lower. Architecture treats programs as
-data, so this is a content change, not a code change.
+Program to be designed near the date; same principles, machine/heavier-load
+progressions unlock once barbell and cable equipment are available again.
+Architecture treats programs as data, so this is a content change, not a
+code change.
