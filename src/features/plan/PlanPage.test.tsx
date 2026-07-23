@@ -44,11 +44,11 @@ function renderApp() {
   )
 }
 
-async function putCompletedWorkout(date: string) {
+async function putCompletedWorkout(date: string, session = seedProgram.sessions[0]) {
   let workout = createWorkout({
     id: `w-${date}`,
     programId: seedProgram.id,
-    session: seedProgram.sessions[0],
+    session,
     date,
     startedAt: `${date}T09:00:00.000Z`,
   })
@@ -72,51 +72,54 @@ describe('PlanPage', () => {
     expect(await screen.findByRole('heading', { name: 'Phase 1 — Home' })).toBeInTheDocument()
   })
 
-  it('renders the phase header with the rotation sentence', async () => {
+  it('renders the phase header with the fixed weekday-session summary', async () => {
     renderApp()
     expect(await screen.findByRole('heading', { name: 'Phase 1 — Home' })).toBeInTheDocument()
-    expect(await screen.findByText('21 Jul – 9 Aug')).toBeInTheDocument()
-    expect(await screen.findByText('A and B alternate, Mon / Wed / Fri')).toBeInTheDocument()
+    expect(await screen.findByText('20 Jul – 9 Aug')).toBeInTheDocument()
+    expect(
+      await screen.findByText('Mon Chest & Back · Wed Legs & Core · Fri Shoulders & Arms'),
+    ).toBeInTheDocument()
   })
 
   it('states a skipped scheduled day as a plain em-dash, never "missed"', async () => {
-    await putCompletedWorkout('2026-07-22')
+    await putCompletedWorkout('2026-07-22', seedProgram.sessions[1]) // Wed = Legs & Core
     renderApp()
     expect(await screen.findByText('Wed 22 Jul')).toBeInTheDocument()
     const skippedRow = (await screen.findByText('Fri 24 Jul')).closest('li')
     expect(skippedRow).not.toBeNull()
-    expect(await screen.findByLabelText('No session')).toHaveTextContent('—')
+    expect(within(skippedRow!).getByLabelText('No session')).toHaveTextContent('—')
     // The row itself carries no guilt copy — the page-level honesty-rule
     // note (a different, neutral sentence) is allowed to use the word.
     expect(skippedRow).not.toHaveTextContent(/missed/i)
   })
 
-  it('shows today\'s real rotation position, shifted by the skipped day, not a repeat', async () => {
-    await putCompletedWorkout('2026-07-22') // session A, completedCount becomes 1
+  it('keeps today\'s pinned session fixed regardless of a skipped day earlier this week — no rotation to shift', async () => {
+    await putCompletedWorkout('2026-07-22', seedProgram.sessions[1]) // Wed done, Fri skipped
     renderApp()
-    // completedCount=1 → rotation[1%2] = B, not A — proves the skip shifted
-    // nothing else and consumed no rotation slot of its own.
+    // Weekday-pinned: Monday is always Chest & Back, whatever happened
+    // earlier in the week — the property Phase 4 (schedule.ts) guarantees,
+    // exercised here through the real seed.
     expect(await screen.findByText(/Mon 27 Jul/)).toBeInTheDocument()
     expect(await screen.findByText('Today')).toBeInTheDocument()
-    const todayLink = screen.getByRole('link', { name: /Mon 27 Jul.*Today.*Session B/s })
+    const todayLink = screen.getByRole('link', { name: /Mon 27 Jul.*Today.*Chest & Back/s })
     expect(todayLink).toBeInTheDocument()
   })
 
-  it('labels only future sessions as projected, with the explanatory line once', async () => {
+  it('labels only future sessions as projected, with the pinned-mode explanatory line once', async () => {
     renderApp()
     const projectedLabels = await screen.findAllByText('Projected', { exact: false })
     expect(projectedLabels.length).toBeGreaterThan(1)
     expect(
-      screen.getAllByText(/rotation follows what you complete, not the date/).length,
+      screen.getAllByText(/each weekday's session is fixed/).length,
     ).toBe(1)
   })
 
   it('shows a completed day\'s session and summary, never projected', async () => {
-    await putCompletedWorkout('2026-07-22')
+    await putCompletedWorkout('2026-07-22', seedProgram.sessions[1])
     renderApp()
     const row = (await screen.findByText('Wed 22 Jul')).closest('li')
     expect(row).not.toBeNull()
-    expect(row).toHaveTextContent('Session A')
+    expect(row).toHaveTextContent('Legs & Core')
     // Correctly singular now that the count is pluralized — previously
     // this always rendered "sets" regardless of count.
     expect(row).toHaveTextContent('1 set')
@@ -131,39 +134,23 @@ describe('PlanPage', () => {
   })
 })
 
-describe('PlanPage weekday-pinned scheduling', () => {
+describe('PlanPage rotation-mode rendering (an explicit opt-out from pinned scheduling)', () => {
   afterEach(async () => {
     await programRepo.put(seedProgram)
   })
 
-  it('renders the fixed weekday-session summary and pinned projected note instead of the rotation sentence', async () => {
+  it('renders the alternating-rotation sentence for a program that opts into rotation mode', async () => {
     await programRepo.put({
       ...seedProgram,
-      schedulingMode: 'weekday-pinned',
-      weekdaySessions: { 1: 'A', 3: 'B', 5: 'A' },
+      schedulingMode: 'rotation',
+      rotation: ['chest-back', 'legs-core'],
     })
     renderApp()
     expect(await screen.findByRole('heading', { name: 'Phase 1 — Home' })).toBeInTheDocument()
-    expect(await screen.findByText('Mon Session A · Wed Session B · Fri Session A')).toBeInTheDocument()
-    expect(screen.queryByText(/alternate/)).toBeNull()
-    expect(
-      screen.getAllByText(/each weekday's session is fixed/).length,
-    ).toBeGreaterThan(0)
-  })
-
-  it('offers the same pinned session on a weekday no matter what was completed elsewhere', async () => {
-    await programRepo.put({
-      ...seedProgram,
-      schedulingMode: 'weekday-pinned',
-      weekdaySessions: { 1: 'A', 3: 'B', 5: 'A' },
-    })
-    // In rotation mode this completion shifts today's (Mon 27 Jul) session
-    // to B (see the earlier "shifted by the skipped day" test) — pinned
-    // mode must stay on A regardless.
-    await putCompletedWorkout('2026-07-22')
-    renderApp()
-    const todayLink = await screen.findByRole('link', { name: /Mon 27 Jul.*Today.*Session A/s })
-    expect(todayLink).toBeInTheDocument()
+    expect(screen.queryByText(/each weekday's session is fixed/)).toBeNull()
+    // rotationLine composes from raw rotation ids, not resolved session
+    // names (a pre-existing PhaseHeader quirk, unrelated to this test).
+    expect(await screen.findByText(/alternate, Mon \/ Wed \/ Fri/)).toBeInTheDocument()
   })
 })
 

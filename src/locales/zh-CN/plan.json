@@ -12,6 +12,7 @@
   "rotationLine": "{{rotationList}}交替，{{weekdays}}",
   "dayDetail": {
     "nothingLogged": "这天没有记录任何内容——训练顺延，没有丢失任何进度。",
+    "nothingLoggedPinned": "这天没有记录任何内容——没有丢失任何进度。下次到这个星期几时，还是同一个训练课。",
     "sets_other": "{{count}} 组",
     "inMinutes_other": " · {{count}} 分钟",
     "summaryLine": "{{setsPhrase}} · {{volume}} kg{{minutesPhrase}}",

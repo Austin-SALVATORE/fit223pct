@@ -34,7 +34,7 @@ async function putCompletedWorkout(date: string) {
   let workout = createWorkout({
     id: `w-${date}`,
     programId: seedProgram.id,
-    session: seedProgram.sessions[0], // Session A: item 0 = goblet-squat
+    session: seedProgram.sessions[1], // Legs & Core: item 0 = goblet-squat
     date,
     startedAt: `${date}T09:00:00.000Z`,
   })
@@ -73,7 +73,7 @@ describe('PlanDayPage states', () => {
     renderDay('2026-07-22')
 
     expect(await screen.findByRole('heading', { name: /Wednesday 22 July/ })).toBeInTheDocument()
-    expect(screen.getByText('Session A')).toBeInTheDocument()
+    expect(screen.getByText('Legs & Core')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Goblet squat' })).toBeInTheDocument()
     expect(screen.getByText('10 × 20 kg · 9 × 20 kg')).toBeInTheDocument()
     expect(screen.getByText(/2 sets/)).toBeInTheDocument()
@@ -81,13 +81,11 @@ describe('PlanDayPage states', () => {
     expect(screen.queryByText(/RIR/)).toBeNull()
   })
 
-  it('future training day: SessionPreview, Projected label, the honesty line, no readiness applied', async () => {
+  it('future training day: SessionPreview, Projected label, the pinned-mode honesty line, no readiness applied', async () => {
     renderDay('2026-07-29') // Wednesday, future relative to 27 Jul "today"
     expect(await screen.findByRole('heading', { name: /Wednesday 29 July/ })).toBeInTheDocument()
     expect(screen.getByText('Projected')).toBeInTheDocument()
-    expect(
-      screen.getByText(/rotation follows what you complete, not the date/),
-    ).toBeInTheDocument()
+    expect(screen.getByText(/each weekday's session is fixed/)).toBeInTheDocument()
     // No readiness-adjustment language ever appears on a future day.
     expect(screen.queryByText(/Adjusted for readiness/)).toBeNull()
   })
@@ -103,7 +101,7 @@ describe('PlanDayPage states', () => {
         },
       },
     })
-    renderDay('2026-07-21') // Tuesday, phase's own start date
+    renderDay('2026-07-21') // Tuesday, second day of the phase
     expect(await screen.findByRole('heading', { name: /Tuesday 21 July/ })).toBeInTheDocument()
     expect(screen.getByText('Recovery')).toBeInTheDocument()
     expect(screen.getByText('Recovery walk & stretch')).toBeInTheDocument()
@@ -115,10 +113,11 @@ describe('PlanDayPage states', () => {
     renderDay('2026-07-24') // Friday, scheduled, nothing logged
     expect(await screen.findByRole('heading', { name: /Friday 24 July/ })).toBeInTheDocument()
     expect(
-      screen.getByText('Nothing was logged this day — the session shifted forward, nothing was lost.'),
+      screen.getByText('Nothing was logged this day — nothing was lost. This weekday still offers the same session next time.'),
     ).toBeInTheDocument()
-    expect(screen.queryByText('Session A')).toBeNull()
-    expect(screen.queryByText('Session B')).toBeNull()
+    expect(screen.queryByText('Chest & Back')).toBeNull()
+    expect(screen.queryByText('Legs & Core')).toBeNull()
+    expect(screen.queryByText('Shoulders & Arms')).toBeNull()
   })
 
   it('unknown/out-of-phase date: quiet message and a back link, never a crash', async () => {

@@ -16,13 +16,13 @@ import type { Workout } from '@/domain/types'
  *   insufficient-data copy renders instead);
  * - stagnation carries its named evidence in the DOM, not just a label.
  *
- * Time is frozen to the program's start date (Tue 21 Jul) so
+ * Time is frozen to the program's start date (Mon 20 Jul) so
  * consistencyTrend's "yesterday" window is deterministic regardless of the
  * real wall clock — ProgressPage reads `new Date()` directly.
  */
 
 beforeAll(async () => {
-  vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 6, 21, 9, 0, 0) })
+  vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 6, 20, 9, 0, 0) })
   await seedDatabase()
 })
 

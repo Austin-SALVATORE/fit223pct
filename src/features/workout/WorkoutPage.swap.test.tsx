@@ -24,7 +24,7 @@ afterEach(async () => {
 })
 
 async function insertActiveWorkoutWithProgramDefinedSubstitutions() {
-  const session = seedProgram.sessions[0] // Session A, item 0 = goblet-squat
+  const session = seedProgram.sessions[1] // Legs & Core, item 0 = goblet-squat
   const workout = createWorkout({
     id: 'test-swap',
     programId: seedProgram.id,

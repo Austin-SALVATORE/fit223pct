@@ -9,7 +9,7 @@ import { createWorkout, logSet } from '@/domain/workout'
 import { WorkoutPage } from './WorkoutPage'
 
 /**
- * Side plank (Session B) is a seconds-mode set with no way to time it —
+ * Side plank (Legs & Core) is a seconds-mode set with no way to time it —
  * the hold timer pre-fills the Hold Stepper on stop; the Stepper stays
  * the source of truth for what actually gets logged.
  */
@@ -24,7 +24,7 @@ afterEach(async () => {
 })
 
 async function insertActiveWorkoutAtSidePlank() {
-  const session = seedProgram.sessions[1]
+  const session = seedProgram.sessions[1] // Legs & Core
   let workout = createWorkout({
     id: 'test-active-b',
     programId: seedProgram.id,
@@ -32,8 +32,8 @@ async function insertActiveWorkoutAtSidePlank() {
     date: '2026-07-24',
     startedAt: '2026-07-24T09:00:00.000Z',
   })
-  // Log every set of the first six exercises to reach side plank (index 6).
-  for (let exerciseIndex = 0; exerciseIndex < 6; exerciseIndex++) {
+  // Log every set of the first four exercises to reach side plank (index 4).
+  for (let exerciseIndex = 0; exerciseIndex < 4; exerciseIndex++) {
     const sets = workout.exercises[exerciseIndex].prescription.sets
     for (let i = 0; i < sets; i++) {
       workout = logSet(workout, exerciseIndex, {

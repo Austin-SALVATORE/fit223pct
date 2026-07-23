@@ -66,7 +66,7 @@ describe('Readiness flowing into the plan', () => {
     // Card collapses into the easier phrase, hero eases, accessory volume trims
     expect(await screen.findByText(/touch easier/i)).toBeInTheDocument()
     expect(await screen.findByText(/Eased back a touch/)).toBeInTheDocument()
-    expect(await screen.findByText(/1 × 15–20/)).toBeInTheDocument()
+    expect(await screen.findByText(/1 × 30–45s/)).toBeInTheDocument()
 
     // The canonical label and the concrete reasons appear next to the numbers
     expect(await screen.findByText('Adjusted for readiness')).toBeInTheDocument()

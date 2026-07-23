@@ -84,9 +84,9 @@ describe('the untouched seeded program', () => {
     render(<Probe program={seedProgram} />)
 
     expect(screen.getByText('Phase 1 — Maison')).toBeInTheDocument()
-    expect(screen.getByText('Séance A')).toBeInTheDocument()
-    expect(screen.getByText('Squat et tirage')).toBeInTheDocument()
-    expect(screen.getByText('Descente de 3 secondes')).toBeInTheDocument()
+    expect(screen.getByText('Poitrine et dos')).toBeInTheDocument()
+    expect(screen.getByText('Fondation poussée-tirage')).toBeInTheDocument()
+    expect(screen.getByText('Tempo 3-1-1')).toBeInTheDocument()
   })
 
   it('still translates into Simplified Chinese', async () => {
@@ -94,8 +94,8 @@ describe('the untouched seeded program', () => {
     render(<Probe program={seedProgram} />)
 
     expect(screen.getByText('第一阶段 — 居家训练')).toBeInTheDocument()
-    expect(screen.getByText('训练 A')).toBeInTheDocument()
-    expect(screen.getByText('深蹲与拉')).toBeInTheDocument()
-    expect(screen.getByText('下降用时3秒')).toBeInTheDocument()
+    expect(screen.getByText('胸背训练')).toBeInTheDocument()
+    expect(screen.getByText('推拉基础')).toBeInTheDocument()
+    expect(screen.getByText('节奏 3-1-1')).toBeInTheDocument()
   })
 })

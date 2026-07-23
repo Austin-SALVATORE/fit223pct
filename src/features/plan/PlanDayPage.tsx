@@ -42,6 +42,7 @@ export function PlanDayPage() {
       exerciseById: new Map(exercises.map((e) => [e.id, e])),
       programId: program.id,
       programOrigin: program.origin,
+      schedulingMode: program.schedulingMode,
     }
   }, [date, validDate])
 
@@ -60,6 +61,7 @@ export function PlanDayPage() {
         date={date}
         programId={data.programId}
         programOrigin={data.programOrigin}
+        schedulingMode={data.schedulingMode}
       />
     </div>
   )
@@ -71,12 +73,14 @@ function DayDetailBody({
   date,
   programId,
   programOrigin,
+  schedulingMode,
 }: {
   day: ScheduleDay
   exerciseById: Map<string, Exercise>
   date: string
   programId: string
   programOrigin: Program['origin']
+  schedulingMode: Program['schedulingMode']
 }) {
   const { t } = useTranslation('plan')
 
@@ -105,11 +109,16 @@ function DayDetailBody({
         programOrigin={programOrigin}
         exerciseById={exerciseById}
         date={date}
+        schedulingMode={schedulingMode}
       />
     )
   }
 
-  return <p className="mt-6 leading-relaxed text-ink-secondary">{t('dayDetail.nothingLogged')}</p>
+  return (
+    <p className="mt-6 leading-relaxed text-ink-secondary">
+      {t(schedulingMode === 'weekday-pinned' ? 'dayDetail.nothingLoggedPinned' : 'dayDetail.nothingLogged')}
+    </p>
+  )
 }
 
 function CompletedDetail({
@@ -211,19 +220,23 @@ function ProjectedDetail({
   programOrigin,
   exerciseById,
   date,
+  schedulingMode,
 }: {
   session: SessionTemplate
   programId: string
   programOrigin: Program['origin']
   exerciseById: Map<string, Exercise>
   date: string
+  schedulingMode: Program['schedulingMode']
 }) {
   const { t } = useTranslation('plan')
   const sessionName = useSessionName(programId, session, programOrigin)
   return (
     <>
       <p className="mt-1 text-sm font-medium text-amber">{t('dayDetail.projectedLabel')}</p>
-      <p className="mt-4 text-sm leading-relaxed text-ink-tertiary">{t('projectedNote')}</p>
+      <p className="mt-4 text-sm leading-relaxed text-ink-tertiary">
+        {t(schedulingMode === 'weekday-pinned' ? 'projectedNotePinned' : 'projectedNote')}
+      </p>
       <SessionPreview
         session={session}
         programId={programId}

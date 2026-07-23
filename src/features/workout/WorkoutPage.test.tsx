@@ -24,7 +24,7 @@ afterEach(async () => {
 })
 
 async function insertActiveWorkoutWithOneLoggedSet() {
-  const session = seedProgram.sessions[0]
+  const session = seedProgram.sessions[1] // Legs & Core, item 0 = goblet-squat
   let workout = createWorkout({
     id: 'test-active',
     programId: seedProgram.id,

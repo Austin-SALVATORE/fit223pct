@@ -321,29 +321,51 @@
     "phase-1-home": {
       "name": "第一阶段 — 居家训练",
       "session": {
-        "A": {
-          "name": "训练 A",
-          "focus": "深蹲与拉",
+        "chest-back": {
+          "name": "胸背训练",
+          "focus": "推拉基础",
           "exercise": {
-            "goblet-squat": {
-              "note": "下降用时3秒"
+            "incline-dumbbell-press": {
+              "note": "节奏 3-1-1"
             },
-            "romanian-deadlift": {
-              "note": "缓慢离心——杠铃下降用时3秒"
+            "dumbbell-bench-press": {
+              "note": "节奏 3-1-1"
+            },
+            "single-arm-db-row": {
+              "note": "节奏 2-1-2"
+            },
+            "rear-delt-fly": {
+              "note": "匀速控制节奏"
+            },
+            "dead-bug": {
+              "note": "匀速控制节奏"
             }
           }
         },
-        "B": {
-          "name": "训练 B",
-          "focus": "铰链与推举",
+        "legs-core": {
+          "name": "腿部与核心",
+          "focus": "深蹲、髋铰链与核心",
           "exercise": {
-            "bent-over-row": {
-              "note": "每次动作顶点稍作停顿"
+            "goblet-squat": {
+              "note": "节奏 3-1-1"
+            },
+            "bulgarian-split-squat": {
+              "note": "匀速控制节奏"
+            },
+            "dumbbell-rdl": {
+              "note": "节奏 3-1-2"
             },
             "single-leg-hip-thrust": {
-              "note": "保持髋部水平——自由腿保持伸直"
+              "note": "匀速控制节奏——保持髋部水平，自由腿保持伸直"
+            },
+            "side-plank": {
+              "note": "静态保持"
             }
           }
+        },
+        "shoulders-arms": {
+          "name": "肩臂训练",
+          "focus": "肩臂力量"
         }
       }
     }

@@ -13,6 +13,7 @@
   "rotationLine": "{{rotationList}} alternate, {{weekdays}}",
   "dayDetail": {
     "nothingLogged": "Nothing was logged this day — the session shifted forward, nothing was lost.",
+    "nothingLoggedPinned": "Nothing was logged this day — nothing was lost. This weekday still offers the same session next time.",
     "sets_one": "{{count}} set",
     "sets_other": "{{count}} sets",
     "inMinutes_one": " · {{count}} minute",

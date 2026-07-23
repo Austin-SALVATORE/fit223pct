@@ -61,7 +61,13 @@ const WEEK_START = '2026-07-20'
 describe('Weekly review on Today', () => {
   beforeAll(async () => {
     await seedDatabase()
-    await db.workouts.bulkPut([workout('w1', '2026-07-21'), workout('w2', '2026-07-23')])
+    // Every scheduled Mon/Wed/Fri that week (20/22/24 Jul) gets a completed
+    // workout — the "all done" headline branch this suite exercises.
+    await db.workouts.bulkPut([
+      workout('w1', '2026-07-20'),
+      workout('w2', '2026-07-22'),
+      workout('w3', '2026-07-24'),
+    ])
   })
 
   afterEach(() => {
@@ -80,7 +86,7 @@ describe('Weekly review on Today', () => {
     renderApp()
     expect(await screen.findByLabelText('Last week')).toBeInTheDocument()
     expect(screen.getByText('Every scheduled session, done.')).toBeInTheDocument()
-    expect(screen.getByText('2/2')).toBeInTheDocument()
+    expect(screen.getByText('3/3')).toBeInTheDocument()
 
     // Wait for this test's own mark-seen write to land before finishing —
     // otherwise it can resolve mid-way through the NEXT test and clobber

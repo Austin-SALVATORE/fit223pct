@@ -321,29 +321,51 @@
     "phase-1-home": {
       "name": "Phase 1 — Home",
       "session": {
-        "A": {
-          "name": "Session A",
-          "focus": "Squat & pull",
+        "chest-back": {
+          "name": "Chest & Back",
+          "focus": "Push & pull foundation",
           "exercise": {
-            "goblet-squat": {
-              "note": "3-second lowering"
+            "incline-dumbbell-press": {
+              "note": "Tempo 3-1-1"
             },
-            "romanian-deadlift": {
-              "note": "Slow eccentric — the bar takes 3 seconds down"
+            "dumbbell-bench-press": {
+              "note": "Tempo 3-1-1"
+            },
+            "single-arm-db-row": {
+              "note": "Tempo 2-1-2"
+            },
+            "rear-delt-fly": {
+              "note": "Controlled tempo"
+            },
+            "dead-bug": {
+              "note": "Controlled tempo"
             }
           }
         },
-        "B": {
-          "name": "Session B",
-          "focus": "Hinge & press",
+        "legs-core": {
+          "name": "Legs & Core",
+          "focus": "Squat, hinge & core",
           "exercise": {
-            "bent-over-row": {
-              "note": "Pause at the top of each rep"
+            "goblet-squat": {
+              "note": "Tempo 3-1-1"
+            },
+            "bulgarian-split-squat": {
+              "note": "Controlled tempo"
+            },
+            "dumbbell-rdl": {
+              "note": "Tempo 3-1-2"
             },
             "single-leg-hip-thrust": {
-              "note": "Keep the hips level — the free leg stays extended"
+              "note": "Controlled tempo — keep the hips level, the free leg stays extended"
+            },
+            "side-plank": {
+              "note": "Static hold"
             }
           }
+        },
+        "shoulders-arms": {
+          "name": "Shoulders & Arms",
+          "focus": "Shoulders & arm strength"
         }
       }
     }

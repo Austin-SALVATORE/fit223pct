@@ -1,4 +1,4 @@
-import type { Program, RepRangePrescription } from '@/domain/types'
+import type { LadderPrescription, Program, RepRangePrescription, SetTarget } from '@/domain/types'
 
 const defaults = {
   mode: 'reps' as const,
@@ -27,74 +27,192 @@ function reps(
   }
 }
 
+function ladder(
+  exerciseId: string,
+  setPlan: SetTarget[],
+  maxWeightKg: number | null,
+  weightStepKg: number | null,
+  overrides: Partial<LadderPrescription> = {},
+): LadderPrescription {
+  return {
+    ...defaults,
+    exerciseId,
+    sets: setPlan.length,
+    setPlan,
+    maxWeightKg,
+    weightStepKg,
+    restSeconds: 120,
+    ...overrides,
+  }
+}
+
 const band = { start: null, max: null, step: null }
 const bodyweight = band
 
 /**
- * Phase 1 — home gym, 21 Jul to 9 Aug 2026 (see docs/Training.md).
- * Mon/Wed/Fri full body, A/B alternating. Weights respect the equipment:
- * barbell caps at 30 kg, single dumbbell at 20 kg.
+ * Adjustable-dumbbell weight increment used throughout — the coach spec
+ * (docs/programs/phase-1-home-v3-coach-spec.md) prescribes starting/target
+ * loads but doesn't name a between-session step size; 2 kg/hand matches the
+ * spacing the spec's own rungs already use and is a conservative default
+ * for this equipment tier (docs/PyramidProgression.md: "conservative
+ * weightStepKg values are the safety margin RIR used to provide").
+ */
+const DUMBBELL_STEP_KG = 2
+/** 15 kg/hand is the hard equipment ceiling for this phase (docs/programs/phase-1-home-v3-coach-spec.md). */
+const DUMBBELL_MAX_KG = 15
+
+/**
+ * Phase 1 — Home, 20 Jul to 9 Aug 2026 (docs/Training.md,
+ * docs/programs/phase-1-home-v3-coach-spec.md — the coach's own program,
+ * transcribed directly, not a laddered conversion of the earlier A/B
+ * seed). Weekday-pinned: Mon Chest & Back, Wed Legs & Core, Fri Shoulders
+ * & Arms — every weekday always offers the same session identity. Dumbbell-
+ * only equipment tier, 15 kg/hand ceiling; every compound is a three-set
+ * ascending ladder, every isolation accessory a two-set rep-range.
  */
 export const seedProgram: Program = {
   id: 'phase-1-home',
   name: 'Phase 1 — Home',
   origin: 'seed',
   phase: 1,
-  startDate: '2026-07-21',
+  startDate: '2026-07-20',
   endDate: '2026-08-09',
   trainingWeekdays: [1, 3, 5],
-  rotation: ['A', 'B'],
+  schedulingMode: 'weekday-pinned',
+  weekdaySessions: { 1: 'chest-back', 3: 'legs-core', 5: 'shoulders-arms' },
+  // Inert in weekday-pinned mode (sessionForDay never consults it) — kept
+  // populated and internally consistent (every id resolves) rather than
+  // an empty/placeholder array, since `rotation` is still a required field.
+  rotation: ['chest-back', 'legs-core', 'shoulders-arms'],
   sessions: [
     {
-      id: 'A',
-      name: 'Session A',
-      focus: 'Squat & pull',
+      id: 'chest-back',
+      name: 'Chest & Back',
+      focus: 'Push & pull foundation',
       items: [
-        reps('goblet-squat', 3, 8, 12, { start: 16, max: 20, step: 2 }, {
-          note: '3-second lowering',
-        }),
-        reps('bench-press', 3, 8, 15, { start: 25, max: 30, step: 2.5 }),
-        reps('single-arm-db-row', 3, 8, 12, { start: 16, max: 20, step: 2 }, {
-          perSide: true,
-          restSeconds: 90,
-        }),
-        reps('romanian-deadlift', 3, 10, 15, { start: 25, max: 30, step: 2.5 }, {
-          note: 'Slow eccentric — the bar takes 3 seconds down',
-        }),
-        reps('band-pull-apart', 2, 15, 20, band, { restSeconds: 60, role: 'accessory' }),
-        reps('dead-bug', 2, 8, 10, bodyweight, {
-          perSide: true,
+        ladder(
+          'incline-dumbbell-press',
+          [
+            { weightKg: 12, reps: 12 },
+            { weightKg: 14, reps: 10 },
+            { weightKg: 15, reps: 8 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { note: 'Tempo 3-1-1' },
+        ),
+        ladder(
+          'dumbbell-bench-press',
+          [
+            { weightKg: 10, reps: 12 },
+            { weightKg: 12, reps: 10 },
+            { weightKg: 15, reps: 8 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { note: 'Tempo 3-1-1' },
+        ),
+        ladder(
+          'single-arm-db-row',
+          [
+            { weightKg: 12, reps: 12 },
+            { weightKg: 14, reps: 10 },
+            { weightKg: 15, reps: 8 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { perSide: true, restSeconds: 90, note: 'Tempo 2-1-2' },
+        ),
+        reps('rear-delt-fly', 2, 12, 15, { start: 5, max: DUMBBELL_MAX_KG, step: DUMBBELL_STEP_KG }, {
           restSeconds: 60,
           role: 'accessory',
+          note: 'Controlled tempo',
+        }),
+        reps('dead-bug', 2, 10, 10, bodyweight, {
+          perSide: true,
+          restSeconds: 45,
+          role: 'accessory',
+          note: 'Controlled tempo',
         }),
       ],
     },
     {
-      id: 'B',
-      name: 'Session B',
-      focus: 'Hinge & press',
+      id: 'legs-core',
+      name: 'Legs & Core',
+      focus: 'Squat, hinge & core',
       items: [
-        reps('bulgarian-split-squat', 3, 8, 12, { start: 8, max: 20, step: 2 }, {
+        ladder(
+          'goblet-squat',
+          [
+            { weightKg: 10, reps: 12 },
+            { weightKg: 12, reps: 10 },
+            { weightKg: 15, reps: 8 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { note: 'Tempo 3-1-1' },
+        ),
+        ladder(
+          'bulgarian-split-squat',
+          [
+            { weightKg: 8, reps: 12 },
+            { weightKg: 10, reps: 10 },
+            { weightKg: 12, reps: 8 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { perSide: true, restSeconds: 90, note: 'Controlled tempo' },
+        ),
+        ladder(
+          'dumbbell-rdl',
+          [
+            { weightKg: 12, reps: 12 },
+            { weightKg: 14, reps: 10 },
+            { weightKg: 15, reps: 8 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { note: 'Tempo 3-1-2' },
+        ),
+        reps('single-leg-hip-thrust', 2, 12, 12, { start: 10, max: DUMBBELL_MAX_KG, step: DUMBBELL_STEP_KG }, {
           perSide: true,
-        }),
-        reps('overhead-press', 3, 6, 10, { start: 20, max: 30, step: 2.5 }),
-        reps('bent-over-row', 3, 10, 15, { start: 25, max: 30, step: 2.5 }, {
-          note: 'Pause at the top of each rep',
-        }),
-        reps('single-leg-hip-thrust', 3, 10, 15, bodyweight, {
-          perSide: true,
-          note: 'Keep the hips level — the free leg stays extended',
-          substitutionIds: ['hip-thrust'],
-        }),
-        reps('band-lateral-raise', 2, 12, 20, band, { restSeconds: 60, role: 'accessory' }),
-        reps('dumbbell-curl', 2, 12, 20, { start: 8, max: null, step: 2 }, {
           restSeconds: 60,
           role: 'accessory',
-          substitutionIds: ['band-curl'],
+          note: 'Controlled tempo — keep the hips level, the free leg stays extended',
         }),
-        reps('side-plank', 2, 20, 40, bodyweight, {
+        reps('side-plank', 2, 30, 45, bodyweight, {
           mode: 'seconds',
           perSide: true,
+          restSeconds: 45,
+          role: 'accessory',
+          note: 'Static hold',
+        }),
+      ],
+    },
+    {
+      id: 'shoulders-arms',
+      name: 'Shoulders & Arms',
+      focus: 'Shoulders & arm strength',
+      items: [
+        ladder(
+          'dumbbell-shoulder-press',
+          [
+            { weightKg: 8, reps: 12 },
+            { weightKg: 10, reps: 10 },
+            { weightKg: 12, reps: 8 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+        ),
+        reps('dumbbell-lateral-raise', 2, 12, 15, { start: 5, max: DUMBBELL_MAX_KG, step: DUMBBELL_STEP_KG }, {
+          restSeconds: 60,
+          role: 'accessory',
+        }),
+        reps('rear-delt-fly', 2, 12, 15, { start: 5, max: DUMBBELL_MAX_KG, step: DUMBBELL_STEP_KG }, {
+          restSeconds: 60,
+          role: 'accessory',
+        }),
+        reps('dumbbell-curl', 2, 12, 15, { start: 8, max: DUMBBELL_MAX_KG, step: DUMBBELL_STEP_KG }, {
           restSeconds: 60,
           role: 'accessory',
         }),
@@ -104,37 +222,30 @@ export const seedProgram: Program = {
   weekdayActivities: {
     2: {
       kind: 'recovery',
-      title: 'Recovery walk & stretch',
+      title: 'Recovery day',
       items: [
-        { label: '30-minute easy walk', detail: 'Conversational pace' },
-        {
-          label: '10-minute stretch',
-          detail: 'Hips, hamstrings, chest, shoulders',
-        },
+        { label: 'Walk', detail: '6,000–10,000 steps' },
+        { label: 'Stretch', detail: '10–15 minutes' },
+        { label: 'Hydration', detail: 'Meet your daily goal' },
+        { label: 'Protein', detail: 'Meet your daily target' },
+        { label: 'Sleep', detail: 'At least 7.5 hours' },
       ],
     },
     4: {
       kind: 'recovery',
-      title: 'Mobility & easy cardio',
+      title: 'Optional recovery',
       items: [
-        {
-          label: '10-minute mobility routine',
-          detail: 'Ankles, hips, thoracic spine, shoulders',
-        },
-        {
-          label: '20–30 minutes of Zone 2',
-          detail: 'Brisk walk, easy cycle, or relaxed swim',
-        },
+        { label: 'Mobility work' },
+        { label: 'Stretching' },
+        { label: 'Foam rolling' },
+        { label: 'Easy walking' },
       ],
     },
     6: {
       kind: 'optional',
-      title: 'Optional sport',
+      title: 'Optional activity',
       items: [
-        {
-          label: 'One enjoyable activity',
-          detail: 'Tennis, swimming, cycling, or a long walk — keep it recreational',
-        },
+        { label: 'Choose one', detail: 'Walking, cycling, swimming, tennis, or mobility work' },
         { label: 'Complete rest is a fine choice too' },
       ],
     },

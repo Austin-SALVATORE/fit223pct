@@ -44,10 +44,10 @@ describe('Early start on unscheduled days', () => {
     vi.setSystemTime(new Date(2026, 6, 23, 9, 0, 0)) // Thursday — rest day
     renderApp()
 
-    // Thursday carries the seed's mobility activity (22 Jul revision) —
-    // the early-start affordance must coexist with the activity hero.
+    // Thursday carries the seed's optional-recovery activity — the
+    // early-start affordance must coexist with the activity hero.
     expect(
-      await screen.findByRole('heading', { name: 'Mobility & easy cardio' }),
+      await screen.findByRole('heading', { name: 'Optional recovery' }),
     ).toBeInTheDocument()
     const early = await screen.findByRole('button', { name: 'Start this session now' })
     await userEvent.click(early)
@@ -56,14 +56,16 @@ describe('Early start on unscheduled days', () => {
     const workouts = await db.workouts.toArray()
     expect(workouts).toHaveLength(1)
     expect(workouts[0].date).toBe('2026-07-23')
-    expect(workouts[0].sessionTemplateId).toBe('A')
+    // Weekday-pinned: the next training day from Thursday is Friday —
+    // Shoulders & Arms, always, regardless of completed count.
+    expect(workouts[0].sessionTemplateId).toBe('shoulders-arms')
   })
 
   it('offers the same quiet start before the program has begun', async () => {
-    vi.setSystemTime(new Date(2026, 6, 19, 9, 0, 0)) // Sunday — 2 days before start
+    vi.setSystemTime(new Date(2026, 6, 19, 9, 0, 0)) // Sunday — 1 day before start
     renderApp()
 
-    expect(await screen.findByText('Starts in 2 days')).toBeInTheDocument()
+    expect(await screen.findByText('Starts tomorrow')).toBeInTheDocument()
     expect(
       await screen.findByRole('button', { name: 'Start this session now' }),
     ).toBeInTheDocument()
@@ -95,7 +97,7 @@ describe('Early start on unscheduled days', () => {
     const [workout] = await db.workouts.toArray()
     expect(workout.readiness?.tier).toBe('easier')
     expect(workout.readiness?.drivers).toContain('sleep')
-    const accessory = workout.exercises.find((e) => e.exerciseId === 'band-pull-apart')
+    const accessory = workout.exercises.find((e) => e.exerciseId === 'dumbbell-lateral-raise')
     expect(accessory?.prescription.sets).toBe(1)
 
     await db.checkins.clear()

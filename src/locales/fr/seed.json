@@ -321,29 +321,51 @@
     "phase-1-home": {
       "name": "Phase 1 — Maison",
       "session": {
-        "A": {
-          "name": "Séance A",
-          "focus": "Squat et tirage",
+        "chest-back": {
+          "name": "Poitrine et dos",
+          "focus": "Fondation poussée-tirage",
           "exercise": {
-            "goblet-squat": {
-              "note": "Descente de 3 secondes"
+            "incline-dumbbell-press": {
+              "note": "Tempo 3-1-1"
             },
-            "romanian-deadlift": {
-              "note": "Excentrique lent — la barre descend en 3 secondes"
+            "dumbbell-bench-press": {
+              "note": "Tempo 3-1-1"
+            },
+            "single-arm-db-row": {
+              "note": "Tempo 2-1-2"
+            },
+            "rear-delt-fly": {
+              "note": "Tempo contrôlé"
+            },
+            "dead-bug": {
+              "note": "Tempo contrôlé"
             }
           }
         },
-        "B": {
-          "name": "Séance B",
-          "focus": "Charnière et poussée",
+        "legs-core": {
+          "name": "Jambes et gainage",
+          "focus": "Squat, charnière et gainage",
           "exercise": {
-            "bent-over-row": {
-              "note": "Pause en haut de chaque répétition"
+            "goblet-squat": {
+              "note": "Tempo 3-1-1"
+            },
+            "bulgarian-split-squat": {
+              "note": "Tempo contrôlé"
+            },
+            "dumbbell-rdl": {
+              "note": "Tempo 3-1-2"
             },
             "single-leg-hip-thrust": {
-              "note": "Garde les hanches de niveau — la jambe libre reste tendue"
+              "note": "Tempo contrôlé — garde les hanches de niveau, la jambe libre reste tendue"
+            },
+            "side-plank": {
+              "note": "Maintien statique"
             }
           }
+        },
+        "shoulders-arms": {
+          "name": "Épaules et bras",
+          "focus": "Force épaules et bras"
         }
       }
     }

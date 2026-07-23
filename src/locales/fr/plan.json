@@ -13,6 +13,7 @@
   "rotationLine": "{{rotationList}} alternent, {{weekdays}}",
   "dayDetail": {
     "nothingLogged": "Rien n'a été enregistré ce jour-là — la séance a été décalée, rien n'a été perdu.",
+    "nothingLoggedPinned": "Rien n'a été enregistré ce jour-là — rien n'a été perdu. Ce jour de la semaine propose de nouveau la même séance la prochaine fois.",
     "sets_one": "{{count}} série",
     "sets_other": "{{count}} séries",
     "inMinutes_one": " · {{count}} minute",
