@@ -36,7 +36,12 @@
     "dialogAriaLabel": "Swap {{exerciseName}}",
     "heading": "Swap {{exerciseName}} for",
     "noSubstitutions": "No substitutions for this one — it's already the fallback.",
-    "keep": "Keep {{exerciseName}}"
+    "keep": "Keep {{exerciseName}}",
+    "confirmHeading": "Swap {{exerciseName}} for {{newExerciseName}}?",
+    "confirmWarning_one": "{{count}} logged set will be cleared.",
+    "confirmWarning_other": "{{count}} logged sets will be cleared.",
+    "confirmSwap": "Swap anyway",
+    "confirmCancel": "Cancel"
   },
   "sessionSummary": {
     "eyebrow": "Session complete",

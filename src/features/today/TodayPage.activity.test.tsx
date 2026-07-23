@@ -13,8 +13,15 @@ import { TodayPage } from './TodayPage'
  * seedProgram (Mon/Wed/Fri) and also its startDate, so time is frozen there.
  */
 
+// origin: 'imported' — these are synthetic activity fixtures, not the real
+// seed's own Tuesday content, so they must render verbatim rather than
+// resolve through the seed's locale keys for weekday 2 (see
+// i18n/seedProgram.ts's useLocalizedActivity: content is keyed by weekday
+// number alone, so any non-imported override for a real seed weekday would
+// otherwise be shadowed by the real seed translation for that same day).
 const recoveryProgram = {
   ...seedProgram,
+  origin: 'imported' as const,
   weekdayActivities: {
     2: {
       kind: 'recovery' as const,
@@ -29,6 +36,7 @@ const recoveryProgram = {
 
 const checkpointProgram = {
   ...seedProgram,
+  origin: 'imported' as const,
   weekdayActivities: {
     2: {
       kind: 'checkpoint' as const,

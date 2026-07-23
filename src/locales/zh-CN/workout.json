@@ -36,7 +36,11 @@
     "dialogAriaLabel": "更换{{exerciseName}}",
     "heading": "把{{exerciseName}}换成",
     "noSubstitutions": "这个动作没有替代选项——它已经是备选方案本身。",
-    "keep": "保留{{exerciseName}}"
+    "keep": "保留{{exerciseName}}",
+    "confirmHeading": "把{{exerciseName}}换成{{newExerciseName}}？",
+    "confirmWarning_other": "已记录的 {{count}} 组将被清除。",
+    "confirmSwap": "仍然更换",
+    "confirmCancel": "取消"
   },
   "sessionSummary": {
     "eyebrow": "训练完成",

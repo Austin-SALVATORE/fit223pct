@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
-import type { ExercisePrescription, Program, SessionTemplate } from '@/domain/types'
+import type { ActivityTemplate, ExercisePrescription, Program, SessionTemplate } from '@/domain/types'
+import type { IsoWeekday } from '@/lib/dates'
 
 /**
  * Program/session/note content is dual-purpose — the one built-in seeded
@@ -57,4 +58,35 @@ export function usePrescriptionNote(
   if (programId === '' || sessionId === '' || programOrigin === 'imported') return item.note
   const key = `program.${programId}.session.${sessionId}.exercise.${item.exerciseId}.note`
   return i18n.exists(`seed:${key}`) ? t(key) : item.note
+}
+
+/**
+ * Same origin-keyed treatment as sessions/prescriptions above, applied to
+ * weekdayActivities — items are keyed by array index (this content is
+ * hand-authored and index-stable, unlike a user-reorderable list) rather
+ * than a natural id, since ActivityItem has none. Returns a whole resolved
+ * ActivityTemplate so call sites (TodayPage's ActivityHero, PlanDayPage's
+ * ActivityDetail) can destructure title/items exactly as before.
+ */
+export function useLocalizedActivity(
+  programId: string,
+  weekday: IsoWeekday,
+  activity: ActivityTemplate,
+  programOrigin?: Program['origin'],
+): ActivityTemplate {
+  const { t, i18n } = useTranslation('seed')
+  if (programId === '' || programOrigin === 'imported') return activity
+  const base = `program.${programId}.activity.${weekday}`
+  const title = t(`${base}.title`, { defaultValue: activity.title })
+  const items = activity.items.map((item, index) => {
+    const labelKey = `${base}.item.${index}.label`
+    const detailKey = `${base}.item.${index}.detail`
+    return {
+      label: i18n.exists(`seed:${labelKey}`) ? t(labelKey) : item.label,
+      ...(item.detail !== undefined
+        ? { detail: i18n.exists(`seed:${detailKey}`) ? t(detailKey) : item.detail }
+        : {}),
+    }
+  })
+  return { ...activity, title, items }
 }

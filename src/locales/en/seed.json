@@ -367,6 +367,79 @@
           "name": "Shoulders & Arms",
           "focus": "Shoulders & arm strength"
         }
+      },
+      "activity": {
+        "2": {
+          "title": "Recovery day",
+          "item": {
+            "0": {
+              "label": "Walk",
+              "detail": "6,000–10,000 steps"
+            },
+            "1": {
+              "label": "Stretch",
+              "detail": "10–15 minutes"
+            },
+            "2": {
+              "label": "Hydration",
+              "detail": "Meet your daily goal"
+            },
+            "3": {
+              "label": "Protein",
+              "detail": "Meet your daily target"
+            },
+            "4": {
+              "label": "Sleep",
+              "detail": "At least 7.5 hours"
+            }
+          }
+        },
+        "4": {
+          "title": "Optional recovery",
+          "item": {
+            "0": {
+              "label": "Mobility work"
+            },
+            "1": {
+              "label": "Stretching"
+            },
+            "2": {
+              "label": "Foam rolling"
+            },
+            "3": {
+              "label": "Easy walking"
+            }
+          }
+        },
+        "6": {
+          "title": "Optional activity",
+          "item": {
+            "0": {
+              "label": "Choose one",
+              "detail": "Walking, cycling, swimming, tennis, or mobility work"
+            },
+            "1": {
+              "label": "Complete rest is a fine choice too"
+            }
+          }
+        },
+        "7": {
+          "title": "Weekly checkpoint",
+          "item": {
+            "0": {
+              "label": "Weigh in",
+              "detail": "Same conditions each week — morning, before eating"
+            },
+            "1": {
+              "label": "Measure your waist",
+              "detail": "Same spot, same conditions as last week"
+            },
+            "2": {
+              "label": "Prepare the coming week",
+              "detail": "Confirm training times and any sport plans"
+            }
+          }
+        }
       }
     }
   }

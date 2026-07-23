@@ -160,8 +160,11 @@ describe('PlanPage activity days', () => {
   })
 
   it('lists an activity day by title, visually quieter than a strength session row', async () => {
+    // origin: 'imported' — a synthetic fixture, not the real seed's own
+    // Tuesday content; see TodayPage.activity.test.tsx's fixture comment.
     await programRepo.put({
       ...seedProgram,
+      origin: 'imported',
       weekdayActivities: {
         2: {
           kind: 'recovery',

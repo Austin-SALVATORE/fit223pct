@@ -1,4 +1,4 @@
-import { useEffect, useRef, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { effectiveSubstitutions } from '@/domain/substitutions'
@@ -14,6 +14,8 @@ interface SwapSheetProps {
   exercise: Exercise
   prescription: Pick<ExercisePrescription, 'substitutionIds'>
   exerciseById: Map<string, Exercise>
+  /** Sets already logged against the exercise being swapped away from — swapExercise (domain/workout.ts) resets them, so a non-zero count needs a chosen, not discovered, confirmation. */
+  loggedSetsCount: number
   onSelect: (exerciseId: string) => void
   onClose: () => void
 }
@@ -23,6 +25,7 @@ export function SwapSheet({
   exercise,
   prescription,
   exerciseById,
+  loggedSetsCount,
   onSelect,
   onClose,
 }: SwapSheetProps) {
@@ -35,6 +38,20 @@ export function SwapSheet({
     .map((id) => exerciseById.get(id))
     .filter((sub): sub is Exercise => sub !== undefined)
 
+  // Set only when the tapped option would clear logged sets — the sheet
+  // shows a confirm step instead of swapping immediately. Reset whenever
+  // the sheet opens/closes so a stale pending choice never survives.
+  const [pendingExerciseId, setPendingExerciseId] = useState<string | null>(null)
+  const pendingExercise = pendingExerciseId ? exerciseById.get(pendingExerciseId) : undefined
+
+  function chooseOption(id: string) {
+    if (loggedSetsCount > 0) {
+      setPendingExerciseId(id)
+    } else {
+      onSelect(id)
+    }
+  }
+
   // A sheet is a modal: it must take focus on open, trap it while open, and
   // return it to whatever opened the sheet on close — otherwise a keyboard
   // user can Tab straight through to controls hidden behind the backdrop.
@@ -45,6 +62,7 @@ export function SwapSheet({
     } else {
       triggerRef.current?.focus()
     }
+    setPendingExerciseId(null)
   }, [open])
 
   function handleKeyDown(event: KeyboardEvent) {
@@ -96,27 +114,78 @@ export function SwapSheet({
             exit={reducedMotion ? { opacity: 0 } : { y: '100%' }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="eyebrow">{t('swapSheet.heading', { exerciseName })}</p>
-            {options.length === 0 ? (
-              <p className="mt-4 text-sm text-ink-secondary">{t('swapSheet.noSubstitutions')}</p>
+            {pendingExercise ? (
+              <ConfirmClear
+                exerciseName={exerciseName}
+                newExerciseId={pendingExercise.id}
+                loggedSetsCount={loggedSetsCount}
+                onConfirm={() => onSelect(pendingExercise.id)}
+                onCancel={() => setPendingExerciseId(null)}
+              />
             ) : (
-              <ul className="mt-3 divide-y divide-border">
-                {options.map((option) => (
-                  <SubstitutionRow key={option.id} option={option} onSelect={onSelect} />
-                ))}
-              </ul>
+              <>
+                <p className="eyebrow">{t('swapSheet.heading', { exerciseName })}</p>
+                {options.length === 0 ? (
+                  <p className="mt-4 text-sm text-ink-secondary">{t('swapSheet.noSubstitutions')}</p>
+                ) : (
+                  <ul className="mt-3 divide-y divide-border">
+                    {options.map((option) => (
+                      <SubstitutionRow key={option.id} option={option} onSelect={chooseOption} />
+                    ))}
+                  </ul>
+                )}
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="mt-4 w-full rounded-card border border-border py-3 text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
+                >
+                  {t('swapSheet.keep', { exerciseName })}
+                </button>
+              </>
             )}
-            <button
-              type="button"
-              onClick={onClose}
-              className="mt-4 w-full rounded-card border border-border py-3 text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
-            >
-              {t('swapSheet.keep', { exerciseName })}
-            </button>
           </motion.div>
         </>
       )}
     </AnimatePresence>
+  )
+}
+
+function ConfirmClear({
+  exerciseName,
+  newExerciseId,
+  loggedSetsCount,
+  onConfirm,
+  onCancel,
+}: {
+  exerciseName: string
+  newExerciseId: string
+  loggedSetsCount: number
+  onConfirm: () => void
+  onCancel: () => void
+}) {
+  const { t } = useTranslation('workout')
+  const newExerciseName = useExerciseName(newExerciseId)
+  return (
+    <>
+      <p className="eyebrow">{t('swapSheet.confirmHeading', { exerciseName, newExerciseName })}</p>
+      <p className="mt-3 text-sm text-ink-secondary">
+        {t('swapSheet.confirmWarning', { count: loggedSetsCount })}
+      </p>
+      <button
+        type="button"
+        onClick={onConfirm}
+        className="mt-4 w-full rounded-card bg-amber py-3 text-center text-sm font-semibold text-bg"
+      >
+        {t('swapSheet.confirmSwap')}
+      </button>
+      <button
+        type="button"
+        onClick={onCancel}
+        className="mt-2 w-full rounded-card border border-border py-3 text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
+      >
+        {t('swapSheet.confirmCancel')}
+      </button>
+    </>
   )
 }
 

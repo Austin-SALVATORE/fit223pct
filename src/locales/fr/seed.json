@@ -367,6 +367,79 @@
           "name": "Épaules et bras",
           "focus": "Force épaules et bras"
         }
+      },
+      "activity": {
+        "2": {
+          "title": "Jour de récupération",
+          "item": {
+            "0": {
+              "label": "Marche",
+              "detail": "6 000 à 10 000 pas"
+            },
+            "1": {
+              "label": "Étirements",
+              "detail": "10 à 15 minutes"
+            },
+            "2": {
+              "label": "Hydratation",
+              "detail": "Atteins ton objectif du jour"
+            },
+            "3": {
+              "label": "Protéines",
+              "detail": "Atteins ta cible du jour"
+            },
+            "4": {
+              "label": "Sommeil",
+              "detail": "Au moins 7h30"
+            }
+          }
+        },
+        "4": {
+          "title": "Récupération optionnelle",
+          "item": {
+            "0": {
+              "label": "Travail de mobilité"
+            },
+            "1": {
+              "label": "Étirements"
+            },
+            "2": {
+              "label": "Auto-massage au rouleau"
+            },
+            "3": {
+              "label": "Marche facile"
+            }
+          }
+        },
+        "6": {
+          "title": "Activité libre",
+          "item": {
+            "0": {
+              "label": "Choisis une activité",
+              "detail": "Marche, vélo, natation, tennis ou mobilité"
+            },
+            "1": {
+              "label": "Le repos complet est aussi un bon choix"
+            }
+          }
+        },
+        "7": {
+          "title": "Bilan hebdomadaire",
+          "item": {
+            "0": {
+              "label": "Pesée",
+              "detail": "Mêmes conditions chaque semaine — le matin, avant de manger"
+            },
+            "1": {
+              "label": "Mesure ton tour de taille",
+              "detail": "Même endroit, mêmes conditions que la semaine dernière"
+            },
+            "2": {
+              "label": "Prépare la semaine à venir",
+              "detail": "Confirme tes créneaux d'entraînement et tes activités sportives"
+            }
+          }
+        }
       }
     }
   }

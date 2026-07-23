@@ -9,10 +9,10 @@ import { createWorkout, summarizeWorkout } from '@/domain/workout'
 import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readiness'
 import { applyReadiness } from '@/domain/adjustments'
 import { buildWeeklyReview, reviewIsUnseen, type WeeklyReview } from '@/domain/weeklyReview'
-import { formatLongDate, toDateKey } from '@/lib/dates'
+import { formatLongDate, isoWeekday, toDateKey, type IsoWeekday } from '@/lib/dates'
 import { useActivityKindLabel } from '@/lib/activityKindLabel'
 import { useLocale } from '@/i18n/useLocale'
-import { useProgramName, useSessionFocus, useSessionName } from '@/i18n/seedProgram'
+import { useLocalizedActivity, useProgramName, useSessionFocus, useSessionName } from '@/i18n/seedProgram'
 import { SettingsLink } from '@/ui/SettingsLink'
 import type { ActivityTemplate, CheckIn, Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
 import { CheckInCard } from '@/features/checkin/CheckInCard'
@@ -239,7 +239,12 @@ function PlannedDay({
           activity={plan.activity}
           hero={
             plan.activity ? (
-              <ActivityHero activity={plan.activity} />
+              <ActivityHero
+                programId={program.id}
+                programOrigin={program.origin}
+                weekday={isoWeekday(today)}
+                activity={plan.activity}
+              />
             ) : (
               <Hero
                 eyebrow={t('plannedDay.restEyebrow')}
@@ -567,14 +572,25 @@ function Hero({ eyebrow, title, subtitle }: HeroProps) {
  * quiet tone, no completion state anywhere in it (see docs/DailyProgram.md:
  * skipping is always fine, a checkbox here would be a streak mechanic).
  */
-function ActivityHero({ activity }: { activity: ActivityTemplate }) {
+function ActivityHero({
+  programId,
+  programOrigin,
+  weekday,
+  activity,
+}: {
+  programId: string
+  programOrigin: Program['origin']
+  weekday: IsoWeekday
+  activity: ActivityTemplate
+}) {
   const kindLabel = useActivityKindLabel(activity.kind)
+  const localized = useLocalizedActivity(programId, weekday, activity, programOrigin)
   return (
     <div className="mt-8">
       <p className="text-sm font-medium text-amber">{kindLabel}</p>
-      <h1 className="text-display mt-2 text-5xl text-ink">{activity.title}</h1>
+      <h1 className="text-display mt-2 text-5xl text-ink">{localized.title}</h1>
       <ul className="mt-4 space-y-2">
-        {activity.items.map((item, index) => (
+        {localized.items.map((item, index) => (
           <li key={index} className="leading-relaxed text-ink-secondary">
             <span className="text-ink">{item.label}</span>
             {item.detail && <span className="text-ink-tertiary"> — {item.detail}</span>}

@@ -171,6 +171,7 @@ export function SetScreen({
         exercise={exercise}
         prescription={prescription}
         exerciseById={exerciseById}
+        loggedSetsCount={workoutExercise.sets.length}
         onSelect={(id) => {
           setSwapOpen(false)
           onSwap(id)

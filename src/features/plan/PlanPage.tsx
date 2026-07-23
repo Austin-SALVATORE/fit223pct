@@ -7,11 +7,11 @@ import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
 import { addDays, dateFormattingLocale, isoWeekday, parseDateKey, toDateKey } from '@/lib/dates'
 import { useLocale } from '@/i18n/useLocale'
-import { useProgramName, useSessionName } from '@/i18n/seedProgram'
+import { useLocalizedActivity, useProgramName, useSessionName } from '@/i18n/seedProgram'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { SettingsLink } from '@/ui/SettingsLink'
 import { ProgramDataActions } from './ProgramDataActions'
-import type { Program, SessionTemplate } from '@/domain/types'
+import type { ActivityTemplate, Program, SessionTemplate } from '@/domain/types'
 
 // A known Monday — used only to look up each ISO weekday's short name via
 // Intl.DateTimeFormat, never as a real date.
@@ -19,6 +19,9 @@ const REFERENCE_MONDAY = new Date(2024, 0, 1)
 
 /** Never rendered — see DayRow's resolvedSessionName comment. */
 const EMPTY_SESSION: SessionTemplate = { id: '', name: '', focus: '', items: [] }
+
+/** Never rendered — see DayRow's localizedActivity comment. */
+const EMPTY_ACTIVITY: ActivityTemplate = { kind: 'recovery', title: '', items: [] }
 
 /** Never rendered — see PhaseNav's previousName/nextName comment. */
 const EMPTY_PROGRAM: Program = {
@@ -143,6 +146,12 @@ function DayRow({
   // so hook order stays stable across day states.
   const resolvedSessionName = useSessionName(programId, day.session ?? EMPTY_SESSION, programOrigin)
   const sessionName = day.session ? resolvedSessionName : t('sessionFallback')
+  const localizedActivity = useLocalizedActivity(
+    programId,
+    isoWeekday(parseDateKey(day.date)),
+    day.activity ?? EMPTY_ACTIVITY,
+    programOrigin,
+  )
 
   if (day.isToday) {
     return (
@@ -151,7 +160,7 @@ function DayRow({
           {label} <span className="text-ink-tertiary">· {tCommon('nav.today')}</span>
         </span>
         <span className="shrink-0 text-sm text-ink-secondary">
-          {day.session ? resolvedSessionName : (day.activity?.title ?? t('restFallback'))}
+          {day.session ? resolvedSessionName : (day.activity ? localizedActivity.title : t('restFallback'))}
         </span>
       </GroupedRow>
     )
@@ -191,7 +200,7 @@ function DayRow({
     return (
       <GroupedRow to={`/plan/${day.date}`}>
         <span className="text-ink-secondary">{label}</span>
-        <span className="shrink-0 text-sm text-ink-tertiary">{day.activity.title}</span>
+        <span className="shrink-0 text-sm text-ink-tertiary">{localizedActivity.title}</span>
       </GroupedRow>
     )
   }

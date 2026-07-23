@@ -36,7 +36,12 @@
     "dialogAriaLabel": "Remplacer {{exerciseName}}",
     "heading": "Remplacer {{exerciseName}} par",
     "noSubstitutions": "Aucune substitution pour celui-ci — c'est déjà la solution de repli.",
-    "keep": "Garder {{exerciseName}}"
+    "keep": "Garder {{exerciseName}}",
+    "confirmHeading": "Remplacer {{exerciseName}} par {{newExerciseName}} ?",
+    "confirmWarning_one": "{{count}} série enregistrée sera effacée.",
+    "confirmWarning_other": "{{count}} séries enregistrées seront effacées.",
+    "confirmSwap": "Remplacer quand même",
+    "confirmCancel": "Annuler"
   },
   "sessionSummary": {
     "eyebrow": "Séance terminée",

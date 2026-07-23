@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Routes } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { seedProgram } from '@/data/seed/program'
-import { createWorkout } from '@/domain/workout'
+import { createWorkout, logSet } from '@/domain/workout'
 import { WorkoutPage } from './WorkoutPage'
 
 /**
@@ -99,5 +99,83 @@ describe('SwapSheet in workout mode', () => {
     // The sheet closes on select; its exit animation is still real wall-clock
     // time (300ms), so give it a moment rather than asserting instant removal.
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+  })
+})
+
+describe('SwapSheet confirm-clear step', () => {
+  async function insertActiveWorkoutWithOneLoggedSet() {
+    const session = seedProgram.sessions[1] // Legs & Core, item 0 = goblet-squat
+    let workout = createWorkout({
+      id: 'test-swap-logged',
+      programId: seedProgram.id,
+      session,
+      date: '2026-07-22',
+      startedAt: '2026-07-22T09:00:00.000Z',
+    })
+    workout = logSet(workout, 0, { weightKg: 10, reps: 12, seconds: null, completedAt: '2026-07-22T09:05:00.000Z' })
+    await db.workouts.put(workout)
+  }
+
+  it('shows a confirm step naming the logged-set count, instead of swapping immediately', async () => {
+    await insertActiveWorkoutWithOneLoggedSet()
+    renderWorkout()
+    await screen.findByText(/Set 2 of/)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
+    const sheet = await screen.findByRole('dialog', { name: 'Swap Goblet squat' })
+    await userEvent.click(within(sheet).getByRole('button', { name: /Split squat/ }))
+
+    expect(within(sheet).getByText('Swap Goblet squat for Split squat?')).toBeInTheDocument()
+    expect(within(sheet).getByText('1 logged set will be cleared.')).toBeInTheDocument()
+    // Nothing has actually swapped yet — still on Goblet squat, still 1 set.
+    expect(screen.getByRole('heading', { name: 'Goblet squat' })).toBeInTheDocument()
+  })
+
+  it('cancelling the confirm step returns to the options list without swapping', async () => {
+    await insertActiveWorkoutWithOneLoggedSet()
+    renderWorkout()
+    await screen.findByText(/Set 2 of/)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
+    const sheet = await screen.findByRole('dialog', { name: 'Swap Goblet squat' })
+    await userEvent.click(within(sheet).getByRole('button', { name: /Split squat/ }))
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Cancel' }))
+
+    expect(within(sheet).getByRole('button', { name: /Split squat/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Goblet squat' })).toBeInTheDocument()
+
+    const [workout] = await db.workouts.toArray()
+    expect(workout.exercises[0].exerciseId).toBe('goblet-squat')
+    expect(workout.exercises[0].sets).toHaveLength(1)
+  })
+
+  it('"Swap anyway" proceeds and clears the logged sets, exactly as the underlying reset always has', async () => {
+    await insertActiveWorkoutWithOneLoggedSet()
+    renderWorkout()
+    await screen.findByText(/Set 2 of/)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
+    const sheet = await screen.findByRole('dialog', { name: 'Swap Goblet squat' })
+    await userEvent.click(within(sheet).getByRole('button', { name: /Split squat/ }))
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Swap anyway' }))
+
+    expect(await screen.findByRole('heading', { name: 'Split squat' })).toBeInTheDocument()
+    expect(await screen.findByText(/Set 1 of/)).toBeInTheDocument()
+
+    const [workout] = await db.workouts.toArray()
+    expect(workout.exercises[0].exerciseId).toBe('split-squat')
+    expect(workout.exercises[0].sets).toHaveLength(0)
+  })
+
+  it('swaps immediately, no confirm step, when nothing has been logged yet', async () => {
+    await insertActiveWorkoutWithProgramDefinedSubstitutions()
+    renderWorkout()
+    await screen.findByRole('heading', { name: 'Goblet squat' })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
+    const sheet = await screen.findByRole('dialog', { name: 'Swap Goblet squat' })
+    await userEvent.click(within(sheet).getByRole('button', { name: /Split squat/ }))
+
+    expect(await screen.findByRole('heading', { name: 'Split squat' })).toBeInTheDocument()
   })
 })

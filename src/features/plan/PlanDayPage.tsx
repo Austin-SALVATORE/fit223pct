@@ -4,10 +4,10 @@ import { Link, Navigate, useParams } from 'react-router'
 import { exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
 import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
-import { formatLongDate, parseDateKey, toDateKey } from '@/lib/dates'
+import { formatLongDate, isoWeekday, parseDateKey, toDateKey, type IsoWeekday } from '@/lib/dates'
 import { useActivityKindLabel } from '@/lib/activityKindLabel'
 import { useExerciseName } from '@/i18n/seedExercise'
-import { useSessionName } from '@/i18n/seedProgram'
+import { useLocalizedActivity, useSessionName } from '@/i18n/seedProgram'
 import { useLocale } from '@/i18n/useLocale'
 import { SessionPreview } from '@/features/today/SessionPreview'
 import type { ActivityTemplate, Exercise, LoggedSet, Program, SessionTemplate, Workout } from '@/domain/types'
@@ -98,7 +98,14 @@ function DayDetailBody({
   }
 
   if (day.activity) {
-    return <ActivityDetail activity={day.activity} />
+    return (
+      <ActivityDetail
+        programId={programId}
+        programOrigin={programOrigin}
+        weekday={isoWeekday(parseDateKey(date))}
+        activity={day.activity}
+      />
+    )
   }
 
   if (day.session) {
@@ -249,14 +256,25 @@ function ProjectedDetail({
   )
 }
 
-function ActivityDetail({ activity }: { activity: ActivityTemplate }) {
+function ActivityDetail({
+  programId,
+  programOrigin,
+  weekday,
+  activity,
+}: {
+  programId: string
+  programOrigin: Program['origin']
+  weekday: IsoWeekday
+  activity: ActivityTemplate
+}) {
   const kindLabel = useActivityKindLabel(activity.kind)
+  const localized = useLocalizedActivity(programId, weekday, activity, programOrigin)
   return (
     <>
       <p className="mt-1 text-sm font-medium text-amber">{kindLabel}</p>
-      <h2 className="text-display mt-1 text-2xl text-ink">{activity.title}</h2>
+      <h2 className="text-display mt-1 text-2xl text-ink">{localized.title}</h2>
       <ul className="mt-4 space-y-2">
-        {activity.items.map((item, index) => (
+        {localized.items.map((item, index) => (
           <li key={index} className="leading-relaxed text-ink-secondary">
             <span className="text-ink">{item.label}</span>
             {item.detail && <span className="text-ink-tertiary"> — {item.detail}</span>}
