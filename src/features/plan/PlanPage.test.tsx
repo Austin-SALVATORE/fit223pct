@@ -131,6 +131,42 @@ describe('PlanPage', () => {
   })
 })
 
+describe('PlanPage weekday-pinned scheduling', () => {
+  afterEach(async () => {
+    await programRepo.put(seedProgram)
+  })
+
+  it('renders the fixed weekday-session summary and pinned projected note instead of the rotation sentence', async () => {
+    await programRepo.put({
+      ...seedProgram,
+      schedulingMode: 'weekday-pinned',
+      weekdaySessions: { 1: 'A', 3: 'B', 5: 'A' },
+    })
+    renderApp()
+    expect(await screen.findByRole('heading', { name: 'Phase 1 — Home' })).toBeInTheDocument()
+    expect(await screen.findByText('Mon Session A · Wed Session B · Fri Session A')).toBeInTheDocument()
+    expect(screen.queryByText(/alternate/)).toBeNull()
+    expect(
+      screen.getAllByText(/each weekday's session is fixed/).length,
+    ).toBeGreaterThan(0)
+  })
+
+  it('offers the same pinned session on a weekday no matter what was completed elsewhere', async () => {
+    await programRepo.put({
+      ...seedProgram,
+      schedulingMode: 'weekday-pinned',
+      weekdaySessions: { 1: 'A', 3: 'B', 5: 'A' },
+    })
+    // In rotation mode this completion shifts today's (Mon 27 Jul) session
+    // to B (see the earlier "shifted by the skipped day" test) — pinned
+    // mode must stay on A regardless.
+    await putCompletedWorkout('2026-07-22')
+    renderApp()
+    const todayLink = await screen.findByRole('link', { name: /Mon 27 Jul.*Today.*Session A/s })
+    expect(todayLink).toBeInTheDocument()
+  })
+})
+
 describe('PlanPage activity days', () => {
   afterEach(async () => {
     await programRepo.put(seedProgram) // restore the plain program

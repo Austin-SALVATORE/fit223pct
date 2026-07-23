@@ -26,24 +26,26 @@ export function resolveDayPlan(
     return { kind: 'ended' }
   }
 
-  const nextSession = sessionAt(program, completedCount)
-
   if (dateKey < program.startDate) {
+    const firstTrainingDate = parseDateKey(
+      nextTrainingDateOnOrAfter(program, parseDateKey(program.startDate)),
+    )
     return {
       kind: 'upcoming',
       daysUntilStart: daysBetween(dateKey, program.startDate),
-      firstSession: nextSession,
+      firstSession: sessionForDay(program, firstTrainingDate, completedCount),
     }
   }
 
   if (program.trainingWeekdays.includes(isoWeekday(date))) {
-    return { kind: 'training', session: nextSession }
+    return { kind: 'training', session: sessionForDay(program, date, completedCount) }
   }
 
+  const nextDateKey = nextTrainingDateOnOrAfter(program, addDays(date, 1))
   return {
     kind: 'rest',
-    nextSession,
-    nextDate: nextTrainingDate(program, date),
+    nextSession: sessionForDay(program, parseDateKey(nextDateKey), completedCount),
+    nextDate: nextDateKey,
     activity: program.weekdayActivities?.[isoWeekday(date)] ?? null,
   }
 }
@@ -141,7 +143,7 @@ export function projectSchedule(
     }
 
     if (date > todayKey) {
-      const session = isTrainingDay ? sessionAt(program, completedCount + futureIndex) : null
+      const session = isTrainingDay ? sessionForDay(program, parseDateKey(date), completedCount + futureIndex) : null
       if (isTrainingDay) futureIndex += 1
       return { date, isToday, isTrainingDay, workout: null, session, projected: true, activity }
     }
@@ -154,7 +156,7 @@ export function projectSchedule(
         isToday,
         isTrainingDay,
         workout: null,
-        session: sessionAt(program, completedCount),
+        session: sessionForDay(program, parseDateKey(date), completedCount),
         projected: false,
         activity,
       }
@@ -178,8 +180,36 @@ export function sessionAt(program: Program, completedCount: number): SessionTemp
   return session
 }
 
-function nextTrainingDate(program: Program, from: Date): string {
-  for (let offset = 1; offset <= 7; offset += 1) {
+/**
+ * What session does this specific day offer? Delegates to `sessionAt`
+ * (rotation, driven by completedCount) unless the program is
+ * weekday-pinned, in which case session identity is read straight off
+ * `date`'s weekday — it never depends on how many sessions have been
+ * completed, which is exactly what makes skipping a pinned day harmless
+ * to every other day (see docs/PyramidProgression.md's scheduling
+ * section, Question A consequence #4).
+ */
+export function sessionForDay(
+  program: Program,
+  date: Date,
+  completedCount: number,
+): SessionTemplate {
+  if (program.schedulingMode !== 'weekday-pinned') {
+    return sessionAt(program, completedCount)
+  }
+  const sessionId = program.weekdaySessions?.[isoWeekday(date)]
+  const session = sessionId ? program.sessions.find((s) => s.id === sessionId) : undefined
+  if (!session) {
+    throw new Error(
+      `Program "${program.id}" is weekday-pinned but has no session for weekday ${isoWeekday(date)}`,
+    )
+  }
+  return session
+}
+
+/** First date on or after `from` (inclusive) whose weekday is a training weekday. */
+function nextTrainingDateOnOrAfter(program: Program, from: Date): string {
+  for (let offset = 0; offset <= 6; offset += 1) {
     const candidate = addDays(from, offset)
     if (program.trainingWeekdays.includes(isoWeekday(candidate))) {
       return toDateKey(candidate)

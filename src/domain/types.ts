@@ -120,6 +120,22 @@ export interface Program {
   rotation: string[]
   sessions: SessionTemplate[]
   /**
+   * 'rotation' (absent = 'rotation', zero migration for every existing
+   * program): session identity follows `rotation`, driven by completed
+   * count. 'weekday-pinned': session identity follows `weekdaySessions`
+   * instead — every weekday always offers the same session, so skipping
+   * one day can never change what a later day offers, unlike rotation
+   * mode. See docs/PyramidProgression.md's scheduling section.
+   */
+  schedulingMode?: 'rotation' | 'weekday-pinned'
+  /**
+   * Session id per pinned weekday — only meaningful when
+   * schedulingMode is 'weekday-pinned'. Every key here should also be a
+   * member of trainingWeekdays (trainingWeekdays still decides whether a
+   * date is a training day at all; this decides which session it is).
+   */
+  weekdaySessions?: Partial<Record<IsoWeekday, string>>
+  /**
    * Authored content for non-training weekdays — may never claim a weekday
    * that's also in trainingWeekdays (import validation rejects the
    * overlap). Absent = today's behavior, a bare rest day.

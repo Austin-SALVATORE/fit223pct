@@ -105,6 +105,76 @@ describe('resolveDayPlan', () => {
   })
 })
 
+const pinnedProgram: Program = {
+  ...program,
+  schedulingMode: 'weekday-pinned',
+  weekdaySessions: { 1: 'A', 3: 'B', 5: 'A' },
+}
+
+describe('resolveDayPlan — weekday-pinned scheduling', () => {
+  it('offers the pinned session for a training day, independent of completedCount', () => {
+    for (const completedCount of [0, 1, 5, 100]) {
+      // Wednesday 22 Jul is pinned to B, regardless of how many sessions
+      // have been completed elsewhere — the defining difference from
+      // rotation mode.
+      const plan = resolveDayPlan(pinnedProgram, new Date(2026, 6, 22), completedCount)
+      expect(plan.kind).toBe('training')
+      if (plan.kind === 'training') expect(plan.session.id).toBe('B')
+    }
+  })
+
+  it('never skips a session — the pinned mapping survives a missed day even more strongly than rotation mode, since it never depends on completedCount at all', () => {
+    for (const completedCount of [0, 1, 5, 100]) {
+      const plan = resolveDayPlan(pinnedProgram, new Date(2026, 6, 24), completedCount) // Friday, pinned to A
+      expect(plan.kind).toBe('training')
+      if (plan.kind === 'training') expect(plan.session.id).toBe('A')
+    }
+  })
+
+  it('describes rest days with the pinned session for the next date, resolved from that date\'s weekday, not today\'s', () => {
+    // Tuesday 21 Jul (program start, not a training weekday) is a rest
+    // day; the next training date is Wed 22 Jul, pinned to B.
+    const plan = resolveDayPlan(pinnedProgram, new Date(2026, 6, 21), 0)
+    expect(plan.kind).toBe('rest')
+    if (plan.kind === 'rest') {
+      expect(plan.nextSession.id).toBe('B')
+      expect(plan.nextDate).toBe('2026-07-22')
+    }
+  })
+
+  it('resolves the upcoming first session from the first pinned training weekday on/after start, not from today\'s weekday', () => {
+    // Program starts Tue 21 Jul, itself not a pinned weekday — the first
+    // pinned training day is Wed 22 Jul (B). "Today" here (Sat 18 Jul) is
+    // a Saturday, also not pinned — proving firstSession isn't read off
+    // today's weekday either.
+    const plan = resolveDayPlan(pinnedProgram, new Date(2026, 6, 18), 0)
+    expect(plan.kind).toBe('upcoming')
+    if (plan.kind === 'upcoming') {
+      expect(plan.daysUntilStart).toBe(3)
+      expect(plan.firstSession.id).toBe('B')
+    }
+  })
+})
+
+describe('projectSchedule — weekday-pinned scheduling', () => {
+  it('early-starting a pinned day\'s session on an earlier date does not change what that pinned weekday independently offers when it later arrives', () => {
+    // Tuesday 21 Jul isn't a pinned training day; completing Session B
+    // there early must not consume or otherwise affect Wednesday's own
+    // (still-future) B identity — the accepted, tested risk from Question
+    // A consequence #5.
+    const earlyWorkout = makeWorkout('2026-07-21', 'B')
+    const days = projectSchedule(pinnedProgram, [earlyWorkout], new Date(2026, 6, 20))
+
+    const tuesday = byDate(days, '2026-07-21')
+    expect(tuesday.workout).not.toBeNull()
+    expect(tuesday.isTrainingDay).toBe(false)
+
+    const wednesday = byDate(days, '2026-07-22')
+    expect(wednesday.session?.id).toBe('B')
+    expect(wednesday.projected).toBe(true)
+  })
+})
+
 function makeWorkout(date: string, sessionTemplateId: string, completed = true): Workout {
   return {
     id: `w-${date}`,

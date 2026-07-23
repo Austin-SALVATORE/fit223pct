@@ -1,6 +1,7 @@
 {
   "noProgram": "Aucun programme n'est encore configuré.",
   "projectedNote": "Les séances projetées supposent que chaque séance entre maintenant et cette date sera complétée — la rotation suit ce que tu termines, pas le calendrier, donc un jour manqué décale tout ce qui suit.",
+  "projectedNotePinned": "Les séances projetées supposent que chaque séance entre maintenant et cette date sera complétée — la séance de chaque jour de la semaine est fixe, donc un jour manqué ne change jamais ce qu'un jour plus tard propose.",
   "weekOf": "Semaine du {{weekStart}}",
   "restFallback": "Repos",
   "sessionFallback": "Séance",

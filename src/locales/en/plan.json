@@ -1,6 +1,7 @@
 {
   "noProgram": "No program is set up yet.",
   "projectedNote": "Projected sessions assume every session between now and then gets completed — the rotation follows what you complete, not the date, so a missed day shifts everything after it.",
+  "projectedNotePinned": "Projected sessions assume every session between now and then gets completed — each weekday's session is fixed, so a missed day never changes what a later day offers.",
   "weekOf": "Week of {{weekStart}}",
   "restFallback": "Rest",
   "sessionFallback": "Session",

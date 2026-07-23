@@ -97,7 +97,11 @@ export function PlanPage() {
 
       <ProgramDataActions program={program} />
 
-      {hasProjectedDays && <p className="mt-6 text-sm leading-relaxed text-ink-tertiary">{t('projectedNote')}</p>}
+      {hasProjectedDays && (
+        <p className="mt-6 text-sm leading-relaxed text-ink-tertiary">
+          {program.schedulingMode === 'weekday-pinned' ? t('projectedNotePinned') : t('projectedNote')}
+        </p>
+      )}
 
       {weeks.map((week) => {
         const weekLabel = t('weekOf', { weekStart: formatShortDate(week.weekStart, locale) })
@@ -229,15 +233,29 @@ function PhaseHeader({ program, locale }: { program: Program; locale: string }) 
   // program's own session names/foci must never resolve through the
   // seed's locale keys, even reusing the seed's session ids.
   const imported = program.origin === 'imported'
+  function resolvedSessionName(session: SessionTemplate): string {
+    return imported
+      ? session.name
+      : tSeed(`program.${program.id}.session.${session.id}.name`, { defaultValue: session.name })
+  }
   const sessionsLine = program.sessions
     .map((s) => {
-      const name = imported
-        ? s.name
-        : tSeed(`program.${program.id}.session.${s.id}.name`, { defaultValue: s.name })
       const focus = imported
         ? s.focus
         : tSeed(`program.${program.id}.session.${s.id}.focus`, { defaultValue: s.focus })
-      return `${name} — ${focus}`
+      return `${resolvedSessionName(s)} — ${focus}`
+    })
+    .join(' · ')
+
+  // Pinned mode has no rotation to describe — name each weekday's fixed
+  // session instead (Question A consequence #2: "A and B alternate" is
+  // simply false once every weekday always offers the same session).
+  const weekdaySessionsLine = Object.entries(program.weekdaySessions ?? {})
+    .map(([weekday, sessionId]) => [Number(weekday), sessionId] as const)
+    .sort(([a], [b]) => a - b)
+    .map(([weekday, sessionId]) => {
+      const session = program.sessions.find((s) => s.id === sessionId)
+      return `${weekdayAbbr(weekday, locale)} ${session ? resolvedSessionName(session) : sessionId}`
     })
     .join(' · ')
 
@@ -251,7 +269,9 @@ function PhaseHeader({ program, locale }: { program: Program; locale: string }) 
       </p>
       <p className="mt-3 text-sm leading-relaxed text-ink-secondary">{sessionsLine}</p>
       <p className="mt-1 text-sm text-ink-tertiary">
-        {t('rotationLine', { rotationList, weekdays: weekdaysLabel })}
+        {program.schedulingMode === 'weekday-pinned'
+          ? weekdaySessionsLine
+          : t('rotationLine', { rotationList, weekdays: weekdaysLabel })}
       </p>
     </section>
   )
