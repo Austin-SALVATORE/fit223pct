@@ -29,8 +29,7 @@
     "logHold": "Log hold",
     "logSet": "Log set",
     "technique": "Technique",
-    "swapExercise": "Swap exercise",
-    "rirLabel": "Reps left in the tank"
+    "swapExercise": "Swap exercise"
   },
   "swapSheet": {
     "closeAriaLabel": "Close",

@@ -13,7 +13,7 @@ interface RatingPickerProps {
 }
 
 /**
- * A small set of mutually-exclusive numeric choices (RIR, a 1–5 rating).
+ * A small set of mutually-exclusive numeric choices (e.g. a 1–5 readiness rating).
  *
  * Deliberately plain toggle buttons (`aria-pressed`), not `role="radio"`:
  * the ARIA radio pattern promises arrow-key roving-tabindex navigation,

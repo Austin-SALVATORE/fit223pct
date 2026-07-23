@@ -25,7 +25,6 @@ function prescription(
     sets,
     mode: 'reps',
     range: { min: 8, max: 12 },
-    targetRir: 2,
     restSeconds: 120,
     perSide: false,
     startWeightKg: 14,
@@ -45,7 +44,7 @@ const session: SessionTemplate = {
 const start = '2026-07-22T18:00:00.000Z'
 
 function set(reps: number, weightKg: number): LoggedSet {
-  return { setIndex: 0, reps, weightKg, seconds: null, rir: 2, completedAt: start }
+  return { setIndex: 0, reps, weightKg, seconds: null, completedAt: start }
 }
 
 function makeWorkout(): Workout {

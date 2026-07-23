@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
 import { Stepper } from '@/ui/Stepper'
-import { RatingPicker } from '@/ui/RatingPicker'
 import { suggestProgression } from '@/domain/progression'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
@@ -69,7 +68,6 @@ export function SetScreen({
       ? effortValue(lastSetThisSession, prescription.mode)
       : (prescription.setPlan ? (ladderRung?.reps ?? 0) : (suggestion?.targetReps ?? 0)),
   )
-  const [rir, setRir] = useState(prescription.targetRir ?? 2)
   const [swapOpen, setSwapOpen] = useState(false)
 
   const isSeconds = prescription.mode === 'seconds'
@@ -81,7 +79,6 @@ export function SetScreen({
       weightKg,
       reps: isSeconds ? null : effort,
       seconds: isSeconds ? effort : null,
-      rir,
       completedAt: new Date().toISOString(),
     })
   }
@@ -133,8 +130,6 @@ export function SetScreen({
             onChange={setEffort}
           />
         </div>
-
-        <RirPicker value={rir} onChange={setRir} />
 
         <motion.button
           type="button"
@@ -199,24 +194,6 @@ function LastTime({
     <>
       {t('setScreen.lastTimePrefix')} <span data-numeric>{parts}</span>
     </>
-  )
-}
-
-const RIR_OPTIONS = [0, 1, 2, 3, 4].map((value) => ({
-  value,
-  display: value === 4 ? '4+' : String(value),
-}))
-
-function RirPicker({ value, onChange }: { value: number; onChange: (v: number) => void }) {
-  const { t } = useTranslation('workout')
-  const label = t('setScreen.rirLabel')
-  return (
-    <div className="mt-8">
-      <p className="eyebrow mx-auto text-center">{label}</p>
-      <div className="mt-2">
-        <RatingPicker label={label} options={RIR_OPTIONS} value={value} onChange={onChange} />
-      </div>
-    </div>
   )
 }
 

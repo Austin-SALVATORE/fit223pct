@@ -19,8 +19,7 @@
     "projectedLabel": "预计",
     "notPartOfPhase": "这个日期不属于这个阶段。",
     "secondsEffort": "{{seconds}}s",
-    "weightSuffix": " × {{weight}} kg",
-    "rirSuffix": "，RIR {{rir}}"
+    "weightSuffix": " × {{weight}} kg"
   },
   "export": {
     "done": "已导出「{{name}}」。"
@@ -59,7 +58,7 @@
     "sessionMissingColumn": "训练课「{{sectionId}}」的表格缺少「{{column}}」这一列。",
     "invalidRange": "训练课「{{sectionId}}」：「{{exerciseId}}」这一行的 Range「{{value}}」无效——应为「min-max」格式。",
     "invalidWeights": "训练课「{{sectionId}}」：「{{exerciseId}}」这一行的 Weights「{{value}}」无效——应为「start/max/step」格式，空值用「-」表示。",
-    "nonNumericField": "训练课「{{sectionId}}」：「{{exerciseId}}」这一行的 Sets、RIR 或 Rest 值不是数字。",
+    "nonNumericField": "训练课「{{sectionId}}」：「{{exerciseId}}」这一行的 Sets 或 Rest 值不是数字。",
     "unrecognizedWeekdayHeading": "活动标题「{{weekdayName}}」不是可识别的星期名称（Monday … Sunday）。",
     "activityMissingKind": "活动「{{weekdayName}}」缺少「Kind:」这一行。",
     "activityMissingTitle": "活动「{{weekdayName}}」缺少「Title:」这一行。",

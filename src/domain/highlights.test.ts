@@ -18,7 +18,6 @@ function prescription(
     sets: 2,
     mode: 'reps',
     range: { min: 8, max: 12 },
-    targetRir: 2,
     restSeconds: 120,
     perSide: false,
     startWeightKg: 14,
@@ -29,7 +28,7 @@ function prescription(
 }
 
 function set(reps: number | null, weightKg: number | null, seconds: number | null = null): Omit<LoggedSet, 'setIndex'> {
-  return { reps, weightKg, seconds, rir: 2, completedAt: '2026-07-24T18:00:00.000Z' }
+  return { reps, weightKg, seconds, completedAt: '2026-07-24T18:00:00.000Z' }
 }
 
 function buildWorkout(

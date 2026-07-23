@@ -281,7 +281,6 @@ function useFormatLoggedSet(): (set: LoggedSet, mode: 'reps' | 'seconds') => str
   return (set, mode) => {
     const effort = mode === 'seconds' ? t('dayDetail.secondsEffort', { seconds: set.seconds }) : String(set.reps)
     const weight = set.weightKg !== null ? t('dayDetail.weightSuffix', { weight: set.weightKg }) : ''
-    const rir = set.rir !== null ? t('dayDetail.rirSuffix', { rir: set.rir }) : ''
-    return `${effort}${weight}${rir}`
+    return `${effort}${weight}`
   }
 }

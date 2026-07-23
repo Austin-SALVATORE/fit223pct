@@ -23,7 +23,6 @@ function validProgram(overrides: Record<string, unknown> = {}) {
             sets: 3,
             mode: 'reps',
             range: { min: 8, max: 12 },
-            targetRir: 2,
             restSeconds: 120,
             perSide: false,
             startWeightKg: 14,
@@ -42,7 +41,6 @@ function validProgram(overrides: Record<string, unknown> = {}) {
             sets: 3,
             mode: 'reps',
             range: { min: 8, max: 12 },
-            targetRir: 2,
             restSeconds: 120,
             perSide: false,
             startWeightKg: 25,
@@ -82,6 +80,20 @@ describe('validateProgramImport', () => {
     const claimsSeed = validateProgramImport(validProgram({ origin: 'seed' }), libraryIds)
     expect(claimsSeed.ok).toBe(true)
     if (claimsSeed.ok) expect(claimsSeed.program.origin).toBe('imported')
+  })
+
+  it('accepts a legacy export carrying a pre-purge targetRir key and silently drops it', () => {
+    // RIR is purged from the schema (M8 Phase 6) — an old backup exported
+    // before the purge must stay importable forever, per
+    // docs/PyramidProgression.md, not rejected for carrying a field the
+    // schema no longer declares.
+    const legacy = validProgram()
+    ;(legacy.sessions[0].items[0] as Record<string, unknown>).targetRir = 2
+    const result = validateProgramImport(legacy, libraryIds)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.program.sessions[0].items[0]).not.toHaveProperty('targetRir')
+    }
   })
 
   it('rejects a missing required field, naming the field via the schema-error descriptor', () => {

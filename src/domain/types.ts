@@ -65,17 +65,9 @@ interface ExercisePrescriptionBase {
  * `setPlan` presence — never inferred from equipment or role. Rep-range
  * covers bodyweight/band/timed work and loaded isolation accessories;
  * setPlan ladders are primary compound lifts only.
- *
- * `targetRir` is a deliberately temporary carryover on this branch only —
- * RIR is being purged from the app entirely (M8 Phase 6 deletes it from
- * here, from LoggedSet, and migrates stored data); until then it's still
- * read by the reserve gate in progression.ts and the RIR-bump in
- * adjustments.ts. Ladders never had a use for it, so LadderPrescription
- * never carries it.
  */
 export interface RepRangePrescription extends ExercisePrescriptionBase {
   range: RepRange
-  targetRir: number
   startWeightKg: number | null
   /** Hard equipment ceiling at home; null = load is not the lever (bands, bodyweight) */
   maxWeightKg: number | null
@@ -89,7 +81,6 @@ export interface LadderPrescription extends ExercisePrescriptionBase {
   maxWeightKg: number | null
   weightStepKg: number | null
   range?: undefined
-  targetRir?: undefined
   startWeightKg?: undefined
 }
 
@@ -149,7 +140,6 @@ export interface LoggedSet {
   weightKg: number | null
   reps: number | null
   seconds: number | null
-  rir: number | null
   completedAt: string
 }
 

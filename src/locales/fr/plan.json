@@ -22,8 +22,7 @@
     "projectedLabel": "Projeté",
     "notPartOfPhase": "Cette date ne fait pas partie de cette phase.",
     "secondsEffort": "{{seconds}}s",
-    "weightSuffix": " × {{weight}} kg",
-    "rirSuffix": ", RIR {{rir}}"
+    "weightSuffix": " × {{weight}} kg"
   },
   "export": {
     "done": "\"{{name}}\" exporté."
@@ -62,7 +61,7 @@
     "sessionMissingColumn": "Le tableau de la séance \"{{sectionId}}\" n'a pas la colonne \"{{column}}\".",
     "invalidRange": "Séance \"{{sectionId}}\" : la ligne pour \"{{exerciseId}}\" a un Range invalide \"{{value}}\" — \"min-max\" est attendu.",
     "invalidWeights": "Séance \"{{sectionId}}\" : la ligne pour \"{{exerciseId}}\" a des Weights invalides \"{{value}}\" — \"start/max/step\" est attendu, avec \"-\" pour une valeur nulle.",
-    "nonNumericField": "Séance \"{{sectionId}}\" : la ligne pour \"{{exerciseId}}\" a une valeur Sets, RIR ou Rest non numérique.",
+    "nonNumericField": "Séance \"{{sectionId}}\" : la ligne pour \"{{exerciseId}}\" a une valeur Sets ou Rest non numérique.",
     "unrecognizedWeekdayHeading": "L'en-tête d'activité \"{{weekdayName}}\" n'est pas un nom de jour reconnu (Monday … Sunday).",
     "activityMissingKind": "L'activité \"{{weekdayName}}\" n'a pas de ligne \"Kind:\".",
     "activityMissingTitle": "L'activité \"{{weekdayName}}\" n'a pas de ligne \"Title:\".",

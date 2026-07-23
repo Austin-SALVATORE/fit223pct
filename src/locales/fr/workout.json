@@ -29,8 +29,7 @@
     "logHold": "Enregistrer le maintien",
     "logSet": "Enregistrer la série",
     "technique": "Technique",
-    "swapExercise": "Remplacer l'exercice",
-    "rirLabel": "Réserve de répétitions"
+    "swapExercise": "Remplacer l'exercice"
   },
   "swapSheet": {
     "closeAriaLabel": "Fermer",

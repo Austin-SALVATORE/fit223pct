@@ -40,7 +40,6 @@ async function insertActiveWorkoutAtSidePlank() {
         weightKg: null,
         reps: 10,
         seconds: null,
-        rir: 2,
         completedAt: '2026-07-24T09:05:00.000Z',
       })
     }

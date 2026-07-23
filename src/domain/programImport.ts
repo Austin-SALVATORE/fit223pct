@@ -18,7 +18,6 @@ const exercisePrescriptionSchema = z.object({
   sets: z.number().int().positive(),
   mode: z.enum(['reps', 'seconds']),
   range: repRangeSchema,
-  targetRir: z.number().int().min(0).max(10),
   restSeconds: z.number().int().positive(),
   perSide: z.boolean(),
   role: z.enum(['main', 'accessory']).optional(),

@@ -15,18 +15,18 @@ rotation: [A, B]
 Name: Session A
 Focus: Squat & pull
 
-| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note |
-|---|---|---|---|---|---|---|---|
-| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | Goblet squat substitutes if the rack's busy |
-| plank | 2 | 20-40 | seconds | 2 | 60 | -/-/- | - |
+| Exercise | Sets | Range | Mode | Rest | Weights | Note |
+|---|---|---|---|---|---|---|
+| barbell-squat | 3 | 8-12 | reps | 120 | 20/40/2.5 | Goblet squat substitutes if the rack's busy |
+| plank | 2 | 20-40 | seconds | 60 | -/-/- | - |
 
 ## Session: B
 Name: Session B
 Focus: Hinge & press
 
-| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note | Per side |
-|---|---|---|---|---|---|---|---|---|
-| bulgarian-split-squat | 3 | 8-12 | reps | 2 | 120 | 8/20/2 | - | yes |
+| Exercise | Sets | Range | Mode | Rest | Weights | Note | Per side |
+|---|---|---|---|---|---|---|---|
+| bulgarian-split-squat | 3 | 8-12 | reps | 120 | 8/20/2 | - | yes |
 `
 
 describe('parseProgramMarkdown', () => {
@@ -56,13 +56,13 @@ describe('parseProgramMarkdown', () => {
       sets: 3,
       range: { min: 8, max: 12 },
       mode: 'reps',
-      targetRir: 2,
       restSeconds: 120,
       startWeightKg: 20,
       maxWeightKg: 40,
       weightStepKg: 2.5,
       note: "Goblet squat substitutes if the rack's busy",
     })
+    expect(sessions[0].items[0]).not.toHaveProperty('targetRir')
     expect(sessions[0].items[1]).toMatchObject({
       exerciseId: 'plank',
       mode: 'seconds',
@@ -76,7 +76,7 @@ describe('parseProgramMarkdown', () => {
   })
 
   it('rejects a table row with an unparseable range, naming the row', () => {
-    const bad = validMarkdown.replace('| 8-12 | reps | 2 | 120 | 20/40/2.5 |', '| eight to twelve | reps | 2 | 120 | 20/40/2.5 |')
+    const bad = validMarkdown.replace('| 8-12 | reps | 120 | 20/40/2.5 |', '| eight to twelve | reps | 120 | 20/40/2.5 |')
     const result = parseProgramMarkdown(bad)
     expect(result.ok).toBe(false)
     if (!result.ok) {
@@ -86,7 +86,7 @@ describe('parseProgramMarkdown', () => {
   })
 
   it('rejects a table missing a required column, naming it', () => {
-    const bad = validMarkdown.replace('| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note |\n|---|---|---|---|---|---|---|---|\n| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | Goblet squat substitutes if the rack\'s busy |', '| Exercise | Sets | Range | Mode | RIR | Weights | Note |\n|---|---|---|---|---|---|---|\n| barbell-squat | 3 | 8-12 | reps | 2 | 20/40/2.5 | Goblet squat substitutes if the rack\'s busy |')
+    const bad = validMarkdown.replace('| Exercise | Sets | Range | Mode | Rest | Weights | Note |\n|---|---|---|---|---|---|---|\n| barbell-squat | 3 | 8-12 | reps | 120 | 20/40/2.5 | Goblet squat substitutes if the rack\'s busy |', '| Exercise | Sets | Range | Mode | Weights | Note |\n|---|---|---|---|---|---|\n| barbell-squat | 3 | 8-12 | reps | 20/40/2.5 | Goblet squat substitutes if the rack\'s busy |')
     const result = parseProgramMarkdown(bad)
     expect(result.ok).toBe(false)
     if (!result.ok) {
@@ -98,8 +98,8 @@ describe('parseProgramMarkdown', () => {
   it('parses a comma-separated Substitutions column, treating "-" as none', () => {
     const withSubs = validMarkdown
       .replace(
-        '| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note |\n|---|---|---|---|---|---|---|---|\n| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | Goblet squat substitutes if the rack\'s busy |\n| plank | 2 | 20-40 | seconds | 2 | 60 | -/-/- | - |',
-        '| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note | Substitutions |\n|---|---|---|---|---|---|---|---|---|\n| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | - | goblet-squat, bulgarian-split-squat |\n| plank | 2 | 20-40 | seconds | 2 | 60 | -/-/- | - | - |',
+        '| Exercise | Sets | Range | Mode | Rest | Weights | Note |\n|---|---|---|---|---|---|---|\n| barbell-squat | 3 | 8-12 | reps | 120 | 20/40/2.5 | Goblet squat substitutes if the rack\'s busy |\n| plank | 2 | 20-40 | seconds | 60 | -/-/- | - |',
+        '| Exercise | Sets | Range | Mode | Rest | Weights | Note | Substitutions |\n|---|---|---|---|---|---|---|---|\n| barbell-squat | 3 | 8-12 | reps | 120 | 20/40/2.5 | - | goblet-squat, bulgarian-split-squat |\n| plank | 2 | 20-40 | seconds | 60 | -/-/- | - | - |',
       )
     const result = parseProgramMarkdown(withSubs)
     expect(result.ok).toBe(true)

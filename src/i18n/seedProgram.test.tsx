@@ -23,7 +23,6 @@ const authoredItem: ExercisePrescription = {
   sets: 3,
   mode: 'reps',
   range: { min: 8, max: 12 },
-  targetRir: 2,
   restSeconds: 120,
   perSide: false,
   startWeightKg: 14,

@@ -20,10 +20,10 @@ rotation: [A]
 Name: Session A
 Focus: Squat & pull
 
-| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note |
-|---|---|---|---|---|---|---|---|
-| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | - |
-| plank | 2 | 20-40 | seconds | 2 | 60 | -/-/- | - |
+| Exercise | Sets | Range | Mode | Rest | Weights | Note |
+|---|---|---|---|---|---|---|
+| barbell-squat | 3 | 8-12 | reps | 120 | 20/40/2.5 | - |
+| plank | 2 | 20-40 | seconds | 60 | -/-/- | - |
 `
     const parsed = parseProgramMarkdown(markdown)
     expect(parsed.ok).toBe(true)
@@ -52,9 +52,9 @@ rotation: [A]
 Name: Session A
 Focus: Squat & pull
 
-| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note |
-|---|---|---|---|---|---|---|---|
-| cable-machine-row | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | - |
+| Exercise | Sets | Range | Mode | Rest | Weights | Note |
+|---|---|---|---|---|---|---|
+| cable-machine-row | 3 | 8-12 | reps | 120 | 20/40/2.5 | - |
 `
     const parsed = parseProgramMarkdown(markdown)
     expect(parsed.ok).toBe(true)
@@ -79,9 +79,9 @@ rotation: [A]
 Name: Session A
 Focus: Squat & pull
 
-| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note |
-|---|---|---|---|---|---|---|---|
-| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | - |
+| Exercise | Sets | Range | Mode | Rest | Weights | Note |
+|---|---|---|---|---|---|---|
+| barbell-squat | 3 | 8-12 | reps | 120 | 20/40/2.5 | - |
 
 ## Activity: Tuesday
 Kind: recovery
@@ -117,9 +117,9 @@ rotation: [A]
 Name: Session A
 Focus: Squat & pull
 
-| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note |
-|---|---|---|---|---|---|---|---|
-| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | - |
+| Exercise | Sets | Range | Mode | Rest | Weights | Note |
+|---|---|---|---|---|---|---|
+| barbell-squat | 3 | 8-12 | reps | 120 | 20/40/2.5 | - |
 
 ## Activity: Monday
 Kind: recovery

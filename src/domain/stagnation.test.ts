@@ -34,7 +34,6 @@ function workout(
           sets: 3,
           mode: 'reps',
           range: { min: 8, max: 12 },
-          targetRir: 2,
           restSeconds: 120,
           perSide: false,
           startWeightKg: weightKg,
@@ -42,7 +41,7 @@ function workout(
           weightStepKg: null,
         },
         sets: [
-          { setIndex: 0, weightKg, reps, seconds: null, rir: 2, completedAt: `${date}T09:10:00.000Z` },
+          { setIndex: 0, weightKg, reps, seconds: null, completedAt: `${date}T09:10:00.000Z` },
         ],
       },
     ],

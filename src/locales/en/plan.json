@@ -22,8 +22,7 @@
     "projectedLabel": "Projected",
     "notPartOfPhase": "This date isn't part of this phase.",
     "secondsEffort": "{{seconds}}s",
-    "weightSuffix": " × {{weight}} kg",
-    "rirSuffix": ", RIR {{rir}}"
+    "weightSuffix": " × {{weight}} kg"
   },
   "export": {
     "done": "Exported \"{{name}}\"."
@@ -62,7 +61,7 @@
     "sessionMissingColumn": "Session \"{{sectionId}}\" table is missing the \"{{column}}\" column.",
     "invalidRange": "Session \"{{sectionId}}\": row for \"{{exerciseId}}\" has an invalid Range \"{{value}}\" — expected \"min-max\".",
     "invalidWeights": "Session \"{{sectionId}}\": row for \"{{exerciseId}}\" has invalid Weights \"{{value}}\" — expected \"start/max/step\" with \"-\" for null.",
-    "nonNumericField": "Session \"{{sectionId}}\": row for \"{{exerciseId}}\" has a non-numeric Sets, RIR, or Rest value.",
+    "nonNumericField": "Session \"{{sectionId}}\": row for \"{{exerciseId}}\" has a non-numeric Sets or Rest value.",
     "unrecognizedWeekdayHeading": "Activity heading \"{{weekdayName}}\" isn't a recognized weekday name (Monday … Sunday).",
     "activityMissingKind": "Activity \"{{weekdayName}}\" is missing a \"Kind:\" line.",
     "activityMissingTitle": "Activity \"{{weekdayName}}\" is missing a \"Title:\" line.",

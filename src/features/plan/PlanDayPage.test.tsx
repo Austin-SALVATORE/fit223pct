@@ -42,14 +42,12 @@ async function putCompletedWorkout(date: string) {
     weightKg: 20,
     reps: 10,
     seconds: null,
-    rir: 2,
     completedAt: `${date}T09:10:00.000Z`,
   })
   workout = logSet(workout, 0, {
     weightKg: 20,
     reps: 9,
     seconds: null,
-    rir: 1,
     completedAt: `${date}T09:15:00.000Z`,
   })
   workout = completeWorkout(workout, `${date}T09:40:00.000Z`)
@@ -70,16 +68,17 @@ function renderDay(date: string) {
 }
 
 describe('PlanDayPage states', () => {
-  it('completed workout day: facts only — session name, per-exercise sets with RIR, summary', async () => {
+  it('completed workout day: facts only — session name, per-exercise logged sets, summary, no RIR anywhere', async () => {
     await putCompletedWorkout('2026-07-22')
     renderDay('2026-07-22')
 
     expect(await screen.findByRole('heading', { name: /Wednesday 22 July/ })).toBeInTheDocument()
     expect(screen.getByText('Session A')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Goblet squat' })).toBeInTheDocument()
-    expect(screen.getByText('10 × 20 kg, RIR 2 · 9 × 20 kg, RIR 1')).toBeInTheDocument()
+    expect(screen.getByText('10 × 20 kg · 9 × 20 kg')).toBeInTheDocument()
     expect(screen.getByText(/2 sets/)).toBeInTheDocument()
     expect(screen.queryByText(/Projected/)).toBeNull()
+    expect(screen.queryByText(/RIR/)).toBeNull()
   })
 
   it('future training day: SessionPreview, Projected label, the honesty line, no readiness applied', async () => {

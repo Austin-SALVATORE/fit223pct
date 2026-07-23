@@ -36,7 +36,6 @@ async function insertActiveWorkoutWithOneLoggedSet() {
     weightKg: 14,
     reps: 10,
     seconds: null,
-    rir: 2,
     completedAt: '2026-07-22T09:05:00.000Z',
   })
   await db.workouts.put(workout)

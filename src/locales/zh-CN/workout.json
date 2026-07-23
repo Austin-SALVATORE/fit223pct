@@ -29,8 +29,7 @@
     "logHold": "记录保持",
     "logSet": "记录这组",
     "technique": "技术",
-    "swapExercise": "更换动作",
-    "rirLabel": "保留次数"
+    "swapExercise": "更换动作"
   },
   "swapSheet": {
     "closeAriaLabel": "关闭",

@@ -36,7 +36,63 @@ export class Fit223Database extends Dexie {
     this.version(2).stores({
       exercises: 'id',
     })
+    // RIR purge (docs/PyramidProgression.md, M8 Phase 6, owner amendment
+    // 22 Jul: "forget RIR, reset all data about RIR") — irreversible on
+    // purpose. No index changes, so an empty stores() diff; the upgrade
+    // callback strips the two fields current types no longer declare
+    // (LoggedSet.rir, ExercisePrescription.targetRir) from every stored
+    // workout's logged sets and prescription snapshots, and from every
+    // stored program's session prescriptions (the seed program's own copy
+    // self-heals on next seedDatabase() upsert regardless — this covers
+    // an imported program, which does not get overwritten).
+    this.version(3)
+      .stores({})
+      .upgrade(async (tx) => {
+        await tx
+          .table('workouts')
+          .toCollection()
+          .modify((workout: LegacyWorkout) => {
+            for (const exercise of workout.exercises) {
+              delete exercise.prescription.targetRir
+              for (const set of exercise.sets) {
+                delete set.rir
+              }
+            }
+          })
+        await tx
+          .table('programs')
+          .toCollection()
+          .modify((program: LegacyProgram) => {
+            for (const session of program.sessions) {
+              for (const item of session.items) {
+                delete item.targetRir
+              }
+            }
+          })
+      })
   }
+}
+
+/**
+ * Shapes for the version-3 upgrade only — current types (types.ts)
+ * deliberately no longer declare `rir`/`targetRir` at all, so the upgrade
+ * callback needs its own view of the pre-migration data to delete from.
+ */
+interface LegacyWorkout extends Omit<Workout, 'exercises'> {
+  exercises: {
+    exerciseId: string
+    prescription: Record<string, unknown> & { targetRir?: number }
+    sets: (Record<string, unknown> & { rir?: number | null })[]
+    substitutedForId?: string
+  }[]
+}
+interface LegacyProgram extends Omit<Program, 'sessions'> {
+  sessions: {
+    id: string
+    name: string
+    focus: string
+    items: (Record<string, unknown> & { targetRir?: number })[]
+  }[]
 }
 
 export const db = new Fit223Database()

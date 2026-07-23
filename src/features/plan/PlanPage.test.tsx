@@ -56,7 +56,6 @@ async function putCompletedWorkout(date: string) {
     weightKg: 20,
     reps: 10,
     seconds: null,
-    rir: 2,
     completedAt: `${date}T09:10:00.000Z`,
   })
   workout = completeWorkout(workout, `${date}T09:40:00.000Z`)

@@ -2,7 +2,6 @@ import type { Program, RepRangePrescription } from '@/domain/types'
 
 const defaults = {
   mode: 'reps' as const,
-  targetRir: 2,
   perSide: false,
   role: 'main' as const,
 }

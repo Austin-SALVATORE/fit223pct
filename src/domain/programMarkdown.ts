@@ -9,7 +9,6 @@ const REQUIRED_COLUMNS = [
   'Sets',
   'Range',
   'Mode',
-  'RIR',
   'Rest',
   'Weights',
   'Note',
@@ -184,9 +183,8 @@ function parseSession(section: RawSection): { ok: true; data: unknown } | { ok: 
       }
     }
     const sets = Number(get('Sets'))
-    const targetRir = Number(get('RIR'))
     const restSeconds = Number(get('Rest'))
-    if (!Number.isFinite(sets) || !Number.isFinite(targetRir) || !Number.isFinite(restSeconds)) {
+    if (!Number.isFinite(sets) || !Number.isFinite(restSeconds)) {
       return {
         ok: false,
         error: { key: 'plan:import.nonNumericField', params: { sectionId, exerciseId } },
@@ -204,7 +202,6 @@ function parseSession(section: RawSection): { ok: true; data: unknown } | { ok: 
       sets,
       mode: get('Mode'),
       range,
-      targetRir,
       restSeconds,
       perSide: perSideCell === 'yes',
       ...(role ? { role } : {}),
