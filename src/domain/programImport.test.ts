@@ -303,6 +303,170 @@ describe('validateProgramImport', () => {
     expect(result.ok).toBe(false)
   })
 
+  it('accepts a well-formed ladder prescription', () => {
+    const good = validProgram()
+    ;(good.sessions[0].items as unknown[])[0] = {
+      exerciseId: 'goblet-squat',
+      sets: 3,
+      mode: 'reps',
+      restSeconds: 120,
+      perSide: false,
+      setPlan: [
+        { weightKg: 8, reps: 12 },
+        { weightKg: 10, reps: 10 },
+        { weightKg: 12, reps: 8 },
+      ],
+      maxWeightKg: 14,
+      weightStepKg: 2,
+    }
+    const result = validateProgramImport(good, libraryIds)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      const item = result.program.sessions[0].items[0]
+      expect(item.setPlan).toEqual([
+        { weightKg: 8, reps: 12 },
+        { weightKg: 10, reps: 10 },
+        { weightKg: 12, reps: 8 },
+      ])
+      expect(item.range).toBeUndefined()
+    }
+  })
+
+  it('rejects a prescription carrying both a Range and a setPlan, naming it plainly', () => {
+    const bad = validProgram()
+    ;(bad.sessions[0].items[0] as Record<string, unknown>).setPlan = [{ weightKg: 8, reps: 12 }]
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.error).toEqual({
+        key: 'plan:import.ambiguousPrescriptionModel',
+        params: { sessionId: 'A', exerciseId: 'goblet-squat' },
+      })
+    }
+  })
+
+  it('rejects a seconds-mode ladder, naming it plainly rather than an unenforced assumption', () => {
+    const bad = validProgram()
+    ;(bad.sessions[0].items as unknown[])[0] = {
+      exerciseId: 'goblet-squat',
+      sets: 1,
+      mode: 'seconds',
+      restSeconds: 60,
+      perSide: false,
+      setPlan: [{ weightKg: null, reps: 20 }],
+      maxWeightKg: null,
+      weightStepKg: null,
+    }
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.error).toEqual({
+        key: 'plan:import.ladderRequiresRepsMode',
+        params: { sessionId: 'A', exerciseId: 'goblet-squat' },
+      })
+    }
+  })
+
+  it('rejects an empty setPlan', () => {
+    const bad = validProgram()
+    ;(bad.sessions[0].items as unknown[])[0] = {
+      exerciseId: 'goblet-squat',
+      sets: 0,
+      mode: 'reps',
+      restSeconds: 120,
+      perSide: false,
+      setPlan: [],
+      maxWeightKg: 14,
+      weightStepKg: 2,
+    }
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+  })
+
+  it('rejects a setPlan with a descending rung weight', () => {
+    const bad = validProgram()
+    ;(bad.sessions[0].items as unknown[])[0] = {
+      exerciseId: 'goblet-squat',
+      sets: 2,
+      mode: 'reps',
+      restSeconds: 120,
+      perSide: false,
+      setPlan: [
+        { weightKg: 12, reps: 8 },
+        { weightKg: 10, reps: 10 },
+      ],
+      maxWeightKg: 14,
+      weightStepKg: 2,
+    }
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+  })
+
+  it('rejects a ladder whose sets count does not match setPlan.length', () => {
+    const bad = validProgram()
+    ;(bad.sessions[0].items as unknown[])[0] = {
+      exerciseId: 'goblet-squat',
+      sets: 2,
+      mode: 'reps',
+      restSeconds: 120,
+      perSide: false,
+      setPlan: [{ weightKg: 8, reps: 12 }],
+      maxWeightKg: 14,
+      weightStepKg: 2,
+    }
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+  })
+
+  it('accepts a well-formed weekdaySessions map for a weekday-pinned program', () => {
+    const good = validProgram({
+      schedulingMode: 'weekday-pinned',
+      weekdaySessions: { 1: 'A', 3: 'B', 5: 'A' },
+    })
+    const result = validateProgramImport(good, libraryIds)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.program.schedulingMode).toBe('weekday-pinned')
+      expect(result.program.weekdaySessions).toEqual({ 1: 'A', 3: 'B', 5: 'A' })
+    }
+  })
+
+  it('rejects weekday-pinned scheduling with no weekdaySessions entries', () => {
+    const bad = validProgram({ schedulingMode: 'weekday-pinned' })
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+  })
+
+  it('rejects a weekdaySessions entry naming a weekday outside trainingWeekdays', () => {
+    const bad = validProgram({
+      schedulingMode: 'weekday-pinned',
+      weekdaySessions: { 2: 'A' }, // Tuesday — not in trainingWeekdays [1, 3, 5]
+    })
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.error).toEqual({
+        key: 'plan:import.weekdaySessionNotTrainingDay',
+        params: { weekdayKey: 'plan:import.weekdayName.2' },
+      })
+    }
+  })
+
+  it('rejects a weekdaySessions entry naming an unknown session id', () => {
+    const bad = validProgram({
+      schedulingMode: 'weekday-pinned',
+      weekdaySessions: { 1: 'C' },
+    })
+    const result = validateProgramImport(bad, libraryIds)
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.error).toEqual({
+        key: 'plan:import.unknownWeekdaySession',
+        params: { sessionId: 'C' },
+      })
+    }
+  })
+
   it('rejects an activity claiming a training weekday, naming it', () => {
     const bad = validProgram({
       weekdayActivities: {

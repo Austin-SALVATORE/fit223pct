@@ -190,3 +190,78 @@ Title: Weekly checkpoint
     if (!result.ok) expect(result.error.key).toBe('plan:import.activityMissingItems')
   })
 })
+
+const ladderMarkdown = `---
+id: phase-1-home
+name: Phase 1 — Home
+phase: 1
+startDate: 2026-07-20
+endDate:
+trainingWeekdays: [1, 3, 5]
+rotation: [A]
+---
+
+## Session: A
+Name: Session A
+Focus: Squat focus
+
+| Exercise | Sets | Range | Mode | Rest | Weights | Ladder | Note |
+|---|---|---|---|---|---|---|---|
+| goblet-squat | 3 | - | reps | 120 | -/14/2 | 8x12 / 10x10 / 12x8 | - |
+| plank | 2 | 20-40 | seconds | 60 | -/-/- | - | - |
+`
+
+describe('parseProgramMarkdown ladder syntax', () => {
+  it('parses a Ladder cell into setPlan, weight-then-reps per rung, ignoring the Weights start slot', () => {
+    const result = parseProgramMarkdown(ladderMarkdown)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    const sessions = (result.data as { sessions: Array<{ items: Array<Record<string, unknown>> }> }).sessions
+    expect(sessions[0].items[0]).toMatchObject({
+      exerciseId: 'goblet-squat',
+      sets: 3,
+      mode: 'reps',
+      setPlan: [
+        { weightKg: 8, reps: 12 },
+        { weightKg: 10, reps: 10 },
+        { weightKg: 12, reps: 8 },
+      ],
+      maxWeightKg: 14,
+      weightStepKg: 2,
+    })
+    expect(sessions[0].items[0]).not.toHaveProperty('range')
+    expect(sessions[0].items[0]).not.toHaveProperty('startWeightKg')
+  })
+
+  it('leaves a non-ladder row in the same table unaffected', () => {
+    const result = parseProgramMarkdown(ladderMarkdown)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    const sessions = (result.data as { sessions: Array<{ items: Array<Record<string, unknown>> }> }).sessions
+    expect(sessions[0].items[1]).toMatchObject({ exerciseId: 'plank', range: { min: 20, max: 40 } })
+    expect(sessions[0].items[1]).not.toHaveProperty('setPlan')
+  })
+
+  it('rejects an unparseable Ladder cell, naming the row', () => {
+    const bad = ladderMarkdown.replace('8x12 / 10x10 / 12x8', '8-12, 10-10')
+    const result = parseProgramMarkdown(bad)
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.error.key).toBe('plan:import.invalidLadder')
+      expect(result.error.params).toMatchObject({ sectionId: 'A', exerciseId: 'goblet-squat' })
+    }
+  })
+
+  it('rejects a row that fills both Ladder and Range', () => {
+    const bad = ladderMarkdown.replace(
+      '| goblet-squat | 3 | - | reps | 120 | -/14/2 | 8x12 / 10x10 / 12x8 | - |',
+      '| goblet-squat | 3 | 8-12 | reps | 120 | -/14/2 | 8x12 / 10x10 / 12x8 | - |',
+    )
+    const result = parseProgramMarkdown(bad)
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.error.key).toBe('plan:import.ladderRowHasRange')
+      expect(result.error.params).toMatchObject({ sectionId: 'A', exerciseId: 'goblet-squat' })
+    }
+  })
+})

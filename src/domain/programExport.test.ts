@@ -48,6 +48,47 @@ describe('toCanonicalProgramJson', () => {
     ])
   })
 
+  it('round-trips a setPlan ladder prescription (M8 Phase 8 acceptance test)', () => {
+    const withLadder = {
+      ...seedProgram,
+      sessions: seedProgram.sessions.map((session, i) =>
+        i === 0
+          ? {
+              ...session,
+              items: session.items.map((item, j) =>
+                j === 0
+                  ? {
+                      exerciseId: item.exerciseId,
+                      sets: 3,
+                      mode: 'reps' as const,
+                      restSeconds: item.restSeconds,
+                      perSide: item.perSide,
+                      setPlan: [
+                        { weightKg: 8, reps: 12 },
+                        { weightKg: 10, reps: 10 },
+                        { weightKg: 12, reps: 8 },
+                      ],
+                      maxWeightKg: 14,
+                      weightStepKg: 2,
+                    }
+                  : item,
+              ),
+            }
+          : session,
+      ),
+    }
+    const json = toCanonicalProgramJson(withLadder)
+    const result = validateProgramImport(JSON.parse(json), libraryIds)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.program).toEqual({ ...withLadder, origin: 'imported' })
+    expect(result.program.sessions[0].items[0].setPlan).toEqual([
+      { weightKg: 8, reps: 12 },
+      { weightKg: 10, reps: 10 },
+      { weightKg: 12, reps: 8 },
+    ])
+  })
+
   it('round-trips a weekdayActivities field', () => {
     const withActivities = {
       ...seedProgram,

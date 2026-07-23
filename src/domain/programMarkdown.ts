@@ -1,4 +1,5 @@
 import type { MessageDescriptor } from './message'
+import type { SetTarget } from './types'
 
 export type MarkdownParseResult =
   | { ok: true; data: unknown }
@@ -154,6 +155,7 @@ function parseSession(section: RawSection): { ok: true; data: unknown } | { ok: 
   const roleIndex = header.findIndex((h) => h.toLowerCase() === 'role')
   const perSideIndex = header.findIndex((h) => h.toLowerCase() === 'per side')
   const substitutionsIndex = header.findIndex((h) => h.toLowerCase() === 'substitutions')
+  const ladderIndex = header.findIndex((h) => h.toLowerCase() === 'ladder')
 
   const items: unknown[] = []
   for (const rowLine of dataRows) {
@@ -162,16 +164,23 @@ function parseSession(section: RawSection): { ok: true; data: unknown } | { ok: 
     const get = (column: (typeof REQUIRED_COLUMNS)[number]) => cells[columnIndex.get(column)!]?.trim() ?? ''
 
     const exerciseId = get('Exercise')
-    const range = parseRange(get('Range'))
-    if (!range) {
+    const sets = Number(get('Sets'))
+    const restSeconds = Number(get('Rest'))
+    if (!Number.isFinite(sets) || !Number.isFinite(restSeconds)) {
       return {
         ok: false,
-        error: {
-          key: 'plan:import.invalidRange',
-          params: { sectionId, exerciseId, value: get('Range') },
-        },
+        error: { key: 'plan:import.nonNumericField', params: { sectionId, exerciseId } },
       }
     }
+
+    // Ladder syntax joins its own prescription (see Data Model comment on
+    // parseLadder), and reuses the Weights column only for its max/step —
+    // Range is unused, and Weights' own start slot is unused too. A row
+    // that fills a Ladder cell must leave Range as "-"; Weights still
+    // parses normally (its start value is simply discarded).
+    const rawLadder = ladderIndex >= 0 ? (cells[ladderIndex]?.trim() ?? '') : ''
+    const hasLadder = rawLadder !== '' && rawLadder !== '-'
+
     const weights = parseWeights(get('Weights'))
     if (!weights) {
       return {
@@ -182,13 +191,35 @@ function parseSession(section: RawSection): { ok: true; data: unknown } | { ok: 
         },
       }
     }
-    const sets = Number(get('Sets'))
-    const restSeconds = Number(get('Rest'))
-    if (!Number.isFinite(sets) || !Number.isFinite(restSeconds)) {
-      return {
-        ok: false,
-        error: { key: 'plan:import.nonNumericField', params: { sectionId, exerciseId } },
+
+    let setPlan: SetTarget[] | undefined
+    let range: { min: number; max: number } | undefined
+    if (hasLadder) {
+      setPlan = parseLadder(rawLadder) ?? undefined
+      if (!setPlan) {
+        return {
+          ok: false,
+          error: { key: 'plan:import.invalidLadder', params: { sectionId, exerciseId, value: rawLadder } },
+        }
       }
+      if (get('Range') !== '-') {
+        return {
+          ok: false,
+          error: { key: 'plan:import.ladderRowHasRange', params: { sectionId, exerciseId } },
+        }
+      }
+    } else {
+      const parsedRange = parseRange(get('Range'))
+      if (!parsedRange) {
+        return {
+          ok: false,
+          error: {
+            key: 'plan:import.invalidRange',
+            params: { sectionId, exerciseId, value: get('Range') },
+          },
+        }
+      }
+      range = parsedRange
     }
 
     const note = get('Note')
@@ -201,13 +232,12 @@ function parseSession(section: RawSection): { ok: true; data: unknown } | { ok: 
       exerciseId,
       sets,
       mode: get('Mode'),
-      range,
       restSeconds,
       perSide: perSideCell === 'yes',
       ...(role ? { role } : {}),
-      startWeightKg: weights.start,
-      maxWeightKg: weights.max,
-      weightStepKg: weights.step,
+      ...(hasLadder
+        ? { setPlan, maxWeightKg: weights.max, weightStepKg: weights.step }
+        : { range, startWeightKg: weights.start, maxWeightKg: weights.max, weightStepKg: weights.step }),
       ...(note && note !== '-' ? { note } : {}),
       ...(substitutionIds ? { substitutionIds } : {}),
     })
@@ -282,6 +312,26 @@ function parseSubstitutions(cell: string | undefined): string[] | undefined {
   if (trimmed === '' || trimmed === '-') return undefined
   const ids = trimmed.split(',').map((id) => id.trim()).filter((id) => id.length > 0)
   return ids.length > 0 ? ids : undefined
+}
+
+/**
+ * Ruled (docs/PyramidProgression.md, Question B / M8 Phase 8): tokens are
+ * weight-then-reps (`8x12` = 8 kg × 12 reps), rungs separated by `/`, in
+ * prescription order — e.g. `8x12 / 10x10 / 12x8`. Deeper checks (non-empty,
+ * ascending weights, positive reps) live at the Zod layer, same division of
+ * labor as parseRange/parseWeights.
+ */
+function parseLadder(cell: string): SetTarget[] | null {
+  const rungs = cell.trim().split('/').map((rung) => rung.trim())
+  if (rungs.some((rung) => rung === '')) return null
+
+  const parsed: SetTarget[] = []
+  for (const rung of rungs) {
+    const match = /^(\d+(?:\.\d+)?)x(\d+)$/i.exec(rung)
+    if (!match) return null
+    parsed.push({ weightKg: Number(match[1]), reps: Number(match[2]) })
+  }
+  return parsed
 }
 
 function parseWeights(cell: string): { start: number | null; max: number | null; step: number | null } | null {

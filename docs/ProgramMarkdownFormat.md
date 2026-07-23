@@ -26,19 +26,19 @@ rotation: [A, B]
 Name: Session A
 Focus: Squat & pull
 
-| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note | Substitutions |
+| Exercise | Sets | Range | Mode | Rest | Weights | Ladder | Note | Substitutions |
 |---|---|---|---|---|---|---|---|---|
-| barbell-squat | 3 | 8-12 | reps | 2 | 120 | 20/40/2.5 | - | goblet-squat, bulgarian-split-squat |
-| lat-pulldown | 3 | 8-12 | reps | 2 | 90 | 25/45/5 | - | single-arm-db-row |
-| plank | 2 | 20-40 | seconds | 2 | 60 | -/-/- | - | - |
+| goblet-squat | 3 | - | reps | 120 | -/14/2 | 8x12 / 10x10 / 12x8 | - | bulgarian-split-squat |
+| lat-pulldown | 3 | 8-12 | reps | 90 | 25/45/5 | - | - | single-arm-db-row |
+| plank | 2 | 20-40 | seconds | 60 | -/-/- | - | - | - |
 
 ## Session: B
 Name: Session B
 Focus: Hinge & press
 
-| Exercise | Sets | Range | Mode | RIR | Rest | Weights | Note |
-|---|---|---|---|---|---|---|---|
-| romanian-deadlift | 3 | 10-15 | reps | 2 | 120 | 20/40/2.5 | - |
+| Exercise | Sets | Range | Mode | Rest | Weights | Note |
+|---|---|---|---|---|---|---|
+| romanian-deadlift | 3 | 10-15 | reps | 120 | 20/40/2.5 | - |
 
 ## Activity: Tuesday
 Kind: recovery
@@ -65,19 +65,35 @@ Title: Weekly checkpoint
 ## Exercise table columns
 
 Header-driven — column order doesn't matter, but names must match (case-
-insensitive). Required: `Exercise`, `Sets`, `Range`, `Mode`, `RIR`, `Rest`,
-`Weights`, `Note`. Optional: `Role`, `Per side`, `Substitutions` (all
-default when omitted).
+insensitive). Required: `Exercise`, `Sets`, `Range`, `Mode`, `Rest`,
+`Weights`, `Note`. Optional: `Role`, `Per side`, `Substitutions`, `Ladder`
+(all default when omitted).
+
+Every row is either a **rep-range** prescription or a **ladder** (pyramid)
+prescription — never both, never neither (see docs/PyramidProgression.md).
+Which one a row is is decided by whether its `Ladder` cell is filled, not
+by any other column.
 
 - **Exercise** — an id from the Library. Unknown ids reject the whole
   import and name the offending id.
-- **Sets** — integer.
-- **Range** — `min-max`, e.g. `8-12`.
-- **Mode** — `reps` or `seconds`.
-- **RIR** — target reps-in-reserve, integer 0–10.
+- **Sets** — integer. For a ladder row this must equal the number of
+  rungs in the `Ladder` cell.
+- **Range** — `min-max`, e.g. `8-12`, for a rep-range row. Must be `-` on
+  a ladder row (a ladder has no rep range — each rung has its own fixed
+  reps instead).
+- **Mode** — `reps` or `seconds`. A ladder row must be `reps` — there's
+  no timed-hold ladder.
 - **Rest** — seconds, integer.
 - **Weights** — `start/max/step` in kg. Use `-` for any that don't apply
-  (bodyweight, bands): `-/-/-`.
+  (bodyweight, bands): `-/-/-`. On a ladder row the `start` slot is
+  unused (the ladder's own first rung is the effective start weight) —
+  write it as `-`, e.g. `-/14/2`; `max`/`step` still mean what they say:
+  the equipment ceiling and the amount every rung advances by, together,
+  once a full ladder is completed.
+- **Ladder** *(optional)* — rungs separated by `/`, each written
+  `weightxreps` — weight first, then reps, e.g. `8x12 / 10x10 / 12x8`
+  (climbing weight, descending reps, top rung last). Leave `-` for a
+  rep-range row. Weights must be ascending or equal rung to rung.
 - **Note** — free text, or `-` for none.
 - **Role** *(optional)* — `main` or `accessory`. Omit for `main`.
 - **Per side** *(optional)* — `yes` or `no`. Omit for `no`.

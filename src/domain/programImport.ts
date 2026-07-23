@@ -13,20 +13,74 @@ const repRangeSchema = z
   })
   .refine((r) => r.max >= r.min, { message: 'range.max must be >= range.min' })
 
-const exercisePrescriptionSchema = z.object({
-  exerciseId: z.string().min(1),
-  sets: z.number().int().positive(),
-  mode: z.enum(['reps', 'seconds']),
-  range: repRangeSchema,
-  restSeconds: z.number().int().positive(),
-  perSide: z.boolean(),
-  role: z.enum(['main', 'accessory']).optional(),
-  startWeightKg: z.number().nonnegative().nullable(),
-  maxWeightKg: z.number().nonnegative().nullable(),
-  weightStepKg: z.number().positive().nullable(),
-  note: z.string().min(1).optional(),
-  substitutionIds: z.array(z.string().min(1)).optional(),
+const setTargetSchema = z.object({
+  weightKg: z.number().nonnegative().nullable(),
+  reps: z.number().int().positive(),
 })
+
+const setPlanSchema = z
+  .array(setTargetSchema)
+  .min(1)
+  .refine((rungs) => rungs.every((rung, i) => i === 0 || isAscendingRung(rungs[i - 1].weightKg, rung.weightKg)), {
+    message: 'setPlan weights must be ascending or equal, rung to rung',
+  })
+
+function isAscendingRung(previousWeightKg: number | null, weightKg: number | null): boolean {
+  return previousWeightKg === null || weightKg === null || weightKg >= previousWeightKg
+}
+
+// Two mutually-exclusive prescription models (docs/PyramidProgression.md),
+// chosen by setPlan presence, never a tag field — matches the domain
+// type's own shape (src/domain/types.ts). Both branches are `.strict()`:
+// load-bearing, not incidental — it's what structurally rejects an object
+// carrying both `range` and `setPlan` (a plain non-strict union would
+// silently strip whichever key doesn't match and mask the mistake). The
+// trade-off is that a strict union's own error message is unhelpful
+// ("Invalid input" with no branch-specific detail), so validateProgramImport
+// runs a purpose-built pre-check for exactly that ambiguity, and for the
+// other case .strict() alone can't phrase well (a seconds-mode ladder),
+// before ever handing the input to this schema.
+const repRangePrescriptionSchema = z
+  .object({
+    exerciseId: z.string().min(1),
+    sets: z.number().int().positive(),
+    mode: z.enum(['reps', 'seconds']),
+    range: repRangeSchema,
+    restSeconds: z.number().int().positive(),
+    perSide: z.boolean(),
+    role: z.enum(['main', 'accessory']).optional(),
+    startWeightKg: z.number().nonnegative().nullable(),
+    maxWeightKg: z.number().nonnegative().nullable(),
+    weightStepKg: z.number().positive().nullable(),
+    note: z.string().min(1).optional(),
+    substitutionIds: z.array(z.string().min(1)).optional(),
+  })
+  .strict()
+
+const ladderPrescriptionSchema = z
+  .object({
+    exerciseId: z.string().min(1),
+    sets: z.number().int().positive(),
+    // Ruled (docs/PyramidProgression.md): a ladder is reps-mode only —
+    // there's no equivalent "hold" ladder, and allowing seconds here would
+    // be an unenforced assumption rather than a deliberate choice.
+    mode: z.literal('reps'),
+    restSeconds: z.number().int().positive(),
+    perSide: z.boolean(),
+    role: z.enum(['main', 'accessory']).optional(),
+    setPlan: setPlanSchema,
+    maxWeightKg: z.number().nonnegative().nullable(),
+    weightStepKg: z.number().positive().nullable(),
+    note: z.string().min(1).optional(),
+    substitutionIds: z.array(z.string().min(1)).optional(),
+  })
+  .strict()
+  .refine((p) => p.sets === p.setPlan.length, {
+    message: 'sets must equal setPlan.length for a ladder prescription',
+    path: ['sets'],
+  })
+
+const exercisePrescriptionSchema = z.union([repRangePrescriptionSchema, ladderPrescriptionSchema])
 
 const sessionTemplateSchema = z.object({
   id: z.string().min(1),
@@ -51,6 +105,11 @@ const weekdayActivitiesSchema = z.record(
   activityTemplateSchema,
 )
 
+const weekdaySessionsSchema = z.record(
+  z.string().regex(/^[1-7]$/, 'weekday keys must be 1-7 (1 = Monday … 7 = Sunday)'),
+  z.string().min(1),
+)
+
 export const programSchema = z
   .object({
     id: z.string().min(1),
@@ -61,11 +120,21 @@ export const programSchema = z
     trainingWeekdays: z.array(z.number().int().min(1).max(7)).min(1),
     rotation: z.array(z.string().min(1)).min(1),
     sessions: z.array(sessionTemplateSchema).min(1),
+    // M8 Phase 4: additive, absent = 'rotation'. weekdaySessions is
+    // validated for cross-references (unknown session id, weekday not in
+    // trainingWeekdays) alongside rotation's own cross-reference check
+    // below, not here — it needs the parsed sessionIds set.
+    schedulingMode: z.enum(['rotation', 'weekday-pinned']).optional(),
+    weekdaySessions: weekdaySessionsSchema.optional(),
     weekdayActivities: weekdayActivitiesSchema.optional(),
   })
   .refine((p) => p.endDate === null || p.endDate >= p.startDate, {
     message: 'endDate must be on or after startDate',
     path: ['endDate'],
+  })
+  .refine((p) => p.schedulingMode !== 'weekday-pinned' || (p.weekdaySessions && Object.keys(p.weekdaySessions).length > 0), {
+    message: 'weekday-pinned scheduling requires at least one weekdaySessions entry',
+    path: ['weekdaySessions'],
   })
 
 export type ProgramInput = z.infer<typeof programSchema>
@@ -92,7 +161,12 @@ export function validateProgramImport(
   input: unknown,
   libraryExerciseIds: ReadonlySet<string>,
 ): ProgramImportResult {
-  const parsed = programSchema.safeParse(input)
+  const sanitized = stripLegacyPrescriptionKeys(input)
+
+  const precheckError = precheckPrescriptions(sanitized)
+  if (precheckError) return { ok: false, error: precheckError }
+
+  const parsed = programSchema.safeParse(sanitized)
   if (!parsed.success) {
     return { ok: false, error: humanizeZodError(parsed.error) }
   }
@@ -112,6 +186,27 @@ export function validateProgramImport(
       return {
         ok: false,
         error: { key: 'plan:import.unknownRotationSession', params: { rotationId } },
+      }
+    }
+  }
+
+  if (program.weekdaySessions) {
+    for (const [key, sessionId] of Object.entries(program.weekdaySessions)) {
+      const weekday = Number(key)
+      if (!program.trainingWeekdays.includes(weekday)) {
+        return {
+          ok: false,
+          error: {
+            key: 'plan:import.weekdaySessionNotTrainingDay',
+            params: { weekdayKey: `plan:import.weekdayName.${weekday}` },
+          },
+        }
+      }
+      if (!sessionIds.has(sessionId)) {
+        return {
+          ok: false,
+          error: { key: 'plan:import.unknownWeekdaySession', params: { sessionId } },
+        }
       }
     }
   }
@@ -187,6 +282,80 @@ function validateSubstitutions(
   }
 
   return null
+}
+
+/**
+ * Old exports carrying a pre-purge `targetRir` key (docs/PyramidProgression.md:
+ * "old backups must stay importable") must keep importing forever, silently
+ * dropped — but the prescription schemas are now `.strict()` (load-bearing,
+ * see exercisePrescriptionSchema's comment), so an unrecognized key would
+ * otherwise be rejected outright. Stripping this one specific legacy key
+ * before validation, rather than loosening `.strict()`, keeps the reject-
+ * genuinely-unknown-keys guarantee for everything else (importantly,
+ * `range`+`setPlan` both present).
+ */
+function stripLegacyPrescriptionKeys(input: unknown): unknown {
+  if (typeof input !== 'object' || input === null) return input
+  const record = input as Record<string, unknown>
+  if (!Array.isArray(record.sessions)) return input
+  return {
+    ...record,
+    sessions: record.sessions.map((session) => {
+      if (typeof session !== 'object' || session === null || !Array.isArray((session as Record<string, unknown>).items)) {
+        return session
+      }
+      const sessionRecord = session as Record<string, unknown>
+      return {
+        ...sessionRecord,
+        items: (sessionRecord.items as unknown[]).map((item) => {
+          if (typeof item !== 'object' || item === null) return item
+          const { targetRir: _targetRir, ...rest } = item as Record<string, unknown>
+          return rest
+        }),
+      }
+    }),
+  }
+}
+
+/**
+ * Catches the two prescription-shape mistakes a strict z.union reports
+ * unhelpfully (a bare "Invalid input" with no branch-specific detail) —
+ * both range and setPlan present (the ambiguity .strict() exists to catch
+ * structurally), and a seconds-mode ladder (rejected by mode: z.literal('reps')
+ * but worth naming plainly rather than leaving to the union's generic
+ * message). Everything else still falls through to humanizeZodError.
+ */
+function precheckPrescriptions(input: unknown): MessageDescriptor | null {
+  if (typeof input !== 'object' || input === null) return null
+  const sessions = (input as Record<string, unknown>).sessions
+  if (!Array.isArray(sessions)) return null
+
+  for (const session of sessions) {
+    if (typeof session !== 'object' || session === null) continue
+    const sessionId = readString((session as Record<string, unknown>).id)
+    const items = (session as Record<string, unknown>).items
+    if (!Array.isArray(items)) continue
+
+    for (const item of items) {
+      if (typeof item !== 'object' || item === null) continue
+      const record = item as Record<string, unknown>
+      const exerciseId = readString(record.exerciseId)
+      const hasRange = 'range' in record
+      const hasSetPlan = 'setPlan' in record
+
+      if (hasRange && hasSetPlan) {
+        return { key: 'plan:import.ambiguousPrescriptionModel', params: { sessionId, exerciseId } }
+      }
+      if (hasSetPlan && record.mode !== 'reps') {
+        return { key: 'plan:import.ladderRequiresRepsMode', params: { sessionId, exerciseId } }
+      }
+    }
+  }
+  return null
+}
+
+function readString(value: unknown): string {
+  return typeof value === 'string' ? value : '?'
 }
 
 function findDuplicate(values: readonly string[]): string | null {
