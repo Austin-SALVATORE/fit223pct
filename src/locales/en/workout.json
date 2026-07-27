@@ -6,7 +6,7 @@
   "progressValueText": "{{logged}} of {{total}} sets",
   "sessionSheet": {
     "triggerAriaLabel": "Session options",
-    "dialogAriaLabel": "Session options",
+    "dialogAriaLabel": "This session",
     "closeAriaLabel": "Close",
     "heading": "This session",
     "reset": "Reset session",

@@ -61,9 +61,15 @@ function renderWorkout() {
   )
 }
 
+/**
+ * The trigger is named "Session options"; the dialog it opens is named
+ * "This session", matching its own visible heading. A screen reader hears
+ * "Session options, button" then "This session, dialog" — and the heard
+ * name matches the seen one, rather than the dialog echoing the trigger.
+ */
 async function openSheet(): Promise<HTMLElement> {
   await userEvent.click(await screen.findByRole('button', { name: 'Session options' }))
-  return screen.findByRole('dialog', { name: 'Session options' })
+  return screen.findByRole('dialog', { name: 'This session' })
 }
 
 describe('reset session', () => {
@@ -149,7 +155,7 @@ describe('reset session', () => {
     await userEvent.keyboard('{Escape}')
 
     await waitFor(() =>
-      expect(screen.queryByRole('dialog', { name: 'Session options' })).toBeNull(),
+      expect(screen.queryByRole('dialog', { name: 'This session' })).toBeNull(),
     )
     expect(await db.workouts.count()).toBe(1)
   })
@@ -177,7 +183,7 @@ describe('reset session', () => {
     await userEvent.click(within(sheet).getByRole('button', { name: /^Reset session/ }))
     await userEvent.keyboard('{Escape}')
     await waitFor(() =>
-      expect(screen.queryByRole('dialog', { name: 'Session options' })).toBeNull(),
+      expect(screen.queryByRole('dialog', { name: 'This session' })).toBeNull(),
     )
 
     const reopened = await openSheet()

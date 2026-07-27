@@ -6,7 +6,7 @@
   "progressValueText": "{{logged}} / {{total}} 组",
   "sessionSheet": {
     "triggerAriaLabel": "训练选项",
-    "dialogAriaLabel": "训练选项",
+    "dialogAriaLabel": "这次训练",
     "closeAriaLabel": "关闭",
     "heading": "这次训练",
     "reset": "重置这次训练",

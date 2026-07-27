@@ -6,7 +6,7 @@
   "progressValueText": "{{logged}} sur {{total}} séries",
   "sessionSheet": {
     "triggerAriaLabel": "Options de la séance",
-    "dialogAriaLabel": "Options de la séance",
+    "dialogAriaLabel": "Cette séance",
     "closeAriaLabel": "Fermer",
     "heading": "Cette séance",
     "reset": "Réinitialiser la séance",
