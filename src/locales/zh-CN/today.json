@@ -29,6 +29,7 @@
   },
   "inProgress": {
     "eyebrow": "进行中",
+    "eyebrowWithSession": "进行中 · {{sessionName}}",
     "sessionFallback": "训练",
     "loggedSets_other": "目前已记录 {{count}} 组。从上次的地方继续。",
     "waiting": "你的训练已经开始，正在等你。",

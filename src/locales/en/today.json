@@ -31,6 +31,7 @@
   },
   "inProgress": {
     "eyebrow": "In progress",
+    "eyebrowWithSession": "In progress · {{sessionName}}",
     "sessionFallback": "Session",
     "loggedSets_one": "{{count}} set logged so far. Pick up right where you left off.",
     "loggedSets_other": "{{count}} sets logged so far. Pick up right where you left off.",

@@ -31,6 +31,7 @@
   },
   "inProgress": {
     "eyebrow": "En cours",
+    "eyebrowWithSession": "En cours · {{sessionName}}",
     "sessionFallback": "Séance",
     "loggedSets_one": "{{count}} série enregistrée jusqu'ici. Reprends là où tu t'es arrêté.",
     "loggedSets_other": "{{count}} séries enregistrées jusqu'ici. Reprends là où tu t'es arrêté.",

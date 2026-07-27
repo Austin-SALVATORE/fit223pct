@@ -7,7 +7,13 @@ import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
 import { addDays, dateFormattingLocale, isoWeekday, parseDateKey, toDateKey } from '@/lib/dates'
 import { useLocale } from '@/i18n/useLocale'
-import { useLocalizedActivity, useProgramName, useSessionName } from '@/i18n/seedProgram'
+import {
+  resolveSessionFocus,
+  resolveSessionName,
+  useLocalizedActivity,
+  useProgramName,
+  useSessionName,
+} from '@/i18n/seedProgram'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { SettingsLink } from '@/ui/SettingsLink'
 import { ProgramDataActions } from './ProgramDataActions'
@@ -238,22 +244,16 @@ function PhaseHeader({ program, locale }: { program: Program; locale: string }) 
     .join(weekdaySeparator)
 
   // Mapped, so this can't call the useSessionName/useSessionFocus hooks
-  // (Rules of Hooks) — same origin guard as those, inlined: an imported
-  // program's own session names/foci must never resolve through the
-  // seed's locale keys, even reusing the seed's session ids.
-  const imported = program.origin === 'imported'
-  function resolvedSessionName(session: SessionTemplate): string {
-    return imported
-      ? session.name
-      : tSeed(`program.${program.id}.session.${session.id}.name`, { defaultValue: session.name })
+  // (Rules of Hooks) — hence the non-hook resolvers, which carry the same
+  // origin guard: an imported program's own session names/foci must never
+  // resolve through the seed's locale keys, even reusing the seed's
+  // session ids. Inlining that guard here instead is what §4 of
+  // docs/review-backlog.md calls the duplication seam.
+  function sessionName(session: SessionTemplate): string {
+    return resolveSessionName(tSeed, program.id, session, program.origin)
   }
   const sessionsLine = program.sessions
-    .map((s) => {
-      const focus = imported
-        ? s.focus
-        : tSeed(`program.${program.id}.session.${s.id}.focus`, { defaultValue: s.focus })
-      return `${resolvedSessionName(s)} — ${focus}`
-    })
+    .map((s) => `${sessionName(s)} — ${resolveSessionFocus(tSeed, program.id, s, program.origin)}`)
     .join(' · ')
 
   // Pinned mode has no rotation to describe — name each weekday's fixed
@@ -264,7 +264,7 @@ function PhaseHeader({ program, locale }: { program: Program; locale: string }) 
     .sort(([a], [b]) => a - b)
     .map(([weekday, sessionId]) => {
       const session = program.sessions.find((s) => s.id === sessionId)
-      return `${weekdayAbbr(weekday, locale)} ${session ? resolvedSessionName(session) : sessionId}`
+      return `${weekdayAbbr(weekday, locale)} ${session ? sessionName(session) : sessionId}`
     })
     .join(' · ')
 

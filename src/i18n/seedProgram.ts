@@ -1,6 +1,60 @@
 import { useTranslation } from 'react-i18next'
-import type { ActivityTemplate, ExercisePrescription, Program, SessionTemplate } from '@/domain/types'
+import type { TFunction } from 'i18next'
+import type {
+  ActivityKind,
+  ActivityTemplate,
+  ExercisePrescription,
+  Program,
+  SessionTemplate,
+} from '@/domain/types'
 import type { IsoWeekday } from '@/lib/dates'
+
+/**
+ * Seed content that has already been through this layer. Structurally
+ * identical to its `@/domain/types` counterpart — the distinct name is the
+ * point: it says "these strings are resolved", so a reader (and the
+ * seed-field-access guard, src/i18n/seedFieldAccess.guard.test.ts) can tell
+ * a localized `.title` from a raw one at the type level rather than by
+ * tracing where the value came from.
+ */
+export interface LocalizedActivityItem {
+  label: string
+  detail?: string
+}
+
+export interface LocalizedActivity {
+  kind: ActivityKind
+  title: string
+  items: LocalizedActivityItem[]
+}
+
+/**
+ * The seed lookups as plain functions, taking the 'seed' `t` rather than
+ * calling `useTranslation` themselves. The hooks below are thin wrappers;
+ * call these directly from a `.map()` or any other spot where Rules of
+ * Hooks forbid a hook (PlanPage's PhaseHeader). Keeping one implementation
+ * here is what stops a call site from re-deriving the origin guard — the
+ * duplication §4 of docs/review-backlog.md is about.
+ */
+export function resolveSessionName(
+  t: TFunction<'seed'>,
+  programId: string,
+  session: SessionTemplate,
+  programOrigin?: Program['origin'],
+): string {
+  if (programId === '' || session.id === '' || programOrigin === 'imported') return session.name
+  return t(`program.${programId}.session.${session.id}.name`, { defaultValue: session.name })
+}
+
+export function resolveSessionFocus(
+  t: TFunction<'seed'>,
+  programId: string,
+  session: SessionTemplate,
+  programOrigin?: Program['origin'],
+): string {
+  if (programId === '' || session.id === '' || programOrigin === 'imported') return session.focus
+  return t(`program.${programId}.session.${session.id}.focus`, { defaultValue: session.focus })
+}
 
 /**
  * Program/session/note content is dual-purpose — the one built-in seeded
@@ -34,8 +88,7 @@ export function useSessionName(
   programOrigin?: Program['origin'],
 ): string {
   const { t } = useTranslation('seed')
-  if (programId === '' || session.id === '' || programOrigin === 'imported') return session.name
-  return t(`program.${programId}.session.${session.id}.name`, { defaultValue: session.name })
+  return resolveSessionName(t, programId, session, programOrigin)
 }
 
 export function useSessionFocus(
@@ -44,8 +97,7 @@ export function useSessionFocus(
   programOrigin?: Program['origin'],
 ): string {
   const { t } = useTranslation('seed')
-  if (programId === '' || session.id === '' || programOrigin === 'imported') return session.focus
-  return t(`program.${programId}.session.${session.id}.focus`, { defaultValue: session.focus })
+  return resolveSessionFocus(t, programId, session, programOrigin)
 }
 
 export function usePrescriptionNote(
@@ -73,7 +125,7 @@ export function useLocalizedActivity(
   weekday: IsoWeekday,
   activity: ActivityTemplate,
   programOrigin?: Program['origin'],
-): ActivityTemplate {
+): LocalizedActivity {
   const { t, i18n } = useTranslation('seed')
   if (programId === '' || programOrigin === 'imported') return activity
   const base = `program.${programId}.activity.${weekday}`

@@ -20,6 +20,9 @@ import { MeasurementCard } from '@/features/checkin/MeasurementCard'
 import { SessionPreview } from './SessionPreview'
 import { WeeklyReviewCard } from './WeeklyReviewCard'
 
+/** Never rendered — see InProgress's Rules-of-Hooks comment. */
+const EMPTY_SESSION: SessionTemplate = { id: '', name: '', focus: '', items: [] }
+
 interface TodayData {
   program: Program | undefined
   exercises: Exercise[]
@@ -461,16 +464,23 @@ function StartButton({
 function InProgress({ workout, program }: { workout: Workout; program?: Program }) {
   const { t } = useTranslation('today')
   const [discardArmed, setDiscardArmed] = useState(false)
-  const sessionName =
-    program?.sessions.find((s) => s.id === workout.sessionTemplateId)?.focus ??
-    t('inProgress.sessionFallback')
+  const session = program?.sessions.find((s) => s.id === workout.sessionTemplateId)
+  // Called unconditionally with a placeholder when the workout's session
+  // template can't be found — Rules of Hooks, mirroring PlanPage's DayRow.
+  // Both values are localized: resuming used to render the stored English
+  // focus verbatim (docs/review-backlog.md I1), and the session *name* never
+  // appeared at all, so the day lost its identity the moment it started.
+  const resolvedName = useSessionName(program?.id ?? '', session ?? EMPTY_SESSION, program?.origin)
+  const resolvedFocus = useSessionFocus(program?.id ?? '', session ?? EMPTY_SESSION, program?.origin)
   const loggedSets = workout.exercises.reduce((n, e) => n + e.sets.length, 0)
 
   return (
     <>
       <Hero
-        eyebrow={t('inProgress.eyebrow')}
-        title={sessionName}
+        eyebrow={
+          session ? t('inProgress.eyebrowWithSession', { sessionName: resolvedName }) : t('inProgress.eyebrow')
+        }
+        title={session ? resolvedFocus : t('inProgress.sessionFallback')}
         subtitle={
           loggedSets > 0
             ? t('inProgress.loggedSets', { count: loggedSets })
