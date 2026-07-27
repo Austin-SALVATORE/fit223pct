@@ -221,14 +221,23 @@ oversights.
 
 ---
 
-## 5. Owner decisions (not the dev's to make)
+## 5. Owner decisions — RULED 27 Jul
 
-- **I1 underlying:** is `sessionName` reading `.focus` a product bug?
-  All three reviewers flagged the name/field mismatch. If sessions
-  should show their *name* here, that's a content fix on top of the
-  i18n fix. Needs a ruling before I1 lands.
-- **I5 wording:** French replacement for "top" in the post-workout
-  summary (e.g. "record" / "meilleure"). Glossary doesn't rule on it.
+- **I1 underlying — RULED: show name *and* focus on resume.** The
+  reviewers' "wrong field" suspicion was half right: the variable is
+  misnamed (`sessionName` holds `.focus`), but titling with focus is
+  already consistent with the training-day hero
+  (`TodayPage.tsx:302-304`, `title={sessionFocus}`). The real gap is
+  that the session *name* never appears when resuming, so the day's
+  identity is lost — contrary to the coach's "every training day has
+  a clear identity" principle that M8's weekday-pinned sessions
+  exist to serve. The resume hero becomes:
+  eyebrow `In progress · Chest & Back`, title `Push & pull foundation`.
+  Both values go through `useSessionName` / `useSessionFocus`.
+- **I5 wording — RULED: `meilleure série`.** Parallels the zh-CN
+  `最佳` and keeps the French locale internally consistent (the
+  register is otherwise fully French). Renders as
+  `3 séries · meilleure série 60 kg × 8`.
 
 *(An earlier open question — the French "reps" loanword — was withdrawn
 during review: `topReps` is the sole exception among a dozen consistent
