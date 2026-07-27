@@ -4,6 +4,10 @@
   "pauseAriaLabel": "Mettre la séance en pause et retourner à Aujourd'hui",
   "progressAriaLabel": "Progression de la séance",
   "progressValueText": "{{logged}} sur {{total}} séries",
+  "undo": {
+    "label": "Annuler",
+    "ariaLabel": "Annuler la dernière série — {{exerciseName}}, série {{setIndex}} sur {{totalSets}}"
+  },
   "resting": {
     "heading": "Repos",
     "next": "Suivant",

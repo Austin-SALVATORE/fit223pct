@@ -4,6 +4,10 @@
   "pauseAriaLabel": "Pause session and go back to Today",
   "progressAriaLabel": "Session progress",
   "progressValueText": "{{logged}} of {{total}} sets",
+  "undo": {
+    "label": "Undo",
+    "ariaLabel": "Undo last set — {{exerciseName}}, set {{setIndex}} of {{totalSets}}"
+  },
   "resting": {
     "heading": "Rest",
     "next": "Next",

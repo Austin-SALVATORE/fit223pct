@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
@@ -75,6 +75,7 @@ export function SetScreen({
 
   const isSeconds = prescription.mode === 'seconds'
   const headingRef = useFocusOnMount<HTMLHeadingElement>()
+  const setProgressId = useId()
   const reducedMotion = useReducedMotion()
 
   function handleLog() {
@@ -89,12 +90,26 @@ export function SetScreen({
   return (
     <div className="flex flex-1 flex-col">
       <div className="mt-8">
-        <p className="eyebrow">
+        <p id={setProgressId} className="eyebrow">
           {t('setScreen.setProgress', { setIndex: setIndex + 1, totalSets: prescription.sets })}
           {ladderRung && ` — ${ladderRung.weightKg ?? '–'} kg × ${ladderRung.reps}`}
           {prescription.perSide && ` · ${t('setScreen.eachSide')}`}
         </p>
-        <h1 ref={headingRef} tabIndex={-1} className="text-display mt-2 text-4xl text-ink">
+        {/*
+          Described by the set-progress line above, so landing here — on
+          mount, and after an undo steps the position back — announces
+          "Goblet squat, Set 1 of 3" rather than just the exercise name.
+          Which set is now being offered is the thing that changed, so it
+          is the thing that has to be said. Reuses text already on screen
+          and already translated, instead of a live region that would race
+          the focus move with a second announcement.
+        */}
+        <h1
+          ref={headingRef}
+          tabIndex={-1}
+          aria-describedby={setProgressId}
+          className="text-display mt-2 text-4xl text-ink"
+        >
           {exerciseName}
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-ink-secondary">

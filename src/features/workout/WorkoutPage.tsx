@@ -9,11 +9,13 @@ import {
   logSet,
   previousSetsFor,
   swapExercise,
+  undoLastSet,
   workoutPosition,
 } from '@/domain/workout'
 import { PRODUCT_NAME } from '@/lib/brand'
 import type { LoggedSet, Workout } from '@/domain/types'
 import { SetScreen } from './SetScreen'
+import { UndoLastSetButton } from './UndoLastSetButton'
 import { RestScreen } from './RestScreen'
 import { SessionSummary } from './SessionSummary'
 
@@ -122,8 +124,24 @@ export function WorkoutPage() {
     await workoutRepo.put(swapExercise(workout, position.exerciseIndex, newExerciseId))
   }
 
+  async function handleUndo() {
+    // Transactional read-modify-write, not read-then-put: two taps inside
+    // one liveQuery frame would otherwise both read the same workout and
+    // one undo would be silently lost (see workoutRepo.mutateActive).
+    await workoutRepo.mutateActive((current) => {
+      const result = undoLastSet(current)
+      return result.removed ? result.workout : null
+    })
+    // A rest timer prescribed against a set that no longer exists must not
+    // keep running.
+    setPhase({ kind: 'logging' })
+  }
+
   const loggedSetCount = workout.exercises.reduce((n, e) => n + e.sets.length, 0)
   const totalSetCount = workout.exercises.reduce((n, e) => n + e.prescription.sets, 0)
+  // What an undo would take, computed for the control's accessible name so
+  // it can state its target before the tap rather than after.
+  const undoTarget = undoLastSet(workout).removed
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-8 pt-[max(1rem,env(safe-area-inset-top))]">
@@ -149,12 +167,28 @@ export function WorkoutPage() {
             style={{ width: `${(loggedSetCount / totalSetCount) * 100}%` }}
           />
         </div>
-        <span className="text-sm text-ink-tertiary" data-numeric>
-          {loggedSetCount}/{totalSetCount}
-        </span>
+        {undoTarget && (
+          <UndoLastSetButton
+            exerciseId={workout.exercises[undoTarget.exerciseIndex].exerciseId}
+            setIndex={undoTarget.set.setIndex + 1}
+            totalSets={workout.exercises[undoTarget.exerciseIndex].prescription.sets}
+            onUndo={() => void handleUndo()}
+          />
+        )}
       </header>
 
       <AnimatePresence mode="wait" initial={false}>
+        {/*
+          This key is load-bearing beyond animation. SetScreen seeds its
+          Stepper values in useState initializers from the *last logged set*,
+          so after an undo those initializers must re-run — otherwise the
+          mistaken weight survives the undo that removed it. Keying on the
+          position guarantees the remount, because an undo always changes
+          setIndex or exerciseIndex. Simplifying this to `phase.kind`, or
+          memoising SetScreen, silently re-introduces the stale prefill;
+          WorkoutPage.undo.test.tsx's "re-offers the ladder rung" test is
+          what catches that, and nothing else in the suite would.
+        */}
         <motion.div
           key={phase.kind === 'resting' ? 'rest' : `set-${position.exerciseIndex}-${position.setIndex}`}
           className="flex flex-1 flex-col"

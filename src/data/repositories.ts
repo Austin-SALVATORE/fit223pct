@@ -64,6 +64,30 @@ export const workoutRepo = {
 
   put: (workout: Workout): Promise<string> => db.workouts.put(workout),
 
+  /**
+   * Read-modify-write the in-progress workout inside one transaction.
+   *
+   * A plain re-read is **not** enough, and this was measured rather than
+   * assumed: two undos tapped inside the same `useLiveQuery` frame — a
+   * double-tap under a second, which is exactly how someone removes two
+   * sets — both observe 3 sets and both write 2, so one tap is silently
+   * lost. Re-reading before the write loses it too; only the transaction
+   * serialises them. Real hardware makes the window wider than the
+   * fake-indexeddb measurement, not narrower.
+   *
+   * `update` returning null means "nothing to do" and skips the write.
+   */
+  async mutateActive(update: (workout: Workout) => Workout | null): Promise<void> {
+    await db.transaction('rw', db.workouts, async () => {
+      // Inside the transaction's scope, so this read is serialised with the
+      // write below rather than racing a sibling call's read.
+      const active = await workoutRepo.getActive()
+      if (!active) return
+      const next = update(active)
+      if (next) await db.workouts.put(next)
+    })
+  },
+
   remove: (id: string): Promise<void> => db.workouts.delete(id),
 }
 
