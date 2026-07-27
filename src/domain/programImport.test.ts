@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { validateProgramImport } from './programImport'
+import enPlanJson from '@/locales/en/plan.json'
 
 const libraryIds = new Set(['goblet-squat', 'bench-press', 'split-squat', 'bulgarian-split-squat'])
 
@@ -102,7 +103,7 @@ describe('validateProgramImport', () => {
     const result = validateProgramImport(bad, libraryIds)
     expect(result.ok).toBe(false)
     if (!result.ok) {
-      expect(result.error.key).toBe('plan:import.schemaErrorWithPath')
+      expect(result.error.key).toBe('plan:import.schemaAtPath')
       expect(result.error.params?.path).toBe('startDate')
     }
   })
@@ -480,6 +481,117 @@ describe('validateProgramImport', () => {
         key: 'plan:import.weekdayIsTrainingDay',
         params: { weekdayKey: 'plan:import.weekdayName.1' },
       })
+    }
+  })
+})
+
+/**
+ * I2: every JSON validation error used to render raw English in all three
+ * locales — `plan:import.schemaError` was a bare `{{message}}` passthrough
+ * carrying `issue.message`. The Markdown import path next door has always
+ * returned keyed descriptors, so the JSON path was the outlier.
+ *
+ * These tests pin the mapping from the *outside*: given a malformed file,
+ * the descriptor must name a key, and that key (plus the nested message
+ * key) must actually exist in en/fr/zh-CN.
+ */
+describe('JSON import errors are keyed, never English prose', () => {
+  const enPlan = enPlanJson as Record<string, unknown>
+
+  function keyExists(qualified: string): boolean {
+    const path = qualified.replace(/^plan:/, '').split('.')
+    let node: unknown = enPlan
+    for (const segment of path) {
+      if (typeof node !== 'object' || node === null) return false
+      node = (node as Record<string, unknown>)[segment]
+    }
+    return typeof node === 'string'
+  }
+
+  /** Each case is one malformed program and the message key it must produce. */
+  const cases: { name: string; input: unknown; messageKey: string }[] = [
+    {
+      name: 'a malformed startDate',
+      input: validProgram({ startDate: '10 Aug 2026' }),
+      messageKey: 'plan:import.schema.dateFormat',
+    },
+    {
+      name: 'an endDate before startDate',
+      input: validProgram({ startDate: '2026-08-10', endDate: '2026-08-01' }),
+      messageKey: 'plan:import.schema.endDateOrder',
+    },
+    {
+      name: 'weekday-pinned with no weekdaySessions',
+      input: validProgram({ schedulingMode: 'weekday-pinned' }),
+      messageKey: 'plan:import.schema.pinnedNeedsWeekdaySessions',
+    },
+    {
+      name: 'a weekday key outside 1-7',
+      input: validProgram({
+        weekdayActivities: { 9: { kind: 'recovery', title: 'Walk', items: [{ label: 'Walk' }] } },
+      }),
+      messageKey: 'plan:import.schema.weekdayKeyRange',
+    },
+    {
+      name: 'a wrong field type',
+      input: validProgram({ phase: 'two' }),
+      messageKey: 'plan:import.zod.invalidType',
+    },
+    {
+      name: 'an empty required string',
+      input: validProgram({ name: '' }),
+      messageKey: 'plan:import.zod.required',
+    },
+    {
+      name: 'a value outside an allowed set',
+      input: validProgram({ schedulingMode: 'whenever' }),
+      messageKey: 'plan:import.zod.invalidValue',
+    },
+    {
+      name: 'a number below its minimum',
+      // Distinct from the empty-string case: "expected at least 1" is the
+      // right phrasing for a number and the wrong one for a missing name.
+      input: validProgram({ phase: 0 }),
+      messageKey: 'plan:import.zod.tooSmall',
+    },
+  ]
+
+  for (const { name, input, messageKey } of cases) {
+    it(`keys the error for ${name}`, () => {
+      const result = validateProgramImport(input, libraryIds)
+      expect(result.ok).toBe(false)
+      if (result.ok) return
+
+      // Either the message key stands alone, or it is nested under the
+      // path wrapper — whose punctuation is what localizes per locale.
+      const actualMessageKey =
+        result.error.key === 'plan:import.schemaAtPath'
+          ? result.error.params?.messageKey
+          : result.error.key
+      expect(actualMessageKey).toBe(messageKey)
+      expect(keyExists(String(actualMessageKey)), `${actualMessageKey} missing from en/plan.json`).toBe(true)
+    })
+  }
+
+  it('never returns a descriptor carrying a raw English message', () => {
+    for (const { input } of cases) {
+      const result = validateProgramImport(input, libraryIds)
+      expect(result.ok).toBe(false)
+      if (result.ok) continue
+      // The passthrough keys are gone; nothing may smuggle prose through a
+      // `message` param either.
+      expect(result.error.key).not.toBe('plan:import.schemaError')
+      expect(result.error.key).not.toBe('plan:import.schemaErrorWithPath')
+      expect(result.error.params?.message).toBeUndefined()
+    }
+  })
+
+  it('keeps the schema messages as keys, so none of them is prose', () => {
+    // A schema message that stopped being a key would render literally.
+    const result = validateProgramImport(validProgram({ startDate: 'nope' }), libraryIds)
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(String(result.error.params?.messageKey)).toMatch(/^plan:import\./)
     }
   })
 })
