@@ -15,6 +15,14 @@ wrong output · Minor = polish. i18n items are Ixx, accessibility Axx.
 
 ---
 
+**Phase 1 SHIPPED 27 Jul** — commits `18616d8` (I1 + §4 guard),
+`d5fdb34` (A1, A2), `d034f44` (I2). Verified independently by the
+lead: 608/608 tests, `tsc -b` clean, working tree clean, no docs or
+`.claude` files swept into the fix commits. The §4 guard was proven to
+fail in both directions by deliberate violation. Blocker items below
+are retained for the record, struck through in spirit — Phases 2 and 3
+remain open.
+
 ## 1. Blockers
 
 ### A1 — Confirming a destructive swap ejects focus out of the modal
@@ -140,7 +148,8 @@ or A14's new accessible names get modelled on the broken key and ship
 the untranslated unit a third time.
 
 ### I7 — Label/value and list joins hardcode English punctuation (4 sites)
-The project already rules on this: `plan:import.schemaErrorWithPath`
+The project already rules on this: `plan:import.schemaAtPath`
+(renamed from `schemaErrorWithPath` when I2 shipped)
 punctuates per-locale (en `": "`, fr `" : "`, zh-CN `"："`). Four sites
 bypass it:
 1. `src/features/today/TodayPage.tsx:303` — the amber eyebrow, **visible
@@ -154,6 +163,30 @@ bypass it:
 punctuation, and `Intl.ListFormat` for joins (as `PlanPage.tsx:226`).
 
 ---
+
+### I8, I9 — the seed program's English name reaches fr/zh-CN on the data screen
+`src/features/plan/ProgramDataActions.tsx:81` (I8) and `:62` (I9).
+**Found by the §4 guard on its first run, not by the three-lens
+review** — in a file none of the three reviewers flagged. Both are the
+I1 family: `program.name` / `existing.name` can be the *seed* program,
+whose name is locale-keyed, but `useProgramName` exists and is not
+used. The export toast (`:81`) and the replace-confirm ("X replaces Y
+— same program id", `:62`) therefore render raw English for a French
+or Chinese user.
+
+Asymmetric effort, which is why they are Phase 2 and not Phase 1:
+**I8 is a one-line fix** (resolve through the hook at render), while
+**I9 is not** — `existing` arrives from an async callback, so
+localizing it means holding the `Program` in state and resolving at
+render time. Same screen, same family: fix them together.
+
+The three sibling reads at `:66`, `:72` and `:155` are **correct** —
+they read the *imported* program's name, which renders verbatim by
+architecture rule. All five sites are declared in the guard's
+`DECLARED_READS` with reasons; the two above are declared as "known
+defect, filed", so **these entries must not be deleted until the
+defects are fixed** — and equally, the declarations must be removed
+when they are, or the guard fails on a stale entry (by design).
 
 ## 3. Minor
 
