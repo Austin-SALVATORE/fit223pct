@@ -1,15 +1,12 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { effectiveSubstitutions } from '@/domain/substitutions'
 import { useEquipmentLabel } from '@/lib/equipmentLabel'
 import { useFocusOnChange } from '@/lib/useFocusOnChange'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { ConfirmAction } from '@/ui/ConfirmAction'
+import { Sheet } from '@/ui/Sheet'
 import type { Exercise, ExercisePrescription } from '@/domain/types'
-
-const FOCUSABLE_SELECTOR =
-  'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 
 interface SwapSheetProps {
   open: boolean
@@ -33,9 +30,6 @@ export function SwapSheet({
 }: SwapSheetProps) {
   const { t } = useTranslation('workout')
   const exerciseName = useExerciseName(exercise.id)
-  const reducedMotion = useReducedMotion()
-  const panelRef = useRef<HTMLDivElement>(null)
-  const triggerRef = useRef<HTMLElement | null>(null)
   const options = effectiveSubstitutions(prescription, exercise)
     .map((id) => exerciseById.get(id))
     .filter((sub): sub is Exercise => sub !== undefined)
@@ -72,107 +66,56 @@ export function SwapSheet({
     }
   }
 
-  // A sheet is a modal: it must take focus on open, trap it while open, and
-  // return it to whatever opened the sheet on close — otherwise a keyboard
-  // user can Tab straight through to controls hidden behind the backdrop.
+  // Resets only this component's own step state; the focus/trap/Escape
+  // behaviour that used to sit here is Sheet's now. A stale pending choice
+  // must never survive the sheet opening or closing.
   useEffect(() => {
-    if (open) {
-      triggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
-      panelRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)?.focus()
-    } else {
-      triggerRef.current?.focus()
-    }
     setPendingExerciseId(null)
     setJustCancelled(false)
   }, [open])
 
-  function handleKeyDown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
-      event.preventDefault()
-      onClose()
-      return
-    }
-    if (event.key !== 'Tab' || !panelRef.current) return
-
-    const focusable = Array.from(
-      panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-    )
-    if (focusable.length === 0) return
-    const first = focusable[0]
-    const last = focusable[focusable.length - 1]
-
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault()
-      last.focus()
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault()
-      first.focus()
-    }
-  }
-
   return (
-    <AnimatePresence>
-      {open && (
+    <Sheet
+      open={open}
+      label={t('swapSheet.dialogAriaLabel', { exerciseName })}
+      closeLabel={t('swapSheet.closeAriaLabel')}
+      onClose={onClose}
+    >
+      {pendingExercise ? (
+        <ConfirmClear
+          exerciseName={exerciseName}
+          newExerciseId={pendingExercise.id}
+          loggedSetsCount={loggedSetsCount}
+          onConfirm={() => onSelect(pendingExercise.id)}
+          onCancel={() => {
+            setPendingExerciseId(null)
+            setJustCancelled(true)
+          }}
+        />
+      ) : (
         <>
-          <motion.button
+          <h2 ref={optionsHeadingRef} tabIndex={-1} className="eyebrow">
+            {t('swapSheet.heading', { exerciseName })}
+          </h2>
+          {options.length === 0 ? (
+            <p className="mt-4 text-sm text-ink-secondary">{t('swapSheet.noSubstitutions')}</p>
+          ) : (
+            <ul className="mt-3 divide-y divide-border">
+              {options.map((option) => (
+                <SubstitutionRow key={option.id} option={option} onSelect={chooseOption} />
+              ))}
+            </ul>
+          )}
+          <button
             type="button"
-            aria-label={t('swapSheet.closeAriaLabel')}
-            className="fixed inset-0 z-10 bg-black/50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             onClick={onClose}
-          />
-          <motion.div
-            ref={panelRef}
-            role="dialog"
-            aria-modal="true"
-            aria-label={t('swapSheet.dialogAriaLabel', { exerciseName })}
-            onKeyDown={handleKeyDown}
-            className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-md rounded-t-3xl border-t border-border bg-surface p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]"
-            initial={reducedMotion ? { opacity: 0 } : { y: '100%' }}
-            animate={reducedMotion ? { opacity: 1 } : { y: 0 }}
-            exit={reducedMotion ? { opacity: 0 } : { y: '100%' }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-4 w-full rounded-card border border-border py-3 text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
           >
-            {pendingExercise ? (
-              <ConfirmClear
-                exerciseName={exerciseName}
-                newExerciseId={pendingExercise.id}
-                loggedSetsCount={loggedSetsCount}
-                onConfirm={() => onSelect(pendingExercise.id)}
-                onCancel={() => {
-                  setPendingExerciseId(null)
-                  setJustCancelled(true)
-                }}
-              />
-            ) : (
-              <>
-                <h2 ref={optionsHeadingRef} tabIndex={-1} className="eyebrow">
-                  {t('swapSheet.heading', { exerciseName })}
-                </h2>
-                {options.length === 0 ? (
-                  <p className="mt-4 text-sm text-ink-secondary">{t('swapSheet.noSubstitutions')}</p>
-                ) : (
-                  <ul className="mt-3 divide-y divide-border">
-                    {options.map((option) => (
-                      <SubstitutionRow key={option.id} option={option} onSelect={chooseOption} />
-                    ))}
-                  </ul>
-                )}
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="mt-4 w-full rounded-card border border-border py-3 text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
-                >
-                  {t('swapSheet.keep', { exerciseName })}
-                </button>
-              </>
-            )}
-          </motion.div>
+            {t('swapSheet.keep', { exerciseName })}
+          </button>
         </>
       )}
-    </AnimatePresence>
+    </Sheet>
   )
 }
 
