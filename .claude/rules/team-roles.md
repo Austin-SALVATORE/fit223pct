@@ -92,9 +92,19 @@ the task.
     that stops anyone else from looking.
   - **Inherit for cross-document judgment**, where the finding
     depends on noticing that two documents disagree.
-- **Omitting `model` inherits.** That is the right default; override
-  only when a task is clearly cheaper or clearly harder than the
-  session's work.
+- **Omitting `model` on a *subagent* inherits the session's model.**
+  That is the right default; override only when a task is clearly
+  cheaper or clearly harder than the session's work.
+
+**Teammates are the exception — omitting `model` does NOT give them
+the bench table's model, it gives them the LEAD's** (Opus). There is
+no `settings.json` key for a default teammate model; the only global
+lever is `/config` → *Default teammate model*, which the owner sets.
+So until that is set to Sonnet, **every review/QA teammate spawn must
+pass `model: 'sonnet'` explicitly** — a spawn that omits it silently
+runs Opus against the lead's policy. (Learned 27 Jul: three review
+teammates ran Opus 5 because the spawns omitted the model. The policy
+table was correct; the spawn instruction was missing.)
 
 Effort level is inherited from the lead and is the cheaper dial —
 reach for it before changing models.

@@ -128,6 +128,19 @@ entries) and add dumbbell-rdl (needs art). Phase 1 is then re-authored
 by the owner's coach as a pyramid, dumbbell-only import file; the seed
 program follows in the same batch.
 
+## Post-M8 review backlog (docs/review-backlog.md, 27 Jul)
+
+A parallel accessibility / i18n / dead-code review surfaced a fixable
+batch: two a11y blockers (focus destroyed at swap-confirm and the fifth
+check-in rating), one live i18n bug on Today (in-progress hero renders
+untranslated), and a systemic guard — a lint asserting no seed field is
+read directly outside the i18n hooks — that retires the whole class the
+weekdayActivities bug belonged to. Two owner decisions and one
+sequencing constraint are called out in the doc. The dead-code review's
+non-locale scope (unused exports, stale docs, dead fixtures) was not
+completed and needs a follow-up pass. Not yet scheduled into a
+milestone.
+
 ## Milestone 9 (proposed, ON HOLD — owner decision 22 Jul) — Smart Connector
 
 Phase 0 investigation complete and preserved (docs/design/SmartConnector.md):
