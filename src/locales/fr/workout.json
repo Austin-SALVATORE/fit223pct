@@ -4,6 +4,21 @@
   "pauseAriaLabel": "Mettre la séance en pause et retourner à Aujourd'hui",
   "progressAriaLabel": "Progression de la séance",
   "progressValueText": "{{logged}} sur {{total}} séries",
+  "sessionSheet": {
+    "triggerAriaLabel": "Options de la séance",
+    "dialogAriaLabel": "Options de la séance",
+    "closeAriaLabel": "Fermer",
+    "heading": "Cette séance",
+    "reset": "Réinitialiser la séance",
+    "resetDescription": "Remet la journée telle qu'elle était avant que tu commences.",
+    "keepGoing": "Continuer",
+    "resetConfirmHeading_one": "Effacer {{count}} série enregistrée ?",
+    "resetConfirmHeading_other": "Effacer {{count}} séries enregistrées ?",
+    "resetConfirmHeadingEmpty": "Réinitialiser cette séance ?",
+    "resetConfirmWarning": "La séance est supprimée, pas sauvegardée. La journée repasse à « pas commencée ».",
+    "resetConfirmAction": "Réinitialiser la séance",
+    "resetConfirmCancel": "Continuer"
+  },
   "undo": {
     "label": "Annuler",
     "ariaLabel": "Annuler la dernière série — {{exerciseName}}, série {{setIndex}} sur {{totalSets}}"

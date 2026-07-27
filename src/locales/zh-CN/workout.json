@@ -4,6 +4,20 @@
   "pauseAriaLabel": "暂停训练并返回今天",
   "progressAriaLabel": "训练进度",
   "progressValueText": "{{logged}} / {{total}} 组",
+  "sessionSheet": {
+    "triggerAriaLabel": "训练选项",
+    "dialogAriaLabel": "训练选项",
+    "closeAriaLabel": "关闭",
+    "heading": "这次训练",
+    "reset": "重置这次训练",
+    "resetDescription": "把今天恢复到还没开始的状态。",
+    "keepGoing": "继续训练",
+    "resetConfirmHeading_other": "清除已记录的 {{count}} 组？",
+    "resetConfirmHeadingEmpty": "重置这次训练？",
+    "resetConfirmWarning": "这次训练会被删除，不会保存。今天回到「未开始」。",
+    "resetConfirmAction": "重置这次训练",
+    "resetConfirmCancel": "继续训练"
+  },
   "undo": {
     "label": "撤销",
     "ariaLabel": "撤销上一组——{{exerciseName}}，第 {{setIndex}} 组 / 共 {{totalSets}} 组"

@@ -4,6 +4,21 @@
   "pauseAriaLabel": "Pause session and go back to Today",
   "progressAriaLabel": "Session progress",
   "progressValueText": "{{logged}} of {{total}} sets",
+  "sessionSheet": {
+    "triggerAriaLabel": "Session options",
+    "dialogAriaLabel": "Session options",
+    "closeAriaLabel": "Close",
+    "heading": "This session",
+    "reset": "Reset session",
+    "resetDescription": "Puts today back to before you started.",
+    "keepGoing": "Keep going",
+    "resetConfirmHeading_one": "Clear {{count}} logged set?",
+    "resetConfirmHeading_other": "Clear {{count}} logged sets?",
+    "resetConfirmHeadingEmpty": "Reset this session?",
+    "resetConfirmWarning": "The session is deleted, not saved. Today goes back to not started.",
+    "resetConfirmAction": "Reset session",
+    "resetConfirmCancel": "Keep going"
+  },
   "undo": {
     "label": "Undo",
     "ariaLabel": "Undo last set — {{exerciseName}}, set {{setIndex}} of {{totalSets}}"

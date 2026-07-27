@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
 import {
@@ -14,6 +14,7 @@ import {
 } from '@/domain/workout'
 import { PRODUCT_NAME } from '@/lib/brand'
 import type { LoggedSet, Workout } from '@/domain/types'
+import { SessionSheet } from './SessionSheet'
 import { SetScreen } from './SetScreen'
 import { UndoLastSetButton } from './UndoLastSetButton'
 import { RestScreen } from './RestScreen'
@@ -29,6 +30,8 @@ export function WorkoutPage() {
   const { t: tCommon, i18n } = useTranslation('common')
   const reducedMotion = useReducedMotion()
   const [phase, setPhase] = useState<Phase>({ kind: 'logging' })
+  const [sessionSheetOpen, setSessionSheetOpen] = useState(false)
+  const navigate = useNavigate()
 
   // Workout mode is a full-screen takeover outside AppShell's route-title
   // handling — it needs its own, since navigating here from Today is still
@@ -137,6 +140,15 @@ export function WorkoutPage() {
     setPhase({ kind: 'logging' })
   }
 
+  async function handleReset() {
+    if (!workout) return
+    // Same end state as the Today page's discard — deleted, not archived,
+    // with today back to not started. `replace` so Back can't return to a
+    // Workout Mode whose session no longer exists.
+    await workoutRepo.remove(workout.id)
+    await navigate('/', { replace: true })
+  }
+
   const loggedSetCount = workout.exercises.reduce((n, e) => n + e.sets.length, 0)
   const totalSetCount = workout.exercises.reduce((n, e) => n + e.prescription.sets, 0)
   // What an undo would take, computed for the control's accessible name so
@@ -175,6 +187,14 @@ export function WorkoutPage() {
             onUndo={() => void handleUndo()}
           />
         )}
+        <button
+          type="button"
+          aria-label={t('sessionSheet.triggerAriaLabel')}
+          onClick={() => setSessionSheetOpen(true)}
+          className="-mr-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
+        >
+          ⋯
+        </button>
       </header>
 
       <AnimatePresence mode="wait" initial={false}>
@@ -224,6 +244,13 @@ export function WorkoutPage() {
           )}
         </motion.div>
       </AnimatePresence>
+
+      <SessionSheet
+        open={sessionSheetOpen}
+        loggedSetCount={loggedSetCount}
+        onReset={() => void handleReset()}
+        onClose={() => setSessionSheetOpen(false)}
+      />
     </div>
   )
 }
