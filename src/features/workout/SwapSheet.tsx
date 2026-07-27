@@ -46,20 +46,26 @@ export function SwapSheet({
   const [pendingExerciseId, setPendingExerciseId] = useState<string | null>(null)
   const pendingExercise = pendingExerciseId ? exerciseById.get(pendingExerciseId) : undefined
   // Cancelling the confirm step swaps the option list back in, unmounting
-  // the button that was focused. Without this, focus lands on <body> —
-  // outside an aria-modal dialog that has hidden the rest of the page, with
-  // Escape dead because its handler is bound to the panel
-  // (docs/review-backlog.md A1). Edge-triggered, so opening the sheet
-  // doesn't fight the open-focus effect below.
-  // `open &&` matters: closing the sheet mid-confirm also clears the pending
-  // id, and without it that clear would yank focus back into a sheet that is
-  // on its way out, instead of leaving it on the trigger.
-  const optionsHeadingRef = useFocusOnChange<HTMLHeadingElement>(
-    open && pendingExerciseId === null,
-  )
+  // the button that was focused. Without a focus move, focus lands on
+  // <body> — outside an aria-modal dialog that has hidden the rest of the
+  // page, with Escape dead because its handler is bound to the panel
+  // (docs/review-backlog.md A1).
+  //
+  // This flag names the *cause* — a cancel — rather than deriving the
+  // moment from state. It previously read `open && pendingExerciseId ===
+  // null`, which is also true when the sheet simply opens, so it fired
+  // there too and was silently overruled by the open-focus effect that
+  // happened to run afterwards. That made a focus behaviour depend on the
+  // declaration order of two effects, which is invisible at the call site
+  // and survives only until someone moves one of them.
+  const [justCancelled, setJustCancelled] = useState(false)
+  const optionsHeadingRef = useFocusOnChange<HTMLHeadingElement>(justCancelled)
 
   function chooseOption(id: string) {
     if (loggedSetsCount > 0) {
+      // Entering the confirm re-arms the flag, so a later cancel is a fresh
+      // false→true edge rather than a no-op.
+      setJustCancelled(false)
       setPendingExerciseId(id)
     } else {
       onSelect(id)
@@ -77,6 +83,7 @@ export function SwapSheet({
       triggerRef.current?.focus()
     }
     setPendingExerciseId(null)
+    setJustCancelled(false)
   }, [open])
 
   function handleKeyDown(event: KeyboardEvent) {
@@ -134,7 +141,10 @@ export function SwapSheet({
                 newExerciseId={pendingExercise.id}
                 loggedSetsCount={loggedSetsCount}
                 onConfirm={() => onSelect(pendingExercise.id)}
-                onCancel={() => setPendingExerciseId(null)}
+                onCancel={() => {
+                  setPendingExerciseId(null)
+                  setJustCancelled(true)
+                }}
               />
             ) : (
               <>
