@@ -11,8 +11,10 @@ import { applyReadiness } from '@/domain/adjustments'
 import { buildWeeklyReview, reviewIsUnseen, type WeeklyReview } from '@/domain/weeklyReview'
 import { formatLongDate, isoWeekday, toDateKey, type IsoWeekday } from '@/lib/dates'
 import { useActivityKindLabel } from '@/lib/activityKindLabel'
+import { useFocusOnChange } from '@/lib/useFocusOnChange'
 import { useLocale } from '@/i18n/useLocale'
 import { useLocalizedActivity, useProgramName, useSessionFocus, useSessionName } from '@/i18n/seedProgram'
+import { ConfirmAction } from '@/ui/ConfirmAction'
 import { SettingsLink } from '@/ui/SettingsLink'
 import type { ActivityTemplate, CheckIn, Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
 import { CheckInCard } from '@/features/checkin/CheckInCard'
@@ -463,7 +465,16 @@ function StartButton({
 
 function InProgress({ workout, program }: { workout: Workout; program?: Program }) {
   const { t } = useTranslation('today')
-  const [discardArmed, setDiscardArmed] = useState(false)
+  // Discard used to arm by swapping its own label in place. The element
+  // stayed mounted, so nothing announced the state change and a blind user
+  // could destroy an in-progress workout without ever perceiving a confirm
+  // step (docs/review-backlog.md A4). It now uses the same confirm the swap
+  // sheet does — one pattern for one concept.
+  const [confirming, setConfirming] = useState(false)
+  // Returns focus to the discard button when the confirm is cancelled. The
+  // hook skips the first render by design, so an ordinary Today load with a
+  // workout in progress never steals focus.
+  const discardRef = useFocusOnChange<HTMLButtonElement>(!confirming)
   const session = program?.sessions.find((s) => s.id === workout.sessionTemplateId)
   // Called unconditionally with a placeholder when the workout's session
   // template can't be found — Rules of Hooks, mirroring PlanPage's DayRow.
@@ -493,16 +504,31 @@ function InProgress({ workout, program }: { workout: Workout; program?: Program 
       >
         {t('inProgress.resume')}
       </Link>
-      <button
-        type="button"
-        onClick={() => {
-          if (discardArmed) void workoutRepo.remove(workout.id)
-          else setDiscardArmed(true)
-        }}
-        className="mt-4 w-full text-center text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
-      >
-        {discardArmed ? t('inProgress.discardArmed') : t('inProgress.discard')}
-      </button>
+      {confirming ? (
+        <div className="mt-8">
+          <ConfirmAction
+            heading={
+              loggedSets > 0
+                ? t('inProgress.discardConfirmHeading', { count: loggedSets })
+                : t('inProgress.discardConfirmHeadingEmpty')
+            }
+            warning={t('inProgress.discardConfirmWarning')}
+            confirmLabel={t('inProgress.discardConfirmAction')}
+            cancelLabel={t('inProgress.discardConfirmCancel')}
+            onConfirm={() => void workoutRepo.remove(workout.id)}
+            onCancel={() => setConfirming(false)}
+          />
+        </div>
+      ) : (
+        <button
+          ref={discardRef}
+          type="button"
+          onClick={() => setConfirming(true)}
+          className="mt-4 w-full text-center text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
+        >
+          {t('inProgress.discard')}
+        </button>
+      )}
     </>
   )
 }

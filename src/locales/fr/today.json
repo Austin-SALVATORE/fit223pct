@@ -38,7 +38,12 @@
     "waiting": "Ta séance est ouverte et t'attend.",
     "resume": "Reprendre la séance",
     "discard": "Abandonner la séance",
-    "discardArmed": "Appuie à nouveau pour abandonner cette séance"
+    "discardConfirmHeading_one": "Abandonner {{count}} série enregistrée ?",
+    "discardConfirmHeading_other": "Abandonner {{count}} séries enregistrées ?",
+    "discardConfirmHeadingEmpty": "Abandonner cette séance ?",
+    "discardConfirmWarning": "La séance est supprimée, pas sauvegardée. La journée repasse à « pas commencée ».",
+    "discardConfirmAction": "Abandonner la séance",
+    "discardConfirmCancel": "La garder"
   },
   "doneToday": {
     "eyebrow": "Séance terminée",

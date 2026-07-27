@@ -38,7 +38,12 @@
     "waiting": "Your session is open and waiting.",
     "resume": "Resume session",
     "discard": "Discard session",
-    "discardArmed": "Tap again to discard this session"
+    "discardConfirmHeading_one": "Discard {{count}} logged set?",
+    "discardConfirmHeading_other": "Discard {{count}} logged sets?",
+    "discardConfirmHeadingEmpty": "Discard this session?",
+    "discardConfirmWarning": "The session is deleted, not saved. Today goes back to not started.",
+    "discardConfirmAction": "Discard session",
+    "discardConfirmCancel": "Keep it"
   },
   "doneToday": {
     "eyebrow": "Session complete",

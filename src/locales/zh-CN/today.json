@@ -35,7 +35,11 @@
     "waiting": "你的训练已经开始，正在等你。",
     "resume": "继续训练",
     "discard": "放弃训练",
-    "discardArmed": "再次点击以放弃这次训练"
+    "discardConfirmHeading_other": "放弃已记录的 {{count}} 组？",
+    "discardConfirmHeadingEmpty": "放弃这次训练？",
+    "discardConfirmWarning": "这次训练会被删除，不会保存。今天回到「未开始」。",
+    "discardConfirmAction": "放弃训练",
+    "discardConfirmCancel": "保留"
   },
   "doneToday": {
     "eyebrow": "训练完成",

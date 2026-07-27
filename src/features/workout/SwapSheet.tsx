@@ -1,11 +1,11 @@
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { effectiveSubstitutions } from '@/domain/substitutions'
 import { useEquipmentLabel } from '@/lib/equipmentLabel'
 import { useFocusOnChange } from '@/lib/useFocusOnChange'
-import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { useExerciseName } from '@/i18n/seedExercise'
+import { ConfirmAction } from '@/ui/ConfirmAction'
 import type { Exercise, ExercisePrescription } from '@/domain/types'
 
 const FOCUSABLE_SELECTOR =
@@ -181,37 +181,18 @@ function ConfirmClear({
 }) {
   const { t } = useTranslation('workout')
   const newExerciseName = useExerciseName(newExerciseId)
-  // This subtree replaces the option list the moment a substitution is
-  // tapped, so it must take the focus that its predecessor lost. The
-  // warning is wired as the heading's description rather than a live
-  // region: it's present at mount, which is exactly when a live region is
-  // least reliable, and "clears N logged sets" is the one thing the user
-  // must hear before confirming something destructive.
-  const headingRef = useFocusOnMount<HTMLHeadingElement>()
-  const warningId = useId()
+  // The focus and announcement behaviour this step needs now lives in
+  // ConfirmAction — same pattern, three callers. This component keeps only
+  // what is genuinely swap-specific: which strings to resolve.
   return (
-    <>
-      <h2 ref={headingRef} tabIndex={-1} aria-describedby={warningId} className="eyebrow">
-        {t('swapSheet.confirmHeading', { exerciseName, newExerciseName })}
-      </h2>
-      <p id={warningId} className="mt-3 text-sm text-ink-secondary">
-        {t('swapSheet.confirmWarning', { count: loggedSetsCount })}
-      </p>
-      <button
-        type="button"
-        onClick={onConfirm}
-        className="mt-4 w-full rounded-card bg-amber py-3 text-center text-sm font-semibold text-bg"
-      >
-        {t('swapSheet.confirmSwap')}
-      </button>
-      <button
-        type="button"
-        onClick={onCancel}
-        className="mt-2 w-full rounded-card border border-border py-3 text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
-      >
-        {t('swapSheet.confirmCancel')}
-      </button>
-    </>
+    <ConfirmAction
+      heading={t('swapSheet.confirmHeading', { exerciseName, newExerciseName })}
+      warning={t('swapSheet.confirmWarning', { count: loggedSetsCount })}
+      confirmLabel={t('swapSheet.confirmSwap')}
+      cancelLabel={t('swapSheet.confirmCancel')}
+      onConfirm={onConfirm}
+      onCancel={onCancel}
+    />
   )
 }
 
