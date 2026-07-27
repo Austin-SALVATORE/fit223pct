@@ -16,6 +16,18 @@ export interface WorkoutSummary {
   durationMinutes: number | null
 }
 
+/** The set an undo took back, and the slot it was taken from. */
+export interface UndoneSet {
+  exerciseIndex: number
+  set: LoggedSet
+}
+
+export interface UndoResult {
+  workout: Workout
+  /** null when nothing was logged — the caller renders no control in that case. */
+  removed: UndoneSet | null
+}
+
 interface CreateWorkoutInput {
   id: string
   programId: string
@@ -63,6 +75,46 @@ export function logSet(
     ...exercise,
     sets: [...exercise.sets, { ...set, setIndex: exercise.sets.length }],
   }))
+}
+
+/**
+ * The inverse of {@link logSet}: removes the most recently logged set in the
+ * whole session, not merely the current exercise's last one — the mis-tap may
+ * be the first set of exercise 3 while the user is now looking at exercise 3.
+ *
+ * "Most recent" is defined **positionally** — the last exercise that has any
+ * sets — not by `max(completedAt)`. Sets can only enter a Workout through
+ * `logSet` (always at `workoutPosition`'s index), `createWorkout` and
+ * `swapExercise` (both `sets: []`), and `workoutPosition` always returns the
+ * *first* unfilled exercise. So exercises fill strictly in order and the two
+ * definitions coincide. Positional is the one to depend on: `completedAt` is
+ * wall-clock (`new Date().toISOString()`), so ties, a device clock change or
+ * a DST-adjacent write can reorder it — and it degrades worse, since a
+ * timestamp undo could pull a set out of the middle of a completed exercise
+ * and leave `workoutPosition` pointing at a hole it can never fill.
+ *
+ * Returns no message descriptor because it has nothing to say; the prose the
+ * UI needs is built in the feature layer from `removed` plus `useExerciseName`.
+ *
+ * `workoutPosition` is derived, so it follows on its own: removing a set
+ * re-opens exactly the slot that set occupied, stepping back into the
+ * previous exercise when the current one had not started yet.
+ */
+export function undoLastSet(workout: Workout): UndoResult {
+  for (let exerciseIndex = workout.exercises.length - 1; exerciseIndex >= 0; exerciseIndex -= 1) {
+    const set = workout.exercises[exerciseIndex].sets.at(-1)
+    if (set === undefined) continue
+    return {
+      workout: updateExercise(workout, exerciseIndex, (exercise) => ({
+        ...exercise,
+        sets: exercise.sets.slice(0, -1),
+      })),
+      removed: { exerciseIndex, set },
+    }
+  }
+  // Nothing logged: the same workout back, so a caller can skip the write
+  // entirely rather than persisting an identical record.
+  return { workout, removed: null }
 }
 
 /**
