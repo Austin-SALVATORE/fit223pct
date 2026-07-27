@@ -19,7 +19,7 @@ interface SetTarget {
 
 // ExercisePrescription gains ONE of:
 //   setPlan?: SetTarget[]        // pyramid: one entry per set, in order
-// …while the existing sets/range/targetRir shape remains valid for
+// …while the existing sets/range shape (minus targetRir) remains valid for
 // bodyweight, band, and timed work (they have no weight to ascend).
 ```
 
@@ -33,12 +33,24 @@ suggestion engine pre-fills each set from the plan and the previous
 session's actuals; the steppers stay free — suggestions are defaults,
 never locks.
 
-**RIR:** removed from the set-logging UI everywhere. `LoggedSet.rir`
-stays in the schema (nullable, historical data untouched) but nothing
-prompts for it. The reserve gate in progression is replaced by the
-completion gate above. Conservative `weightStepKg` values are the
-safety margin that RIR used to provide — program authors should step
-small.
+**RIR: purged entirely (owner ruling 22 Jul — "forget RIR, reset all
+data about RIR", superseding the earlier keep-history position).**
+Not just removed from the UI — erased as a concept:
+
+- `LoggedSet.rir` deleted from the type; a one-time Dexie migration
+  strips the field from every stored workout's sets. Irreversible by
+  design (the values carry no meaning in the pyramid era).
+- `targetRir` deleted from prescriptions, seed defaults, and the
+  rep-range branch of the type — not "kept but unread."
+- No RIR display anywhere, including historical workout detail
+  (the old-workouts suffix goes too).
+- Import tolerates legacy files: `rir`/`targetRir` keys in old
+  exports are accepted and stripped, never errors — old backups must
+  stay importable.
+
+The reserve gate in progression is replaced by the completion gate
+above. Conservative `weightStepKg` values are the safety margin that
+RIR used to provide — program authors should step small.
 
 ## Readiness integration (the lever changes shape)
 
@@ -61,7 +73,8 @@ Amended 22 Jul by the owner's coach (supersedes the earlier
   seconds-mode work, AND loaded isolation accessories (curls, lateral
   raises, flies). Rationale: accessory goals are quality contraction
   and short sessions, not per-session progressive loading. `targetRir`
-  remains in their stored shape but is no longer surfaced in the UI.
+  is deleted from their shape too (full RIR purge — see the RIR
+  section).
 - The choice is per-prescription, carried by the presence of `setPlan`
   — the engine never infers the model from equipment or role.
 
@@ -89,8 +102,10 @@ approximated.
 
 ## Out of scope (deliberate)
 
-Deleting RIR from stored data or history; auto-generating ladders from
-1RM; per-set rest overrides; changing bodyweight/timed progression.
+Auto-generating ladders from 1RM; per-set rest overrides; changing
+bodyweight/timed progression. (RIR data deletion was originally out
+of scope; the 22 Jul owner ruling moved the full purge INTO scope —
+see the RIR section.)
 
 ## Migration
 

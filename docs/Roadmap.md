@@ -102,17 +102,22 @@ review before being called shipped (docs/I18n-glossary-fr.md,
 docs/I18n-glossary-zh.md). docs/I18n-adding-a-locale.md documents what a
 fourth locale actually requires.
 
-## Milestone 8 — Pyramid Progression
+## Milestone 8 — Pyramid Progression ✓ (shipped 23 Jul)
 
 Owner-directed pivot after the first real workout (docs/
 PyramidProgression.md): loaded lifts move from RIR-gated double
 progression to classical ascending-weight set ladders — explicit
 per-set weight×rep targets, ladder-steps-up-on-completion progression,
-RIR removed from the logging UI (data preserved). Readiness's easing
+RIR purged entirely — UI, schema, and stored data (owner ruling,
+Dexie v3 migration). Readiness's easing
 lever becomes "drop the top set." Bodyweight, band, and timed work keep
 the rep-range model — pyramid is the primary model for loaded lifts,
 not the only model. Import/export gain the ladder syntax,
-back-compatible.
+back-compatible. Shipped alongside: weekday-pinned scheduling
+(sessions carry fixed day identities — Mon Chest & Back, Wed Legs &
+Core, Fri Shoulders & Arms — per the coach's v3 spec, which the seed
+now transcribes directly), and the seed-clobber guard protecting
+imported programs from reseeding.
 
 Rides with M8 (owner decision, same first-workout feedback): the **Home
 equipment tier** — Home programs assume adjustable dumbbells + bench
@@ -123,6 +128,21 @@ entries) and add dumbbell-rdl (needs art). Phase 1 is then re-authored
 by the owner's coach as a pyramid, dumbbell-only import file; the seed
 program follows in the same batch.
 
+## Milestone 9 (proposed, ON HOLD — owner decision 22 Jul) — Smart Connector
+
+Phase 0 investigation complete and preserved (docs/design/SmartConnector.md):
+Apple Health becomes the single integration boundary (Apple Watch
+natively; the Xiaomi 8-electrode scale via Mi Fitness's Health sync),
+read through a Capacitor-wrapped build of the existing web app — the
+readiness engine gains objective drivers (sleep, resting HR, HRV,
+external load) alongside the subjective check-in, with
+subjective-wins fusion and pyramid-era recommendation levers.
+Reduced scope approved-for-consideration: Phases 0–3 only; workout
+write-back and the watch app are separate future milestones; BLE and
+Xiaomi cloud rejected. Blocked behind M8 and the owner decisions in
+the doc's §11.
+
 ## Later (architecture-ready, not scheduled)
 
-Cloud sync · Apple Watch · nutrition · wearables · advanced analytics.
+Cloud sync · Apple Watch app (Smart Connector Phase 6) · workout
+write-back (Phase 5) · nutrition · advanced analytics.
