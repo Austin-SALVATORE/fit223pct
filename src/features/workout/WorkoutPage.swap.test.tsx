@@ -167,6 +167,83 @@ describe('SwapSheet confirm-clear step', () => {
     expect(workout.exercises[0].sets).toHaveLength(0)
   })
 
+  /**
+   * A1: the confirm step replaces the option list in place, so the focused
+   * row unmounts. Focus used to land on <body> — outside the aria-modal
+   * dialog, with the destructive warning unannounced and Escape dead
+   * (its handler is bound to the panel), recoverable only by reloading the
+   * page with the confirm still pending.
+   */
+  describe('focus across the confirm branch swap', () => {
+    it('moves focus to the confirm heading, which describes the destructive count', async () => {
+      await insertActiveWorkoutWithOneLoggedSet()
+      renderWorkout()
+      await screen.findByText(/Set 2 of/)
+
+      await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
+      const sheet = await screen.findByRole('dialog', { name: 'Swap Goblet squat' })
+      await userEvent.click(within(sheet).getByRole('button', { name: /Split squat/ }))
+
+      const heading = within(sheet).getByRole('heading', {
+        name: 'Swap Goblet squat for Split squat?',
+      })
+      await waitFor(() => expect(heading).toHaveFocus())
+      expect(sheet.contains(document.activeElement)).toBe(true)
+      // The warning is the heading's description, so it is announced with it
+      // rather than left to a live region that fires at mount.
+      const warningId = heading.getAttribute('aria-describedby') ?? ''
+      expect(document.getElementById(warningId)).toHaveTextContent('1 logged set will be cleared.')
+    })
+
+    it('keeps Escape working once the confirm step has focus', async () => {
+      await insertActiveWorkoutWithOneLoggedSet()
+      renderWorkout()
+      await screen.findByText(/Set 2 of/)
+
+      await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
+      const sheet = await screen.findByRole('dialog', { name: 'Swap Goblet squat' })
+      await userEvent.click(within(sheet).getByRole('button', { name: /Split squat/ }))
+      await waitFor(() => expect(sheet.contains(document.activeElement)).toBe(true))
+
+      await userEvent.keyboard('{Escape}')
+
+      await waitFor(() =>
+        expect(screen.queryByRole('dialog', { name: 'Swap Goblet squat' })).toBeNull(),
+      )
+      const [workout] = await db.workouts.toArray()
+      expect(workout.exercises[0].exerciseId).toBe('goblet-squat')
+    })
+
+    it('returns focus to the option list heading on cancel', async () => {
+      await insertActiveWorkoutWithOneLoggedSet()
+      renderWorkout()
+      await screen.findByText(/Set 2 of/)
+
+      await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
+      const sheet = await screen.findByRole('dialog', { name: 'Swap Goblet squat' })
+      await userEvent.click(within(sheet).getByRole('button', { name: /Split squat/ }))
+      await userEvent.click(within(sheet).getByRole('button', { name: 'Cancel' }))
+
+      await waitFor(() =>
+        expect(within(sheet).getByRole('heading', { name: 'Swap Goblet squat for' })).toHaveFocus(),
+      )
+    })
+
+    it('still opens onto the first option, not the heading, when the sheet is reopened', async () => {
+      // The cancel-path focus is edge-triggered on the pending id clearing,
+      // which also happens as the sheet opens — opening must stay unaffected.
+      await insertActiveWorkoutWithOneLoggedSet()
+      renderWorkout()
+      await screen.findByText(/Set 2 of/)
+
+      await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
+      const sheet = await screen.findByRole('dialog', { name: 'Swap Goblet squat' })
+      await waitFor(() =>
+        expect(within(sheet).getAllByRole('button')[0]).toHaveFocus(),
+      )
+    })
+  })
+
   it('swaps immediately, no confirm step, when nothing has been logged yet', async () => {
     await insertActiveWorkoutWithProgramDefinedSubstitutions()
     renderWorkout()

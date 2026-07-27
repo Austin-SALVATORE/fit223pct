@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { effectiveSubstitutions } from '@/domain/substitutions'
 import { useEquipmentLabel } from '@/lib/equipmentLabel'
+import { useFocusOnChange } from '@/lib/useFocusOnChange'
+import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { useExerciseName } from '@/i18n/seedExercise'
 import type { Exercise, ExercisePrescription } from '@/domain/types'
 
@@ -43,6 +45,18 @@ export function SwapSheet({
   // the sheet opens/closes so a stale pending choice never survives.
   const [pendingExerciseId, setPendingExerciseId] = useState<string | null>(null)
   const pendingExercise = pendingExerciseId ? exerciseById.get(pendingExerciseId) : undefined
+  // Cancelling the confirm step swaps the option list back in, unmounting
+  // the button that was focused. Without this, focus lands on <body> —
+  // outside an aria-modal dialog that has hidden the rest of the page, with
+  // Escape dead because its handler is bound to the panel
+  // (docs/review-backlog.md A1). Edge-triggered, so opening the sheet
+  // doesn't fight the open-focus effect below.
+  // `open &&` matters: closing the sheet mid-confirm also clears the pending
+  // id, and without it that clear would yank focus back into a sheet that is
+  // on its way out, instead of leaving it on the trigger.
+  const optionsHeadingRef = useFocusOnChange<HTMLHeadingElement>(
+    open && pendingExerciseId === null,
+  )
 
   function chooseOption(id: string) {
     if (loggedSetsCount > 0) {
@@ -124,7 +138,9 @@ export function SwapSheet({
               />
             ) : (
               <>
-                <p className="eyebrow">{t('swapSheet.heading', { exerciseName })}</p>
+                <h2 ref={optionsHeadingRef} tabIndex={-1} className="eyebrow">
+                  {t('swapSheet.heading', { exerciseName })}
+                </h2>
                 {options.length === 0 ? (
                   <p className="mt-4 text-sm text-ink-secondary">{t('swapSheet.noSubstitutions')}</p>
                 ) : (
@@ -165,10 +181,20 @@ function ConfirmClear({
 }) {
   const { t } = useTranslation('workout')
   const newExerciseName = useExerciseName(newExerciseId)
+  // This subtree replaces the option list the moment a substitution is
+  // tapped, so it must take the focus that its predecessor lost. The
+  // warning is wired as the heading's description rather than a live
+  // region: it's present at mount, which is exactly when a live region is
+  // least reliable, and "clears N logged sets" is the one thing the user
+  // must hear before confirming something destructive.
+  const headingRef = useFocusOnMount<HTMLHeadingElement>()
+  const warningId = useId()
   return (
     <>
-      <p className="eyebrow">{t('swapSheet.confirmHeading', { exerciseName, newExerciseName })}</p>
-      <p className="mt-3 text-sm text-ink-secondary">
+      <h2 ref={headingRef} tabIndex={-1} aria-describedby={warningId} className="eyebrow">
+        {t('swapSheet.confirmHeading', { exerciseName, newExerciseName })}
+      </h2>
+      <p id={warningId} className="mt-3 text-sm text-ink-secondary">
         {t('swapSheet.confirmWarning', { count: loggedSetsCount })}
       </p>
       <button

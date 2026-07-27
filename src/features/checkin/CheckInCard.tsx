@@ -1,7 +1,8 @@
-import { useState, type ReactNode } from 'react'
+import { useState, type ReactNode, type Ref } from 'react'
 import { useTranslation } from 'react-i18next'
 import { checkinRepo } from '@/data/repositories'
 import { describeDrivers, type Readiness, type ReadinessSignal } from '@/domain/readiness'
+import { useFocusOnChange } from '@/lib/useFocusOnChange'
 import type { CheckIn, Rating } from '@/domain/types'
 import { RatingPicker } from '@/ui/RatingPicker'
 
@@ -40,6 +41,15 @@ export function CheckInCard({ dateKey, checkIn, readiness, locked = false }: Che
   const [editing, setEditing] = useState(false)
   const expanded = !locked && (editing || !complete)
   const tierPhrase = useTierPhrase(readiness)
+  // Rating the fifth signal makes the card complete, which unmounts the
+  // expanded branch out from under the button the user just pressed —
+  // focus would fall to <body>, and the readiness tier, the payoff of the
+  // whole flow, would render into a region nothing announced
+  // (docs/review-backlog.md A2). Focus the collapsed control instead: its
+  // accessible name is its own content, so the tier is read out as part of
+  // it. Edge-triggered, so a page that loads already-collapsed — the
+  // common case — never steals focus.
+  const collapsedRef = useFocusOnChange<HTMLButtonElement>(!expanded)
 
   async function rate(signal: ReadinessSignal, value: Rating) {
     const next: CheckIn = {
@@ -91,7 +101,7 @@ export function CheckInCard({ dateKey, checkIn, readiness, locked = false }: Che
           </div>
         </>
       ) : (
-        <CollapsedRow locked={locked} onEdit={() => setEditing(true)}>
+        <CollapsedRow ref={collapsedRef} locked={locked} onEdit={() => setEditing(true)}>
           <h2 className="eyebrow">{t('heading')}</h2>
           <p className="mt-2 text-ink">
             {locked && !complete ? t('notRecorded') : tierPhrase}
@@ -107,13 +117,18 @@ function CollapsedRow({
   locked,
   onEdit,
   children,
+  ref,
 }: {
   locked: boolean
   onEdit: () => void
   children: ReactNode
+  /** Focus target for the expanded→collapsed transition — see CheckInCard's collapsedRef. */
+  ref?: Ref<HTMLButtonElement>
 }) {
   const { t } = useTranslation('checkin')
   const { t: tCommon } = useTranslation('common')
+  // A locked card is collapsed from its first render and can never make the
+  // transition, so it needs no focus target.
   if (locked) {
     return (
       <div className="flex w-full items-baseline justify-between gap-4">
@@ -124,6 +139,7 @@ function CollapsedRow({
   }
   return (
     <button
+      ref={ref}
       type="button"
       onClick={onEdit}
       className="flex w-full items-baseline justify-between gap-4 text-left"
