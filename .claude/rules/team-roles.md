@@ -22,6 +22,20 @@ spawned teammate. Read your role, stay in it.
 When in doubt, subagent. A role that never needs to argue back does
 not need a seat at the table.
 
+**One teammate per role, for the life of the session.** A role that
+already exists is never re-spawned — the next brief goes to the
+teammate that holds it, resumed by name if it stopped. A second agent
+for a role you already have throws away a context window that already
+read this code, and it feels tidy rather than wasteful, which is why
+it keeps happening. A model-tier mismatch does not justify it: paying
+a full cold start to save a per-token rate is a bad trade.
+
+**Subagents may start cold; their memory must not.** Every recurring
+bench role keeps `~/.claude/agent-memory/<name>/MEMORY.md`, so the
+next invocation inherits what the last one learned. Seed those files
+with structural facts only — never conclusions about a live task, or
+an independent reader becomes an echo of the previous spawn.
+
 ## Team lead — PM & Reviewer
 
 Owns the roadmap, the specs (`docs/**` as review contracts),
