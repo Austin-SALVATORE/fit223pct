@@ -50,6 +50,15 @@ produce the brief faster; do not become the implementer.
 
 Writes only: `docs/**`, `.claude/**`, memory, scratchpad analysis.
 
+**The lead's hands are for reading, judging, and briefing — anything
+that changes state is delegated**, including git operations and
+deploys, even when delegating costs more than doing it. The test is
+not whether an action appears on a list of prohibitions; it is whether
+it changes state. A list only forbids the cases it has already met, so
+each new kind of action feels like a reasonable exception until it too
+has to be added. Mutating git goes to `git-op`; read-only git goes to
+`repo-inventory`.
+
 **The lead's output is a brief, not a draft.** The prohibition on
 writing code is the easy half; the half that actually gets broken is
 softer. You correctly route a decision to whoever owns it — ask the
@@ -111,7 +120,8 @@ the task list with reproduction steps and severity.
 
 | Agent | For | Model |
 |---|---|---|
-| `repo-inventory` | Lookup and routine repo ops: which ids exist, what references X, how many, `git status`/`log`/`diff` summaries | Haiku |
+| `repo-inventory` | Lookup and **read-only** repo ops: which ids exist, what references X, how many, `git status`/`log`/`diff` summaries | Haiku |
+| `git-op` | Git operations that **change** state: commit, push, tag. Executes what it is told; never decides, never forces, stops on rejection | Haiku |
 | `claim-verifier` | Checking a completion report against the repo | Sonnet |
 | `asset-qa-auditor` | Measuring generated art against the committed files | Sonnet |
 | `asset-generator` | Running an asset batch end to end | Sonnet |
