@@ -36,6 +36,19 @@ delivers.
 2. **Stretching only this milestone.** Mobility, foam rolling and
    walking stay as text. Prove the pattern before multiplying the art
    batch and the coach's authoring load.
+3. **Auto-advance**, with a lead-in before each hold, plus pause,
+   next, back, and leave-at-any-time. A routine that needs a tap
+   between every stretch defeats itself when your hands are on the
+   floor.
+4. **Wake lock is in scope.** A hands-free routine means no touch
+   input for ~10 minutes, so the screen sleeps exactly when the user
+   needs to see the next stretch. Shipping without it would make the
+   feature's own premise unusable. Workout Mode does not use it today
+   and may adopt it later.
+5. **Two illustrations per stretch** — entry pose and held pose. The
+   lead-in shows entry, the display switches to the held pose when the
+   timer starts, so the second frame has a job rather than being
+   completeness for its own sake. Doubles the art batch, knowingly.
 
 ## What must be true
 
