@@ -11,6 +11,7 @@ import { useLocalizedActivity, useSessionName } from '@/i18n/seedProgram'
 import { useLocale } from '@/i18n/useLocale'
 import { SessionPreview } from '@/features/today/SessionPreview'
 import type { ActivityTemplate, Exercise, LoggedSet, Program, SessionTemplate, Workout } from '@/domain/types'
+import { ActivityItemList } from '@/features/recovery/ActivityItemList'
 
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
@@ -273,14 +274,7 @@ function ActivityDetail({
     <>
       <p className="mt-1 text-sm font-medium text-amber">{kindLabel}</p>
       <h2 className="text-display mt-1 text-2xl text-ink">{localized.title}</h2>
-      <ul className="mt-4 space-y-2">
-        {localized.items.map((item, index) => (
-          <li key={index} className="leading-relaxed text-ink-secondary">
-            <span className="text-ink">{item.label}</span>
-            {item.detail && <span className="text-ink-tertiary"> — {item.detail}</span>}
-          </li>
-        ))}
-      </ul>
+      <ActivityItemList items={localized.items} />
     </>
   )
 }

@@ -1,5 +1,6 @@
 {
   "leaveAriaLabel": "Leave this routine and go back to Today",
+  "startRoutine": "Start this routine",
   "leadIn": "Get into position",
   "position": "{{index}} of {{total}}",
   "side": {

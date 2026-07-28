@@ -20,6 +20,8 @@ import type { IsoWeekday } from '@/lib/dates'
 export interface LocalizedActivityItem {
   label: string
   detail?: string
+  /** Carried through from ActivityItem — see useLocalizedActivity. */
+  routineId?: string
 }
 
 export interface LocalizedActivity {
@@ -138,6 +140,12 @@ export function useLocalizedActivity(
       ...(item.detail !== undefined
         ? { detail: i18n.exists(`seed:${detailKey}`) ? t(detailKey) : item.detail }
         : {}),
+      // Carried through explicitly. This rebuilds each item as a fresh
+      // literal rather than spreading, so any field not named here is
+      // silently dropped — and the failure mode for routineId is invisible:
+      // no error, the affordance simply never appears. Hence its own test,
+      // in a non-English locale, since this branch is the localized one.
+      ...(item.routineId !== undefined ? { routineId: item.routineId } : {}),
     }
   })
   return { ...activity, title, items }

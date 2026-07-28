@@ -98,6 +98,18 @@ export type ActivityKind = 'recovery' | 'mobility' | 'cardio' | 'optional' | 'ch
 export interface ActivityItem {
   label: string
   detail?: string
+  /**
+   * Names a built-in routine (src/data/seed/routines.ts) that this item can
+   * be tapped to play. Absent is the norm — most items are plain text and
+   * must keep looking that way, so "Complete rest is a fine choice too"
+   * never reads as a broken link.
+   *
+   * This is a pointer into the app's own closed catalogue, not into the
+   * Library and not into program content. What it points at structurally
+   * cannot carry weights, sets or progression (see domain/routine.ts), so it
+   * admits guided playback and nothing else.
+   */
+  routineId?: string
 }
 
 /** Free-text program content, not a Library reference — no weights, no logging, no prescription. */

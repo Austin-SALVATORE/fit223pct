@@ -1,5 +1,6 @@
 {
   "leaveAriaLabel": "退出这套动作并返回今天",
+  "startRoutine": "开始这套动作",
   "leadIn": "摆好姿势",
   "position": "第 {{index}} 个 / 共 {{total}} 个",
   "side": {

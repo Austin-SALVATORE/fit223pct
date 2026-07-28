@@ -14,6 +14,7 @@ import { useActivityKindLabel } from '@/lib/activityKindLabel'
 import { useFocusOnChange } from '@/lib/useFocusOnChange'
 import { useLocale } from '@/i18n/useLocale'
 import { useLocalizedActivity, useProgramName, useSessionFocus, useSessionName } from '@/i18n/seedProgram'
+import { ActivityItemList } from '@/features/recovery/ActivityItemList'
 import { ConfirmAction } from '@/ui/ConfirmAction'
 import { SettingsLink } from '@/ui/SettingsLink'
 import type { ActivityTemplate, CheckIn, Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
@@ -625,14 +626,7 @@ function ActivityHero({
     <div className="mt-8">
       <p className="text-sm font-medium text-amber">{kindLabel}</p>
       <h1 className="text-display mt-2 text-5xl text-ink">{localized.title}</h1>
-      <ul className="mt-4 space-y-2">
-        {localized.items.map((item, index) => (
-          <li key={index} className="leading-relaxed text-ink-secondary">
-            <span className="text-ink">{item.label}</span>
-            {item.detail && <span className="text-ink-tertiary"> — {item.detail}</span>}
-          </li>
-        ))}
-      </ul>
+      <ActivityItemList items={localized.items} />
     </div>
   )
 }

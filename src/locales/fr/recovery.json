@@ -1,5 +1,6 @@
 {
   "leaveAriaLabel": "Quitter cette routine et revenir à Aujourd'hui",
+  "startRoutine": "Lancer cette routine",
   "leadIn": "Mets-toi en position",
   "position": "{{index}} sur {{total}}",
   "side": {
