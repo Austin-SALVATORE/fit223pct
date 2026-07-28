@@ -13,13 +13,40 @@ import type { Routine } from '@/domain/routine'
  * glob to `src/data/seed/**`, covers it automatically: which stretches, how
  * long, in what order is the coach's call, not this repo's.
  *
- * Empty until the coach's stretch list and its art batch both exist
- * (milestone phase 5). Empty is the correct state, not a placeholder — no
- * seeded activity item carries a `routineId` yet, so nothing in the product
- * links here and no affordance appears anywhere. The vehicle is complete
- * and provable without the content.
+ * Content is the coach's (docs/programs/recovery-stretch-v1-coach-spec.md):
+ * which stretches, how long each is held, the order, and which are per-side
+ * are all reproduced from that spec and are not this repo's to revise. The
+ * ids are the exception — spelling follows the Library's convention (no
+ * digits, no apostrophes), hence `figure-four-` and `childs-pose`.
+ *
+ * Still not reachable in the product: no activity item carries a `routineId`
+ * until the art batch lands, so nobody meets an illustration-less routine.
+ *
+ * Note on duration, because the spec's own arithmetic differs: the coach
+ * computes one lead-in per *stretch* (8 × 8 s = 64 s). The player issues one
+ * per *play*, and routinePlaylist expands the six per-side steps into two
+ * plays each, so the real sequence is 14 plays — 112 s of lead-in and 547 s
+ * total (9:07), not the stated 8:20. Per-play is the behaviour we want:
+ * switching from the left side to the right genuinely needs the
+ * repositioning time. The user-visible "8–10 min" card copy still holds.
  */
-export const seedRoutines: readonly Routine[] = []
+export const seedRoutines: readonly Routine[] = [
+  {
+    id: 'recovery-stretch-v1',
+    // Ordered standing → kneeling → floor, deliberately: the spec minimises
+    // transitions between standing and floor positions.
+    steps: [
+      { id: 'wall-chest-stretch', holdSeconds: 30, perSide: true },
+      { id: 'wall-calf-stretch', holdSeconds: 30, perSide: true },
+      { id: 'standing-hamstring-stretch', holdSeconds: 30, perSide: true },
+      { id: 'standing-quadriceps-stretch', holdSeconds: 30, perSide: true },
+      { id: 'half-kneeling-hip-flexor-stretch', holdSeconds: 30, perSide: true },
+      { id: 'figure-four-glute-stretch', holdSeconds: 30, perSide: true },
+      { id: 'seated-butterfly-stretch', holdSeconds: 30 },
+      { id: 'childs-pose', holdSeconds: 45 },
+    ],
+  },
+]
 
 /** The routine with this id, or undefined — an unknown id degrades to plain text, never a dead link. */
 export function routineById(routineId: string): Routine | undefined {

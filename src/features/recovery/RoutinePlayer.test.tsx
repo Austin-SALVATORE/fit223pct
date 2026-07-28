@@ -34,7 +34,8 @@ vi.mock('@/data/seed/routines', async () => {
   }
 })
 
-const LEAD_IN_SECONDS = 5
+/** Mirrors RoutinePlayer's constant — coach ruling A. */
+const LEAD_IN_SECONDS = 8
 
 beforeAll(() => {
   i18n.addResourceBundle(

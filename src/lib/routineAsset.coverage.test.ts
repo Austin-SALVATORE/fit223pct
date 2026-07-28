@@ -8,18 +8,31 @@ import { routineStepAsset } from './routineAsset'
  * exerciseAsset.coverage.test.ts. Every step of every routine must resolve
  * both of its poses or appear in KNOWN_MISSING.
  *
- * **This test is vacuous today and that is expected.** `seedRoutines` is
- * empty until the coach's stretch list and its art batch land (milestone
- * phase 5), so every `it.each` below iterates nothing. It is infrastructure
- * that becomes real the moment content arrives — the same way KNOWN_MISSING
- * in the exercise coverage test is empty and stays in place. Landing it now
- * rather than with the content means the content cannot arrive unguarded.
- *
  * It exists because the exercise coverage test asserts only Library ⊆
  * resolves; nothing asserts the reverse, so stretch entries in the manifest
  * would otherwise be entirely unaudited.
+ *
+ * **Every step is listed below, deliberately and temporarily.** The
+ * catalogue landed ahead of its art (part 1 of phase 5), and no activity
+ * item links to the routine yet, so nobody meets an illustration-less
+ * stretch in the product.
+ *
+ * This list is self-clearing rather than a suppression: the assertion below
+ * requires a KNOWN_MISSING id to *not* resolve, so the first stretch whose
+ * art lands turns this file red and names itself. Part 2 cannot quietly ship
+ * art while leaving a stale entry here — removing them is forced, not
+ * remembered.
  */
-const KNOWN_MISSING = new Set<string>()
+const KNOWN_MISSING = new Set<string>([
+  'wall-chest-stretch',
+  'wall-calf-stretch',
+  'standing-hamstring-stretch',
+  'standing-quadriceps-stretch',
+  'half-kneeling-hip-flexor-stretch',
+  'figure-four-glute-stretch',
+  'seated-butterfly-stretch',
+  'childs-pose',
+])
 
 const stepIds = seedRoutines.flatMap((routine) => routine.steps.map((step) => step.id))
 

@@ -442,5 +442,39 @@
         }
       }
     }
+  },
+  "routineStep": {
+    "wall-chest-stretch": {
+      "name": "Étirement des pectoraux au mur",
+      "cue": "Garde l'épaule relâchée et sens l'étirement à l'avant de la poitrine."
+    },
+    "wall-calf-stretch": {
+      "name": "Étirement des mollets au mur",
+      "cue": "Garde le talon arrière bien ancré au sol."
+    },
+    "standing-hamstring-stretch": {
+      "name": "Étirement des ischio-jambiers debout",
+      "cue": "Bascule à partir des hanches et garde le dos long."
+    },
+    "standing-quadriceps-stretch": {
+      "name": "Étirement des quadriceps debout",
+      "cue": "Garde les genoux serrés et pousse doucement les hanches vers l'avant."
+    },
+    "half-kneeling-hip-flexor-stretch": {
+      "name": "Étirement des fléchisseurs de hanche en demi-agenouillé",
+      "cue": "Rentre légèrement le bassin avant de te déplacer vers l'avant."
+    },
+    "figure-four-glute-stretch": {
+      "name": "Étirement des fessiers en chiffre quatre",
+      "cue": "Garde le bas du dos relâché pendant tout le maintien."
+    },
+    "seated-butterfly-stretch": {
+      "name": "Étirement papillon assis",
+      "cue": "Assieds-toi bien droit et laisse les genoux descendre naturellement."
+    },
+    "childs-pose": {
+      "name": "Posture de l'enfant",
+      "cue": "Relâche les épaules et respire profondément dans le dos."
+    }
   }
 }

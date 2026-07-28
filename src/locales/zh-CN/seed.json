@@ -442,5 +442,39 @@
         }
       }
     }
+  },
+  "routineStep": {
+    "wall-chest-stretch": {
+      "name": "靠墙胸部拉伸",
+      "cue": "肩膀放松，感受胸前的拉伸。"
+    },
+    "wall-calf-stretch": {
+      "name": "靠墙小腿拉伸",
+      "cue": "后脚跟牢牢踩在地面上。"
+    },
+    "standing-hamstring-stretch": {
+      "name": "站姿腘绳肌拉伸",
+      "cue": "从髋部前屈，背部保持伸展。"
+    },
+    "standing-quadriceps-stretch": {
+      "name": "站姿股四头肌拉伸",
+      "cue": "两膝并拢，髋部轻轻向前推。"
+    },
+    "half-kneeling-hip-flexor-stretch": {
+      "name": "半跪姿髋屈肌拉伸",
+      "cue": "先轻轻收住骨盆，再向前移。"
+    },
+    "figure-four-glute-stretch": {
+      "name": "四字臀部拉伸",
+      "cue": "整个保持过程中下背部都要放松。"
+    },
+    "seated-butterfly-stretch": {
+      "name": "坐姿蝴蝶式拉伸",
+      "cue": "坐直，让膝盖自然下沉。"
+    },
+    "childs-pose": {
+      "name": "婴儿式",
+      "cue": "放松肩膀，把呼吸送到背部。"
+    }
   }
 }

@@ -442,5 +442,39 @@
         }
       }
     }
+  },
+  "routineStep": {
+    "wall-chest-stretch": {
+      "name": "Wall chest stretch",
+      "cue": "Keep your shoulder relaxed and feel the stretch across the front of your chest."
+    },
+    "wall-calf-stretch": {
+      "name": "Wall calf stretch",
+      "cue": "Keep your back heel firmly on the floor."
+    },
+    "standing-hamstring-stretch": {
+      "name": "Standing hamstring stretch",
+      "cue": "Hinge from the hips and keep your back long."
+    },
+    "standing-quadriceps-stretch": {
+      "name": "Standing quadriceps stretch",
+      "cue": "Keep your knees together and gently push your hips forward."
+    },
+    "half-kneeling-hip-flexor-stretch": {
+      "name": "Half-kneeling hip flexor stretch",
+      "cue": "Tuck your pelvis slightly before shifting forward."
+    },
+    "figure-four-glute-stretch": {
+      "name": "Figure-four glute stretch",
+      "cue": "Keep your lower back relaxed throughout the hold."
+    },
+    "seated-butterfly-stretch": {
+      "name": "Seated butterfly stretch",
+      "cue": "Sit tall and let your knees fall naturally."
+    },
+    "childs-pose": {
+      "name": "Child's pose",
+      "cue": "Relax your shoulders and breathe deeply into your back."
+    }
   }
 }

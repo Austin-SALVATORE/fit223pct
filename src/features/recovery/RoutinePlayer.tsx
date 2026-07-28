@@ -26,11 +26,22 @@ import { TimerRing } from '@/ui/TimerRing'
  */
 
 /**
- * One global constant rather than per-step authoring. The type can gain a
- * per-step override later with no migration, since nothing is stored — the
- * coach question this answers provisionally is program-content.md's.
+ * Coach ruling A (docs/programs/recovery-stretch-v1-coach-spec.md): eight
+ * seconds, fixed, before every stretch. Transition time is physical, so it
+ * is the coach's call, not this repo's.
+ *
+ * One global constant rather than per-step authoring. Should a step ever
+ * need its own, the type can gain an override with no migration, since
+ * nothing about a routine is stored.
+ *
+ * Note this is per *play*, not per authored step: routinePlaylist expands a
+ * per-side step into two plays, so a left/right stretch gets two lead-ins.
+ * That is deliberate — changing sides needs the repositioning time as much
+ * as arriving at the stretch did — and it is why the routine runs 9:07
+ * rather than the spec's 8:20 arithmetic, which counts one lead-in per
+ * stretch.
  */
-const LEAD_IN_SECONDS = 5
+const LEAD_IN_SECONDS = 8
 
 export function RoutinePlayer() {
   const { t } = useTranslation('recovery')
