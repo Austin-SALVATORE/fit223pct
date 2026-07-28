@@ -6,6 +6,7 @@ import { TodayPage } from '@/features/today/TodayPage'
 import { LibraryPage } from '@/features/library/LibraryPage'
 import { ExercisePage } from '@/features/library/ExercisePage'
 import { WorkoutPage } from '@/features/workout/WorkoutPage'
+import { RoutinePlayer } from '@/features/recovery/RoutinePlayer'
 import { ProgressPage } from '@/features/progress/ProgressPage'
 import { PlanPage } from '@/features/plan/PlanPage'
 import { PlanDayPage } from '@/features/plan/PlanDayPage'
@@ -19,6 +20,8 @@ export default function App() {
       <Routes>
         {/* Workout mode is a full-screen takeover — no shell chrome */}
         <Route path="workout" element={<WorkoutPage />} />
+        {/* A routine is the same kind of thing: minutes long, one decision at a time */}
+        <Route path="routine/:routineId" element={<RoutinePlayer />} />
         <Route element={<AppShell />}>
           <Route index element={<TodayPage />} />
           <Route path="library" element={<LibraryPage />} />

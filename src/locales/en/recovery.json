@@ -1,0 +1,24 @@
+{
+  "leaveAriaLabel": "Leave this routine and go back to Today",
+  "leadIn": "Get into position",
+  "position": "{{index}} of {{total}}",
+  "side": {
+    "left": "left side",
+    "right": "right side"
+  },
+  "stepWithSide": "{{stepName}} — {{side}}",
+  "nextUp": "Next: {{stepName}}",
+  "nextUpLast": "Last one",
+  "pause": "Pause",
+  "next": "Next",
+  "back": "Back",
+  "end": {
+    "heading": "Done.",
+    "body": "That's the routine. Nothing to log, nothing to tick off.",
+    "backToToday": "Back to Today"
+  },
+  "notFound": {
+    "body": "That routine isn't available.",
+    "backToToday": "Back to Today"
+  }
+}

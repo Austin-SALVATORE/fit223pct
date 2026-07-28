@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
+import { TimerRing } from '@/ui/TimerRing'
 import {
   useExerciseCues,
   useExerciseName,
@@ -92,49 +93,6 @@ export function RestScreen({
   )
 }
 
-function TimerRing({ remaining, total }: { remaining: number; total: number }) {
-  const radius = 88
-  const circumference = 2 * Math.PI * radius
-  const fraction = total > 0 ? remaining / total : 0
-  // Final-seconds emphasis lives on the ring only — the digit itself is a
-  // data-critical number and stays a plain, stable readout.
-  const almostDone = remaining > 0 && remaining <= 3
-
-  return (
-    <div className="relative mt-6 h-52 w-52">
-      <svg viewBox="0 0 200 200" className="h-full w-full -rotate-90">
-        <circle
-          cx="100"
-          cy="100"
-          r={radius}
-          fill="none"
-          strokeWidth="6"
-          className="stroke-raised"
-        />
-        <circle
-          cx="100"
-          cy="100"
-          r={radius}
-          fill="none"
-          strokeWidth="6"
-          strokeLinecap="round"
-          className={`transition-[stroke-dashoffset,stroke] duration-300 ease-linear ${
-            almostDone ? 'stroke-clay' : 'stroke-amber'
-          }`}
-          strokeDasharray={circumference}
-          strokeDashoffset={circumference * (1 - fraction)}
-        />
-      </svg>
-      <time
-        aria-live="off"
-        className="absolute inset-0 flex items-center justify-center text-5xl font-semibold text-ink"
-      >
-        {formatClock(remaining)}
-      </time>
-    </div>
-  )
-}
-
 function RestButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button
@@ -176,10 +134,4 @@ function CoachingCard({
 
 function secondsLeft(endsAt: number): number {
   return Math.max(0, Math.ceil((endsAt - Date.now()) / 1000))
-}
-
-function formatClock(totalSeconds: number): string {
-  const minutes = Math.floor(totalSeconds / 60)
-  const seconds = totalSeconds % 60
-  return `${minutes}:${String(seconds).padStart(2, '0')}`
 }

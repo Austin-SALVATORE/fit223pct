@@ -18,6 +18,7 @@ export const NAMESPACES = [
   'seed',
   'plan',
   'settings',
+  'recovery',
 ] as const
 
 /** `fr-FR` → `fr`, `zh-Hans`/`zh-CN` → `zh-CN`, anything else → `en`. */

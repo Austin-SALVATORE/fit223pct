@@ -1,0 +1,24 @@
+{
+  "leaveAriaLabel": "Quitter cette routine et revenir à Aujourd'hui",
+  "leadIn": "Mets-toi en position",
+  "position": "{{index}} sur {{total}}",
+  "side": {
+    "left": "côté gauche",
+    "right": "côté droit"
+  },
+  "stepWithSide": "{{stepName}} — {{side}}",
+  "nextUp": "Ensuite : {{stepName}}",
+  "nextUpLast": "Dernier",
+  "pause": "Pause",
+  "next": "Suivant",
+  "back": "Précédent",
+  "end": {
+    "heading": "Terminé.",
+    "body": "C'est la fin de la routine. Rien à enregistrer, rien à cocher.",
+    "backToToday": "Revenir à Aujourd'hui"
+  },
+  "notFound": {
+    "body": "Cette routine n'est pas disponible.",
+    "backToToday": "Revenir à Aujourd'hui"
+  }
+}
