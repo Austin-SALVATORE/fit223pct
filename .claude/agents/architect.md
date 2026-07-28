@@ -56,7 +56,16 @@ because C would otherwise model itself on something B fixes.
 
 ## Report
 
-The plan itself, plus: what you verified and how, what you could not
-verify, the risks with their mitigations, and the open questions. If
-you disagree with the brief you were given, say so before planning
-around it.
+**Write the plan to a file, always** — `~/.claude/plans/<name>.md`,
+outside the repo — and tell the lead the path, line count and md5.
+A plan delivered only as a message reaches the lead and nobody else:
+the dev that will execute it cannot read the mailbox, so an unwritten
+plan has to be summarised by hand, which discards exactly the
+`file:line` grounding and rejected-alternative reasoning that made it
+worth producing. Publishing a checksum also makes "does the file
+exist" settleable by evidence rather than by assertion.
+
+The report itself is: where the plan lives, plus what you verified and
+how, what you could not verify, the risks with their mitigations, and
+the open questions. If you disagree with the brief you were given, say
+so before planning around it.
