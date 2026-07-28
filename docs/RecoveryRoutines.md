@@ -80,6 +80,36 @@ delivers.
 - **Offline and local-first**, like everything else. No network at
   routine time.
 
+## Device pass — ordered, and the order matters
+
+Automated tests cannot reach any of this: jsdom has no display and no
+power management, so every wake-lock test proves our *logic* is
+correct given a model of the browser, never that the browser behaves
+that way. Run these on a real device, in this order.
+
+1. **Background the app mid-routine and return.** First, not last.
+   It is the only step that can detect broken wake-lock
+   re-acquisition, and it is invisible to every automated test. A
+   documented iOS report (vueuse #3484, iPad 16.5) shows
+   `NotAllowedError` on exactly this path — not on the initial
+   request.
+   - *If it fails:* no client-side redesign fixes it. The platform
+     releases on hide however the lock was obtained, so returning
+     always needs a fresh non-gesture request. Accept it, document
+     it, and the routine simply behaves as it does today after the
+     first background.
+2. **Play a full routine untouched** and confirm the screen never
+   sleeps.
+   - *If the initial acquire fails:* the fix is acquiring on the
+     starting tap and handing the sentinel to the player — contained
+     to the hook's signature and one call site.
+3. Repeat in **low-power mode**, and as an **installed PWA** as well
+   as in-browser.
+4. **Screen reader**: what VoiceOver actually utters at each play
+   boundary, and whether auto-advance strands you. The tests prove
+   focus target, `aria-describedby` wiring and `aria-live="off"`;
+   they cannot prove what is spoken.
+
 ## Out of scope (deliberate)
 
 Logging or tracking of any kind; progression across sessions; user-
