@@ -50,6 +50,15 @@ delivers.
    timer starts, so the second frame has a job rather than being
    completeness for its own sake. Doubles the art batch, knowingly.
 
+   **This one is not enforced by any test.** The coverage guard checks
+   that a step resolves art at all and that its id does not collide
+   with a Library id, but `routineStepAsset` falls back to the entry
+   frame when a held frame is missing — assets never block a feature.
+   So a single-frame stretch degrades quietly to a still image and
+   nothing goes red. The art brief must state two frames, and review
+   must count them. Same shape as the end screen showing no number:
+   an invariant that only people can hold.
+
 ## What must be true
 
 - **A stretch routine is not a `Program` and not a Library exercise.**
