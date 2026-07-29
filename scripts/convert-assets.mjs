@@ -336,7 +336,7 @@ function selectNearest(runs, frames, frameW) {
   return sorted.every((c, i) => i === 0 || c > sorted[i - 1]) ? sorted : null
 }
 
-function findCuts(ink, width, frames, id) {
+function findCuts(ink, width, frames) {
   const runs = []
   let start = -1
   for (let x = 0; x <= width; x++) {
@@ -508,7 +508,7 @@ function convert(id, tmp) {
   qaScan(rgba, width, height, `${id} reference`)
 
   const ink = opaqueProfile(rgba, width, height)
-  const { mode, cuts, worstInk } = findCuts(ink, width, frames, id)
+  const { mode, cuts, worstInk } = findCuts(ink, width, frames)
   assertSliceSafe(id, cuts, worstInk, components(rgba, width, height))
 
   const framesDir = join(dir, 'frames')
