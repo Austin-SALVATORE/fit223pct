@@ -6,6 +6,7 @@ import type { Trend } from '@/domain/trends'
 import type { Exercise } from '@/domain/types'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { useExerciseName } from '@/i18n/seedExercise'
+import type { TFunction } from 'i18next'
 import { formatValue, useDirectionPhrase } from './formatTrend'
 
 interface StrengthCardProps {
@@ -35,7 +36,7 @@ export function StrengthCard({ exercise, trend, stagnation, substitution }: Stre
         <InsufficientTrend reason={trend.reason} />
       ) : (
         <p className="mt-1.5 text-sm text-ink-secondary" data-numeric>
-          {formatValue(trend.evidence.at(-1)!.value, trend.unit)} — {directionPhrase}
+          {formatValue(t, trend.evidence.at(-1)!.value, trend.unit)} — {directionPhrase}
         </p>
       )}
 
@@ -47,7 +48,7 @@ export function StrengthCard({ exercise, trend, stagnation, substitution }: Stre
               {t('strength.stagnation.sessionCount', { count: stagnation.evidence.length })}
             </span>
             {' — '}
-            {stagnation.evidence.map((point) => formatEvidence(point)).join(' → ')}
+            {stagnation.evidence.map((point) => formatEvidence(t, point)).join(' → ')}
             {stagnation.excludedForReadiness > 0 &&
               t('strength.stagnation.excluded', { count: stagnation.excludedForReadiness })}
             .
@@ -78,9 +79,9 @@ function InsufficientTrend({ reason }: { reason: MessageDescriptor }) {
 /** Shows both dimensions when weight is present — a session's reps still
  * moved even when its weight didn't, and hiding that is exactly what let
  * double progression read as a plateau. */
-function formatEvidence(point: StagnationEvidencePoint): string {
+function formatEvidence(t: TFunction, point: StagnationEvidencePoint): string {
   if (point.weightKg !== null) {
-    return `${formatValue(point.weightKg, 'kg')} × ${formatValue(point.effort, point.effortMode)}`
+    return `${formatValue(t, point.weightKg, 'kg')} × ${formatValue(t, point.effort, point.effortMode)}`
   }
-  return formatValue(point.effort, point.effortMode)
+  return formatValue(t, point.effort, point.effortMode)
 }

@@ -26,5 +26,11 @@
   "waist": {
     "sectionLabel": "腰围",
     "rangeLine": "{{firstDate}}：{{firstValue}} → {{lastDate}}：{{lastValue}}"
+  },
+  "unit": {
+    "kg": "{{value}} kg",
+    "cm": "{{value}} cm",
+    "seconds_other": "{{value}} 秒",
+    "reps_other": "{{value}} 次"
   }
 }

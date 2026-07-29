@@ -29,7 +29,7 @@
   "highlight": {
     "first": "首次",
     "load": "+{{delta, number}} kg",
-    "effortSeconds": "+{{delta}}s",
+    "effortSeconds": "+{{delta}} 秒",
     "effortReps_other": "+{{count}} 次",
     "steady": "保持稳定"
   },

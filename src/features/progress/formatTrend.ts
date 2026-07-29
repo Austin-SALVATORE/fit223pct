@@ -1,17 +1,30 @@
 import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import type { TrendDirection, TrendUnit } from '@/domain/trends'
 
-export function formatValue(value: number, unit: TrendUnit): string {
-  switch (unit) {
-    case 'kg':
-      return `${value} kg`
-    case 'cm':
-      return `${value} cm`
-    case 'seconds':
-      return `${value}s`
-    case 'reps':
-      return `${value} reps`
-  }
+const UNIT_KEY: Record<TrendUnit, string> = {
+  kg: 'progress:unit.kg',
+  cm: 'progress:unit.cm',
+  seconds: 'progress:unit.seconds',
+  reps: 'progress:unit.reps',
+}
+
+/**
+ * "12 reps" / "30s" used to be built here from English literals, so a zh-CN
+ * user read Latin units on a fully translated screen (docs/review-backlog.md
+ * I3). Units are now keyed and pluralised per locale, and the number goes
+ * through the locale's own formatter — French wants a comma, and zh-CN
+ * groups differently.
+ *
+ * Takes `t` rather than calling useTranslation, because two of its four call
+ * sites are inside `.map()` where a hook cannot run.
+ */
+export function formatValue(t: TFunction, value: number, unit: TrendUnit): string {
+  return t(UNIT_KEY[unit], { count: value, value: formatNumber(t, value) })
+}
+
+function formatNumber(t: TFunction, value: number): string {
+  return new Intl.NumberFormat(t('common:intlLocale')).format(value)
 }
 
 const DIRECTION_MESSAGE_KEY: Record<TrendDirection, string> = {

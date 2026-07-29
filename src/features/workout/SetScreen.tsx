@@ -205,11 +205,13 @@ function LastTime({
   mode: 'reps' | 'seconds'
 }) {
   const { t } = useTranslation('workout')
+  const { t: tCommon } = useTranslation('common')
   if (sets.length === 0) return <>{t('setScreen.lastTimeFirst')}</>
   const parts = sets
     .map((set) => {
       const effort = effortValue(set, mode)
-      const suffix = mode === 'seconds' ? 's' : ''
+      // The seconds marker is keyed: zh-CN writes 秒, not a Latin "s" (I3).
+      const suffix = mode === 'seconds' ? tCommon('unitSeconds') : ''
       return set.weightKg !== null ? `${effort}×${set.weightKg} kg` : `${effort}${suffix}`
     })
     .join(' · ')

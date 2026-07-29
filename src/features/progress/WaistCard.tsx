@@ -18,13 +18,13 @@ export function WaistCard({ trend }: { trend: Trend }) {
   return (
     <Card>
       <p className="text-ink" data-numeric>
-        {formatValue(last.value, trend.unit)} — {directionPhrase}
+        {formatValue(t, last.value, trend.unit)} — {directionPhrase}
       </p>
       <p className="mt-1 text-sm text-ink-tertiary" data-numeric>
         {t('waist.rangeLine', {
-          firstValue: formatValue(first.value, trend.unit),
+          firstValue: formatValue(t, first.value, trend.unit),
           firstDate: first.date,
-          lastValue: formatValue(last.value, trend.unit),
+          lastValue: formatValue(t, last.value, trend.unit),
           lastDate: last.date,
         })}
       </p>

@@ -52,5 +52,9 @@
     "en": "English",
     "fr": "Français",
     "zh-CN": "中文"
-  }
+  },
+  "intlLocale": "en-GB",
+  "labelValue": "{{label}}: {{value}}",
+  "middotJoin": "{{a}} · {{b}}",
+  "unitSeconds": "s"
 }

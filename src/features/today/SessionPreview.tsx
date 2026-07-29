@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { useExerciseName } from '@/i18n/seedExercise'
@@ -33,8 +34,11 @@ export function SessionPreview({
   origin = { from: 'today' },
 }: SessionPreviewProps) {
   const sessionName = useSessionName(programId, session, programOrigin)
+  // Label/value and middot punctuation are per-locale (I7) — zh-CN drops the
+  // ASCII spaces the English form needs.
+  const { t: tCommon } = useTranslation('common')
   return (
-    <section className="mt-10" aria-label={`${heading}: ${sessionName}`}>
+    <section className="mt-10" aria-label={tCommon('labelValue', { label: heading, value: sessionName })}>
       <div className="flex items-baseline justify-between gap-3">
         <h2 className="eyebrow">{heading}</h2>
         {badge && <p className="text-xs font-medium text-amber">{badge}</p>}
@@ -87,6 +91,7 @@ function ItemRow({
   sessionId: string
 }) {
   const { t } = useTranslation('today')
+  const { t: tCommon } = useTranslation('common')
   const exerciseName = useExerciseName(exercise.id)
   const note = usePrescriptionNote(programId, sessionId, item, programOrigin)
   const perSideSuffix = item.perSide ? t('sessionPreview.perSideSuffix') : ''
@@ -103,19 +108,34 @@ function ItemRow({
         </div>
       </span>
       <p className="shrink-0 self-center text-sm text-ink-secondary" data-numeric>
-        {formatPrescription(item, perSideSuffix)}
+        {formatPrescription(tCommon, item, perSideSuffix)}
       </p>
     </GroupedRow>
   )
 }
 
-function formatPrescription(item: ExercisePrescription, perSideSuffix: string): string {
+/**
+ * I7 only: the two ` · ` joins become the locale's own middot form. The
+ * arrows, en-dash and × stay as they are — i18n correctly ruled those
+ * locale-neutral, and rewriting them for screen readers is A14, a separate
+ * defect on the same line that ships independently.
+ */
+function formatPrescription(
+  t: TFunction<'common'>,
+  item: ExercisePrescription,
+  perSideSuffix: string,
+): string {
   if (item.setPlan) {
     const weights = item.setPlan.map((rung) => (rung.weightKg !== null ? String(rung.weightKg) : '–'))
     const reps = item.setPlan.map((rung) => String(rung.reps))
-    return `${weights.join('→')} kg · ${reps.join('/')}${perSideSuffix}`
+    return t('middotJoin', {
+      a: `${weights.join('→')} kg`,
+      b: `${reps.join('/')}${perSideSuffix}`,
+    })
   }
-  const unit = item.mode === 'seconds' ? 's' : ''
-  const load = item.startWeightKg !== null ? ` · ${item.startWeightKg} kg` : ''
-  return `${item.sets} × ${item.range.min}–${item.range.max}${unit}${perSideSuffix}${load}`
+  const unit = item.mode === 'seconds' ? t('unitSeconds') : ''
+  const base = `${item.sets} × ${item.range.min}–${item.range.max}${unit}${perSideSuffix}`
+  return item.startWeightKg !== null
+    ? t('middotJoin', { a: base, b: `${item.startWeightKg} kg` })
+    : base
 }

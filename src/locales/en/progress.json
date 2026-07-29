@@ -28,5 +28,13 @@
   "waist": {
     "sectionLabel": "Waist",
     "rangeLine": "{{firstValue}} on {{firstDate}} → {{lastValue}} on {{lastDate}}"
+  },
+  "unit": {
+    "kg": "{{value}} kg",
+    "cm": "{{value}} cm",
+    "seconds_one": "{{value}}s",
+    "seconds_other": "{{value}}s",
+    "reps_one": "{{value}} rep",
+    "reps_other": "{{value}} reps"
   }
 }

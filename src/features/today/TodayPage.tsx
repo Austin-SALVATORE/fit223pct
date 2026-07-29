@@ -297,6 +297,7 @@ function TrainingDay({
   checkInCard: ReactNode
 }) {
   const { t } = useTranslation('today')
+  const { t: tCommon } = useTranslation('common')
   const sessionName = useSessionName(program.id, session, program.origin)
   const sessionFocus = useSessionFocus(program.id, session, program.origin)
   const adjusted = applyReadiness(session, readiness)
@@ -306,7 +307,10 @@ function TrainingDay({
   return (
     <>
       <Hero
-        eyebrow={`${sessionName} · ${sessionFocus}`}
+        // Per-locale punctuation, not an ASCII join: zh-CN sets the middot
+        // without surrounding spaces (docs/review-backlog.md I7). Visible on
+        // Today every training day.
+        eyebrow={tCommon('middotJoin', { a: sessionName, b: sessionFocus })}
         title={sessionFocus}
         subtitle={
           eased

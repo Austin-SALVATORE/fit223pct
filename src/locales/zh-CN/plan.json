@@ -20,7 +20,7 @@
     "loggedExercisesAriaLabel": "已记录的动作",
     "projectedLabel": "预计",
     "notPartOfPhase": "这个日期不属于这个阶段。",
-    "secondsEffort": "{{seconds}}s",
+    "secondsEffort": "{{seconds}} 秒",
     "weightSuffix": " × {{weight}} kg"
   },
   "export": {

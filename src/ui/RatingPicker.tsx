@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 interface RatingOption {
   value: number
   /** Visible glyph, e.g. "3" or "4+" */
@@ -23,6 +25,9 @@ interface RatingPickerProps {
  * every option, Enter/Space selects.
  */
 export function RatingPicker({ label, options, value, onChange, disabled }: RatingPickerProps) {
+  // Label/value punctuation is per-locale — fr spaces the colon, zh-CN uses
+  // its own full-width form (I7), the same rule plan:import.schemaAtPath set.
+  const { t } = useTranslation('common')
   return (
     <div role="group" aria-label={label} className="flex justify-center gap-1.5">
       {options.map((option) => {
@@ -32,7 +37,7 @@ export function RatingPicker({ label, options, value, onChange, disabled }: Rati
             key={option.value}
             type="button"
             aria-pressed={selected}
-            aria-label={`${label}: ${option.display}`}
+            aria-label={t('labelValue', { label, value: option.display })}
             disabled={disabled}
             data-numeric
             onClick={() => onChange(option.value)}
