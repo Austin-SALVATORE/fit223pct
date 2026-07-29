@@ -85,13 +85,25 @@ prohibits author naming, so AT drops it (or reads it *instead of*
 "Rest"). The screen has no heading at all.
 *Fix:* make it an `<h2>` or `role="status"`, string as content not label.
 
-### A4 — Discarding an in-progress workout is a silent two-tap
-`src/features/today/TodayPage.tsx:486-495`. The button arms by swapping
-its own label in place; the element stays mounted, so nothing announces
-the state change. A blind user can destroy an in-progress workout
-without perceiving the confirm step. Arming is visual only.
-*Fix:* announce armed state via live region, or use the two-control
-confirm the swap sheet already has (`SwapSheet.tsx:174`).
+### A4 — Discarding an in-progress workout is a silent two-tap — **FIXED 27 Jul, `49007a3`**
+The fix took the second option below: `ConfirmAction` was extracted
+from the swap sheet and discard now uses it, because discard and reset
+are one concept and must not diverge.
+
+**This entry stayed open in the backlog for two days after it
+shipped**, and was closed only because the dev recognised the code
+while working the batch around it. A backlog that describes shipped
+work as outstanding costs a re-investigation every time someone reads
+it, and the cost is invisible — nobody reports the ten minutes they
+spent confirming something was already done. When a fix lands, strike
+its entry in the same change.
+
+*Original diagnosis, kept because the reasoning still applies to any
+future arm-in-place control:* `src/features/today/TodayPage.tsx:486-495`
+— the button armed by swapping its own label in place; the element
+stayed mounted, so nothing announced the state change. A blind user
+could destroy an in-progress workout without perceiving the confirm
+step. Arming was visual only.
 
 ### A5 — Control borders fail non-text contrast (WCAG 1.4.11) UI-wide
 `src/ui/index.css:15-16` vs `:13-14`. Measured: `border` on `surface`

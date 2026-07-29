@@ -262,6 +262,18 @@ as the definition "correctly inheriting" — two spawns landing on the
 lead's model was the pattern, and it was rationalised twice before it
 was noticed.)
 
+**A definition change does not reach a teammate that is already
+running.** A teammate keeps the `tools` and `model` it was spawned
+with, for its whole life. Editing `.claude/agents/<role>.md` changes
+the *next* spawn, not the live one — and the live one will discover
+this by finding a tool missing mid-task, which is a bad moment to
+learn it. (29 Jul: `Agent` was added to `architect.md` while the
+architect teammate was mid-plan; it reported "No such tool available"
+and fell back to grep. Correct behaviour, wasted intent.) Weigh the
+change against a respawn: a cold start mid-task usually costs more
+than the capability is worth, so prefer landing definition changes
+between batches rather than during one.
+
 **Prefer spawning a role from its definition in `.claude/agents/`
 rather than passing the model by hand.** A teammate spawned from a
 definition honors that definition's `model` and `tools`, so
