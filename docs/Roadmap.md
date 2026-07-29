@@ -155,7 +155,28 @@ write-back and the watch app are separate future milestones; BLE and
 Xiaomi cloud rejected. Blocked behind M8 and the owner decisions in
 the doc's §11.
 
+## Milestone 10 (next major release — owner-requested 29 Jul) — AI nutrition logging
+
+Meals logged by text, photo or both; an LLM estimates calories and
+macros with confidence and stated assumptions; a daily summary judged
+against targets that adapt to the training schedule. Records are
+isolated per calendar day — yesterday never influences today, which is
+the no-guilt principle expressed in food. Full spec and the proposal
+as given: **docs/NutritionLogging.md**.
+
+**Blocked on four owner decisions, and the first is larger than the
+feature.** An LLM call needs a key, a key cannot ship in a PWA, so this
+requires either a backend the owner hosts, a user-supplied key, or an
+on-device model — and "local-first (no backend)" is a stated product
+constraint that this milestone changes. The other three: a daily
+nutrition score is a judgement mechanism in an app whose
+non-negotiable is that nothing guilts; nutrition targets belong to the
+owner's coach, not this repo; and the model's output must be
+constrained to estimation against a target, never prediction, or it
+will violate the fitness rules unprompted. Nothing is designed until
+these are settled.
+
 ## Later (architecture-ready, not scheduled)
 
 Cloud sync · Apple Watch app (Smart Connector Phase 6) · workout
-write-back (Phase 5) · nutrition · advanced analytics.
+write-back (Phase 5) · advanced analytics.
