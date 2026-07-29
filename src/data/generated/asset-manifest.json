@@ -817,15 +817,15 @@
     ],
     "frameSizes": [
       [
-        181,
+        477,
         824
       ],
       [
-        468,
+        453,
         824
       ],
       [
-        752,
+        484,
         824
       ],
       [
@@ -834,11 +834,11 @@
       ]
     ],
     "referenceHash": "e4894d12c5",
-    "thumbnailHash": "8df7870205",
+    "thumbnailHash": "be22119e02",
     "frameHashes": [
-      "b1ea57dbd7",
-      "ff4a52539e",
-      "7ef4a591b1",
+      "405f7f7dae",
+      "984c25e263",
+      "744a67de1f",
       "bc6d2d556b"
     ]
   },
