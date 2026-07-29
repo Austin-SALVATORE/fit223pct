@@ -69,6 +69,12 @@ const WHITE_FUZZ_FRACTION = 0.08
 // report.
 const POCKET_AREA_FRACTION = 0.05
 const MATTE_DILATE_RADIUS = 3
+// Smaller opaque blobs are noise, not a pose (rows subsampled 2x when measured).
+const MIN_OBJECT_AREA = 400
+
+// Collected rather than only thrown, so a 44-asset re-render batch produces one
+// readable digest instead of failures scattered through the per-asset log.
+const sliceFlags = []
 
 const args = process.argv.slice(2)
 const only = args.flatMap((a, i) => (a === '--only' && args[i + 1] ? [args[i + 1]] : []))
@@ -279,11 +285,18 @@ function opaqueProfile(rgba, width, height) {
  * an error and the run fails naming it — re-rendered art removes itself from
  * this list by force, exactly like KNOWN_MISSING in the asset coverage tests.
  *
- * 43 entries as of 29 Jul. The count should only ever go down.
+ * 44 entries as of 29 Jul. The count should only ever go down.
+ *
+ * cable-row is the odd one: every cut lands on clean background, so it is
+ * unsafe by the *straddle* measure rather than the ink one — two cuts fall in
+ * the gaps between one figure's own limbs, splitting a pose across frames. It
+ * has six poses (297-318px spans, 29929-30539px areas — one athlete at
+ * identical scale), and the owner's four-poses-maximum ruling means it
+ * becomes a four-frame strip when re-rendered.
  */
 const UNSAFE_SLICE_ALLOWLIST = new Set([
   'assisted-pull-up', 'barbell-back-squat', 'barbell-row', 'bench-dip', 'bench-press',
-  'bird-dog', 'bodyweight-squat', 'bulgarian-split-squat', 'cable-fly', 'cable-pull-through',
+  'bird-dog', 'bodyweight-squat', 'bulgarian-split-squat', 'cable-fly', 'cable-pull-through', 'cable-row',
   'cable-woodchop', 'close-grip-bench-press', 'close-grip-lat-pulldown', 'db-floor-press',
   'dead-bug', 'deadlift', 'diamond-push-up', 'dip', 'dumbbell-bench-press', 'dumbbell-fly',
   'front-squat', 'hack-squat', 'hanging-leg-raise', 'hip-thrust', 'incline-bench-press',
@@ -335,34 +348,17 @@ function findCuts(ink, width, frames, id) {
     }
   }
   const frameW = width / frames
-  // The staleness check has to cover *every* safe outcome, not just the
-  // fallback's. Re-rendered art with proper gaps lands in gutter mode, which
-  // is precisely the case the list exists to shed — checking only the
-  // fallback would have left it permanently stale for the assets that got
-  // fixed. (Found by testing the property rather than assuming it: a safe
-  // gutter-mode id added to the list produced no error at all.)
-  const assertNotStale = (mode, worst) => {
-    if (!UNSAFE_SLICE_ALLOWLIST.has(id)) return
-    throw new Error(
-      `${id}: slices safely now (mode=${mode}, worst cut ${worst} opaque px) but is still ` +
-      `in UNSAFE_SLICE_ALLOWLIST — remove it from the list in scripts/convert-assets.mjs`,
-    )
-  }
-
   const interior = runs.filter(r => r.start > 0 && r.end < width && r.width >= MIN_GUTTER)
   if (interior.length >= frames - 1) {
     const cuts = selectNearest(interior, frames, frameW)
-    if (cuts) {
-      assertNotStale('gutter', Math.max(...cuts.map(c => ink[c])))
-      return { mode: 'gutter', cuts }
-    }
+    if (cuts) return { mode: 'gutter', cuts, worstInk: Math.max(...cuts.map(c => ink[c])) }
   }
 
-  // Fallback, now thresholded. It used to take the locally thinnest column
-  // with no threshold at all, so it would cut straight through a figure and
-  // say nothing — silently wrong for 43 assets since it was written, until
-  // the owner noticed a detached shoe on his phone. A cut must land on
-  // background or not be made.
+  // Fallback. It used to take the locally thinnest column with no threshold
+  // at all, so it would cut straight through a figure and say nothing —
+  // silently wrong for 43 assets since it was written, until the owner
+  // noticed a detached shoe on his phone. The verdict on whether these cuts
+  // are usable is assertSliceSafe's, not this function's.
   const window = Math.floor(frameW / 4)
   const cuts = []
   for (let i = 1; i < frames; i++) {
@@ -376,26 +372,107 @@ function findCuts(ink, width, frames, id) {
     while (b < width - 2 && ink[b + 1] === ink[best]) b++
     cuts.push(Math.floor((a + b) / 2))
   }
-  const worst = Math.max(...cuts.map(c => ink[c]))
+  return { mode: 'min-ink', cuts, worstInk: Math.max(...cuts.map(c => ink[c])) }
+}
+
+/**
+ * Separate objects in the strip — connected opaque regions, **never merged by
+ * x-overlap**. That distinction is the whole point: merging collapses exactly
+ * the case under investigation, two figures that touch. Reading a merged
+ * count as a pose count is how cable-row was misreported as four poses when
+ * it has six.
+ *
+ * Rows are subsampled 2x; a limb thinner than two pixels is not a pose.
+ */
+function components(rgba, width, height) {
+  const step = 2
+  const h = Math.floor(height / step)
+  const lab = new Int32Array(width * h).fill(-1)
+  const parent = []
+  const find = a => { while (parent[a] !== a) { parent[a] = parent[parent[a]]; a = parent[a] } return a }
+  const union = (a, b) => { a = find(a); b = find(b); if (a !== b) parent[b] = a }
+  for (let yy = 0; yy < h; yy++) {
+    for (let x = 0; x < width; x++) {
+      if (rgba[((yy * step) * width + x) * 4 + 3] < 128) continue
+      const i = yy * width + x
+      let best = -1
+      for (const [dx, dy] of [[-1, 0], [-1, -1], [0, -1], [1, -1]]) {
+        const nx = x + dx, ny = yy + dy
+        if (nx < 0 || nx >= width || ny < 0) continue
+        const j = ny * width + nx
+        if (lab[j] === -1) continue
+        best = best === -1 ? lab[j] : (union(best, lab[j]), best)
+      }
+      if (best === -1) { best = parent.length; parent.push(best) }
+      lab[i] = best
+    }
+  }
+  const info = new Map()
+  for (let yy = 0; yy < h; yy++) for (let x = 0; x < width; x++) {
+    const i = yy * width + x
+    if (lab[i] === -1) continue
+    const root = find(lab[i])
+    const e = info.get(root) || { x0: x, x1: x, area: 0 }
+    if (x < e.x0) e.x0 = x
+    if (x > e.x1) e.x1 = x
+    e.area++
+    info.set(root, e)
+  }
+  return [...info.values()].filter(c => c.area > MIN_OBJECT_AREA).sort((a, b) => a.x0 - b.x0)
+}
+
+/**
+ * The single safety verdict, covering both ways a slice can be wrong:
+ *
+ *  - **ink at the cut** — the boundary has no background column, so the cut
+ *    severs whatever is there and slice() pads the fragment onto its
+ *    neighbour;
+ *  - **a straddled object** — the cut lands on genuine background that is
+ *    not a frame boundary, splitting one figure across two frames. cable-row
+ *    is the case that proves this one: every cut on clean background, two of
+ *    them inside a figure's own limb gaps.
+ *
+ * Exact, with no threshold to tune. A width-evenness heuristic was the
+ * alternative and was rejected: it separates cleanly only at a constant
+ * fitted to a single example, and it flags legitimately uneven art
+ * (band-lateral-raise, band-pull-apart, front-raise) forever.
+ *
+ * Allowlisted assets are exempt from *both* checks and warn instead — they
+ * are known-wrong pending re-render, and failing them would make a third of
+ * the library unbuildable. The exemption is symmetric: an allowlisted asset
+ * that is safe by both measures fails as a stale entry, so re-rendered art
+ * removes itself from the list by force.
+ */
+function assertSliceSafe(id, cuts, worstInk, objects) {
+  const offences = []
+  if (worstInk > INK_TOL) {
+    offences.push(`no cut lands on background (worst cut has ${worstInk} opaque px)`)
+  }
+  for (const c of cuts) {
+    const hit = objects.find(o => o.x0 < c && c < o.x1)
+    if (hit) offences.push(`cut at x=${c} severs the object spanning ${hit.x0}-${hit.x1}`)
+  }
+
   const allowed = UNSAFE_SLICE_ALLOWLIST.has(id)
-
-  if (worst <= INK_TOL) {
-    assertNotStale('min-ink', worst)
-    return { mode: 'min-ink', cuts }
+  if (offences.length === 0) {
+    if (allowed) {
+      throw new Error(
+        `${id}: slices safely now — every cut on background, no object severed — but is ` +
+        `still in UNSAFE_SLICE_ALLOWLIST. Remove it from the list in scripts/convert-assets.mjs`,
+      )
+    }
+    return
   }
-
-  if (!allowed) {
-    const detail = cuts.map((c, i) => `boundary ${i + 1} at x=${c}: ${ink[c]} opaque px`).join('; ')
-    throw new Error(
-      `${id}: no cut lands on background — the poses in this strip touch, so slicing ` +
-      `would sever a figure and pad the fragment onto the next frame (${detail}). ` +
-      `Re-render with clear gaps between poses, or add the id to UNSAFE_SLICE_ALLOWLIST ` +
-      `to keep the old, known-wrong behaviour deliberately.`,
-    )
+  if (allowed) {
+    sliceFlags.push(`${id} (allowlisted, known-wrong): ${offences.join('; ')}`)
+    console.warn(`WARN ${id} — ${offences.join('; ')} [allowlisted, pending re-render]`)
+    return
   }
-
-  console.warn(`WARN ${id} — unsafe slice (worst cut ${worst} opaque px), allowlisted; frames are known-wrong pending re-render`)
-  return { mode: 'min-ink-unsafe', cuts }
+  sliceFlags.push(`${id}: ${offences.join('; ')}`)
+  throw new Error(
+    `${offences.join('; ')}. Re-render with clear gaps between poses, or add the id to ` +
+    `UNSAFE_SLICE_ALLOWLIST to keep the known-wrong frames deliberately.`,
+  )
 }
 
 /** Slice [x0,x1) of an RGBA image and trim to opaque content + FRAME_PAD each side. */
@@ -431,7 +508,8 @@ function convert(id, tmp) {
   qaScan(rgba, width, height, `${id} reference`)
 
   const ink = opaqueProfile(rgba, width, height)
-  const { mode, cuts } = findCuts(ink, width, frames, id)
+  const { mode, cuts, worstInk } = findCuts(ink, width, frames, id)
+  assertSliceSafe(id, cuts, worstInk, components(rgba, width, height))
 
   const framesDir = join(dir, 'frames')
   mkdirSync(framesDir, { recursive: true })
@@ -519,6 +597,12 @@ for (const id of ids) {
 
 const entries = buildManifest()
 console.log(`manifest: ${entries} entr${entries === 1 ? 'y' : 'ies'} → ${MANIFEST}`)
+
+if (sliceFlags.length) {
+  console.error(`\nSLICING: ${sliceFlags.length} asset(s) cannot be sliced without severing a figure:`)
+  sliceFlags.forEach(f => console.error(`  SEVERED  ${f}`))
+  console.error('  Re-render these with clear background gaps between poses.')
+}
 
 if (qaFlags.length) {
   console.error(`\nQA: ${qaFlags.length} flag(s) — near-magenta or near-white survivors:`)
