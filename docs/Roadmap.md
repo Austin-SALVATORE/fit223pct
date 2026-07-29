@@ -155,7 +155,34 @@ write-back and the watch app are separate future milestones; BLE and
 Xiaomi cloud rejected. Blocked behind M8 and the owner decisions in
 the doc's §11.
 
-## Milestone 10 (next major release — owner-requested 29 Jul) — AI nutrition logging
+## Milestone 10 (next — owner-requested 29 Jul) — User profile & energy baseline
+
+The stable facts about the user, in one place: height, age, sex,
+current weight and body-fat percentage, plus their targets. From those,
+a BMR and a maintenance figure by published formula (Mifflin–St Jeor
+needs age, height, weight and sex — which is why sex is a required
+field rather than an optional one).
+
+**Sequenced before nutrition deliberately.** M11's whole evaluation
+rests on knowing what "too much" is measured against, and that number
+has to come from somewhere citable rather than invented. It is also
+useful on its own — training targets, readiness and progress all have
+a use for a baseline — and it needs no backend, so it can ship while
+M11's hosting question is still open.
+
+Reconciles rather than duplicates: `UserSettings.heightCm` already
+exists, and weight already lives as a time series on `CheckIn.weightKg`
+(nullable). Height, age and sex are stable facts; weight and body fat
+are series. The profile must not fork a second copy of a number the
+app already tracks.
+
+**One guardrail.** Storing a goal — "target 15% body fat" — is fine.
+Telling the user *when* they will reach it is not: `CLAUDE.md` forbids
+promising body-transformation outcomes, and a target weight beside a
+trend line is exactly the shape that invites a projection. Store the
+goal, show progress, predict nothing.
+
+## Milestone 11 (owner-requested 29 Jul) — AI nutrition logging
 
 Meals logged by text, photo or both; an LLM estimates calories and
 macros with confidence and stated assumptions; a daily summary judged
@@ -175,6 +202,46 @@ owner's coach, not this repo; and the model's output must be
 constrained to estimation against a target, never prediction, or it
 will violate the fitness rules unprompted. Nothing is designed until
 these are settled.
+
+## Deferred (owner-requested 29 Jul, design not started) — Day-plan rescheduling
+
+Move today's session to another day, and pull any day's plan onto any
+other day. Raised and deferred the same evening; design stopped before
+it started so nothing was invested.
+
+**Not a small feature, which is why it is its own milestone.** The app
+has two scheduling models and a swap means different things under each
+(`.claude/rules/architecture.md`): under `'weekday-pinned'` a date
+genuinely has an identity, so moving it is meaningful — and overriding
+it fights the exact property pinning exists to guarantee; under
+`'rotation'` identity follows the completed count, so the operation may
+have no coherent meaning at all and should be unavailable rather than
+subtly wrong.
+
+Questions to settle before designing, all owner-facing:
+
+- **Swap, displace, or overwrite?** If today's session moves to
+  Thursday, do the two exchange, does Thursday shift forward, or is it
+  lost? The owner's phrasing — "swap" for one case, "grab" for the
+  other — suggests two operations, not one.
+- **Does it cascade?** Moving a training day into a recovery slot
+  changes that week's rhythm. Does the app re-balance, or does the user
+  own the consequence? M6's philosophy points at the latter.
+- **A day already trained** — logged sets must not be orphaned or
+  duplicated. Prefer refusing over doing something clever.
+- **Does the recovery activity travel with the day**, including the
+  `routineId` one of its items now carries?
+
+Two known traps: overrides are user data, so **storage stays
+locale-free and they must never be shadowed by seed translations**; and
+if they are exportable, `activityItemSchema` is not `.strict()`, so Zod
+**strips** unknown fields rather than rejecting them — that is how
+adding `routineId` silently deleted every recovery link on a program
+round-trip, caught only by the round-trip tests
+(`src/domain/programImport.ts:55-79`).
+
+Dexie versions are allocated M10 → v4, M11 → v5; if this lands between
+them it takes the next free version rather than colliding.
 
 ## Later (architecture-ready, not scheduled)
 

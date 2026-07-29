@@ -291,6 +291,59 @@ differs from the default.)
 Effort level is inherited from the lead and is the cheaper dial —
 reach for it before changing models.
 
+## A plan being executed is a contract, not a document
+
+Authorship and authority are different things. The architect owns a
+plan while nobody is working from it; the moment a dev starts
+executing, the file becomes a contract between the lead and that dev,
+and improving it — even correcting something genuinely wrong —
+desynchronises the implementer from the document without anyone
+noticing.
+
+**The question is "is anyone executing this?", not "is this my file?"**
+
+The failure does not surface as a merge conflict. It surfaces later as
+a broken migration, a stale constant, or a test written against a
+requirement that changed, with the divergence invisible in between.
+That is worse than the error being fixed. (29 Jul: a Dexie version
+allocation was corrected inside an approved plan while the dev was
+implementing from it — sound reasoning, wrong moment, caught only
+because the architect asked rather than assumed.)
+
+Corrections to a live plan route through the lead, who can sequence
+them against what the implementer already holds.
+
+## Two agents, one working tree
+
+Teammates and subagents share one checkout. Parallel dispatch is cheap
+until two agents touch the same files, and the failure is not a merge
+conflict — it is one agent reading another's **uncommitted, half-done**
+work as if it were the truth.
+
+It is the lead's job to notice before dispatching, because neither
+agent can see the other's brief.
+
+- **A generator editing inputs and a consumer reading them cannot run
+  concurrently.** (29 Jul: an art batch was rewriting `prompt.md` frame
+  counts while the dev ran the conversion pipeline that reads them. The
+  pipeline picked up a not-yet-true count of 4 and sliced six-pose art
+  into four frames — reproducing exactly the defect a withdrawn ruling
+  would have caused. Caught and reverted by the dev, who then could not
+  run its full-library proof at all.)
+- **Whole-tree operations are the collision surface.** A scoped
+  `--only` run is safe; a 120-asset conversion or a full re-index is
+  not. If one agent needs the whole tree, nothing else may be writing
+  to it.
+- **Sequence, or scope.** Either serialise the two, or constrain the
+  second to files the first cannot touch — and say which in the brief,
+  since the agent cannot infer it.
+- **Never revert another agent's uncommitted work to unblock your
+  own.** Restore what you disturbed, report the collision, and let the
+  lead sequence it.
+
+The tell that this went wrong is a proof that cannot be run rather than
+a proof that failed.
+
 ## Task list and mailbox
 
 The task list (`~/.claude/tasks/`) and mailboxes
