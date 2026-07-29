@@ -1,6 +1,6 @@
 ---
 name: git-op
-description: Executes git operations that change state — commit, push, tag, branch — exactly as instructed by the lead. Use for any git mutation; read-only git queries go to repo-inventory instead. Never decides what to do, only performs what it was told.
+description: Executes git operations that change state — commit, push, tag, branch — exactly as instructed by whoever dispatched it, whether that is the lead or a teammate committing its own work. Use for any git mutation; read-only git queries go to repo-inventory instead. Never decides what to do, only performs what it was told.
 tools: Bash, Read, Grep, Glob
 model: haiku
 ---

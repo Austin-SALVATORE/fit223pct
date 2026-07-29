@@ -12,6 +12,40 @@ Claims are verified by running commands, not by reading reports.
   Before accepting "deployed", check the artifact or the device.
 - Report failures with their output. A skipped step is stated as
   skipped. "Green except known failures" is not green — name them.
+- **A generated artifact older than its source is stale, and nothing
+  downstream will notice.** When a brief is corrected mid-flight, some
+  subset of what already exists was produced under the old one — and
+  it will not announce itself: the file exists, the source now reads
+  correctly, and the artifact contradicts it. `convert-assets.mjs`
+  reads `prompt.md` for frame count and `reference.png` for pixels and
+  never compares their timestamps, so a corrected prompt will happily
+  ship an uncorrected image. Compare mtimes before consuming any
+  generated tree:
+
+  ```
+  [ "$(stat -f %m out)" -lt "$(stat -f %m src)" ] && echo STALE
+  ```
+
+  (28 Jul: a wall asset generated ten minutes before its own corrected
+  prompt, while the correction was in flight. It was caught by mtime,
+  not by any check in the pipeline.)
+- **A spawn's model and kind are checkable, so check them.** What a
+  definition declares is not evidence of what a spawn got. Grep the
+  agent's own transcript:
+
+  ```
+  grep -oE '"model" *: *"[^"]{1,40}"' \
+    ~/.claude/projects/<project>/<session>/subagents/agent-<id>.jsonl \
+    | sort -u
+  ```
+
+  Never `cat` or `tail` that file — it is the full JSONL transcript and
+  reading it whole overflows context. The grep costs nothing and turns
+  "the definition says sonnet" into a measurement. A bench role that
+  has *no* file under `subagents/` was not spawned as a subagent at
+  all. (28 Jul: two bench roles spawned with task-shaped names came
+  back as teammates on the lead's model, and the first was explained
+  away as the definition working correctly.)
 - **A citation is a claim.** A comment, docblock, or memory note
   saying "documented in X" is not evidence that X says it — open X.
   Cross-references rot faster than the code around them, and a stale

@@ -50,14 +50,40 @@ delivers.
    timer starts, so the second frame has a job rather than being
    completeness for its own sake. Doubles the art batch, knowingly.
 
-   **This one is not enforced by any test.** The coverage guard checks
-   that a step resolves art at all and that its id does not collide
-   with a Library id, but `routineStepAsset` falls back to the entry
-   frame when a held frame is missing — assets never block a feature.
-   So a single-frame stretch degrades quietly to a still image and
-   nothing goes red. The art brief must state two frames, and review
-   must count them. Same shape as the end screen showing no number:
-   an invariant that only people can hold.
+   **Qualified 29 Jul for one stretch.** `half-kneeling-hip-flexor-stretch`
+   ships with two near-identical frames, accepted by the owner after
+   three attempts. The reason generalises: an entry/held pair only
+   reads where the two positions differ by **limb configuration** —
+   heel loaded or not, hands on the floor or on the feet, hips raised
+   or folded, ankle crossed or not. All of those landed in one or two
+   attempts. A hip flexor stretch differs from its own setup by a
+   pelvic tilt, which is close to invisible in a stylised side
+   profile, so no prompt produces a distinguishable pair. It still
+   ships two frames rather than one, because a single-frame asset
+   would break the `frameCount >= 2` manifest assertion that guards
+   every other step.
+
+   **Decide this per stretch at brief time, before commissioning
+   art.** Discovering it after three regenerations is what this
+   batch paid for.
+
+   **Enforced since 29 Jul** by `src/lib/routineAsset.coverage.test.ts`
+   — "every routine step ships at least two frames" asserts
+   `frameCount >= 2` in the manifest for every step id.
+
+   It needed its own assertion because the rest of the coverage guard
+   cannot see this: it checks that a step resolves art at all and that
+   its id does not collide with a Library id, but `routineStepAsset`
+   falls back to the entry frame when a held frame is missing — assets
+   never block a feature. So a single-frame stretch degraded quietly
+   to a still image, the player looked correct, and nothing went red.
+   Near-identical frames still pass, and should:
+   `half-kneeling-hip-flexor-stretch` ships two real frames, so it
+   satisfies this honestly rather than by exemption — an exemption
+   list here would be the hole the assertion exists to close.
+
+   The end screen showing no number remains the invariant in this
+   milestone that only people can hold.
 
 ## What must be true
 
@@ -114,7 +140,27 @@ that way. Run these on a real device, in this order.
      to the hook's signature and one call site.
 3. Repeat in **low-power mode**, and as an **installed PWA** as well
    as in-browser.
-4. **Screen reader**: what VoiceOver actually utters at each play
+4. **Play a wall stretch and watch the wall** — chest or calf — at the
+   moment the lead-in ends and the hold begins. A known defect ships
+   here: the wall band shifts position and changes width between the
+   two frames on all four wall assets, worst on `wall-chest-stretch`
+   (43.8% → 25.4% of frame width).
+
+   The cause is structural, not artistic. `slice()` in
+   `scripts/convert-assets.mjs` trims each frame to its opaque content
+   then pads `FRAME_PAD = 40` px per side. A wall sitting at the source
+   strip's outer edge cannot be padded — there is nothing beyond it —
+   so it lands flush; the same wall on the gutter-facing side of the
+   other frame gets the full 40 px. Hence exactly one flush frame and
+   one with a 37–40 px gap, in every wall asset. Four regeneration
+   attempts could not beat it: the achievable target was 8–39 px of
+   background in a ~1800 px source, under 2% of the width.
+
+   It shipped because the visible effect lands on a deliberate
+   transition rather than mid-motion, and because regenerating art
+   cannot fix a pipeline constant. **If it reads badly on device, the
+   fix is in `scripts/` — owner territory — not in another art batch.**
+5. **Screen reader**: what VoiceOver actually utters at each play
    boundary, and whether auto-advance strands you. The tests prove
    focus target, `aria-describedby` wiring and `aria-live="off"`;
    they cannot prove what is spoken.
@@ -126,9 +172,33 @@ authored routines; the other three recovery activities; anything on
 training days. Routines are content the app plays, not data it
 accumulates.
 
-## Open — needs the coach
+## Content — settled 28 Jul
 
-The routine's actual content: which stretches, hold duration, order,
-which are per-side, and what cue each one needs. The Library's
-existing vocabulary does not cover stretches, so this is new content
-and each item will need art.
+The routine's content is
+[programs/recovery-stretch-v1-coach-spec.md](./programs/recovery-stretch-v1-coach-spec.md):
+eight static holds, six of them per-side, standing → kneeling → floor.
+That spec is authoritative for stretch selection, hold durations,
+order, per-side flags and cues; this document remains authoritative
+for what must be true of the vehicle that plays it.
+
+Three things worth carrying forward, because each one is a place where
+the spec and the code disagree or where a reader would guess wrong:
+
+- **The spec's total duration is wrong and the routine is right.**
+  Ruling C computes one lead-in per *stretch* (8 × 8 s = 64 s). The
+  player issues one per *play*, and `routinePlaylist` expands the six
+  per-side steps into two plays each — 14 plays, 112 s of lead-in,
+  547 s total (9:07), not the stated 8:20. Per-play is the behaviour
+  we want: switching sides genuinely needs the repositioning time. The
+  user-visible "8–10 min" card copy holds at 9:07, so the ruling's
+  conclusion survives its arithmetic. Do not "correct" the routine to
+  match the spec's number; `routines.ts` says so at the point of use.
+- **Step ids follow the Library's spelling convention, not the coach's
+  prose** — no digits, no apostrophes, hence `figure-four-glute-stretch`
+  and `childs-pose`. Ids are the one part of the content this repo
+  rules on; everything else is the coach's.
+- **Per-side stretches reuse one pair of frames for both sides.** The
+  player names the side in its heading rather than mirroring the art,
+  so the illustration shows the left side — the side played first —
+  and diverges only on the repeat. Mirroring is a render decision, not
+  an asset one, and could be revisited without regenerating anything.
