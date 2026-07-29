@@ -206,10 +206,47 @@ describe('the seed program\'s name is localized on the data screen', () => {
       jsonFile('phase-1.json', newProgram({ id: seedProgram.id, name: 'Mon propre bloc' })),
     )
 
-    const alert = await screen.findByRole('alert')
-    expect(alert).toHaveTextContent('Phase 1 — Maison')
-    expect(alert).not.toHaveTextContent('Phase 1 — Home')
-    // Imported content renders exactly as the owner typed it.
-    expect(alert).toHaveTextContent('Mon propre bloc')
+    // A8 turned this into a real confirm, so the name lives on the heading
+    // rather than inside a role="alert" that also held the buttons.
+    const heading = await screen.findByRole('heading', { name: /Mon propre bloc/ })
+    expect(heading).toHaveTextContent('Phase 1 — Maison')
+    expect(heading).not.toHaveTextContent('Phase 1 — Home')
+  })
+})
+
+/**
+ * A8 (docs/review-backlog.md): the replace prompt was a `role="alert"`
+ * paragraph with the Replace and Cancel buttons inside it. Focus never
+ * moved, so a screen-reader user was told controls existed without being
+ * taken to them — inside an assertive region that could re-interrupt. It
+ * overwrites the owner's whole program, so it deserves a real confirm.
+ */
+describe('replacing a program is a real confirm, not an alert with buttons', () => {
+  async function reachConfirm() {
+    render(<ProgramDataActions program={seedProgram} />)
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement
+    await userEvent.upload(
+      input,
+      jsonFile('phase-1.json', newProgram({ id: seedProgram.id, name: 'Phase 1 — Revised' })),
+    )
+    return screen.findByRole('heading', { name: /Phase 1 — Revised/ })
+  }
+
+  it('moves focus to the confirm heading and describes what replacement costs', async () => {
+    const heading = await reachConfirm()
+
+    await waitFor(() => expect(heading).toHaveFocus())
+    const describedBy = heading.getAttribute('aria-describedby') ?? ''
+    expect(document.getElementById(describedBy)).toHaveTextContent(
+      'Your existing program is replaced.',
+    )
+  })
+
+  it('no longer puts the controls inside a live region', async () => {
+    await reachConfirm()
+
+    expect(screen.queryByRole('alert')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Replace' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
   })
 })

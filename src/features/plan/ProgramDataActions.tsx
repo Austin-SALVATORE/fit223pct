@@ -7,6 +7,7 @@ import { toCanonicalProgramJson, programExportFilename } from '@/domain/programE
 import { shareOrDownloadFile } from '@/lib/shareOrDownloadFile'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { useProgramName } from '@/i18n/seedProgram'
+import { ConfirmAction } from '@/ui/ConfirmAction'
 import { SecondaryButton } from '@/ui/SecondaryButton'
 import type { MessageDescriptor } from '@/domain/message'
 import type { Program } from '@/domain/types'
@@ -177,20 +178,25 @@ function ImportFeedback({
     )
   }
 
+  // Was a role="alert" paragraph with the Replace and Cancel buttons inside
+  // it: focus never moved, so the user was *told* about controls without
+  // being taken to them, inside an assertive region that could re-interrupt
+  // (docs/review-backlog.md A8). It overwrites the owner's whole program, so
+  // it gets the same real confirm the swap sheet and the Today discard use —
+  // heading takes focus, destructive consequence as its description.
   return (
-    <p role="alert" className="mt-3 flex flex-wrap items-baseline gap-x-2 text-ink-secondary">
-      <span>
-        {t('import.replacesExisting', {
+    <div className="mt-3">
+      <ConfirmAction
+        heading={t('import.replacesExisting', {
           newName: state.program.name,
           existingName,
         })}
-      </span>
-      <button type="button" onClick={onConfirm} className="font-medium text-clay">
-        {t('import.replace')}
-      </button>
-      <button type="button" onClick={onCancel} className="text-ink-tertiary">
-        {t('import.cancel')}
-      </button>
-    </p>
+        warning={t('import.replaceWarning')}
+        confirmLabel={t('import.replace')}
+        cancelLabel={t('import.cancel')}
+        onConfirm={onConfirm}
+        onCancel={onCancel}
+      />
+    </div>
   )
 }

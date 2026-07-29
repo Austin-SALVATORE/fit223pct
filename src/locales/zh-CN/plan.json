@@ -31,6 +31,7 @@
     "exportProgram": "导出计划",
     "imported": "已导入「{{name}}」。",
     "replacesExisting": "「{{newName}}」将替换「{{existingName}}」——计划 id 相同。",
+    "replaceWarning": "你现有的计划会被替换。导入的文件成为新计划；已记录的训练不受影响。",
     "replace": "替换",
     "cancel": "取消",
     "notValidJson": "该文件不是有效的 JSON。",

@@ -34,6 +34,7 @@
     "exportProgram": "Exporter le programme",
     "imported": "\"{{name}}\" importé.",
     "replacesExisting": "\"{{newName}}\" remplace \"{{existingName}}\" — même identifiant de programme.",
+    "replaceWarning": "Ton programme actuel est remplacé. Le fichier importé devient le plan ; les séances enregistrées ne bougent pas.",
     "replace": "Remplacer",
     "cancel": "Annuler",
     "notValidJson": "Ce fichier n'est pas un JSON valide.",

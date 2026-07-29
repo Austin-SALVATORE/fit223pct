@@ -34,6 +34,7 @@
     "exportProgram": "Export program",
     "imported": "Imported \"{{name}}\".",
     "replacesExisting": "\"{{newName}}\" replaces \"{{existingName}}\" — same program id.",
+    "replaceWarning": "Your existing program is replaced. The imported file becomes the plan; logged workouts are untouched.",
     "replace": "Replace",
     "cancel": "Cancel",
     "notValidJson": "That file isn't valid JSON.",
