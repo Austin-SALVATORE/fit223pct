@@ -1,0 +1,214 @@
+import { describe, expect, it } from 'vitest'
+import { PAL_BANDS } from './energyReference'
+import {
+  ageOn,
+  leanBodyMassKg,
+  maintenanceKcal,
+  resolveProfile,
+  restingEnergyExpenditure,
+  restingEnergyExpenditureFromLeanMass,
+  type ProfileCheckIn,
+  type ResolvedProfile,
+} from './profile'
+
+function profile(overrides: Partial<ResolvedProfile> = {}): ResolvedProfile {
+  return {
+    heightCm: 178,
+    age: 30,
+    sex: 'male',
+    currentWeightKg: 80,
+    currentBodyFatPercent: null,
+    targetWeightKg: null,
+    targetBodyFatPercent: null,
+    ...overrides,
+  }
+}
+
+function checkIn(date: string, weightKg: number | null, bodyFatPercent?: number | null): ProfileCheckIn {
+  return { date, weightKg, bodyFatPercent }
+}
+
+/**
+ * The golden cases are the acceptance test for this module, not a report.
+ *
+ * Every expected value below was cross-checked by hand against the published
+ * equations. They are asserted **unrounded**: the plan's table shows them to
+ * one decimal (1370.3, 2133.8, 2173.8), and two of those land exactly on
+ * toBeCloseTo's boundary, so the rounded form is both weaker and flakier
+ * than the real number.
+ *
+ * **Third-party calculators were not used and must not be**:
+ * verification found a widely used public one silently inserting a
+ * nonstandard 1.465 activity tier while its own prose claimed the standard
+ * five-band scale. These numbers are the reference; a calculator is not.
+ */
+describe('Mifflin–St Jeor golden cases', () => {
+  it.each([
+    ['M 30y 178cm 80kg', { sex: 'male' as const, age: 30, heightCm: 178, currentWeightKg: 80 }, 1767.5],
+    ['F 30y 165cm 65kg', { sex: 'female' as const, age: 30, heightCm: 165, currentWeightKg: 65 }, 1370.25],
+    ['F 19y 150cm 45kg', { sex: 'female' as const, age: 19, heightCm: 150, currentWeightKg: 45 }, 1131.5],
+    ['M 78y 195cm 130kg', { sex: 'male' as const, age: 78, heightCm: 195, currentWeightKg: 130 }, 2133.75],
+  ])('%s', (_label, inputs, expected) => {
+    expect(restingEnergyExpenditure(profile(inputs))).toBeCloseTo(expected, 2)
+  })
+})
+
+describe('Cunningham golden case', () => {
+  it('M 80kg at 15% body fat', () => {
+    const p = profile({ currentWeightKg: 80, currentBodyFatPercent: 15 })
+    expect(leanBodyMassKg(p)).toBeCloseTo(68, 6)
+    expect(restingEnergyExpenditureFromLeanMass(p)).toBeCloseTo(1838.8, 2)
+  })
+})
+
+/**
+ * The two cases that justify carrying both equations at all: they disagree
+ * in *opposite* directions depending on body composition. Asserted rather
+ * than described, because a future reader deleting one of the two would
+ * otherwise see no reason not to.
+ */
+describe('the equations diverge in opposite directions with body composition', () => {
+  it('Cunningham reads LOWER than Mifflin at high body fat', () => {
+    const p = profile({ sex: 'male', age: 45, heightCm: 175, currentWeightKg: 130, currentBodyFatPercent: 45 })
+    const mifflin = restingEnergyExpenditure(p)!
+    const cunningham = restingEnergyExpenditureFromLeanMass(p)!
+
+    expect(mifflin).toBeCloseTo(2173.75, 2)
+    expect(cunningham).toBeCloseTo(1914.4, 2)
+    expect(cunningham - mifflin).toBeCloseTo(-259.35, 2)
+    expect(Math.abs(cunningham - mifflin) / mifflin).toBeCloseTo(0.12, 2)
+  })
+
+  it('Cunningham reads HIGHER than Mifflin at low body fat', () => {
+    const p = profile({ sex: 'male', age: 35, heightCm: 180, currentWeightKg: 90, currentBodyFatPercent: 8 })
+    const mifflin = restingEnergyExpenditure(p)!
+    const cunningham = restingEnergyExpenditureFromLeanMass(p)!
+
+    expect(mifflin).toBeCloseTo(1855.0, 2)
+    expect(cunningham).toBeCloseTo(2158.48, 2)
+    expect(cunningham - mifflin).toBeCloseTo(303.48, 2)
+    expect(Math.abs(cunningham - mifflin) / mifflin).toBeCloseTo(0.16, 2)
+  })
+})
+
+describe('a missing input yields no figure, never a default', () => {
+  it.each(['currentWeightKg', 'heightCm', 'age', 'sex'] as const)(
+    'returns null when %s is missing',
+    (field) => {
+      expect(restingEnergyExpenditure(profile({ [field]: null }))).toBeNull()
+    },
+  )
+
+  it('returns a number only when every input is present', () => {
+    expect(restingEnergyExpenditure(profile())).not.toBeNull()
+  })
+
+  it('has no lean mass, and so no Cunningham figure, without a body-fat reading', () => {
+    expect(leanBodyMassKg(profile({ currentBodyFatPercent: null }))).toBeNull()
+    expect(restingEnergyExpenditureFromLeanMass(profile({ currentBodyFatPercent: null }))).toBeNull()
+  })
+})
+
+describe('age is derived from a birth date, never stored', () => {
+  it('counts a birthday that has not arrived this year as not yet reached', () => {
+    expect(ageOn('1990-07-30', new Date(2026, 6, 29))).toBe(35)
+    expect(ageOn('1990-07-29', new Date(2026, 6, 29))).toBe(36)
+  })
+
+  it('handles a 29 February birth date in a non-leap year', () => {
+    // The day before the would-be birthday, and the day 1 March provides.
+    expect(ageOn('2000-02-29', new Date(2025, 1, 28))).toBe(24)
+    expect(ageOn('2000-02-29', new Date(2025, 2, 1))).toBe(25)
+  })
+
+  it('is null for an absent or unparseable date', () => {
+    expect(ageOn(null, new Date())).toBeNull()
+    expect(ageOn(undefined, new Date())).toBeNull()
+    expect(ageOn('not-a-date', new Date())).toBeNull()
+  })
+})
+
+describe('resolveProfile reads the series rather than shadowing it', () => {
+  it('takes the most recent check-in that actually carries a weight', () => {
+    const resolved = resolveProfile({}, [
+      checkIn('2026-07-01', 82),
+      checkIn('2026-07-20', null), // more recent, but no weight logged
+      checkIn('2026-07-10', 80.5),
+    ])
+
+    expect(resolved.currentWeightKg).toBe(80.5)
+  })
+
+  it('resolves weight and body fat independently', () => {
+    // The newest weight and the newest body-fat reading are on different days,
+    // which is the normal case — body fat is measured far less often.
+    const resolved = resolveProfile({}, [
+      checkIn('2026-07-20', 80, null),
+      checkIn('2026-07-01', 82, 18),
+    ])
+
+    expect(resolved.currentWeightKg).toBe(80)
+    expect(resolved.currentBodyFatPercent).toBe(18)
+  })
+
+  it('yields all-null for an empty check-in list, and does not throw', () => {
+    const resolved = resolveProfile({}, [])
+
+    expect(resolved).toEqual({
+      heightCm: null,
+      age: null,
+      sex: null,
+      currentWeightKg: null,
+      currentBodyFatPercent: null,
+      targetWeightKg: null,
+      targetBodyFatPercent: null,
+    })
+  })
+
+  it('treats a settings record without the new fields as missing, not defaulted', () => {
+    // A v3 record predates birthDate/sex/targets entirely. Absent must read as
+    // missing — the alternative recreates the seeded-height problem elsewhere.
+    const resolved = resolveProfile({ heightCm: 180 }, [])
+
+    expect(resolved.heightCm).toBe(180)
+    expect(resolved.age).toBeNull()
+    expect(resolved.sex).toBeNull()
+    expect(resolved.targetWeightKg).toBeNull()
+  })
+
+  it('does not mutate the check-in list it was given', () => {
+    const checkins = [checkIn('2026-07-01', 82), checkIn('2026-07-20', 80)]
+    const snapshot = structuredClone(checkins)
+
+    resolveProfile({}, checkins)
+
+    expect(checkins).toEqual(snapshot)
+  })
+})
+
+describe('maintenance energy is a range, not a point', () => {
+  it('multiplies REE by both ends of the selected PAL band', () => {
+    const range = maintenanceKcal(1767.5, 'sedentary')
+
+    expect(range.min).toBeCloseTo(1767.5 * PAL_BANDS.sedentary.min, 6)
+    expect(range.max).toBeCloseTo(1767.5 * PAL_BANDS.sedentary.max, 6)
+    expect(range.max).toBeGreaterThan(range.min)
+  })
+
+  it('never collapses a band to a single figure', () => {
+    // The bands are ranges in the source; a point estimate here would be
+    // precision this milestone's own citations do not have.
+    for (const pal of ['sedentary', 'active', 'vigorous'] as const) {
+      const range = maintenanceKcal(1650, pal)
+      expect(range.max).toBeGreaterThan(range.min)
+    }
+  })
+
+  it('uses the FAO bands, which put sedentary well above the unsourced 1.2 convention', () => {
+    // Guards the ruling itself: someone "correcting" these to the familiar
+    // fitness-calculator scale would change every downstream figure by
+    // hundreds of kcal, and that scale has no traceable source.
+    expect(PAL_BANDS.sedentary.min).toBeGreaterThan(1.2)
+    expect(maintenanceKcal(1650, 'sedentary').min).toBeGreaterThan(1650 * 1.2)
+  })
+})
