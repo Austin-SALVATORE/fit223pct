@@ -79,18 +79,6 @@ const DECLARED_READS: DeclaredRead[] = [
     read: 'state.program.name',
     reason: 'Same imported program, rendered in the confirm prompt — verbatim by the same rule.',
   },
-  {
-    file: 'src/features/plan/ProgramDataActions.tsx',
-    read: 'existing.name',
-    reason:
-      'KNOWN DEFECT, filed as a Phase 2 backlog item: the *existing* program may be the seed, so the replace-confirm shows its English name in fr/zh-CN. Not fixed here — it arrives from an async callback, so localizing it means holding the Program in state and resolving at render.',
-  },
-  {
-    file: 'src/features/plan/ProgramDataActions.tsx',
-    read: 'program.name',
-    reason:
-      'KNOWN DEFECT, filed as a Phase 2 backlog item: the export toast names the active program, which may be the seed. useProgramName is a one-line fix but belongs with the sibling defect above, on the same screen, in one change.',
-  },
 ]
 
 function seedTypeNamesOf(type: ts.Type): string[] {

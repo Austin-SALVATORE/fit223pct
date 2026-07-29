@@ -6,6 +6,7 @@ import { parseProgramMarkdown } from '@/domain/programMarkdown'
 import { toCanonicalProgramJson, programExportFilename } from '@/domain/programExport'
 import { shareOrDownloadFile } from '@/lib/shareOrDownloadFile'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
+import { useProgramName } from '@/i18n/seedProgram'
 import { SecondaryButton } from '@/ui/SecondaryButton'
 import type { MessageDescriptor } from '@/domain/message'
 import type { Program } from '@/domain/types'
@@ -13,10 +14,26 @@ import type { Program } from '@/domain/types'
 type ImportState =
   | { status: 'idle' }
   | { status: 'error'; message: MessageDescriptor }
-  | { status: 'confirm'; program: Program; existingName: string }
+  // Holds the whole existing Program, not just its name: the name has to be
+  // resolved through useProgramName at *render* time, because the seed
+  // program's name is locale-keyed and this state is set from an async
+  // callback where hooks cannot run (docs/review-backlog.md I9).
+  | { status: 'confirm'; program: Program; existing: Program }
   | { status: 'done'; name: string }
 
-type ExportState = { status: 'idle' } | { status: 'done'; message: string }
+type ExportState = { status: 'idle' } | { status: 'done' }
+
+/** Never rendered — keeps useProgramName's call unconditional. */
+const EMPTY_PROGRAM: Program = {
+  id: '',
+  name: '',
+  phase: 0,
+  startDate: '',
+  endDate: null,
+  trainingWeekdays: [],
+  rotation: [],
+  sessions: [],
+}
 
 /**
  * Import/Export program — the program surface (see
@@ -25,6 +42,9 @@ type ExportState = { status: 'idle' } | { status: 'done'; message: string }
  */
 export function ProgramDataActions({ program }: { program: Program }) {
   const { t } = useTranslation('plan')
+  // The active program may be the seed, whose name is locale-keyed — read it
+  // through the hook rather than off the record (I8).
+  const programName = useProgramName(program)
   const [importState, setImportState] = useState<ImportState>({ status: 'idle' })
   const [exportState, setExportState] = useState<ExportState>({ status: 'idle' })
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -59,7 +79,7 @@ export function ProgramDataActions({ program }: { program: Program }) {
 
     const existing = await programRepo.getById(result.program.id)
     if (existing) {
-      setImportState({ status: 'confirm', program: result.program, existingName: existing.name })
+      setImportState({ status: 'confirm', program: result.program, existing })
       return
     }
     await programRepo.put(result.program)
@@ -78,7 +98,9 @@ export function ProgramDataActions({ program }: { program: Program }) {
       toCanonicalProgramJson(program),
     )
     if (outcome !== 'cancelled') {
-      setExportState({ status: 'done', message: t('export.done', { name: program.name }) })
+      // Only the fact, never the prose: the message is built at render so it
+      // follows a live language switch and resolves the seed's locale key.
+      setExportState({ status: 'done' })
     }
   }
 
@@ -109,7 +131,7 @@ export function ProgramDataActions({ program }: { program: Program }) {
       />
       {exportState.status === 'done' && (
         <p role="status" className="mt-3 text-sm text-ink-secondary">
-          {exportState.message}
+          {t('export.done', { name: programName })}
         </p>
       )}
     </div>
@@ -128,6 +150,13 @@ function ImportFeedback({
   const { t } = useTranslation('plan')
   const errorMessage = useTranslatedMessage(
     state.status === 'error' ? state.message : { key: 'plan:import.notValidJson' },
+  )
+  // Unconditional, with a placeholder off the confirm path — Rules of Hooks.
+  // The *existing* program may be the seed (locale-keyed name); the incoming
+  // one is always imported and renders verbatim, which is why only this side
+  // goes through the hook.
+  const existingName = useProgramName(
+    state.status === 'confirm' ? state.existing : EMPTY_PROGRAM,
   )
 
   if (state.status === 'idle') return null
@@ -153,7 +182,7 @@ function ImportFeedback({
       <span>
         {t('import.replacesExisting', {
           newName: state.program.name,
-          existingName: state.existingName,
+          existingName,
         })}
       </span>
       <button type="button" onClick={onConfirm} className="font-medium text-clay">

@@ -6,6 +6,7 @@ import { seedDatabase } from '@/data/seed'
 import { seedProgram } from '@/data/seed/program'
 import { programRepo } from '@/data/repositories'
 import { toCanonicalProgramJson } from '@/domain/programExport'
+import i18n from '@/i18n/i18next'
 import { ProgramDataActions } from './ProgramDataActions'
 
 vi.mock('@/lib/shareOrDownloadFile', () => ({
@@ -21,6 +22,7 @@ afterEach(async () => {
   cleanup()
   vi.mocked(shareOrDownloadFile).mockClear()
   await db.programs.clear()
+  await i18n.changeLanguage('en')
 })
 
 function jsonFile(name: string, data: unknown): File {
@@ -162,5 +164,52 @@ describe('ProgramDataActions export', () => {
     const [importButton, exportButton] = screen.getAllByRole('button')
     expect(importButton.parentElement).toBe(exportButton.parentElement)
     expect(importButton.parentElement?.className).toMatch(/grid-cols-2/)
+  })
+})
+
+/**
+ * I8 / I9 (docs/review-backlog.md). Both sites read a *seed* program's name,
+ * which is locale-keyed, and both resolved it in an async callback where a
+ * hook cannot run — so the English name reached fr and zh-CN users. The fix
+ * is to carry the record, not the prose, and resolve at render.
+ *
+ * The incoming program on the confirm line stays verbatim on purpose: it is
+ * imported content, which is never translated or shadowed.
+ */
+describe('the seed program\'s name is localized on the data screen', () => {
+  it('localizes the export toast (I8)', async () => {
+    await i18n.changeLanguage('fr')
+    render(<ProgramDataActions program={seedProgram} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Exporter le programme' }))
+
+    const status = await screen.findByRole('status')
+    expect(status).toHaveTextContent('Phase 1 — Maison')
+    expect(status).not.toHaveTextContent('Phase 1 — Home')
+  })
+
+  it('localizes the export toast in zh-CN too', async () => {
+    await i18n.changeLanguage('zh-CN')
+    render(<ProgramDataActions program={seedProgram} />)
+    await userEvent.click(screen.getByRole('button', { name: '导出计划' }))
+
+    const status = await screen.findByRole('status')
+    expect(status).toHaveTextContent('第一阶段 — 居家训练')
+    expect(status).not.toHaveTextContent('Phase 1 — Home')
+  })
+
+  it('localizes the existing program in the replace confirm, and leaves the imported one verbatim (I9)', async () => {
+    await i18n.changeLanguage('fr')
+    render(<ProgramDataActions program={seedProgram} />)
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement
+    await userEvent.upload(
+      input,
+      jsonFile('phase-1.json', newProgram({ id: seedProgram.id, name: 'Mon propre bloc' })),
+    )
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent('Phase 1 — Maison')
+    expect(alert).not.toHaveTextContent('Phase 1 — Home')
+    // Imported content renders exactly as the owner typed it.
+    expect(alert).toHaveTextContent('Mon propre bloc')
   })
 })
