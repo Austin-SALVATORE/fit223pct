@@ -265,7 +265,65 @@ function opaqueProfile(rgba, width, height) {
   return ink
 }
 
-function findCuts(ink, width, frames) {
+/**
+ * Strips whose poses touch, so no column between two frames is background.
+ *
+ * These convert with the pre-29-Jul behaviour — a cut placed at the locally
+ * thinnest column even though that column has ink in it — which severs a
+ * limb and pads the fragment flush against the neighbouring frame. Their
+ * frames on disk are already wrong; listing them keeps the library
+ * convertible while the art is re-rendered, rather than making a third of it
+ * unbuildable.
+ *
+ * **Self-clearing, not a suppression.** If a listed id slices safely, that is
+ * an error and the run fails naming it — re-rendered art removes itself from
+ * this list by force, exactly like KNOWN_MISSING in the asset coverage tests.
+ *
+ * 43 entries as of 29 Jul. The count should only ever go down.
+ */
+const UNSAFE_SLICE_ALLOWLIST = new Set([
+  'assisted-pull-up', 'barbell-back-squat', 'barbell-row', 'bench-dip', 'bench-press',
+  'bird-dog', 'bodyweight-squat', 'bulgarian-split-squat', 'cable-fly', 'cable-pull-through',
+  'cable-woodchop', 'close-grip-bench-press', 'close-grip-lat-pulldown', 'db-floor-press',
+  'dead-bug', 'deadlift', 'diamond-push-up', 'dip', 'dumbbell-bench-press', 'dumbbell-fly',
+  'front-squat', 'hack-squat', 'hanging-leg-raise', 'hip-thrust', 'incline-bench-press',
+  'incline-dumbbell-curl', 'incline-dumbbell-press', 'incline-push-up', 'inverted-row',
+  'kettlebell-swing', 'lateral-raise', 'machine-shoulder-press', 'pull-up', 'push-up',
+  'reverse-crunch', 'russian-twist', 'seated-dumbbell-shoulder-press', 'single-leg-hip-thrust',
+  'single-leg-romanian-deadlift', 'smith-machine-squat', 'sumo-deadlift',
+  'tempo-bodyweight-squat', 'wide-grip-lat-pulldown',
+])
+
+/**
+ * Picks one run per expected boundary, nearest first, never reusing a run.
+ * Returns null if any boundary has no run left to claim.
+ *
+ * Nearest, not widest: a strip whose figure is separate from its machine has
+ * a wide gap *inside* a pose, and selecting by width let that gap outrank a
+ * real frame boundary — which is how cable-rear-delt-fly ended up with the
+ * machine alone in frame 1 and two athletes in another.
+ */
+function selectNearest(runs, frames, frameW) {
+  const taken = new Set()
+  const cuts = []
+  for (let i = 1; i < frames; i++) {
+    const center = i * frameW
+    let best = null
+    for (const r of runs) {
+      if (taken.has(r.start)) continue
+      const mid = r.start + Math.floor(r.width / 2)
+      const d = Math.abs(mid - center)
+      if (!best || d < best.d) best = { r, mid, d }
+    }
+    if (!best) return null
+    taken.add(best.r.start)
+    cuts.push(best.mid)
+  }
+  const sorted = [...cuts].sort((a, b) => a - b)
+  return sorted.every((c, i) => i === 0 || c > sorted[i - 1]) ? sorted : null
+}
+
+function findCuts(ink, width, frames, id) {
   const runs = []
   let start = -1
   for (let x = 0; x <= width; x++) {
@@ -276,17 +334,35 @@ function findCuts(ink, width, frames) {
       start = -1
     }
   }
-  const interior = runs.filter(r => r.start > 0 && r.end < width && r.width >= MIN_GUTTER)
-  if (interior.length >= frames - 1)
-    return {
-      mode: 'gutter',
-      cuts: interior
-        .sort((a, b) => b.width - a.width)
-        .slice(0, frames - 1)
-        .sort((a, b) => a.start - b.start)
-        .map(r => r.start + Math.floor(r.width / 2)),
-    }
   const frameW = width / frames
+  // The staleness check has to cover *every* safe outcome, not just the
+  // fallback's. Re-rendered art with proper gaps lands in gutter mode, which
+  // is precisely the case the list exists to shed — checking only the
+  // fallback would have left it permanently stale for the assets that got
+  // fixed. (Found by testing the property rather than assuming it: a safe
+  // gutter-mode id added to the list produced no error at all.)
+  const assertNotStale = (mode, worst) => {
+    if (!UNSAFE_SLICE_ALLOWLIST.has(id)) return
+    throw new Error(
+      `${id}: slices safely now (mode=${mode}, worst cut ${worst} opaque px) but is still ` +
+      `in UNSAFE_SLICE_ALLOWLIST — remove it from the list in scripts/convert-assets.mjs`,
+    )
+  }
+
+  const interior = runs.filter(r => r.start > 0 && r.end < width && r.width >= MIN_GUTTER)
+  if (interior.length >= frames - 1) {
+    const cuts = selectNearest(interior, frames, frameW)
+    if (cuts) {
+      assertNotStale('gutter', Math.max(...cuts.map(c => ink[c])))
+      return { mode: 'gutter', cuts }
+    }
+  }
+
+  // Fallback, now thresholded. It used to take the locally thinnest column
+  // with no threshold at all, so it would cut straight through a figure and
+  // say nothing — silently wrong for 43 assets since it was written, until
+  // the owner noticed a detached shoe on his phone. A cut must land on
+  // background or not be made.
   const window = Math.floor(frameW / 4)
   const cuts = []
   for (let i = 1; i < frames; i++) {
@@ -300,7 +376,26 @@ function findCuts(ink, width, frames) {
     while (b < width - 2 && ink[b + 1] === ink[best]) b++
     cuts.push(Math.floor((a + b) / 2))
   }
-  return { mode: 'min-ink', cuts }
+  const worst = Math.max(...cuts.map(c => ink[c]))
+  const allowed = UNSAFE_SLICE_ALLOWLIST.has(id)
+
+  if (worst <= INK_TOL) {
+    assertNotStale('min-ink', worst)
+    return { mode: 'min-ink', cuts }
+  }
+
+  if (!allowed) {
+    const detail = cuts.map((c, i) => `boundary ${i + 1} at x=${c}: ${ink[c]} opaque px`).join('; ')
+    throw new Error(
+      `${id}: no cut lands on background — the poses in this strip touch, so slicing ` +
+      `would sever a figure and pad the fragment onto the next frame (${detail}). ` +
+      `Re-render with clear gaps between poses, or add the id to UNSAFE_SLICE_ALLOWLIST ` +
+      `to keep the old, known-wrong behaviour deliberately.`,
+    )
+  }
+
+  console.warn(`WARN ${id} — unsafe slice (worst cut ${worst} opaque px), allowlisted; frames are known-wrong pending re-render`)
+  return { mode: 'min-ink-unsafe', cuts }
 }
 
 /** Slice [x0,x1) of an RGBA image and trim to opaque content + FRAME_PAD each side. */
@@ -336,7 +431,7 @@ function convert(id, tmp) {
   qaScan(rgba, width, height, `${id} reference`)
 
   const ink = opaqueProfile(rgba, width, height)
-  const { mode, cuts } = findCuts(ink, width, frames)
+  const { mode, cuts } = findCuts(ink, width, frames, id)
 
   const framesDir = join(dir, 'frames')
   mkdirSync(framesDir, { recursive: true })
