@@ -13,6 +13,7 @@
   "conceptSectionAriaLabel": "Concept",
   "whyItMatters": "Pourquoi c'est important — {{title}}",
   "frameStepperAriaLabel": "Photos étape par étape : {{exerciseName}}",
+  "frameStepperTrackAriaLabel": "Bande photo : {{exerciseName}} — fais défiler ou utilise les flèches",
   "substitutionsSectionAriaLabel": "Substitutions",
   "swapFor": "Remplacer par",
   "backLink": {

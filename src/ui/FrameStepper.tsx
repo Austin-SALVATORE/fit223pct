@@ -52,9 +52,20 @@ export function FrameStepper({ exerciseId }: { exerciseId: string }) {
 
   return (
     <section aria-label={t('frameStepperAriaLabel', { exerciseName })} className="mt-8">
+      {/*
+        tabIndex makes the scroller focusable, which Safari and Firefox do
+        not do for a bare overflow container — so on an iOS-first PWA the
+        strip was unreachable by keyboard entirely (A6/A7 in
+        docs/review-backlog.md). role="group" plus the name gives the stop
+        something to announce; the frames themselves stay alt="" because
+        they are decorative repetitions of the reference image.
+      */}
       <div
         ref={trackRef}
-        className="flex snap-x snap-mandatory gap-3 overflow-x-auto"
+        tabIndex={0}
+        role="group"
+        aria-label={t('frameStepperTrackAriaLabel', { exerciseName })}
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto rounded-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
         style={{ height: STEPPER_HEIGHT }}
       >
         {Array.from({ length: frameCount }, (_, i) => {

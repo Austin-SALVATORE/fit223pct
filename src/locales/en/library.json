@@ -13,6 +13,7 @@
   "conceptSectionAriaLabel": "Concept",
   "whyItMatters": "Why it matters — {{title}}",
   "frameStepperAriaLabel": "Step-through photos: {{exerciseName}}",
+  "frameStepperTrackAriaLabel": "Photo strip: {{exerciseName}} — scroll or use arrow keys",
   "substitutionsSectionAriaLabel": "Substitutions",
   "swapFor": "Swap for",
   "backLink": {

@@ -36,10 +36,17 @@ export function RatingPicker({ label, options, value, onChange, disabled }: Rati
             disabled={disabled}
             data-numeric
             onClick={() => onChange(option.value)}
-            className={`h-11 w-11 rounded-full border text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-40 ${
+            // Selection carries a non-colour cue as well as hue: a solid
+            // fill inverts the figure/ground relationship and the weight
+            // steps up, so the choice survives greyscale, colour-vision
+            // deficiency and forced-colours mode. Amber-on-ink alone was
+            // near-identical in luminance, which made the check-in's own
+            // answer hard to see (docs/review-backlog.md A6). aria-pressed
+            // already covered screen readers; this is the visual channel.
+            className={`h-11 w-11 rounded-full border text-sm transition-colors disabled:pointer-events-none disabled:opacity-40 ${
               selected
-                ? 'border-amber bg-amber/15 text-amber'
-                : 'border-border text-ink-secondary hover:border-border-strong'
+                ? 'border-amber bg-amber font-bold text-bg'
+                : 'border-border font-medium text-ink-secondary hover:border-border-strong'
             }`}
           >
             {option.display}

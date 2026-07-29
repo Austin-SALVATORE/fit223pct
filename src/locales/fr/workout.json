@@ -27,7 +27,6 @@
     "heading": "Repos",
     "next": "Suivant",
     "nextUp": "À suivre",
-    "ariaLabel": "En repos. {{nextLabel}} : {{exerciseName}}, série {{setIndex}} sur {{totalSets}}",
     "setProgress": "{{exerciseName}} — série {{setIndex}} sur {{totalSets}}",
     "plusThirty": "+30s",
     "skip": "Passer"

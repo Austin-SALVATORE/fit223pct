@@ -27,7 +27,6 @@
     "heading": "Rest",
     "next": "Next",
     "nextUp": "Next up",
-    "ariaLabel": "Resting. {{nextLabel}}: {{exerciseName}}, set {{setIndex}} of {{totalSets}}",
     "setProgress": "{{exerciseName}} — set {{setIndex}} of {{totalSets}}",
     "plusThirty": "+30s",
     "skip": "Skip"

@@ -31,10 +31,11 @@ export function LanguageSwitcher({ value, onChange, groupLabel }: LanguageSwitch
             onClick={() => onChange(locale)}
             whileTap={reducedMotion ? undefined : { scale: 0.94 }}
             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            className={`rounded-full border px-4 py-3 text-center text-sm font-medium transition-colors ${
+            // Same non-colour cue as RatingPicker — see its comment (A6).
+            className={`rounded-full border px-4 py-3 text-center text-sm transition-colors ${
               selected
-                ? 'border-amber bg-amber/15 text-amber'
-                : 'border-border text-ink-secondary hover:border-border-strong hover:text-ink'
+                ? 'border-amber bg-amber font-bold text-bg'
+                : 'border-border font-medium text-ink-secondary hover:border-border-strong hover:text-ink'
             }`}
           >
             {t(`language.${locale}`)}

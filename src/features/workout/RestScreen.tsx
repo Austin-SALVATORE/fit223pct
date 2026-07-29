@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { TimerRing } from '@/ui/TimerRing'
@@ -33,7 +33,8 @@ export function RestScreen({
   const { t } = useTranslation('workout')
   const [endsAt, setEndsAt] = useState(initialEndsAt)
   const [remaining, setRemaining] = useState(() => secondsLeft(initialEndsAt))
-  const headingRef = useFocusOnMount<HTMLParagraphElement>()
+  const headingRef = useFocusOnMount<HTMLHeadingElement>()
+  const nextUpId = useId()
 
   useEffect(() => {
     const tick = setInterval(() => setRemaining(secondsLeft(endsAt)), 250)
@@ -56,19 +57,21 @@ export function RestScreen({
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center text-center">
-      <p
-        ref={headingRef}
-        tabIndex={-1}
-        className="eyebrow"
-        aria-label={t('resting.ariaLabel', {
-          nextLabel,
-          exerciseName,
-          setIndex: position.setIndex + 1,
-          totalSets: nextExercise.prescription.sets,
-        })}
-      >
+      {/*
+        A heading, not a <p aria-label>. `role="paragraph"` prohibits author
+        naming, so the old aria-label was either dropped by assistive tech or
+        read *instead of* "Rest" — and the screen had no heading at all
+        (docs/review-backlog.md A3).
+
+        The context that label carried is not lost: it is the same text the
+        next-up block below already displays, so that block is wired as this
+        heading's description rather than duplicated into a name. Visible
+        text stays the accessible name, which is also what keeps
+        voice-control working.
+      */}
+      <h2 ref={headingRef} tabIndex={-1} aria-describedby={nextUpId} className="eyebrow">
         {t('resting.heading')}
-      </p>
+      </h2>
 
       <TimerRing remaining={remaining} total={total} />
 
@@ -77,7 +80,7 @@ export function RestScreen({
         <RestButton label={t('resting.skip')} onClick={onDone} />
       </div>
 
-      <div className="mt-10">
+      <div id={nextUpId} className="mt-10">
         <p className="text-sm text-ink-tertiary">{nextLabel}</p>
         <p className="mt-1 font-medium text-ink">
           {t('resting.setProgress', {

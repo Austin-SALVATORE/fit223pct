@@ -43,3 +43,30 @@ describe('FrameStepper', () => {
     }
   })
 })
+
+/**
+ * A7 (docs/review-backlog.md): the strip was an `overflow-x-auto` div with
+ * no tabIndex and no controls. Safari and Firefox do not focus a bare
+ * scroller, so on an iOS-first PWA it was unreachable by keyboard — and the
+ * named section exposed nothing to a screen reader either, since the frames
+ * are alt="" and the dots aria-hidden.
+ */
+describe('the photo strip is reachable by keyboard', () => {
+  it('makes the scrolling track a focus stop with a name of its own', () => {
+    render(<FrameStepper exerciseId="goblet-squat" />)
+
+    const track = screen.getByRole('group', { name: /Photo strip/ })
+    expect(track).toHaveAttribute('tabindex', '0')
+    expect(track.className).toContain('overflow-x-auto')
+  })
+
+  it('keeps the outer region named separately from the track', () => {
+    // A12 warns against a region whose name merely duplicates its contents;
+    // these two names describe different things — the section says what the
+    // strip is, the track says how to move through it.
+    render(<FrameStepper exerciseId="goblet-squat" />)
+
+    expect(screen.getByRole('region', { name: 'Step-through photos: Goblet squat' })).toBeInTheDocument()
+    expect(screen.getByRole('group', { name: /Photo strip/ })).toBeInTheDocument()
+  })
+})
