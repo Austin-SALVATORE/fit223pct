@@ -1,0 +1,32 @@
+{
+  "exerciseId": "seated-butterfly-stretch",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        560,
+        822
+      ],
+      [
+        727,
+        822
+      ]
+    ],
+    "referenceHash": "863724c6a6",
+    "thumbnailHash": "8e4f64388e",
+    "frameHashes": [
+      "0dc42037dd",
+      "26782ea871"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

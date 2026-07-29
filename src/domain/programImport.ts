@@ -112,6 +112,14 @@ const sessionTemplateSchema = z.object({
 const activityItemSchema = z.object({
   label: z.string().min(1),
   detail: z.string().min(1).optional(),
+  // Names a built-in routine. Accepted here because this schema is not
+  // .strict(), so an unlisted field is silently *stripped* rather than
+  // rejected — omitting it meant exporting a program and re-importing it
+  // quietly lost every routine link, with the export round-trip as the only
+  // symptom. Not validated against the catalogue on purpose: an id this
+  // build doesn't have renders as plain text (ActivityItemList), so an
+  // older app importing a newer program degrades instead of refusing it.
+  routineId: z.string().min(1).optional(),
 })
 
 const activityTemplateSchema = z.object({

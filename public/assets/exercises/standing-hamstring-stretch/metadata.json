@@ -1,0 +1,32 @@
+{
+  "exerciseId": "standing-hamstring-stretch",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1774,
+      887
+    ],
+    "frameSizes": [
+      [
+        835,
+        887
+      ],
+      [
+        858,
+        887
+      ]
+    ],
+    "referenceHash": "1380b4af0e",
+    "thumbnailHash": "0f0d51a8b5",
+    "frameHashes": [
+      "9e73e9c9c8",
+      "0fc942fd2f"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

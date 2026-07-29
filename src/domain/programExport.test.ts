@@ -23,6 +23,27 @@ describe('toCanonicalProgramJson', () => {
     expect(programExportFilename(seedProgram)).toBe('phase-1-home.json')
   })
 
+  // Regression: activityItemSchema is not .strict(), so an unlisted field is
+  // stripped rather than rejected — routineId therefore vanished on import
+  // and every recovery link died on an export/import round-trip, silently.
+  it('round-trips an activity item\'s routineId', () => {
+    const withRoutine = {
+      ...seedProgram,
+      weekdayActivities: {
+        2: {
+          kind: 'recovery' as const,
+          title: 'Recovery day',
+          items: [{ label: 'Guided Stretch', detail: '8–10 min', routineId: 'recovery-stretch-v1' }],
+        },
+      },
+    }
+    const result = validateProgramImport(JSON.parse(toCanonicalProgramJson(withRoutine)), libraryIds)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.program.weekdayActivities?.[2]?.items[0].routineId).toBe('recovery-stretch-v1')
+    }
+  })
+
   it('round-trips a program-defined substitutionIds field', () => {
     const withSubs = {
       ...seedProgram,

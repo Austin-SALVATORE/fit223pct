@@ -1,0 +1,32 @@
+{
+  "exerciseId": "wall-calf-stretch",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        683,
+        822
+      ],
+      [
+        903,
+        822
+      ]
+    ],
+    "referenceHash": "6e0301f7a0",
+    "thumbnailHash": "29a4a54b27",
+    "frameHashes": [
+      "61a1bf1d87",
+      "fdc11c6490"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

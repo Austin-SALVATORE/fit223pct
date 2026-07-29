@@ -1,0 +1,32 @@
+{
+  "exerciseId": "half-kneeling-hip-flexor-stretch",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1774,
+      887
+    ],
+    "frameSizes": [
+      [
+        670,
+        887
+      ],
+      [
+        777,
+        887
+      ]
+    ],
+    "referenceHash": "e104a85f6e",
+    "thumbnailHash": "55b59ba744",
+    "frameHashes": [
+      "718c1b6966",
+      "b02b56c9a3"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

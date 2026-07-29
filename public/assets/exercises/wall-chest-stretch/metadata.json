@@ -1,0 +1,32 @@
+{
+  "exerciseId": "wall-chest-stretch",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1658,
+      949
+    ],
+    "frameSizes": [
+      [
+        559,
+        949
+      ],
+      [
+        574,
+        949
+      ]
+    ],
+    "referenceHash": "3da98d5e7c",
+    "thumbnailHash": "79290a2ef1",
+    "frameHashes": [
+      "df22a0fc84",
+      "c95023cb58"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import manifest from '@/data/generated/asset-manifest.json'
 import { seedRoutines } from '@/data/seed/routines'
 import { seedExercises } from '@/data/seed/exercises'
 import { routineStepAsset } from './routineAsset'
@@ -12,27 +13,13 @@ import { routineStepAsset } from './routineAsset'
  * resolves; nothing asserts the reverse, so stretch entries in the manifest
  * would otherwise be entirely unaudited.
  *
- * **Every step is listed below, deliberately and temporarily.** The
- * catalogue landed ahead of its art (part 1 of phase 5), and no activity
- * item links to the routine yet, so nobody meets an illustration-less
- * stretch in the product.
- *
- * This list is self-clearing rather than a suppression: the assertion below
- * requires a KNOWN_MISSING id to *not* resolve, so the first stretch whose
- * art lands turns this file red and names itself. Part 2 cannot quietly ship
- * art while leaving a stale entry here — removing them is forced, not
- * remembered.
+ * Empty as of the art batch landing: all eight steps resolve. It stays in
+ * place as infrastructure, the same way the exercise coverage test's list
+ * does — it refills the moment a routine step ships before its art, which
+ * is the normal order (content first, art generated after), and that is
+ * this list doing its job rather than a regression.
  */
-const KNOWN_MISSING = new Set<string>([
-  'wall-chest-stretch',
-  'wall-calf-stretch',
-  'standing-hamstring-stretch',
-  'standing-quadriceps-stretch',
-  'half-kneeling-hip-flexor-stretch',
-  'figure-four-glute-stretch',
-  'seated-butterfly-stretch',
-  'childs-pose',
-])
+const KNOWN_MISSING = new Set<string>()
 
 const stepIds = seedRoutines.flatMap((routine) => routine.steps.map((step) => step.id))
 
@@ -81,5 +68,30 @@ describe('routine step asset coverage', () => {
 
   it('step ids are unique across the catalogue', () => {
     expect(stepIds.length).toBe(new Set(stepIds).size)
+  })
+
+  it('every routine step ships at least two frames — the entry pose and the held pose', () => {
+    // Mechanical enforcement of the owner's two-illustration ruling
+    // (docs/RecoveryRoutines.md ruling 5). Until now only review could hold
+    // it: routineStepAsset falls back to the entry frame when 'held' is
+    // missing, deliberately — assets never block a feature — so a
+    // single-frame stretch degrades to a still image instead of failing,
+    // and the player would look correct while the lead-in and the hold
+    // showed the same picture.
+    //
+    // Near-identical frames still satisfy this and should:
+    // half-kneeling-hip-flexor-stretch differs from its own setup by a
+    // pelvic tilt that cannot be drawn in this style (owner, 29 Jul). It
+    // ships two real frames, so it passes honestly rather than by
+    // exemption — and an exemption list here would be the hole this test
+    // exists to close.
+    const entries = manifest as unknown as Record<string, { frameCount: number }>
+    for (const stepId of stepIds) {
+      expect(
+        entries[stepId]?.frameCount ?? 0,
+        `${stepId} must ship an entry pose and a held pose — the player switches ` +
+          'between them when the hold starts, so one frame is not enough',
+      ).toBeGreaterThanOrEqual(2)
+    }
   })
 })

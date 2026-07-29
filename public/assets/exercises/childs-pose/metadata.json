@@ -1,0 +1,32 @@
+{
+  "exerciseId": "childs-pose",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        958,
+        822
+      ],
+      [
+        904,
+        822
+      ]
+    ],
+    "referenceHash": "654ea355f7",
+    "thumbnailHash": "f5ee7971a4",
+    "frameHashes": [
+      "a895fe4e2f",
+      "76e06499eb"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

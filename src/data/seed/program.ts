@@ -225,7 +225,10 @@ export const seedProgram: Program = {
       title: 'Recovery day',
       items: [
         { label: 'Walk', detail: '6,000–10,000 steps' },
-        { label: 'Stretch', detail: '10–15 minutes' },
+        // Both stretch items open the same guided routine; the seed
+        // literals here are the English fallback, the shipped copy is
+        // locale-keyed (seed.json).
+        { label: 'Guided Stretch', detail: '8–10 min', routineId: 'recovery-stretch-v1' },
         { label: 'Hydration', detail: 'Meet your daily goal' },
         { label: 'Protein', detail: 'Meet your daily target' },
         { label: 'Sleep', detail: 'At least 7.5 hours' },
@@ -236,7 +239,7 @@ export const seedProgram: Program = {
       title: 'Optional recovery',
       items: [
         { label: 'Mobility work' },
-        { label: 'Stretching' },
+        { label: 'Stretching', routineId: 'recovery-stretch-v1' },
         { label: 'Foam rolling' },
         { label: 'Easy walking' },
       ],

@@ -1,0 +1,32 @@
+{
+  "exerciseId": "figure-four-glute-stretch",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1916,
+      821
+    ],
+    "frameSizes": [
+      [
+        950,
+        821
+      ],
+      [
+        885,
+        821
+      ]
+    ],
+    "referenceHash": "2455abdae5",
+    "thumbnailHash": "7de2f0d863",
+    "frameHashes": [
+      "5cb1ed0636",
+      "ce8527d972"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

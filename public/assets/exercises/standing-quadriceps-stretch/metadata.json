@@ -1,0 +1,32 @@
+{
+  "exerciseId": "standing-quadriceps-stretch",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        680,
+        823
+      ],
+      [
+        749,
+        823
+      ]
+    ],
+    "referenceHash": "6ffcd761d7",
+    "thumbnailHash": "8365b15611",
+    "frameHashes": [
+      "6f7e988a70",
+      "6bf90654d3"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}
