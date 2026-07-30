@@ -2,47 +2,37 @@
   "exerciseId": "incline-bench-press",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
       1919,
       820
     ],
     "frameSizes": [
       [
-        353,
+        513,
         820
       ],
       [
-        308,
+        463,
         820
       ],
       [
-        306,
+        486,
         820
       ],
       [
-        332,
-        820
-      ],
-      [
-        330,
-        820
-      ],
-      [
-        290,
+        455,
         820
       ]
     ],
-    "referenceHash": "7b47025cf5",
-    "thumbnailHash": "462b3b7c53",
+    "referenceHash": "49a4394a4f",
+    "thumbnailHash": "987b542d11",
     "frameHashes": [
-      "931a75b08b",
-      "8b622227c9",
-      "fc57f78d54",
-      "a7c0459816",
-      "4f5c76494f",
-      "a03a94f8f1"
+      "5e7a3ba088",
+      "895eb3b0d0",
+      "0ec9814a6f",
+      "6a05ab62cf"
     ]
   },
   "credits": {

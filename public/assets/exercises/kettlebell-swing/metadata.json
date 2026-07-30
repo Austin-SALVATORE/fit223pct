@@ -2,47 +2,37 @@
   "exerciseId": "kettlebell-swing",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1910,
-      823
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        243,
-        823
+        412,
+        822
       ],
       [
-        328,
-        823
+        403,
+        822
       ],
       [
-        386,
-        823
+        357,
+        822
       ],
       [
-        330,
-        823
-      ],
-      [
-        235,
-        823
-      ],
-      [
-        335,
-        823
+        412,
+        822
       ]
     ],
-    "referenceHash": "0e2fc266ce",
-    "thumbnailHash": "142fbab555",
+    "referenceHash": "4e727de879",
+    "thumbnailHash": "48a61837c5",
     "frameHashes": [
-      "05bef41284",
-      "31a9e7f1f2",
-      "293cebd46e",
-      "a677a1b810",
-      "17baeb2806",
-      "e5e502ddfc"
+      "1a4bd0fde0",
+      "e32a543c33",
+      "f27dcc34f7",
+      "3af7ad500d"
     ]
   },
   "credits": {

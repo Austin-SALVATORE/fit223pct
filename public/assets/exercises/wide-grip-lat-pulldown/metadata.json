@@ -2,47 +2,37 @@
   "exerciseId": "wide-grip-lat-pulldown",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1913,
-      822
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        318,
-        822
+        475,
+        823
       ],
       [
-        296,
-        822
+        474,
+        823
       ],
       [
-        301,
-        822
+        484,
+        823
       ],
       [
-        327,
-        822
-      ],
-      [
-        336,
-        822
-      ],
-      [
-        335,
-        822
+        479,
+        823
       ]
     ],
-    "referenceHash": "97ac90bec8",
-    "thumbnailHash": "2b2cb98016",
+    "referenceHash": "1452083742",
+    "thumbnailHash": "5fc839d9b2",
     "frameHashes": [
-      "685ccfbff7",
-      "ba6a980285",
-      "bfab882084",
-      "9e0a38f0ef",
-      "8646f24690",
-      "5044244ac2"
+      "23327cd836",
+      "1a2a138952",
+      "5449bf4f3a",
+      "93a78f6f1d"
     ]
   },
   "credits": {

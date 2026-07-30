@@ -2,47 +2,37 @@
   "exerciseId": "incline-push-up",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1873,
-      840
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        331,
-        840
+        491,
+        822
       ],
       [
-        306,
-        840
+        468,
+        822
       ],
       [
-        315,
-        840
+        469,
+        822
       ],
       [
-        297,
-        840
-      ],
-      [
-        309,
-        840
-      ],
-      [
-        315,
-        840
+        485,
+        822
       ]
     ],
-    "referenceHash": "a34b1cc51c",
-    "thumbnailHash": "86fbf82380",
+    "referenceHash": "bc889488e9",
+    "thumbnailHash": "5717354cf1",
     "frameHashes": [
-      "b127aa62ee",
-      "3f7d1e124d",
-      "0a7d7527e6",
-      "b2e324934c",
-      "528628f2cf",
-      "31d0dd832a"
+      "4b2a955e19",
+      "926b691c7d",
+      "d17c8d3e14",
+      "51c4a65d33"
     ]
   },
   "credits": {

@@ -2,47 +2,37 @@
   "exerciseId": "smith-machine-squat",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1913,
-      822
+      1915,
+      821
     ],
     "frameSizes": [
       [
-        311,
-        822
+        485,
+        821
       ],
       [
-        323,
-        822
+        448,
+        821
       ],
       [
-        316,
-        822
+        469,
+        821
       ],
       [
-        306,
-        822
-      ],
-      [
-        315,
-        822
-      ],
-      [
-        342,
-        822
+        496,
+        821
       ]
     ],
-    "referenceHash": "3135ca24ac",
-    "thumbnailHash": "d3b5d5217c",
+    "referenceHash": "b8618c6055",
+    "thumbnailHash": "2f6735f904",
     "frameHashes": [
-      "3a3eb821b6",
-      "2933669aba",
-      "3ca1d48fad",
-      "d7ca7c7677",
-      "566306166e",
-      "33cadb347a"
+      "1e22c5c451",
+      "45f2e7939d",
+      "fec431a9fc",
+      "69436e1302"
     ]
   },
   "credits": {

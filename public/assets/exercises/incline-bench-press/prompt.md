@@ -82,7 +82,11 @@ bar path and the elbow angle are all readable.
 Equipment: one long brushed chrome bar with matte black bumper plates, evenly
 loaded both sides, plus one matte black padded bench set to roughly 30 degrees
 on a black steel frame. The backrest rises toward the left of each frame at a
-clearly visible 30 degree angle; no uprights or rack in frame.
+clearly visible 30 degree angle; no uprights or rack in frame. The bench's own
+legs are the widest part of this pose horizontally — keep the entire bench,
+including both legs, well inside this pose's exclusive vertical band, with the
+same wide clear magenta column beyond the bench legs as beyond the bar plates
+on the other side.
 Number of frames: 4, evenly spaced left to right.
 
 Frames:

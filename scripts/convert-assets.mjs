@@ -302,10 +302,6 @@ function opaqueProfile(rgba, width, height) {
  * sat on clean background — and it cleared in the pilot re-render.
  */
 const UNSAFE_SLICE_ALLOWLIST = new Set([
-  'incline-bench-press', 'incline-dumbbell-curl',
-  'incline-push-up', 'inverted-row', 'kettlebell-swing', 'machine-shoulder-press',
-  'reverse-crunch', 'russian-twist', 'seated-dumbbell-shoulder-press',
-  'single-leg-romanian-deadlift', 'smith-machine-squat', 'sumo-deadlift', 'wide-grip-lat-pulldown',
 ])
 
 /**

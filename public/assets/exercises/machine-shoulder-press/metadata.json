@@ -2,47 +2,37 @@
   "exerciseId": "machine-shoulder-press",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1919,
+      1918,
       820
     ],
     "frameSizes": [
       [
-        324,
+        474,
         820
       ],
       [
-        323,
+        470,
         820
       ],
       [
-        319,
+        460,
         820
       ],
       [
-        309,
-        820
-      ],
-      [
-        309,
-        820
-      ],
-      [
-        335,
+        481,
         820
       ]
     ],
-    "referenceHash": "2248147ee3",
-    "thumbnailHash": "a2bc92e334",
+    "referenceHash": "7ec084b45f",
+    "thumbnailHash": "0480321938",
     "frameHashes": [
-      "a3965c2d12",
-      "fe2f2c7166",
-      "f2e7763484",
-      "f338e34684",
-      "4174334b3e",
-      "9422ef2f5d"
+      "01ba21d52d",
+      "8bf195b53a",
+      "7623166b88",
+      "ffb144a16d"
     ]
   },
   "credits": {

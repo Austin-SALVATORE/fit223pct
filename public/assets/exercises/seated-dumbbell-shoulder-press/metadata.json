@@ -2,47 +2,37 @@
   "exerciseId": "seated-dumbbell-shoulder-press",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
-      822
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        376,
-        822
+        466,
+        823
       ],
       [
-        333,
-        822
+        468,
+        823
       ],
       [
-        315,
-        822
+        462,
+        823
       ],
       [
-        292,
-        822
-      ],
-      [
-        301,
-        822
-      ],
-      [
-        297,
-        822
+        457,
+        823
       ]
     ],
-    "referenceHash": "10bf4120af",
-    "thumbnailHash": "2d21bbaaec",
+    "referenceHash": "5bb6664f3d",
+    "thumbnailHash": "21d3d0d268",
     "frameHashes": [
-      "30b728ad96",
-      "d2513a559b",
-      "f6b3b97354",
-      "5d0ab31b65",
-      "c093f6c929",
-      "40a25cbd86"
+      "dfd332bbcd",
+      "9616c19ea0",
+      "680d5ac042",
+      "3671e8ae17"
     ]
   },
   "credits": {

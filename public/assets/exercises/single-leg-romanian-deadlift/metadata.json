@@ -2,47 +2,37 @@
   "exerciseId": "single-leg-romanian-deadlift",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1915,
-      821
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        215,
-        821
+        291,
+        822
       ],
       [
-        373,
-        821
+        516,
+        822
       ],
       [
-        342,
-        821
+        600,
+        822
       ],
       [
-        411,
-        821
-      ],
-      [
-        321,
-        821
-      ],
-      [
-        212,
-        821
+        409,
+        822
       ]
     ],
-    "referenceHash": "8fe33c7951",
-    "thumbnailHash": "3d775a185b",
+    "referenceHash": "ab44fdfd5c",
+    "thumbnailHash": "a03a636de4",
     "frameHashes": [
-      "341c3d0276",
-      "4944716ad5",
-      "675f2e9a8c",
-      "70f5f19a70",
-      "49dec8d8be",
-      "1e83df332e"
+      "1292e719e6",
+      "fdc2558d87",
+      "216f7eab1e",
+      "0a3b79793d"
     ]
   },
   "credits": {

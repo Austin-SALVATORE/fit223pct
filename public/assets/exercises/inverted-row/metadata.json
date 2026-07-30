@@ -2,47 +2,37 @@
   "exerciseId": "inverted-row",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1915,
-      821
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        343,
-        821
+        482,
+        823
       ],
       [
-        298,
-        821
+        509,
+        823
       ],
       [
-        317,
-        821
+        482,
+        823
       ],
       [
-        323,
-        821
-      ],
-      [
-        349,
-        821
-      ],
-      [
-        285,
-        821
+        439,
+        823
       ]
     ],
-    "referenceHash": "66689bd4c4",
-    "thumbnailHash": "766014fd3e",
+    "referenceHash": "c879a0e3a6",
+    "thumbnailHash": "a385972d58",
     "frameHashes": [
-      "ffad4430fb",
-      "fa809feffa",
-      "188a9413bd",
-      "31fa717091",
-      "5c1dd23fbc",
-      "ac85519a34"
+      "853ab5f3bc",
+      "261d1596f6",
+      "2830bc0f58",
+      "03e62bd25a"
     ]
   },
   "credits": {

@@ -2,47 +2,37 @@
   "exerciseId": "sumo-deadlift",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1916,
-      821
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        367,
-        821
+        509,
+        822
       ],
       [
-        326,
-        821
+        478,
+        822
       ],
       [
-        321,
-        821
+        446,
+        822
       ],
       [
-        286,
-        821
-      ],
-      [
-        287,
-        821
-      ],
-      [
-        329,
-        821
+        472,
+        822
       ]
     ],
-    "referenceHash": "2b04a7dd4d",
-    "thumbnailHash": "8d619f403c",
+    "referenceHash": "6d0d6a4564",
+    "thumbnailHash": "e2cd76850f",
     "frameHashes": [
-      "08dd656e55",
-      "2b27972977",
-      "6169469d00",
-      "553c11a9da",
-      "880d87823e",
-      "5c309b6b8b"
+      "82e99c5f1e",
+      "452f83b1aa",
+      "36c723a6e1",
+      "270d1eed0a"
     ]
   },
   "credits": {
