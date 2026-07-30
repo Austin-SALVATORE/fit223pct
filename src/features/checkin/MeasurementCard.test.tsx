@@ -67,6 +67,32 @@ describe('revealing a control is not entering a value', () => {
     })
   })
 
+  it('persists nothing when the revealed field is focused and left', async () => {
+    // Direct entry added a second way to touch a control without choosing a
+    // value: tapping the number opens a text field. Opening and leaving it is
+    // still not entering a reading, so the invariant has to hold through the
+    // typing path as well as the reveal path.
+    renderCard()
+    await userEvent.click(screen.getByRole('button', { name: 'Add a body-fat reading' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Body fat' }))
+    await userEvent.tab()
+
+    expect(await storedRow()).toBeUndefined()
+  })
+
+  it('persists a typed body-fat reading, because typing is a choice', async () => {
+    renderCard()
+    await userEvent.click(screen.getByRole('button', { name: 'Add a body-fat reading' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Body fat' }))
+    const input = screen.getByRole('textbox', { name: 'Body fat' })
+    await userEvent.clear(input)
+    await userEvent.type(input, '17.5{Enter}')
+
+    await waitFor(async () => {
+      expect((await storedRow())?.bodyFatPercent).toBe(17.5)
+    })
+  })
+
   it('keeps the revealed stepper on screen after an adjustment', async () => {
     // Guards a subtler version of the same bug: if reveal state were derived
     // only from the stored value, the control would vanish on any write that

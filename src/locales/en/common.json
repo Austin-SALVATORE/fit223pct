@@ -30,6 +30,7 @@
   "settings": "Settings",
   "stepper": {
     "decrease": "Decrease {{label}}",
+    "edit": "Edit {{label}}",
     "increase": "Increase {{label}}"
   },
   "equipment": {

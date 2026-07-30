@@ -30,6 +30,7 @@
   "settings": "设置",
   "stepper": {
     "decrease": "减少{{label}}",
+    "edit": "编辑{{label}}",
     "increase": "增加{{label}}"
   },
   "equipment": {

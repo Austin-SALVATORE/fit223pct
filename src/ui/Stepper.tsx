@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 interface StepperProps {
@@ -49,11 +49,45 @@ interface StepperProps {
 export function Stepper({ label, value, step, min, max, unit, onChange, variant = 'focal' }: StepperProps) {
   const { t } = useTranslation('common')
   const form = variant === 'form'
+  /**
+   * Direct entry. Reaching 82.5 from 70 at `step={0.1}` is ~125 taps, which
+   * is what the buttons alone asked of anyone with a real number in mind.
+   * Typing is additive — the buttons are untouched — so this adds a route to
+   * the same value rather than replacing one.
+   */
+  const [draft, setDraft] = useState<string | null>(null)
+  const editing = draft !== null
+  const inputRef = useRef<HTMLInputElement>(null)
   const repeat = useRef<ReturnType<typeof setInterval> | null>(null)
   const latest = useRef({ value, step, min, max, onChange })
   latest.current = { value, step, min, max, onChange }
 
   useEffect(() => stopRepeat, [])
+
+  useEffect(() => {
+    if (editing) inputRef.current?.select()
+  }, [editing])
+
+  /**
+   * **Validation happens here and nowhere else.** Clamping per keystroke
+   * looks equivalent and makes the field unusable: height has `min={120}`, so
+   * the "1" of "180" would be rewritten to "120" before the user reached the
+   * "8", and the value becomes unreachable by typing.
+   *
+   * Anything unparseable — empty, `-`, `abc`, a lone `.` — restores the
+   * previous value. Never `NaN`, and never `0`: a silent zero in a weight
+   * field is a data-integrity bug, and coercing a missing weight to 0 once
+   * produced false "stagnant" claims (M4).
+   */
+  function commit() {
+    const parsed = draft === null ? null : parseDecimal(draft)
+    setDraft(null)
+    if (parsed === null) return
+    const next = clamp(round(parsed), min, max)
+    // Unchanged means no write — which is what keeps "focus the field and
+    // blur again" from persisting a body-fat reading nobody entered.
+    if (next !== value) onChange(next)
+  }
 
   function apply(direction: 1 | -1) {
     const { value, step, min, max, onChange } = latest.current
@@ -84,14 +118,64 @@ export function Stepper({ label, value, step, min, max, unit, onChange, variant 
           onPress={() => startRepeat(-1)}
           onRelease={stopRepeat}
         />
-        <output
-          data-numeric
-          aria-label={label}
-          className="min-w-14 text-center text-3xl font-semibold text-ink"
-        >
-          {formatNumber(value)}
-          {unit && <span className="ml-0.5 text-lg font-normal text-ink-tertiary">{unit}</span>}
-        </output>
+        {editing ? (
+          <input
+            ref={inputRef}
+            type="text"
+            /*
+              `type="text"` rather than `type="number"`, because a French user
+              on a decimal keypad types `82,5` and `type="number"` rejects the
+              comma outright — yielding an empty value, so their weight would
+              silently fail to save. parseDecimal accepts both separators.
+
+              inputMode picks the keypad: `decimal` where the step is
+              fractional (weight 0.1, waist and body fat 0.5), `numeric` where
+              it is whole (height, reps). Wrong here means a full alphabetic
+              keyboard for a number, on a phone.
+
+              appearance-none / min-w-0 / box-border from the start — the iOS
+              width class we already met on the date input.
+            */
+            inputMode={step < 1 ? 'decimal' : 'numeric'}
+            aria-label={label}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            onBlur={commit}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault()
+                commit()
+              }
+              if (event.key === 'Escape') {
+                event.preventDefault()
+                setDraft(null)
+              }
+            }}
+            className="box-border w-24 min-w-0 appearance-none rounded-card border border-amber bg-raised text-center text-3xl font-semibold text-ink"
+          />
+        ) : (
+          <button
+            type="button"
+            aria-label={t('stepper.edit', { label })}
+            onClick={() => setDraft(formatNumber(value))}
+            className="rounded-card px-1 transition-colors hover:bg-raised"
+          >
+            {/*
+              The value keeps its own `role="status"` so a change made with the
+              buttons is still announced. The button around it carries a
+              separate name for the edit affordance, so the two never compete:
+              only one of them is ever the control being described.
+            */}
+            <output
+              data-numeric
+              aria-label={label}
+              className="block min-w-14 text-center text-3xl font-semibold text-ink"
+            >
+              {formatNumber(value)}
+              {unit && <span className="ml-0.5 text-lg font-normal text-ink-tertiary">{unit}</span>}
+            </output>
+          </button>
+        )}
         <StepButton
           symbol="+"
           ariaLabel={t('stepper.increase', { label })}
@@ -134,6 +218,19 @@ function StepButton({ symbol, ariaLabel, onPress, onRelease }: StepButtonProps) 
       {symbol}
     </button>
   )
+}
+
+/**
+ * Accepts either decimal separator, and rejects everything that is not a
+ * number outright rather than letting `Number()` produce a plausible-looking
+ * result. `''`, `'-'`, `'abc'` and `'.'` all return null; `'82,5'`, `'82.5'`,
+ * `'5.'` and `'.5'` all parse.
+ */
+function parseDecimal(raw: string): number | null {
+  const normalized = raw.trim().replace(',', '.')
+  if (!/^-?(\d+(\.\d*)?|\.\d+)$/.test(normalized)) return null
+  const parsed = Number(normalized)
+  return Number.isFinite(parsed) ? parsed : null
 }
 
 function round(value: number): number {
