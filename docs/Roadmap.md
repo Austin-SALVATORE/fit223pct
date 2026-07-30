@@ -42,7 +42,7 @@ direction moved from comparing two endpoints to comparing half-window
 medians; the consistency rate is now bounded at 1; the weekly review is no
 longer Monday-only. See docs/Progress.md.
 
-## Milestone 5 — Polish & Phase 2
+## Milestone 5 — Polish & Phase 2 ✓ (shipped)
 
 PWA install/offline hardening, motion polish pass, accessibility audit,
 Fitness Park (gym equipment) program for Phase 2, program transition UX.
@@ -73,7 +73,7 @@ being the recommendation — and a tap-to-start hold timer for seconds-mode
 sets (side plank and similar), which pre-fills the manual seconds Stepper
 on stop rather than replacing it.
 
-## Milestone 6 — Daily Program
+## Milestone 6 — Daily Program ✓ (shipped)
 
 Programs evolve from strength calendars into daily fitness programs
 (docs/DailyProgram.md): every weekday can carry an authored activity —
@@ -136,10 +136,31 @@ check-in rating), one live i18n bug on Today (in-progress hero renders
 untranslated), and a systemic guard — a lint asserting no seed field is
 read directly outside the i18n hooks — that retires the whole class the
 weekdayActivities bug belonged to. Two owner decisions and one
-sequencing constraint are called out in the doc. The dead-code review's
-non-locale scope (unused exports, stale docs, dead fixtures) was not
-completed and needs a follow-up pass. Not yet scheduled into a
-milestone.
+sequencing constraint are called out in the doc.
+
+**Status, verified 30 Jul — mostly done, and this file said otherwise
+for three days.** All four Blockers and all nine Serious items are
+fixed, except **A5**, which the **owner closed on 30 Jul** having looked
+on device and observed no problem. The 1.26:1 measurement stays on the
+record, so it reopens if the app ever has a second user. The §4 systemic
+guard landed as `src/i18n/seedFieldAccess.guard.test.ts`.
+
+What actually remains:
+
+- **Minor tier (§3)** — I4 and A10 are now closed. A10 had first been
+  made *worse*: hold-acceleration took the Stepper's live region from
+  ~7 announcements/sec to a measured 18 in a two-second hold, because
+  the accessibility backlog was not consulted when acceleration was
+  ruled. **A9 and A12 are confirmed still open**, with drifted line
+  references. I5, I6, A11, A13 and A14 are **unverified** — nobody has
+  looked, which is not the same as fine.
+- **Dead-code, non-locale scope** (unused exports, stale docs, dead
+  fixtures) — **still unaudited**, unchanged since 27 Jul.
+
+The general lesson outlives the tally: **a fix list nobody annotates
+becomes a list of things that look undone.** Twelve items were fixed and
+recorded nowhere, and the board was reported wrong from this file until
+someone checked the code instead of the document.
 
 ## Milestone 9 (proposed, ON HOLD — owner decision 22 Jul) — Smart Connector
 
@@ -155,7 +176,23 @@ write-back and the watch app are separate future milestones; BLE and
 Xiaomi cloud rejected. Blocked behind M8 and the owner decisions in
 the doc's §11.
 
-## Milestone 10 (next — owner-requested 29 Jul) — User profile & energy baseline
+## Milestone 10 ✓ (shipped 30 Jul) — User profile & energy baseline
+
+**Closed 30 Jul**, verified item by item against `docs/UserProfile.md`:
+`profileConfirmedAt`, required sex, birth date rather than a stored age,
+targets, the persisted PAL band, Mifflin + Cunningham + FAO/WHO/UNU
+constants with their provenance, the `sedentary.min > 1.2` guard, the
+predict-nothing guard, weight and body-fat trends, and all-three-bands
+maintenance when no band is stated. Four phases in the required order
+plus the PAL band selector.
+
+Two defects of the *same class* were found and fixed inside the
+milestone written to prevent it — a guess becoming load-bearing:
+`DEFAULT_PAL = 'sedentary'` was being attributed to the user, and the
+body-fat control persisted 20% on reveal. A third, the check-in card's
+`70 kg` placeholder, was fixed after (`3c420c1`). **A never-default
+invariant holds only where something checks it; prose is not a
+mechanism.**
 
 The stable facts about the user, in one place: height, age, sex,
 current weight and body-fat percentage, plus their targets. From those,
@@ -182,7 +219,44 @@ promising body-transformation outcomes, and a target weight beside a
 trend line is exactly the shape that invites a projection. Store the
 goal, show progress, predict nothing.
 
-## Milestone 11 (owner-requested 29 Jul) — AI nutrition logging
+## Milestone 11 (design delivered 30 Jul) — AI nutrition logging
+
+**Plan: `~/.claude/plans/nutrition-m11.md`.** The earlier
+`nutrition.md` carries a SUPERSEDED banner — do not implement from it.
+
+Three of the four §1 blockers are ruled: a **Vercel backend** (which
+knowingly changes the local-first constraint), **no daily score**, and
+**targets belong to the owner's coach**. Protein uses the owner's
+rescaled 1.4–2.0 g/kg.
+
+Decisions taken in the plan, with the reasoning that matters:
+
+- **Two model roles, not the three proposed. OCR is dropped**, because
+  its only job here is reading a nutrition label — which is packaged-food
+  recognition, already out of scope in §5 of the spec. Photographing a
+  plate is estimation, not reading.
+- **Conversation and vision are one model.** One prompt, one schema, one
+  failure mode; a cheaper text-only parser stays available later as a
+  measured optimisation.
+- **The RAG store is local**, measured rather than argued: 1536 dims over
+  a 500-food corpus is 0.85 ms/query at 2.93 MB. Cost is no cross-device
+  sync — and `embeddingModel` must be in the schema from day one, since
+  changing the model invalidates every stored vector.
+- **Normalisation before embedding.** 24 of 27 constructed variants
+  collapse without a model; embeddings earn their place on cross-language
+  and synonyms only.
+- **No cost-per-meal figure is stated**, deliberately — §4 is a cost
+  model with the rates as inputs. Retrieval reduces *expensive* calls,
+  not the number of calls, because free-text parsing is itself a call.
+- **Estimation-never-prediction is structural**, mirroring M10: a
+  `.strict()` schema that rejects an injected `advice` field, a name
+  guard like `goals.guard.test.ts`, and an import-closure guard so the
+  evaluator cannot import the LLM client.
+
+**Two owner decisions remain**, both behind one function so deferring
+costs nothing: where embedding runs (backend recommended) and where the
+RAG store lives (local recommended). Real provider rates are needed
+before phases 3–5.
 
 Meals logged by text, photo or both; an LLM estimates calories and
 macros with confidence and stated assumptions; a daily summary judged

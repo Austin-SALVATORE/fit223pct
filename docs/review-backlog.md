@@ -1,9 +1,31 @@
 # Post-M8 review backlog
 
 Findings from a parallel three-lens review (accessibility, i18n, dead
-code) run 27 Jul 2026 against `main` at `45e80ee`. Read-only review;
-nothing here is fixed. Each item cites `file:line`. This is a fix
-contract for the dev, not a set of instructions to the reviewer.
+code) run 27 Jul 2026 against `main` at `45e80ee`. Each item cites
+`file:line`. This is a fix contract for the dev, not a set of
+instructions to the reviewer.
+
+> **STATUS, verified 30 Jul against `origin/main`.** The line above used
+> to read "nothing here is fixed" and stayed that way for three days
+> after items started landing. **12 of the 13 Blocker and Serious items
+> are fixed**, each corroborated by a commit that is an ancestor of
+> `main` — checked item by item against the current code, not against
+> this document. The staleness was the defect: a fix list nobody
+> annotates becomes a list of things that look undone, and the board
+> gets reported wrong.
+>
+> | tier | state |
+> |---|---|
+> | 1. Blockers (A1, A2, I1, I2) | **all fixed** — `d5fdb34`, `18616d8`, `d034f44` |
+> | 2. Serious (A3, A4, A6, A7, A8, I3, I7, I8, I9) | **all fixed** — `ace867d`, `49007a3`, `7494874`, `abd0c91`, `cdc83be` |
+> | 2. Serious — **A5** | **closed 30 Jul by owner ruling.** See the item. |
+> | 3. Minor (I4, I5, I6, A9–A14) | partially swept; see per-item notes |
+> | 4. Systemic guard | **landed** — `src/i18n/seedFieldAccess.guard.test.ts`, with `18616d8` |
+> | 7. Dead-code, non-locale scope | **still unaudited** |
+>
+> Line references throughout have drifted and are no longer reliable —
+> two were measured as stale on 30 Jul (A9, A12). Search for the
+> described defect rather than trusting a line number.
 
 **Highest-leverage item first:** the systemic guard in §4 retires an
 entire bug class (the one the shipped weekdayActivities bug belonged
@@ -116,6 +138,20 @@ have no perceivable edge.
 boundaries; keep `--color-border` for decorative dividers. (The palette
 comment reasons about *text* contrast only — non-text was never covered.)
 
+**CLOSED 30 Jul — owner ruling, not a measurement change.** The owner
+looked on device and reported observing no problem. They are the sole
+user, and whether an edge is perceivable to *them* in their lighting is
+a question their eye answers and a contrast ratio does not.
+
+**The measurement is unchanged and stays on the record**: 1.26:1 against
+`surface` where WCAG 1.4.11 asks 3:1, re-verified 30 Jul with
+`src/ui/index.css:15-16` untouched since the review. So this is closed
+as *not a problem for this user*, not as *not a defect*. If the app ever
+has a second user — or if the owner's own eyesight or lighting changes
+— it returns, and the fix above is still the fix. Do not delete the
+numbers when tidying this file; a closed item with its evidence removed
+cannot be reopened on the same footing.
+
 ### A6 — Rating-picker selection conveyed by hue alone
 `src/ui/RatingPicker.tsx:39-43`; same pattern `LanguageSwitcher.tsx:34-38`.
 Selected vs unselected differ only in amber-vs-ink hue (near-identical
@@ -202,7 +238,34 @@ when they are, or the guard fails on a stale entry (by design).
 
 ## 3. Minor
 
-- **I4** — `src/ui/Stepper.tsx:116` `toFixed(1)` renders `.` in French;
+**Swept 30 Jul.** I4 and A10 are closed; A9 and A12 were re-measured and
+are still open with corrected references. I5, I6, A11, A13 and A14 were
+not examined and remain unverified — absence of a note below means
+nobody has looked, not that the item is fine.
+
+- **I4 — FIXED 30 Jul, `528d98f`.** The `toFixed(1)` this cites is gone;
+  `Stepper` now formats through `Intl.NumberFormat` keyed on the reader's
+  locale, so French both accepts and displays `82,5`. Thousands grouping
+  is deliberately off — an English comma-as-thousands beside a French
+  comma-as-decimal is one glyph with two meanings in one control.
+- **A9 — STILL OPEN**, references stale: `CheckInCard.tsx:126-134` is now
+  `:109`, `MeasurementCard.tsx:48-60` is now `:76`. Both instances exist.
+- **A10 — FIXED 30 Jul, `4c8ce88`**, and it had got **worse** before it
+  got better. The item measured ~7 announcements/sec at the old fixed
+  140ms repeat. Hold-acceleration shipped the same day took the interval
+  to a 60ms floor, and the restored-behaviour control measured **18
+  announcements in a two-second hold**. Now debounced on the *value*
+  rather than announced on release, so keyboard and typed input are
+  covered by construction rather than by wiring each path.
+  **The lesson is the sequencing:** two changes each correct alone —
+  acceleration, and a live region announcing every change — combined
+  into a defect, and the accessibility backlog was not consulted when
+  the first was ruled. Check this file before changing an interaction.
+- **A12 — STILL OPEN** at all three files; `PlanPage.tsx:112` is now
+  `:118`. There is now a shipped precedent for the fix: `MeasurementCard`
+  uses `aria-labelledby` pointing at its own `<h2>`.
+
+- **I4 (original text)** — `src/ui/Stepper.tsx:116` `toFixed(1)` renders `.` in French;
   reached with decimals at `MeasurementCard.tsx:74` (kg) and `:82` (cm).
   French needs `82,5`. The `Intl.NumberFormat` machinery already exists
   (`i18next.ts:72`); the stepper isn't wired to it.
