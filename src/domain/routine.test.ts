@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { routinePlaylist, type Routine } from './routine'
+import { routineOverview, routinePlaylist, type Routine } from './routine'
 
 function routine(steps: Routine['steps']): Routine {
   return { id: 'stretching', steps }
@@ -74,5 +74,50 @@ describe('routinePlaylist', () => {
     for (const play of plays) {
       expect(Object.keys(play).sort()).toEqual(['holdSeconds', 'index', 'side', 'stepId', 'total'])
     }
+  })
+})
+
+describe('routineOverview', () => {
+  it('counts authored stretches, not plays', () => {
+    const input = routine([
+      { id: 'hamstring', holdSeconds: 30, perSide: true },
+      { id: 'child-pose', holdSeconds: 45 },
+    ])
+
+    // Two authored stretches; three plays. Reporting 3 to the user is the
+    // defect this asserts against — nobody standing on a mat counts sides.
+    expect(routineOverview(input, 8).stretches).toBe(2)
+    expect(routinePlaylist(input)).toHaveLength(3)
+  })
+
+  it('charges one lead-in per play, so a per-side stretch pays twice', () => {
+    const oneSided = routine([{ id: 'child-pose', holdSeconds: 45 }])
+    const perSide = routine([{ id: 'hamstring', holdSeconds: 45, perSide: true }])
+
+    expect(routineOverview(oneSided, 8).seconds).toBe(53)
+    // Not 45 × 2 + 8: the second side gets its own repositioning time, which
+    // is why the shipped routine runs longer than the coach spec's own
+    // per-stretch arithmetic.
+    expect(routineOverview(perSide, 8).seconds).toBe(106)
+  })
+
+  it('moves with the content — a longer hold is a longer routine, with no edit here', () => {
+    const before = routineOverview(routine([{ id: 'child-pose', holdSeconds: 45 }]), 8).seconds
+    const after = routineOverview(routine([{ id: 'child-pose', holdSeconds: 60 }]), 8).seconds
+
+    expect(after - before).toBe(15)
+  })
+
+  it('is zero on both counts for an empty routine', () => {
+    expect(routineOverview(routine([]), 8)).toEqual({ stretches: 0, seconds: 0 })
+  })
+
+  it('does not mutate the routine it was given', () => {
+    const input = routine([{ id: 'hamstring', holdSeconds: 30, perSide: true }])
+    const snapshot = structuredClone(input)
+
+    routineOverview(input, 8)
+
+    expect(input).toEqual(snapshot)
   })
 })

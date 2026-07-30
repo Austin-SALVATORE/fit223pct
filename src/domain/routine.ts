@@ -76,3 +76,40 @@ export function routinePlaylist(routine: Routine): RoutinePlay[] {
     total: expanded.length,
   }))
 }
+
+/** What a routine looks like before you commit to it. */
+export interface RoutineOverview {
+  /**
+   * Authored stretches — deliberately **not** the play count.
+   *
+   * `RoutinePlay.total` is the number of screens the player will show, which
+   * is larger: a per-side step becomes two plays. Standing in a living room
+   * looking at eight stretches, "14" is not a number anyone recognises, so
+   * the preview counts what was authored and the position line inside the
+   * routine keeps counting plays. The two disagreeing is correct.
+   */
+  stretches: number
+  /**
+   * Whole-routine duration, with **one lead-in per play** rather than per
+   * stretch — which is why `recovery-stretch-v1` runs 547 s (9:07) against
+   * the coach spec's 8:20 arithmetic. Changing a hold in the seed moves this
+   * number with no edit here, which is the reason it is computed at all.
+   */
+  seconds: number
+}
+
+/**
+ * The two numbers a ready screen needs, from one place so they cannot be
+ * sourced inconsistently.
+ *
+ * `leadInSeconds` is a parameter rather than a constant here because the
+ * value is coach content (ruling A) and lives with its own docblock beside
+ * the player that issues it. Domain owns the arithmetic, not the policy.
+ */
+export function routineOverview(routine: Routine, leadInSeconds: number): RoutineOverview {
+  const plays = routinePlaylist(routine)
+  return {
+    stretches: routine.steps.length,
+    seconds: plays.reduce((total, play) => total + leadInSeconds + play.holdSeconds, 0),
+  }
+}

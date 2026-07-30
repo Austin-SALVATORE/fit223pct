@@ -1,6 +1,12 @@
 {
   "leaveAriaLabel": "Quitter cette routine et revenir à Aujourd'hui",
   "startRoutine": "Lancer cette routine",
+  "ready": {
+    "summary_one": "{{count}} étirement · environ {{minutes}} min",
+    "summary_other": "{{count}} étirements · environ {{minutes}} min",
+    "firstUp": "Pour commencer : {{stepName}}",
+    "start": "Commencer"
+  },
   "leadIn": "Mets-toi en position",
   "position": "{{index}} sur {{total}}",
   "side": {

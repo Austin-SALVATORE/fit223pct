@@ -1,6 +1,12 @@
 {
   "leaveAriaLabel": "Leave this routine and go back to Today",
   "startRoutine": "Start this routine",
+  "ready": {
+    "summary_one": "{{count}} stretch · about {{minutes}} min",
+    "summary_other": "{{count}} stretches · about {{minutes}} min",
+    "firstUp": "First up: {{stepName}}",
+    "start": "Start"
+  },
   "leadIn": "Get into position",
   "position": "{{index}} of {{total}}",
   "side": {

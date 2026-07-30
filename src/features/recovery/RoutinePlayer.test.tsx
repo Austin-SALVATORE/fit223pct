@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import i18n from '@/i18n/i18next'
@@ -42,6 +42,9 @@ beforeAll(() => {
     'en',
     'seed',
     {
+      routine: {
+        'test-stretching': { name: 'Recovery stretch' },
+      },
       routineStep: {
         'test-hamstring': { name: 'Hamstring stretch', cue: 'Keep the back leg straight.' },
         'test-child-pose': { name: 'Child pose' },
@@ -68,6 +71,29 @@ function renderPlayer(routineId = 'test-stretching') {
 }
 
 /**
+ * Gets past the ready screen.
+ *
+ * `fireEvent` rather than `userEvent`: half these tests run on fake timers,
+ * and userEvent's own delays then have to be threaded through
+ * `advanceTimers` on every call site for what is a plain button click. The
+ * ready screen's *own* interaction tests use userEvent, so the realistic
+ * pointer path is still covered.
+ */
+async function start() {
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }))
+  })
+}
+
+/** Renders and starts, for the tests that are about the routine, not the gate. */
+async function renderPlaying(routineId = 'test-stretching') {
+  const result = renderPlayer(routineId)
+  await screen.findByRole('button', { name: 'Start' })
+  await start()
+  return result
+}
+
+/**
  * `shouldAdvanceTime` matters: plain fake timers also freeze the clock that
  * testing-library's waitFor/findBy poll on, so every async query times out
  * even when the DOM is already correct.
@@ -88,9 +114,92 @@ async function tick(seconds: number) {
 /** AnimatePresence's exit runs before the next play mounts — it needs room. */
 const AFTER_ADVANCE = { timeout: 3000 }
 
+describe('the ready screen', () => {
+  it('opens on a preview, not a running routine', async () => {
+    renderPlayer()
+
+    expect(await screen.findByRole('heading', { name: 'Recovery stretch' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument()
+    // Nothing about the routine is under way: no lead-in copy, no stretch.
+    expect(screen.queryByText('Get into position')).toBeNull()
+    expect(screen.queryByRole('heading', { name: /Hamstring stretch/ })).toBeNull()
+  })
+
+  it('does not start the routine as time passes', async () => {
+    // The regression test for the reported defect: the owner tapped a stretch
+    // and the eight-second lead-in was already burning with the phone still
+    // in their hand. Without this, the gate can be removed — or an effect can
+    // start the interval early again — and every other test still passes,
+    // because they all click Start first.
+    useControlledClock()
+    renderPlayer()
+    await act(async () => {})
+
+    await tick(LEAD_IN_SECONDS + 60)
+
+    expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument()
+    expect(screen.queryByText('Get into position')).toBeNull()
+    expect(screen.queryByRole('heading', { name: /Hamstring stretch/ })).toBeNull()
+  })
+
+  it('previews the count and duration, derived rather than written down', async () => {
+    renderPlayer()
+    await screen.findByRole('heading', { name: 'Recovery stretch' })
+
+    // Two authored stretches, three plays — the number shown is the one a
+    // person recognises, not the number of screens the player will show.
+    // Duration is 3 lead-ins (24 s) + 30 + 30 + 20 = 104 s, so "about 2 min".
+    expect(screen.getByText('2 stretches · about 2 min')).toBeInTheDocument()
+    expect(screen.queryByText(/3 stretches/)).toBeNull()
+  })
+
+  it('names the first stretch, so the decision is informed', async () => {
+    renderPlayer()
+    await screen.findByRole('heading', { name: 'Recovery stretch' })
+
+    expect(screen.getByText('First up: Hamstring stretch')).toBeInTheDocument()
+  })
+
+  it('takes focus on the heading and offers Start as a real button', async () => {
+    renderPlayer()
+
+    const heading = await screen.findByRole('heading', { name: 'Recovery stretch' })
+    await waitFor(() => expect(heading).toHaveFocus())
+    // A real button, not a styled div or a link: Enter and Space have to work,
+    // and the rest of the player's controls set that expectation.
+    expect(screen.getByRole('button', { name: 'Start' }).tagName).toBe('BUTTON')
+  })
+
+  it('leaves from the ready screen exactly as it does mid-routine', async () => {
+    renderPlayer()
+    await screen.findByRole('heading', { name: 'Recovery stretch' })
+
+    await userEvent.click(screen.getByRole('link', { name: /^Leave this routine/ }))
+
+    expect(await screen.findByText('TODAY PROBE')).toBeInTheDocument()
+  })
+
+  it('hands play one a full lead-in, however long the decision took', async () => {
+    useControlledClock()
+    renderPlayer()
+    await act(async () => {})
+
+    // Twenty seconds of deliberation — more than the whole lead-in.
+    await tick(20)
+    await start()
+
+    expect(screen.getByText('Get into position')).toBeInTheDocument()
+    // The gate does not consume the lead-in: coach ruling A is physical
+    // transition time and is owed in full from the moment Start is pressed.
+    expect(screen.getByText('0:08')).toBeInTheDocument()
+    await tick(LEAD_IN_SECONDS - 1)
+    expect(screen.getByText('Get into position')).toBeInTheDocument()
+  })
+})
+
 describe('the routine player', () => {
   it('opens on the first play, naming the step and its side', async () => {
-    renderPlayer()
+    await renderPlaying()
 
     expect(
       await screen.findByRole('heading', { name: 'Hamstring stretch — left side' }),
@@ -100,8 +209,7 @@ describe('the routine player', () => {
 
   it('leads in before the hold, and does not start the hold timer during it', async () => {
     useControlledClock()
-    renderPlayer()
-    await act(async () => {})
+    await renderPlaying()
 
     expect(screen.getByText('Get into position')).toBeInTheDocument()
 
@@ -117,8 +225,7 @@ describe('the routine player', () => {
 
   it('auto-advances exactly one play when the hold reaches zero', async () => {
     useControlledClock()
-    renderPlayer()
-    await act(async () => {})
+    await renderPlaying()
 
     await tick(LEAD_IN_SECONDS + 30 + 1)
 
@@ -139,7 +246,7 @@ describe('the routine player', () => {
     // Real timers throughout: switching implementations mid-test leaves the
     // player's interval uncleared, which then leaks into the next test.
     // Next is the same advance path auto-advance uses.
-    renderPlayer()
+    await renderPlaying()
     await screen.findByRole('heading', { name: 'Hamstring stretch — left side' })
 
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
@@ -156,7 +263,7 @@ describe('the routine player', () => {
   })
 
   it('exposes the cue as the heading\'s description, not a live region', async () => {
-    renderPlayer()
+    await renderPlaying()
 
     const heading = await screen.findByRole('heading', { name: 'Hamstring stretch — left side' })
     const cueId = heading.getAttribute('aria-describedby') ?? ''
@@ -164,7 +271,7 @@ describe('the routine player', () => {
   })
 
   it('keeps the countdown digits out of the announcement budget', async () => {
-    renderPlayer()
+    await renderPlaying()
     await screen.findByRole('heading', { name: /Hamstring stretch/ })
 
     // The A10 defence: an implicit live region ticking once a second is a
@@ -177,8 +284,7 @@ describe('the routine player', () => {
   it('pauses as a toggle with a stable name, and stops the countdown', async () => {
     useControlledClock()
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
-    renderPlayer()
-    await act(async () => {})
+    await renderPlaying()
 
     const pause = screen.getByRole('button', { name: 'Pause' })
     expect(pause).toHaveAttribute('aria-pressed', 'false')
@@ -194,7 +300,7 @@ describe('the routine player', () => {
   })
 
   it('moves one play at a time with Next and Back, clamping at the start', async () => {
-    renderPlayer()
+    await renderPlaying()
     await screen.findByRole('heading', { name: 'Hamstring stretch — left side' })
 
     // Back is present but inert on the first play — it clamps, never wraps.
@@ -212,7 +318,7 @@ describe('the routine player', () => {
   })
 
   it('says what happens next, before it happens', async () => {
-    renderPlayer()
+    await renderPlaying()
     await screen.findByRole('heading', { name: 'Hamstring stretch — left side' })
     expect(screen.getByText('Next: Hamstring stretch')).toBeInTheDocument()
 
@@ -223,7 +329,7 @@ describe('the routine player', () => {
   })
 
   it('leaves with a single tap and no confirm step', async () => {
-    renderPlayer()
+    await renderPlaying()
     await screen.findByRole('heading', { name: /Hamstring stretch/ })
 
     // A confirm here would assert that leaving costs you something, which is
@@ -234,7 +340,7 @@ describe('the routine player', () => {
   })
 
   it('ends with no count, no duration, no number of any kind', async () => {
-    renderPlayer()
+    await renderPlaying()
     await screen.findByRole('heading', { name: /Hamstring stretch/ })
 
     for (let i = 0; i < 3; i += 1) {
@@ -246,8 +352,39 @@ describe('the routine player', () => {
     // screen reading "12 stretches, 9 minutes" writes nothing and imports
     // nothing, so both no-tracking guards pass while it is exactly what the
     // owner ruled out. The only mechanical defence is refusing digits.
+    //
+    // The ready screen shows those same two numbers and is deliberately
+    // outside this subtree: a preview informs a decision you have not made,
+    // where the identical numbers afterwards would be a report on what you
+    // did. Scoping to the end screen is what keeps the assertion this blunt —
+    // it never needed loosening to let the preview in.
     const endScreen = heading.closest('div')
     expect(endScreen?.textContent ?? '').not.toMatch(/\d/)
+  })
+
+  it('holds the screen awake only once the routine is actually running', async () => {
+    // The ready screen is a decision moment, so someone who opens it and
+    // walks away must not be pinning the display on. Asserted at the player
+    // level rather than the hook's: useWakeLock.test.tsx proves the hook is
+    // correct given `active`, and `active` is what this fix changed.
+    const requests: string[] = []
+    Object.defineProperty(navigator, 'wakeLock', {
+      value: {
+        request: (type: string) => {
+          requests.push(type)
+          return Promise.resolve({ released: false, release: () => Promise.resolve() })
+        },
+      },
+      configurable: true,
+      writable: true,
+    })
+
+    renderPlayer()
+    await screen.findByRole('heading', { name: 'Recovery stretch' })
+    await waitFor(() => expect(requests).toEqual([]))
+
+    await start()
+    await waitFor(() => expect(requests).toEqual(['screen']))
   })
 
   it('degrades to plain text for an unknown routine, never a dead end', async () => {

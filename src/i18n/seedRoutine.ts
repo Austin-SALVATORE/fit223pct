@@ -15,6 +15,26 @@ import { useTranslation } from 'react-i18next'
  * the app's translated words. Both are correct — the item is the user's
  * content, the routine is the app's.
  */
+/**
+ * The routine's own display name, resolved from the routine id.
+ *
+ * Keyed per routine rather than being one string in the `recovery` namespace,
+ * because the catalogue is a catalogue: a second routine has a different name
+ * and must get it without a code change. Same reason `routineStep` is keyed
+ * by step id.
+ *
+ * Note this is *not* the activity-item label a user tapped to get here. That
+ * label belongs to the program — coach content, and verbatim when the program
+ * is imported — while this belongs to the routine, which is always the app's.
+ * "Stretching" on Today opening "Recovery stretch" is the same correct
+ * split described below for step prose.
+ */
+export function useRoutineName(routineId: string): string {
+  const { t } = useTranslation('seed')
+  if (routineId === '') return ''
+  return t(`routine.${routineId}.name`)
+}
+
 export function useRoutineStepName(stepId: string): string {
   const { t } = useTranslation('seed')
   // Same empty-id guard as seedExercise's hooks: callers may hold a

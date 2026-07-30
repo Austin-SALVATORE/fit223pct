@@ -443,6 +443,11 @@
       }
     }
   },
+  "routine": {
+    "recovery-stretch-v1": {
+      "name": "Étirements de récupération"
+    }
+  },
   "routineStep": {
     "wall-chest-stretch": {
       "name": "Étirement des pectoraux au mur",

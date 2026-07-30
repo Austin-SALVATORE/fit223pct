@@ -46,6 +46,9 @@ beforeAll(async () => {
   // way phase 5's seed.json will — otherwise every render logs a missing key
   // and the headings read as raw key paths.
   i18n.addResourceBundle('en', 'seed', {
+    routine: {
+      'test-stretching': { name: 'Recovery stretch' },
+    },
     routineStep: {
       'test-hamstring': { name: 'Hamstring stretch', cue: 'Keep the back leg straight.' },
       'test-child-pose': { name: 'Child pose' },
@@ -95,6 +98,9 @@ describe('a routine writes nothing', () => {
     const before = await snapshotDatabase()
 
     renderPlayer()
+    // Through the ready gate first: a routine now begins with an explicit
+    // Start, and this test's subject is the whole play-through, gate included.
+    await userEvent.click(await screen.findByRole('button', { name: 'Start' }))
     await screen.findByRole('heading', { name: 'Hamstring stretch — left side' })
 
     // Driven with Next rather than by waiting out real timers — this test is

@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { routinePlaylist, type RoutinePlay } from '@/domain/routine'
+import { routineOverview, routinePlaylist, type Routine, type RoutinePlay } from '@/domain/routine'
 import { routineById } from '@/data/seed/routines'
 import { PRODUCT_NAME } from '@/lib/brand'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { useWakeLock } from '@/lib/useWakeLock'
 import { routineStepAsset } from '@/lib/routineAsset'
-import { useRoutineStepCue, useRoutineStepName } from '@/i18n/seedRoutine'
+import { useRoutineName, useRoutineStepCue, useRoutineStepName } from '@/i18n/seedRoutine'
 import { TimerRing } from '@/ui/TimerRing'
 
 /**
@@ -52,6 +52,7 @@ export function RoutinePlayer() {
   const routine = routineId ? routineById(routineId) : undefined
   const plays = useMemo(() => (routine ? routinePlaylist(routine) : []), [routine])
 
+  const [started, setStarted] = useState(false)
   const [playIndex, setPlayIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const [finished, setFinished] = useState(false)
@@ -59,7 +60,11 @@ export function RoutinePlayer() {
   // "Is a routine playing" — not "is the timer running". Pause keeps the
   // lock, because a screen going dark while you adjust position is the
   // defect this exists to prevent. The end screen drops it.
-  useWakeLock(plays.length > 0 && !finished)
+  //
+  // `started` is part of the condition rather than an omission: the ready
+  // screen is a decision, not a stretch, so someone who opens it and puts the
+  // phone down should not be holding the display awake indefinitely.
+  useWakeLock(started && plays.length > 0 && !finished)
 
   // A takeover route outside AppShell has no route-title handling of its own.
   useEffect(() => {
@@ -76,7 +81,7 @@ export function RoutinePlayer() {
     })
   }, [plays.length])
 
-  if (plays.length === 0) {
+  if (plays.length === 0 || !routine) {
     return (
       <Fallback body={t('notFound.body')} backLabel={t('notFound.backToToday')} />
     )
@@ -87,18 +92,16 @@ export function RoutinePlayer() {
     return <EndScreen />
   }
 
+  if (!started) {
+    return <ReadyScreen routine={routine} onStart={() => setStarted(true)} />
+  }
+
   const play = plays[playIndex]
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-8 pt-[max(1rem,env(safe-area-inset-top))]">
+    <Takeover>
       <header className="flex items-center gap-4">
-        <Link
-          to="/"
-          aria-label={t('leaveAriaLabel')}
-          className="-ml-2 flex h-10 w-10 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
-        >
-          ✕
-        </Link>
+        <LeaveLink />
         <p className="flex-1 text-sm text-ink-tertiary" data-numeric>
           {t('position', { index: play.index, total: play.total })}
         </p>
@@ -130,7 +133,95 @@ export function RoutinePlayer() {
           />
         </motion.div>
       </AnimatePresence>
+    </Takeover>
+  )
+}
+
+/** The full-screen frame both the ready screen and a play sit in. */
+function Takeover({ children }: { children: ReactNode }) {
+  return (
+    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-8 pt-[max(1rem,env(safe-area-inset-top))]">
+      {children}
     </div>
+  )
+}
+
+/**
+ * Leaving, identical from the ready screen and from mid-routine.
+ *
+ * Shared rather than duplicated so the two cannot drift: the ready screen is
+ * the one place a user is most likely to change their mind, and an ✕ that
+ * behaved differently there would be the worst possible place for it.
+ */
+function LeaveLink() {
+  const { t } = useTranslation('recovery')
+  return (
+    <Link
+      to="/"
+      aria-label={t('leaveAriaLabel')}
+      className="-ml-2 flex h-10 w-10 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
+    >
+      ✕
+    </Link>
+  )
+}
+
+/**
+ * What the routine is, before it starts running.
+ *
+ * The defect this fixes: tapping a stretch on Today dropped you straight into
+ * a running lead-in, so the eight seconds were burning while the phone was
+ * still in your hand. Opening a screen is not the same act as committing to
+ * start.
+ *
+ * **This does not replace the lead-in, and must not shorten it.** They answer
+ * different questions — the gate is "am I doing this", the lead-in is "am I in
+ * position" (coach ruling A, physical transition time). Starting from here
+ * hands play one a full `LEAD_IN_SECONDS`, however long you spent deciding.
+ *
+ * The numbers are a **preview**, derived from the playlist rather than written
+ * down: a hardcoded "9 min" would be wrong the first time the coach edits a
+ * hold. They are also the one place in this player where digits are welcome —
+ * see EndScreen for why the end of a routine is the opposite case.
+ */
+function ReadyScreen({ routine, onStart }: { routine: Routine; onStart: () => void }) {
+  const { t } = useTranslation('recovery')
+  const headingRef = useFocusOnMount<HTMLHeadingElement>()
+  const routineName = useRoutineName(routine.id)
+  const firstStepName = useRoutineStepName(routine.steps[0]?.id ?? '')
+  const overview = routineOverview(routine, LEAD_IN_SECONDS)
+
+  return (
+    <Takeover>
+      <header className="flex items-center gap-4">
+        <LeaveLink />
+      </header>
+
+      <div className="flex flex-1 flex-col items-center justify-center text-center">
+        <h1 ref={headingRef} tabIndex={-1} className="text-display text-3xl text-ink">
+          {routineName}
+        </h1>
+        <p className="mt-3 text-sm text-ink-tertiary" data-numeric>
+          {t('ready.summary', {
+            count: overview.stretches,
+            // Minutes, not seconds: the exact 9:07 is precision the user has
+            // no use for standing on a mat. Rounding is a display choice, so
+            // it lives here rather than in the domain.
+            minutes: Math.round(overview.seconds / 60),
+          })}
+        </p>
+        <p className="mt-8 leading-relaxed text-ink-secondary">
+          {t('ready.firstUp', { stepName: firstStepName })}
+        </p>
+        <button
+          type="button"
+          onClick={onStart}
+          className="mt-8 w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg transition-transform active:scale-[0.98]"
+        >
+          {t('ready.start')}
+        </button>
+      </div>
+    </Takeover>
   )
 }
 
@@ -278,6 +369,14 @@ function PlayerButton({
  * pass while it is exactly the tracking affordance the owner ruled out. The
  * only defence is review, plus the deliberately blunt test asserting no
  * digit appears in this subtree.
+ *
+ * **The ban is this screen's, not the player's**, and the distinction is the
+ * timing rather than the digits. ReadyScreen shows a count and a duration
+ * because they inform a decision you have not made yet. The same two numbers
+ * *after* the routine would be a report on what you did, which is the thing
+ * the no-tracking ruling forbids. The test is scoped to this subtree for that
+ * reason — narrowing it further, or softening it, gives up the only
+ * mechanical defence there is.
  */
 function EndScreen() {
   const { t } = useTranslation('recovery')

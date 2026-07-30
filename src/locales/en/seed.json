@@ -443,6 +443,11 @@
       }
     }
   },
+  "routine": {
+    "recovery-stretch-v1": {
+      "name": "Recovery stretch"
+    }
+  },
   "routineStep": {
     "wall-chest-stretch": {
       "name": "Wall chest stretch",
