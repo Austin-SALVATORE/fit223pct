@@ -129,6 +129,55 @@ Collapsing 1.40–1.69 into one number would manufacture precision the
 source does not have — the same error as a false threshold, in a
 different place.
 
+### The band is stated by the user, never assumed — corrected 30 Jul
+
+For one release it *was* assumed. `BaselineCard` held
+`DEFAULT_PAL = 'sedentary'`, computed maintenance from it, and labelled
+the output as sedentary — attributing a guess to the user, twelve lines
+below its own docblock forbidding exactly that. The REE path honoured
+the rule; the maintenance path did not, and no test asked.
+
+This is the **same defect as the seeded `heightCm: 180`**, in the
+milestone written to prevent it. Worth stating plainly rather than
+filing as a fixed bug: a never-default invariant holds only where
+something checks it, and both violations were introduced by authors who
+had read the rule. Prose is not a mechanism.
+
+`UserSettings.activityLevel` is optional and **non-indexed, so it
+needed no Dexie version** — same reasoning as `profileConfirmedAt`.
+
+Two behaviours are load-bearing:
+
+- **Absent is a normal state of a confirmed profile, not an incomplete
+  one.** An install confirmed before the field existed keeps its
+  baseline. `confirmed` is computed before `activityLevel` and never
+  consults it, `restingEnergyExpenditure` does not read it, and it is
+  absent from the missing-input list. Making `confirmed` depend on it
+  turns 14 tests red, which is the intended volume.
+- **With no band stated, all three ranges show** — no guess, and no
+  hiding the figure either. Owner ruling. Seeing what each band implies
+  is how a person recognises which one they are, and it asserts nothing
+  about them. A stated band collapses the display to that band alone.
+
+**The FAO caveat has to reach the user, not just the constant.** PAL
+counts total daily expenditure including all non-exercise movement,
+where the fitness convention's "sedentary" is narrower — so a trainee
+who lifts three times a week will read themselves as "active" while FAO
+puts a modal Western lifestyle at ~1.60, a band boundary away. The
+option descriptions are therefore written in terms of the whole day —
+work, commute, movement — and never in terms of training frequency.
+
+**No band is recommended, highlighted, or inferred from the program.**
+Which band a trainee belongs in is a training-content judgement and
+belongs to the owner's coach, not this repo. A highlight colour on one
+row fails a test.
+
+**A deliberate copy asymmetry, ruled 30 Jul:** the all-three list uses
+short band names while the chosen state keeps its longer existing
+sentence. Each reads correctly in its own context, and rewriting
+shipped copy inside a defect fix is how unrelated regressions arrive.
+Recorded here so the next reader does not "tidy" it.
+
 **Measurement is the destination; the formula is a bootstrap.** Intake
 observed against the weight trend *measures* maintenance for this
 person, where a formula estimates it from demographics and a band
