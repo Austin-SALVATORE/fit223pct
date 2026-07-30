@@ -17,5 +17,34 @@
   "targetWeightAdd": "添加目标体重",
   "targetWeightClear": "移除",
   "targetWeightValue": "目标 {{targetWeightKg}} 公斤",
-  "save": "保存资料"
+  "save": "保存资料",
+  "baseline": {
+    "sectionLabel": "你的能量基准",
+    "heading": "能量基准",
+    "restingValue": "每天 {{kcal}} 千卡",
+    "restingWhat": "大致是你身体在静息状态下消耗的能量。",
+    "maintenanceValue": "算上活动量，每天 {{min}}–{{max}} 千卡",
+    "leanMassValue": "按去脂体重计算：每天 {{kcal}} 千卡。",
+    "provenance": "静息值用 Mifflin–St Jeor（1990），去脂体重用 Cunningham（1991），活动系数用 FAO/WHO/UNU（2001）的区间。活动系数是一个区间，因为公开发表的数值本身就是区间——这也是这里最不确定的部分。",
+    "noFigure": "还算不出基准——还缺几项信息，用猜出来的数字反而不如没有。",
+    "missingWeight": "一次记录的体重",
+    "missingHeight": "你的身高",
+    "missingBirthDate": "你的出生日期",
+    "missingSex": "性别，公式需要用到",
+    "currentWeight": "最近一次 {{weightKg}} 公斤",
+    "pal": {
+      "sedentary": "按大部分时间坐着、活动量较轻来估算。",
+      "active": "按大部分日子都比较活跃来估算。",
+      "vigorous": "按大部分日子活动量很大来估算。"
+    }
+  },
+  "goal": {
+    "heading": "你的目标",
+    "distance": "距离 {{target}} 公斤还有 {{remaining}} 公斤",
+    "direction": {
+      "increasing": "你的数据一直在上升。",
+      "steady": "你的数据一直很稳定。",
+      "decreasing": "你的数据一直在下降。"
+    }
+  }
 }

@@ -10,6 +10,7 @@ import { useLocale } from '@/i18n/useLocale'
 import { SecondaryButton } from '@/ui/SecondaryButton'
 import { LanguageSwitcher } from '@/ui/LanguageSwitcher'
 import { ProfileCard } from '@/features/profile/ProfileCard'
+import { BaselineCard } from '@/features/profile/BaselineCard'
 import type { SupportedLocale } from '@/domain/types'
 
 type ExportState = { status: 'idle' } | { status: 'done'; message: string }
@@ -62,6 +63,9 @@ export function SettingsPage() {
       {/* Profile first: it is the section a new install most needs, and the
           only one whose absence changes what the rest of the app can show. */}
       <ProfileCard />
+      {/* Renders nothing until the profile is confirmed — a baseline computed
+          before the user was asked would show the seeded height as theirs. */}
+      <BaselineCard />
 
       <section className="mt-8" aria-label={t('language.sectionLabel')}>
         <h2 className="eyebrow">{t('language.heading')}</h2>

@@ -18,5 +18,34 @@
   "targetWeightAdd": "Add a target weight",
   "targetWeightClear": "Remove",
   "targetWeightValue": "Target {{targetWeightKg}} kg",
-  "save": "Save profile"
+  "save": "Save profile",
+  "baseline": {
+    "sectionLabel": "Your energy baseline",
+    "heading": "Energy baseline",
+    "restingValue": "{{kcal}} kcal a day",
+    "restingWhat": "Roughly the energy your body uses at rest.",
+    "maintenanceValue": "{{min}}–{{max}} kcal a day with activity",
+    "leanMassValue": "From lean mass instead: {{kcal}} kcal a day.",
+    "provenance": "Mifflin–St Jeor (1990) for the resting figure, Cunningham (1991) from lean mass, and FAO/WHO/UNU (2001) activity bands. The activity band is a range because the published figure is a range — it is the least certain part of this.",
+    "noFigure": "No baseline yet — a few facts are still missing, and a figure built on guesses would be worse than none.",
+    "missingWeight": "A logged weight",
+    "missingHeight": "Your height",
+    "missingBirthDate": "Your date of birth",
+    "missingSex": "Sex, which the formula needs",
+    "currentWeight": "{{weightKg}} kg most recently",
+    "pal": {
+      "sedentary": "Assuming mostly sitting, with light activity.",
+      "active": "Assuming an active day, most days.",
+      "vigorous": "Assuming vigorous activity, most days."
+    }
+  },
+  "goal": {
+    "heading": "Your target",
+    "distance": "{{remaining}} kg from {{target}} kg",
+    "direction": {
+      "increasing": "Your measurements have been going up.",
+      "steady": "Your measurements have been steady.",
+      "decreasing": "Your measurements have been going down."
+    }
+  }
 }

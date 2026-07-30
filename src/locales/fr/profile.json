@@ -18,5 +18,34 @@
   "targetWeightAdd": "Ajouter un poids cible",
   "targetWeightClear": "Retirer",
   "targetWeightValue": "Cible {{targetWeightKg}} kg",
-  "save": "Enregistrer le profil"
+  "save": "Enregistrer le profil",
+  "baseline": {
+    "sectionLabel": "Ta base énergétique",
+    "heading": "Base énergétique",
+    "restingValue": "{{kcal}} kcal par jour",
+    "restingWhat": "À peu près l'énergie que ton corps utilise au repos.",
+    "maintenanceValue": "{{min}} à {{max}} kcal par jour avec l'activité",
+    "leanMassValue": "À partir de la masse maigre : {{kcal}} kcal par jour.",
+    "provenance": "Mifflin–St Jeor (1990) pour la valeur au repos, Cunningham (1991) à partir de la masse maigre, et les tranches d'activité FAO/OMS/UNU (2001). La tranche d'activité est un intervalle parce que la valeur publiée en est un — c'est l'élément le moins certain ici.",
+    "noFigure": "Pas encore de base — il manque quelques informations, et un chiffre construit sur des suppositions serait pire que rien.",
+    "missingWeight": "Un poids enregistré",
+    "missingHeight": "Ta taille",
+    "missingBirthDate": "Ta date de naissance",
+    "missingSex": "Le sexe, dont la formule a besoin",
+    "currentWeight": "{{weightKg}} kg au dernier relevé",
+    "pal": {
+      "sedentary": "En supposant une journée surtout assise, avec une activité légère.",
+      "active": "En supposant une journée active, la plupart du temps.",
+      "vigorous": "En supposant une activité intense, la plupart du temps."
+    }
+  },
+  "goal": {
+    "heading": "Ta cible",
+    "distance": "{{remaining}} kg de {{target}} kg",
+    "direction": {
+      "increasing": "Tes mesures sont en hausse.",
+      "steady": "Tes mesures sont stables.",
+      "decreasing": "Tes mesures sont en baisse."
+    }
+  }
 }
