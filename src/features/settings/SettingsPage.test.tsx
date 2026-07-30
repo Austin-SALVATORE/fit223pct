@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { seedDatabase } from '@/data/seed'
@@ -64,10 +64,18 @@ describe('SettingsPage', () => {
     const [filename, content] = vi.mocked(shareOrDownloadFile).mock.calls[0]
     expect(filename).toMatch(/^fit223-export-\d{4}-\d{2}-\d{2}\.json$/)
     expect(() => JSON.parse(content)).not.toThrow()
-    // Queried by its text, not by being the page's only `role="status"`:
-    // Settings now also mounts the measurement card, whose Steppers each
-    // render an `<output>`. Narrowing the selector rather than the assertion.
-    expect(await screen.findByText('Backup saved.')).toBeInTheDocument()
+    // Two properties, both load-bearing: the confirmation appears, **and** it
+    // sits in a live region so it is announced rather than only drawn.
+    //
+    // Scoped to the Backup region rather than queried page-wide, because
+    // Settings now also mounts the measurement card and a Stepper's readout is
+    // legitimately an `<output>` — i.e. also `role="status"`. A bare
+    // `findByRole('status')` is therefore ambiguous here. It was briefly
+    // replaced with a `findByText`, which resolves the ambiguity by dropping
+    // the live-region assertion entirely: remove `role="status"` from the
+    // toast and that version still passes. Scope the query, never the claim.
+    const backup = screen.getByRole('region', { name: 'Backup' })
+    expect(await within(backup).findByRole('status')).toHaveTextContent('Backup saved.')
   })
 
   it('falls back to Today when opened with no origin state (e.g. a direct URL)', async () => {
