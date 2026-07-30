@@ -51,22 +51,26 @@ export function CheckInCard({ dateKey, checkIn, readiness, locked = false }: Che
   // common case — never steals focus.
   const collapsedRef = useFocusOnChange<HTMLButtonElement>(!expanded)
 
+  /**
+   * **Merges through the repository rather than rebuilding the row here.**
+   *
+   * The old version spread the `checkIn` prop into a fresh object and wrote
+   * the whole thing back. That prop is one `useLiveQuery` frame old, so two
+   * ratings tapped inside a single frame both started from the same snapshot
+   * and the second silently dropped the first — a lost answer, invisible at
+   * the moment it happens. Five rating rows one tap apart is the most likely
+   * place in the app to hit it, not the least.
+   *
+   * The blank row lives in `checkinRepo.mergeByDate` for the same reason it
+   * did for `MeasurementCard`: this literal had already drifted, omitting
+   * `bodyFatPercent`, so a row created here differed from one created there.
+   */
   async function rate(signal: ReadinessSignal, value: Rating) {
-    const next: CheckIn = {
-      id: `checkin-${dateKey}`,
-      date: dateKey,
-      sleep: null,
-      energy: null,
-      soreness: null,
-      stress: null,
-      motivation: null,
-      weightKg: null,
-      waistCm: null,
-      ...checkIn,
-      [signal]: value,
-    }
-    await checkinRepo.put(next)
-    const nowComplete = SIGNAL_ROWS.every(({ signal: s }) => next[s] != null)
+    await checkinRepo.mergeByDate(dateKey, { [signal]: value })
+    // Deliberately still derived from the prop plus the tap just made, which
+    // is exactly what the old code computed — so the moment the card
+    // collapses, and therefore the A2 focus move, is unchanged.
+    const nowComplete = SIGNAL_ROWS.every(({ signal: s }) => s === signal || checkIn?.[s] != null)
     if (nowComplete) setEditing(false)
   }
 
