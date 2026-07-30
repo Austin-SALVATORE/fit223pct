@@ -61,6 +61,43 @@ Claims are verified by running commands, not by reading reports.
   all. (28 Jul: two bench roles spawned with task-shaped names came
   back as teammates on the lead's model, and the first was explained
   away as the definition working correctly.)
+- **A clean result from an instrument that cannot see the subject is
+  not evidence — and re-running it does not make it evidence.** This is
+  the most frequent failure in this repo. Four instances, all with the
+  same shape: `tsc --noEmit -p .` exiting 0 against `files: []`;
+  `git diff HEAD` reporting no change on a gitignored `reference.png`;
+  an i18n guard passing while its regex silently discarded every
+  `tCommon()` call; and a plural-family count read from a regex that
+  cannot see namespaces.
+
+  The trap is not the wrong answer, it is what happens next. **The
+  natural response to doubt is to run the same instrument harder** — a
+  wider character class, a second `git status`, another look at the
+  console — and the agreement reads as confirmation while the blind
+  spot is untouched. (30 Jul: the lead "corrected" a plural-family
+  count from 20 to 18, then re-ran with a wider character class and
+  took the matching answer as proof. The collision was in namespacing,
+  which no character class can reach; the wider pattern could only ever
+  have agreed. The dev re-derived it path-aware and both numbers turned
+  out to measure different things.)
+
+  So the question is never "did the check pass?" but **"could this
+  check have failed for the reason I care about?"** If you cannot say
+  how it would fail, you have not measured anything. Change
+  *instrument*, not *effort*: a different tool, a different layer, or a
+  deliberate break.
+
+- **A guard is not evidence until it has been made to fail on
+  purpose.** A test written for a bug and never seen red is
+  indistinguishable from a test that checks nothing, and it is worse
+  than no test because it stops anyone else from looking. Break the
+  thing it guards, watch it go red, name the key or line in the output,
+  restore. (30 Jul: an i18n guard shipped green with the exact key it
+  was written for deleted from every locale. Only a negative control
+  caught it.) Where a wrong "all clear" would be silent, the negative
+  control belongs to a *different* role than the author — whoever wrote
+  it already believes it works.
+
 - **A citation is a claim.** A comment, docblock, or memory note
   saying "documented in X" is not evidence that X says it — open X.
   Cross-references rot faster than the code around them, and a stale
