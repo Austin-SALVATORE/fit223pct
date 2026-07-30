@@ -568,3 +568,109 @@ describe('a sustained hold does not flood the live region (A10)', () => {
     }
   })
 })
+
+describe('an absent value renders as nothing, and a press supplies one', () => {
+  /**
+   * The `70 kg` placeholder defect, one layer down. A field with no
+   * measurement used to open on a plausible figure, which on the profile page
+   * sat above a baseline card showing the user's real most-recent weight —
+   * the same quantity twice, one invented.
+   */
+  it('shows no digit at all when the value is absent', () => {
+    render(<Stepper label="Weight" value={null} step={0.1} min={20} unit="kg" onChange={vi.fn()} />)
+
+    const value = screen.getByLabelText('Weight')
+    expect(value.textContent).not.toMatch(/\d/)
+    expect(value).toHaveTextContent('—')
+    // Not even the unit, which would read as "kg of something".
+    expect(value.textContent).not.toContain('kg')
+  })
+
+  it('writes nothing merely by rendering', () => {
+    const onChange = vi.fn()
+    render(<Stepper label="Weight" value={null} step={0.1} min={20} onChange={onChange} />)
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('materialises startFrom on the first press, in either direction', () => {
+    for (const button of ['Increase Weight', 'Decrease Weight']) {
+      const onChange = vi.fn()
+      const { unmount } = render(
+        <Stepper label="Weight" value={null} step={0.1} min={20} startFrom={70} onChange={onChange} />,
+      )
+      fireEvent.pointerDown(screen.getByRole('button', { name: button }), { pointerId: 1 })
+      fireEvent.pointerUp(screen.getByRole('button', { name: button }), { pointerId: 1 })
+      // The press means "give me a number to work from" before it means up or
+      // down, so both land on the same starting figure.
+      expect(onChange, button).toHaveBeenCalledWith(70)
+      unmount()
+    }
+  })
+
+  it('steps normally once a value exists', async () => {
+    // The half that cannot be tested through a card rendered with a static
+    // prop: the second press has to see the first one's value.
+    const changes: number[] = []
+    function Host() {
+      const [value, setValue] = useState<number | null>(null)
+      return (
+        <Stepper
+          label="Weight"
+          value={value}
+          step={0.1}
+          min={20}
+          startFrom={70}
+          onChange={(next) => {
+            changes.push(next)
+            setValue(next)
+          }}
+        />
+      )
+    }
+    render(<Host />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
+    expect(changes).toEqual([70, 70.1])
+  })
+
+  it('falls back to min when no startFrom is given', () => {
+    // Documented rather than desirable — a weight field's minimum is not a
+    // sensible opening figure, which is why any caller passing null should
+    // pass startFrom too.
+    const onChange = vi.fn()
+    render(<Stepper label="Weight" value={null} step={0.1} min={20} onChange={onChange} />)
+    fireEvent.pointerDown(screen.getByRole('button', { name: 'Increase Weight' }), { pointerId: 1 })
+    fireEvent.pointerUp(screen.getByRole('button', { name: 'Increase Weight' }), { pointerId: 1 })
+    expect(onChange).toHaveBeenCalledWith(20)
+  })
+
+  it('opens the edit field blank, and typing commits', async () => {
+    const onChange = vi.fn()
+    render(<Stepper label="Weight" value={null} step={0.1} min={20} startFrom={70} onChange={onChange} />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Weight' }))
+    const input = screen.getByRole('textbox', { name: 'Weight' })
+    expect(input).toHaveValue('')
+
+    await userEvent.type(input, '82.5{Enter}')
+    expect(onChange).toHaveBeenCalledWith(82.5)
+  })
+
+  it('announces nothing while absent', () => {
+    vi.useFakeTimers()
+    try {
+      render(<Stepper label="Weight" value={null} step={0.1} min={20} unit="kg" onChange={vi.fn()} />)
+      const value = screen.getByLabelText('Weight')
+      const announcer = screen.getAllByRole('status').find((n) => n !== value)
+      act(() => {
+        vi.advanceTimersByTime(1000)
+      })
+      // A live region reading "dash" is noise; the first real value announces
+      // on the press that creates it.
+      expect(announcer?.textContent).toBe('')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})

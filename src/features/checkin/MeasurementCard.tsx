@@ -10,9 +10,19 @@ interface MeasurementCardProps {
   checkIn: CheckIn | undefined
 }
 
-const DEFAULT_WEIGHT_KG = 70
-const DEFAULT_WAIST_CM = 80
-const DEFAULT_BODY_FAT_PERCENT = 20
+/**
+ * **Where a press starts, not what an untouched field shows.**
+ *
+ * These used to be passed as `value`, so a day with no measurements rendered
+ * `70 kg` and `80 cm` as though someone had weighed themselves — and on the
+ * profile page that sat directly above a baseline card showing the owner's
+ * real most-recent weight: the same quantity twice, one of them invented.
+ * The field now renders empty until the user acts, and these are the value a
+ * deliberate press materialises. They look dead; they are not.
+ */
+const START_WEIGHT_KG = 70
+const START_WAIST_CM = 80
+const START_BODY_FAT_PERCENT = 20
 
 /**
  * Checkpoint-day input — the only surface that ever writes
@@ -112,7 +122,8 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
         <Stepper
           variant="form"
           label={t('measurement.weightLabel')}
-          value={checkIn?.weightKg ?? DEFAULT_WEIGHT_KG}
+          value={checkIn?.weightKg ?? null}
+          startFrom={START_WEIGHT_KG}
           step={0.1}
           min={20}
           unit="kg"
@@ -121,7 +132,8 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
         <Stepper
           variant="form"
           label={t('measurement.waistLabel')}
-          value={checkIn?.waistCm ?? DEFAULT_WAIST_CM}
+          value={checkIn?.waistCm ?? null}
+          startFrom={START_WAIST_CM}
           step={0.5}
           min={30}
           unit="cm"
@@ -148,12 +160,12 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
           <Stepper
             variant="form"
             label={t('measurement.bodyFatLabel')}
-            // A display value until touched, exactly like weight and waist
-            // above. The cost, shared with them: someone whose reading really
-            // is the default has to nudge it and back to store it. That is the
-            // right side of the trade — the alternative is inventing a figure
-            // for everyone who merely looked.
-            value={checkIn?.bodyFatPercent ?? DEFAULT_BODY_FAT_PERCENT}
+            // Empty until touched, exactly like weight and waist above. The
+            // nudge-it-and-back workaround they used to share is gone: a
+            // press from empty commits START_BODY_FAT_PERCENT directly, so a
+            // reading that really is 20% takes one tap rather than two.
+            value={checkIn?.bodyFatPercent ?? null}
+            startFrom={START_BODY_FAT_PERCENT}
             step={0.5}
             min={3}
             max={70}

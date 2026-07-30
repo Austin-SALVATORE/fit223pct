@@ -56,7 +56,19 @@ function intervalForTick(tick: number): number {
 
 interface StepperProps {
   label: string
-  value: number
+  /**
+   * **`null` means nothing has been entered**, and renders as visibly
+   * not-a-number rather than as a plausible figure.
+   *
+   * Nullable rather than a separate `empty` flag, deliberately: a flag would
+   * let `empty` and a number coexist, so the type would permit exactly the lie
+   * this exists to prevent — a value that looks measured and is not. Here
+   * "absent" and "a number" are the same slot and cannot both be true.
+   *
+   * `number` is assignable to `number | null`, so the six callers that always
+   * have a value are unchanged and unaffected.
+   */
+  value: number | null
   step: number
   min: number
   max?: number
@@ -78,6 +90,18 @@ interface StepperProps {
    * one edge, and a takeover screen needs a focus. Defaulting to `'focal'`
    * means no existing caller changes behaviour by doing nothing.
    */
+  /**
+   * Where a press lands when the value is absent. Defaults to `min`, which is
+   * rarely what a caller wants — a weight field's minimum is 20kg, not a
+   * sensible opening figure — so any caller that passes `null` should pass
+   * this too.
+   *
+   * **This is why the DEFAULT_* constants survive.** They are no longer
+   * displayed, so they look dead; they are the value a *deliberate press*
+   * starts from. Revealing a control is not choosing, but pressing `+` is —
+   * the same distinction the body-fat reveal turns on.
+   */
+  startFrom?: number
   variant?: 'focal' | 'form'
   /**
    * The field counts whole things and a fraction of one is meaningless —
@@ -127,6 +151,7 @@ export function Stepper({
   max,
   unit,
   onChange,
+  startFrom,
   variant = 'focal',
   integer = false,
 }: StepperProps) {
@@ -138,7 +163,10 @@ export function Stepper({
    * Typing is additive — the buttons are untouched — so this adds a route to
    * the same value rather than replacing one.
    */
-  const spoken = (v: number) => `${formatNumber(v, i18n.language)}${unit ? ` ${unit}` : ''}`
+  // Nothing to announce while absent — a live region saying "dash" is noise,
+  // and the first real value announces on the press that creates it.
+  const spoken = (v: number | null) =>
+    v === null ? '' : `${formatNumber(v, i18n.language)}${unit ? ` ${unit}` : ''}`
   // Seeded with the current value so the effect's first run writes the same
   // string and React bails out — a live region announces changes, and a value
   // nobody touched is not one.
@@ -148,8 +176,8 @@ export function Stepper({
   const inputRef = useRef<HTMLInputElement>(null)
   const repeat = useRef<ReturnType<typeof setTimeout> | null>(null)
   const holdTick = useRef(0)
-  const latest = useRef({ value, step, min, max, onChange })
-  latest.current = { value, step, min, max, onChange }
+  const latest = useRef({ value, step, min, max, onChange, startFrom })
+  latest.current = { value, step, min, max, onChange, startFrom }
 
   useEffect(() => stopRepeat, [])
 
@@ -186,8 +214,15 @@ export function Stepper({
   }
 
   function apply(direction: 1 | -1) {
-    const { value, step, min, max, onChange } = latest.current
-    const next = clamp(round(value + direction * step), min, max)
+    const { value, step, min, max, onChange, startFrom } = latest.current
+    // From absent, the first press *materialises* a value rather than stepping
+    // from one — in either direction, because the press means "give me a
+    // number to work from" before it means "up" or "down". Stepping continues
+    // normally from there.
+    const next =
+      value === null
+        ? clamp(round(startFrom ?? min), min, max)
+        : clamp(round(value + direction * step), min, max)
     if (next !== value) onChange(next)
   }
 
@@ -263,7 +298,7 @@ export function Stepper({
           <button
             type="button"
             aria-label={t('stepper.edit', { label })}
-            onClick={() => setDraft(formatNumber(value, i18n.language))}
+            onClick={() => setDraft(value === null ? '' : formatNumber(value, i18n.language))}
             className="rounded-card px-1 transition-colors hover:bg-raised"
           >
             {/*
@@ -280,8 +315,19 @@ export function Stepper({
               aria-live="off"
               className="block min-w-14 text-center text-3xl font-semibold text-ink"
             >
-              {formatNumber(value, i18n.language)}
-              {unit && <span className="ml-0.5 text-lg font-normal text-ink-tertiary">{unit}</span>}
+              {value === null ? (
+                // Visibly not a number. The test is whether someone could
+                // mistake it for a measurement — a plausible figure here is
+                // the same defect as the one this replaced, in a new costume.
+                <span className="text-ink-tertiary">—</span>
+              ) : (
+                <>
+                  {formatNumber(value, i18n.language)}
+                  {unit && (
+                    <span className="ml-0.5 text-lg font-normal text-ink-tertiary">{unit}</span>
+                  )}
+                </>
+              )}
             </output>
           </button>
         )}

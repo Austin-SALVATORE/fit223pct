@@ -108,12 +108,18 @@ describe('Today on a checkpoint day', () => {
     expect(await screen.findByRole('heading', { name: 'Weekly checkpoint' })).toBeInTheDocument()
     expect(await screen.findByRole('heading', { name: 'Measurements' })).toBeInTheDocument()
 
+    // The fields open empty on a day with no measurements, so the first press
+    // commits the starting figure rather than stepping past it.
+    for (const field of ['Weight', 'Waist']) {
+      expect(screen.getByLabelText(field).textContent, field).not.toMatch(/\d/)
+    }
+
     await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
     await userEvent.click(screen.getByRole('button', { name: 'Increase Waist' }))
 
     const stored = await checkinRepo.getByDate('2026-07-21')
-    expect(stored?.weightKg).toBe(70.1)
-    expect(stored?.waistCm).toBe(80.5)
+    expect(stored?.weightKg).toBe(70)
+    expect(stored?.waistCm).toBe(80)
   })
 
   it('omits the measurement card on a non-checkpoint activity day', async () => {

@@ -41,18 +41,25 @@ describe('revealing a control is not entering a value', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Add a body-fat reading' }))
 
-    // The stepper is now on screen offering a starting point...
-    expect(screen.getByLabelText('Body fat')).toHaveTextContent('20')
-    // ...and absolutely nothing has been written. This is the regression test
-    // for the defect: the old code called save() from this button's onClick.
+    // The stepper is on screen and shows *no figure at all*. It used to open
+    // on 20, which read as a reading nobody had taken; the invariant is now
+    // visible rather than only true in the database.
+    const bodyFat = screen.getByLabelText('Body fat')
+    expect(bodyFat).toHaveTextContent('—')
+    expect(bodyFat.textContent).not.toMatch(/\d/)
+    // And absolutely nothing has been written.
     expect(await storedRow()).toBeUndefined()
   })
 
   it('persists nothing at all until a stepper is actually adjusted', async () => {
     renderCard()
-    // Weight and waist are visible with their own placeholder defaults.
-    expect(screen.getByLabelText('Weight')).toHaveTextContent('70')
-    expect(screen.getByLabelText('Waist')).toHaveTextContent('80')
+    // Weight and waist show no figure either. On the profile page this card
+    // sits directly above a baseline showing the user's real most-recent
+    // weight — a placeholder here made that the same quantity twice, one of
+    // them invented.
+    for (const field of ['Weight', 'Waist']) {
+      expect(screen.getByLabelText(field).textContent, field).not.toMatch(/\d/)
+    }
 
     expect(await storedRow()).toBeUndefined()
   })
@@ -60,11 +67,18 @@ describe('revealing a control is not entering a value', () => {
   it('persists a body-fat reading once it is adjusted', async () => {
     renderCard()
     await userEvent.click(screen.getByRole('button', { name: 'Add a body-fat reading' }))
+    // The first press from empty commits the starting figure rather than
+    // stepping past it — the press is the choice, and 20 is where it starts.
     await userEvent.click(screen.getByRole('button', { name: 'Increase Body fat' }))
 
     await waitFor(async () => {
-      expect((await storedRow())?.bodyFatPercent).toBe(20.5)
+      expect((await storedRow())?.bodyFatPercent).toBe(20)
     })
+
+    // "Stepping continues from there" is Stepper's behaviour, not this
+    // card's, and belongs where the value can actually feed back — this card
+    // is rendered with a static prop, so a second press here would only
+    // re-materialise the same start value. Asserted in Stepper.test.tsx.
   })
 
   it('persists nothing when the revealed field is focused and left', async () => {
@@ -103,6 +117,31 @@ describe('revealing a control is not entering a value', () => {
 
     expect(screen.getByLabelText('Body fat')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Add a body-fat reading' })).toBeNull()
+  })
+})
+
+describe('the collapsed summary cannot show a figure nobody entered', () => {
+  it('never renders a summary for a day with no measurements', async () => {
+    // Flagged as the place the same lie could hide: the summary prints
+    // `weightKg kg · waistCm cm` directly, with no placeholder logic of its
+    // own. It is safe by construction rather than by care — the collapsed
+    // branch renders only when `complete`, which requires both values to be
+    // non-null. Asserted so a future change to `complete` cannot quietly
+    // expose it.
+    renderCard()
+    // The summary's shape is "<weight> kg · <waist> cm". Asserted by that
+    // pattern rather than by the Edit control, which is now ambiguous — each
+    // Stepper carries its own "Edit <label>" affordance.
+    expect(screen.queryByText(/kg · /)).toBeNull()
+    expect(screen.getByLabelText('Weight')).toBeInTheDocument()
+  })
+
+  it('shows the summary only once both measurements are real', async () => {
+    await checkinRepo.mergeByDate(DATE_KEY, { weightKg: 84, waistCm: 82 })
+    const row = await storedRow()
+    render(<MeasurementCard dateKey={DATE_KEY} checkIn={row} />)
+
+    expect(screen.getByText(/84 kg · 82 cm/)).toBeInTheDocument()
   })
 })
 
@@ -219,7 +258,7 @@ describe('the profile page writes a CheckIn, never UserSettings', () => {
 
     const todayKey = toDateKey(new Date())
     await waitFor(async () => {
-      expect((await checkinRepo.getByDate(todayKey))?.bodyFatPercent).toBe(20.5)
+      expect((await checkinRepo.getByDate(todayKey))?.bodyFatPercent).toBe(20)
     })
 
     // A second copy on UserSettings would drift the first time a check-in was
@@ -242,7 +281,7 @@ describe('the profile page writes a CheckIn, never UserSettings', () => {
     const todayKey = toDateKey(new Date())
     await waitFor(async () => {
       const checkins = await checkinRepo.getAll()
-      expect(resolveProfile({}, checkins).currentWeightKg).toBe(70.1)
+      expect(resolveProfile({}, checkins).currentWeightKg).toBe(70)
       expect(checkins.some((c) => c.date === todayKey)).toBe(true)
     })
   })
