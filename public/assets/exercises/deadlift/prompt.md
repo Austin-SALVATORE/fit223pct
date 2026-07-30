@@ -5,7 +5,7 @@
 | Exercise id | `deadlift` |
 | Category | Hip Hinge / Glutes |
 | Camera | `side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Barbell |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -75,7 +82,7 @@ vertical bar path are all clearly readable.
 Equipment: one long brushed chrome bar with matte black bumper plates, evenly
 loaded both sides, resting on the ground at the start; double-overhand grip
 just outside the shins, arms straight and vertical.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Setup from the floor. Feet hip-width apart and flat, bar directly over the
@@ -83,20 +90,14 @@ Frames:
    reach it, hips higher than the knees and lower than the shoulders, arms
    straight and vertical, shoulder blades stacked just in front of the bar,
    chest set, lumbar spine neutral, gaze a short distance ahead on the floor.
-2. Break from the floor. The bar has just left the ground and is at low-shin
-   height. Knees extend and the hips rise, but the back angle is unchanged from
-   frame 1 — chest and hips rise at the same rate, bar riding straight up the
-   shin.
-3. Bar at knee height. Shins have become vertical, the bar is in contact with
-   the front of the knee, torso still inclined forward, lumbar spine neutral,
-   lats holding the bar against the legs.
-4. Above the knee, mid-thigh. Hips now drive forward toward the bar, torso
-   rising, bar sliding up the front of the thighs in continuous contact,
-   shoulders coming back over the bar.
-5. Lockout. Hips and knees fully extended, bar resting against the upper
+2. Bar at knee height, mid-pull. Shins have become vertical, the bar is in
+   contact with the front of the knee, torso still inclined forward, lumbar
+   spine neutral, lats holding the bar against the legs, chest and hips rising
+   at the same rate.
+3. Lockout. Hips and knees fully extended, bar resting against the upper
    thighs, torso vertical, ribs down, glutes contracted, shoulders back and
    down, no leaning back and no shrugging.
-6. Start of the controlled descent. Hips pushed back first with the knees still
+4. Start of the controlled descent. Hips pushed back first with the knees still
    nearly straight, bar back down at upper-thigh height and still touching the
    legs, back flat, weight balanced over the mid-foot.
 
@@ -116,11 +117,11 @@ TECHNIQUE — must be correct in every frame:
 ## Form checkpoints (QA)
 
 - [ ] Setup frame has hips above knees and below shoulders, bar over mid-foot
-- [ ] Bar path is a straight vertical line across all six frames
-- [ ] Hips and shoulders rise together between frames 1 and 2 — no hips-shoot-up
+- [ ] Bar path is a straight vertical line across all four frames
+- [ ] Chest and hips rise together through the pull — no hips-shoot-up
 - [ ] Lumbar spine neutral in every frame, including the floor setup
 - [ ] Lockout is vertical with no backwards lean or hyperextension
 - [ ] Arms straight in every frame, elbows never bent
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a deadlift at 64 px wide

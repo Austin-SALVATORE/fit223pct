@@ -2,47 +2,37 @@
   "exerciseId": "deadlift",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1913,
+      1914,
       822
     ],
     "frameSizes": [
       [
-        340,
+        485,
         822
       ],
       [
-        327,
+        440,
         822
       ],
       [
-        312,
+        465,
         822
       ],
       [
-        298,
-        822
-      ],
-      [
-        302,
-        822
-      ],
-      [
-        334,
+        479,
         822
       ]
     ],
-    "referenceHash": "3a1c47f7d9",
-    "thumbnailHash": "9f9e496ace",
+    "referenceHash": "b79905a1b7",
+    "thumbnailHash": "a950a8eda1",
     "frameHashes": [
-      "9713b806e6",
-      "67863a5dfa",
-      "d38b326256",
-      "36fc6971f7",
-      "60e5333f31",
-      "0674fc02de"
+      "695dce9d14",
+      "a1d8e08211",
+      "66c3ae9ea9",
+      "89af9b387a"
     ]
   },
   "credits": {

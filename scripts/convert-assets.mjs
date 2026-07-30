@@ -302,13 +302,13 @@ function opaqueProfile(rgba, width, height) {
  * sat on clean background — and it cleared in the pilot re-render.
  */
 const UNSAFE_SLICE_ALLOWLIST = new Set([
-  'assisted-pull-up', 'barbell-back-squat', 'barbell-row', 'bench-dip', 'bench-press',
-  'bird-dog', 'bodyweight-squat', 'bulgarian-split-squat', 'cable-fly', 'cable-pull-through',
+  'assisted-pull-up', 'barbell-back-squat', 'barbell-row', 'bench-press',
+  'bodyweight-squat', 'bulgarian-split-squat', 'cable-fly', 'cable-pull-through',
   'cable-woodchop', 'close-grip-bench-press', 'close-grip-lat-pulldown', 'db-floor-press', 'dead-bug',
-  'deadlift', 'dip', 'dumbbell-bench-press', 'dumbbell-fly', 'front-squat',
+  'dip', 'dumbbell-bench-press', 'dumbbell-fly', 'front-squat',
   'hack-squat', 'hanging-leg-raise', 'incline-bench-press', 'incline-dumbbell-curl', 'incline-dumbbell-press',
-  'incline-push-up', 'inverted-row', 'kettlebell-swing', 'lateral-raise', 'machine-shoulder-press',
-  'push-up', 'reverse-crunch', 'russian-twist', 'seated-dumbbell-shoulder-press', 'single-leg-hip-thrust',
+  'incline-push-up', 'inverted-row', 'kettlebell-swing', 'machine-shoulder-press',
+  'reverse-crunch', 'russian-twist', 'seated-dumbbell-shoulder-press',
   'single-leg-romanian-deadlift', 'smith-machine-squat', 'sumo-deadlift', 'tempo-bodyweight-squat', 'wide-grip-lat-pulldown',
 ])
 

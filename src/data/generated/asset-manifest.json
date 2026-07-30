@@ -437,34 +437,34 @@
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1913,
-      822
+      1915,
+      821
     ],
     "frameSizes": [
       [
-        475,
-        822
+        493,
+        821
       ],
       [
-        444,
-        822
+        450,
+        821
       ],
       [
-        452,
-        822
+        460,
+        821
       ],
       [
-        494,
-        822
+        503,
+        821
       ]
     ],
-    "referenceHash": "b8921e9b94",
-    "thumbnailHash": "7b4cd79613",
+    "referenceHash": "44e8145bed",
+    "thumbnailHash": "65dac01484",
     "frameHashes": [
-      "14a7bc7cc2",
-      "605931ea1b",
-      "3e083daaf7",
-      "4b701ab565"
+      "6a9bf8cb96",
+      "544cf35295",
+      "1249a7b7be",
+      "fc393d8a33"
     ]
   },
   "bench-press": {
@@ -549,29 +549,29 @@
     "frameCount": 3,
     "thumbnailFrame": 2,
     "referenceSize": [
-      1912,
-      823
+      1915,
+      821
     ],
     "frameSizes": [
       [
-        516,
-        823
+        507,
+        821
       ],
       [
-        669,
-        823
+        724,
+        821
       ],
       [
-        679,
-        823
+        684,
+        821
       ]
     ],
-    "referenceHash": "93b35374ea",
-    "thumbnailHash": "19450cd279",
+    "referenceHash": "5ad6a14a68",
+    "thumbnailHash": "95b716ae2e",
     "frameHashes": [
-      "ee1005d2e5",
-      "9776aff768",
-      "ca22a16e9d"
+      "6117428b11",
+      "d149a916d7",
+      "cc050ae186"
     ]
   },
   "bodyweight-squat": {
@@ -1252,47 +1252,37 @@
     ]
   },
   "deadlift": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1913,
+      1914,
       822
     ],
     "frameSizes": [
       [
-        340,
+        485,
         822
       ],
       [
-        327,
+        440,
         822
       ],
       [
-        312,
+        465,
         822
       ],
       [
-        298,
-        822
-      ],
-      [
-        302,
-        822
-      ],
-      [
-        334,
+        479,
         822
       ]
     ],
-    "referenceHash": "3a1c47f7d9",
-    "thumbnailHash": "9f9e496ace",
+    "referenceHash": "b79905a1b7",
+    "thumbnailHash": "a950a8eda1",
     "frameHashes": [
-      "9713b806e6",
-      "67863a5dfa",
-      "d38b326256",
-      "36fc6971f7",
-      "60e5333f31",
-      "0674fc02de"
+      "695dce9d14",
+      "a1d8e08211",
+      "66c3ae9ea9",
+      "89af9b387a"
     ]
   },
   "decline-bench-press": {
@@ -2547,34 +2537,34 @@
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1915,
-      821
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        283,
-        821
+        305,
+        822
       ],
       [
-        609,
-        821
+        481,
+        822
       ],
       [
-        388,
-        821
+        553,
+        822
       ],
       [
-        521,
-        821
+        395,
+        822
       ]
     ],
-    "referenceHash": "6fccbd134b",
-    "thumbnailHash": "4a924b45cc",
+    "referenceHash": "bb898e8624",
+    "thumbnailHash": "2bb53e551f",
     "frameHashes": [
-      "0c0a9446f3",
-      "bdc518c68c",
-      "ee7616831f",
-      "91138eac3d"
+      "14e29f15ce",
+      "418f846ae8",
+      "71171af01e",
+      "636b2a2afa"
     ]
   },
   "leaning-lateral-raise": {
@@ -3172,47 +3162,37 @@
     ]
   },
   "push-up": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1918,
-      820
+      1909,
+      824
     ],
     "frameSizes": [
       [
-        366,
-        820
+        472,
+        824
       ],
       [
-        311,
-        820
+        480,
+        824
       ],
       [
-        308,
-        820
+        468,
+        824
       ],
       [
-        303,
-        820
-      ],
-      [
-        289,
-        820
-      ],
-      [
-        341,
-        820
+        472,
+        824
       ]
     ],
-    "referenceHash": "d08be7cf49",
-    "thumbnailHash": "9ecc70e9d2",
+    "referenceHash": "9668253bc8",
+    "thumbnailHash": "5df880a45b",
     "frameHashes": [
-      "5f755800bf",
-      "f658d53580",
-      "a78409acce",
-      "9ca5415ea4",
-      "6a64b7dd3b",
-      "189c1e0d79"
+      "7fac6e54d9",
+      "cf22674fb0",
+      "a7b39e649e",
+      "5a94e21b7f"
     ]
   },
   "rear-delt-fly": {
@@ -3834,47 +3814,37 @@
     ]
   },
   "single-leg-hip-thrust": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1912,
-      823
+      1915,
+      821
     ],
     "frameSizes": [
       [
-        326,
-        823
+        453,
+        821
       ],
       [
-        280,
-        823
+        482,
+        821
       ],
       [
-        319,
-        823
+        501,
+        821
       ],
       [
-        310,
-        823
-      ],
-      [
-        348,
-        823
-      ],
-      [
-        329,
-        823
+        479,
+        821
       ]
     ],
-    "referenceHash": "ea5462f4da",
-    "thumbnailHash": "7cf51aa69f",
+    "referenceHash": "a3c7951a94",
+    "thumbnailHash": "515fb6da26",
     "frameHashes": [
-      "7872d5faea",
-      "6782d50418",
-      "8a902d5186",
-      "33e1695833",
-      "9c56515172",
-      "228d531d17"
+      "6ebcada129",
+      "45fd985717",
+      "9727dc7946",
+      "78dcab9b68"
     ]
   },
   "single-leg-romanian-deadlift": {

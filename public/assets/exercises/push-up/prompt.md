@@ -5,7 +5,7 @@
 | Exercise id | `push-up` |
 | Category | Chest / Push |
 | Camera | `floor-side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | None — bodyweight only |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -73,7 +80,7 @@ Exercise: Push-up
 Camera: floor-side view, the body seen from the side so the straight line from
 head to heels and the elbow angle are both readable.
 Equipment: none — bodyweight only.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Top position. Prone on hands and toes, hands flat on the floor just outside
@@ -81,20 +88,16 @@ Frames:
    not locked hard, head in line with the spine, ribs down, glutes braced, body
    one straight line from the crown of the head through the hips to the heels,
    feet about hip width apart.
-2. Early descent, elbows bent to roughly 20 degrees. Upper arms have begun to
-   travel back and down at roughly 45 degrees to the torso, not flared out to
-   90. The hips have not dropped and the straight body line is unchanged.
-3. Half descent, elbows at roughly 90 degrees, upper arms still at roughly 45
-   degrees to the ribs, chest lowering toward a point slightly ahead of the
-   hands, wrists stacked under the elbows.
-4. Bottom position, deepest point. Chest roughly a fist above the floor, elbows
+2. Half descent, elbows at roughly 90 degrees, upper arms at roughly 45
+   degrees to the ribs, not flared out to 90, chest lowering toward a point
+   slightly ahead of the hands, wrists stacked under the elbows, hips not
+   dropped and the straight body line unchanged.
+3. Bottom position, deepest point. Chest roughly a fist above the floor, elbows
    behind the wrists and still tucked to roughly 45 degrees, shoulder blades
    drawn together, hips level with the shoulders and heels, no sag in the lower
    back and no pike at the hips, gaze angled slightly forward.
-5. Ascent, back to roughly a half push-up. Elbows extending, chest and hips
+4. Ascent, back to roughly a half push-up. Elbows extending, chest and hips
    rising together as one rigid unit, hips never leading.
-6. Top position again, identical to frame 1, elbows extended, body still one
-   straight line.
 
 TECHNIQUE — must be correct in every frame:
 - The body holds one straight line from head to heels — no sagging lower back
@@ -108,10 +111,10 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Body forms one straight head-to-heel line in all six frames
+- [ ] Body forms one straight head-to-heel line in all four frames
 - [ ] Elbows tucked to roughly 45 degrees, never flared to 90
 - [ ] Bottom frame lowers the chest close to the floor without hip sag
 - [ ] Hands stacked under the upper chest, wrists neutral
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a push-up at 64 px wide

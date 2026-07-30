@@ -5,7 +5,7 @@
 | Exercise id | `single-leg-hip-thrust` |
 | Category | Seeded Program |
 | Camera | `bench-side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Flat bench — bodyweight only |
 | Status | `planned` |
 
@@ -62,10 +62,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -79,7 +86,7 @@ shin and the extended free leg are all clearly readable.
 Equipment: one low matte black padded bench on a simple black steel frame,
 standing horizontally behind her. No barbell, no dumbbell — bodyweight only.
 Her arms rest along the top edge of the bench pad on either side for balance.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Setup. Seated on the ground with her upper back against the edge of the
@@ -88,23 +95,18 @@ Frames:
    vertical at lockout. The far (right) leg is extended straight forward,
    knee locked, foot held off the ground. Hips resting low near the floor,
    chin tucked, gaze forward and slightly down.
-2. Early drive. Hips lifted a few inches off the ground through the planted
-   heel, shoulder blades pivoting on the bench edge, pelvis level, the
-   extended right leg still straight and rising with the torso line.
-3. Mid-range, roughly halfway up. Torso and hips rising as one rigid unit on
+2. Mid-range, roughly halfway up. Torso and hips rising as one rigid unit on
    the single planted leg, pelvis staying level with no drop on the
    unsupported side, extended leg straight and in line with the torso.
-4. Top position, full lockout. The left hip fully extended so the torso is
+3. Top position, full lockout. The left hip fully extended so the torso is
    roughly parallel to the ground in a straight line from the left knee
    through the hips to the shoulders. Left shin vertical, left foot flat,
    glutes visibly contracted. The extended right leg is straight and level, in
    line with the torso, both thighs parallel to each other. Pelvis level, ribs
    down, chin tucked, lumbar spine neutral — the range comes from the hip, not
    from arching the back.
-5. Controlled descent, back through roughly halfway. Hips lowering under
+4. Controlled descent, back through roughly halfway. Hips lowering under
    control on the single leg, pelvis still level, free leg still straight.
-6. Bottom again, identical to frame 1, hips low near the floor, right leg
-   still extended and off the ground.
 
 TECHNIQUE — must be correct in every frame:
 - The right leg stays completely straight and off the ground for the entire
@@ -120,12 +122,12 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Free leg straight, locked and off the ground in all six frames
+- [ ] Free leg straight, locked and off the ground in all four frames
 - [ ] Pelvis level at every height — no drop on the unsupported side
-- [ ] Bench edge sits just below the shoulder blades in all six frames
+- [ ] Bench edge sits just below the shoulder blades in all four frames
 - [ ] Planted shin vertical at the top frame, foot flat and heel down
 - [ ] Top frame shows a straight knee-hip-shoulder line, torso parallel
 - [ ] Lumbar spine neutral at the top — no lower-back arch, ribs down
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale, sharing one bench height and ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale, sharing one bench height and ground line
 - [ ] Readable as a single-leg hip thrust at 64 px wide

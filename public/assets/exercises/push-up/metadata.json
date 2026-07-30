@@ -2,47 +2,37 @@
   "exerciseId": "push-up",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1918,
-      820
+      1909,
+      824
     ],
     "frameSizes": [
       [
-        366,
-        820
+        472,
+        824
       ],
       [
-        311,
-        820
+        480,
+        824
       ],
       [
-        308,
-        820
+        468,
+        824
       ],
       [
-        303,
-        820
-      ],
-      [
-        289,
-        820
-      ],
-      [
-        341,
-        820
+        472,
+        824
       ]
     ],
-    "referenceHash": "d08be7cf49",
-    "thumbnailHash": "9ecc70e9d2",
+    "referenceHash": "9668253bc8",
+    "thumbnailHash": "5df880a45b",
     "frameHashes": [
-      "5f755800bf",
-      "f658d53580",
-      "a78409acce",
-      "9ca5415ea4",
-      "6a64b7dd3b",
-      "189c1e0d79"
+      "7fac6e54d9",
+      "cf22674fb0",
+      "a7b39e649e",
+      "5a94e21b7f"
     ]
   },
   "credits": {

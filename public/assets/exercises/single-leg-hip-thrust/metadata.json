@@ -2,47 +2,37 @@
   "exerciseId": "single-leg-hip-thrust",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1912,
-      823
+      1915,
+      821
     ],
     "frameSizes": [
       [
-        326,
-        823
+        453,
+        821
       ],
       [
-        280,
-        823
+        482,
+        821
       ],
       [
-        319,
-        823
+        501,
+        821
       ],
       [
-        310,
-        823
-      ],
-      [
-        348,
-        823
-      ],
-      [
-        329,
-        823
+        479,
+        821
       ]
     ],
-    "referenceHash": "ea5462f4da",
-    "thumbnailHash": "7cf51aa69f",
+    "referenceHash": "a3c7951a94",
+    "thumbnailHash": "515fb6da26",
     "frameHashes": [
-      "7872d5faea",
-      "6782d50418",
-      "8a902d5186",
-      "33e1695833",
-      "9c56515172",
-      "228d531d17"
+      "6ebcada129",
+      "45fd985717",
+      "9727dc7946",
+      "78dcab9b68"
     ]
   },
   "credits": {
