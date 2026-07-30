@@ -339,3 +339,48 @@ describe('sex is a text choice, not a digit control', () => {
     }
   })
 })
+
+describe('the form has one label style and one alignment', () => {
+  /**
+   * The form carried two of each: Height used a centred uppercase eyebrow
+   * label with a centred Stepper, while Date of birth, Sex and Activity level
+   * used left sentence-case labels with full-width controls. Neither half was
+   * reachable from this file — `Stepper` centred itself and styled its own
+   * label — so the fix was a ruling on the primitive, not a container tweak.
+   *
+   * Asserted on structure, since jsdom has no layout: the width check is a
+   * device pass, recorded in the commit message.
+   */
+  async function openForm() {
+    await settingsRepo.update({ heightCm: 180 })
+    render(<ProfileCard />)
+    await userEvent.click(await screen.findByRole('button', { name: /Set up your profile/ }))
+  }
+
+  it('gives every field label the same style', async () => {
+    await openForm()
+
+    // Height's label comes from Stepper; the rest are rendered by this form.
+    const heightLabel = screen.getByText('Height')
+    for (const sibling of ['Date of birth', 'Sex', 'Activity level']) {
+      expect(screen.getByText(sibling).className).toBe(heightLabel.className)
+    }
+    // And it is no longer the uppercase eyebrow treatment.
+    expect(heightLabel.className).not.toContain('eyebrow')
+  })
+
+  it('leaves no control centred inside the form', async () => {
+    await openForm()
+
+    const card = document.querySelector('section#profile')
+    // Layout containers only. A round StepButton centres its own glyph, and
+    // Stepper's button row centres −/value/+ vertically — both intrinsic to
+    // the control rather than decisions about where a field sits, so matching
+    // on every `items-center` would fail on things that are correct.
+    const centred = [...card!.querySelectorAll('div[class*="justify-center"]')]
+    expect(
+      centred.map((n) => n.className),
+      'A centred field container sits off the edge every label and button shares.',
+    ).toEqual([])
+  })
+})

@@ -108,7 +108,7 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
         `flex-wrap` with a row gap is the adaptive form: side by side where
         there is room, stacked where there is not, and never overflowing.
       */}
-      <div className="mt-4 flex flex-wrap justify-center gap-x-8 gap-y-4">
+      <div className="mt-4 flex flex-wrap gap-x-8 gap-y-4">
         <Stepper
           label={t('measurement.weightLabel')}
           value={checkIn?.weightKg ?? DEFAULT_WEIGHT_KG}
@@ -142,7 +142,7 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
           {t('measurement.bodyFatAdd')}
         </button>
       ) : (
-        <div className="mt-5 flex justify-center">
+        <div className="mt-5">
           <Stepper
             label={t('measurement.bodyFatLabel')}
             // A display value until touched, exactly like weight and waist

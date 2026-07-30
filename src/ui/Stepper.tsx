@@ -14,6 +14,20 @@ interface StepperProps {
 /**
  * Large-touch-target numeric stepper. Hold a button to repeat — nobody
  * should tap "+" ten times between sets.
+ *
+ * **Left-aligned, with a sentence-case label** (owner ruling, 30 Jul). Both
+ * were previously centred and uppercase *inside this component*, which is why
+ * the profile form could not be made consistent from its call sites: a
+ * container can move the stepper, but only this file can move the label
+ * relative to the buttons or change its style. That made a form of four
+ * fields carry two label styles and two alignments with no way to reconcile
+ * them short of changing this.
+ *
+ * The blast radius was known and accepted rather than discovered: seven call
+ * sites across profile, check-in and Workout Mode. A caller that wants the
+ * whole control centred still centres it from its own container — what is
+ * fixed here is the relationship between a stepper's label and its own
+ * buttons, which was never the caller's to decide.
  */
 export function Stepper({ label, value, step, min, max, unit, onChange }: StepperProps) {
   const { t } = useTranslation('common')
@@ -43,8 +57,8 @@ export function Stepper({ label, value, step, min, max, unit, onChange }: Steppe
   }
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <span className="eyebrow">{label}</span>
+    <div className="flex flex-col items-start gap-2">
+      <span className="text-sm text-ink-secondary">{label}</span>
       <div className="flex items-center gap-1">
         <StepButton
           symbol="−"

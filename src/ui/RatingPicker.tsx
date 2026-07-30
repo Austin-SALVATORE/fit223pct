@@ -17,6 +17,12 @@ interface RatingPickerProps {
 /**
  * A small set of mutually-exclusive numeric choices (e.g. a 1–5 readiness rating).
  *
+ * **Left-aligned** (owner ruling, 30 Jul), so a rating row starts on the same
+ * edge as the label above it. It was centred here rather than by its caller,
+ * so the readiness card's five rows had left labels over centred buttons with
+ * nothing a call site could do about it. Today's rows moving left is the
+ * accepted consequence, not an incidental one.
+ *
  * Deliberately plain toggle buttons (`aria-pressed`), not `role="radio"`:
  * the ARIA radio pattern promises arrow-key roving-tabindex navigation,
  * which this component does not implement, so claiming the role would
@@ -29,7 +35,7 @@ export function RatingPicker({ label, options, value, onChange, disabled }: Rati
   // its own full-width form (I7), the same rule plan:import.schemaAtPath set.
   const { t } = useTranslation('common')
   return (
-    <div role="group" aria-label={label} className="flex justify-center gap-1.5">
+    <div role="group" aria-label={label} className="flex gap-1.5">
       {options.map((option) => {
         const selected = value === option.value
         return (

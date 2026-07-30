@@ -125,7 +125,7 @@ export function ProfileCard() {
     >
       <h2 className="eyebrow">{t('heading')}</h2>
 
-      <div className="mt-5 flex justify-center">
+      <div className="mt-5">
         <Stepper
           label={t('heightLabel')}
           value={draft.heightCm}
@@ -201,7 +201,7 @@ export function ProfileCard() {
             {t('targetWeightAdd')}
           </button>
         ) : (
-          <div className="mt-2 flex items-start justify-center gap-4">
+          <div className="mt-2 flex items-start gap-4">
             <Stepper
               label={t('targetWeightLabel')}
               value={draft.targetWeightKg}
