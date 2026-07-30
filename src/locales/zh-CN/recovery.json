@@ -1,4 +1,5 @@
 {
+  "leave": "退出这套动作",
   "leaveAriaLabel": "退出这套动作并返回今天",
   "startRoutine": "开始这套动作",
   "ready": {

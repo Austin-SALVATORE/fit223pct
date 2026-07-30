@@ -4,6 +4,9 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import i18n from '@/i18n/i18next'
 import type { Routine } from '@/domain/routine'
+import en from '@/locales/en/recovery.json'
+import fr from '@/locales/fr/recovery.json'
+import zhCN from '@/locales/zh-CN/recovery.json'
 import { RoutinePlayer } from './RoutinePlayer'
 
 /**
@@ -392,5 +395,66 @@ describe('the routine player', () => {
 
     expect(await screen.findByText("That routine isn't available.")).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Back to Today' })).toBeInTheDocument()
+  })
+})
+
+describe('leaving is a control that reads as one', () => {
+  /**
+   * The owner could not reliably hit the exit on a phone: a 40×40 icon-only ✕
+   * at `text-ink-tertiary`. All three faults are asserted, because fixing any
+   * one alone still leaves a control that does not look tappable.
+   *
+   * The one-tap-no-confirm behaviour is covered from both surfaces by "leaves
+   * with a single tap and no confirm step" and "leaves from the ready screen
+   * exactly as it does mid-routine" — both unchanged by this fix, because the
+   * accessible name was deliberately kept.
+   */
+  it('carries a visible text label, not a glyph alone', async () => {
+    await renderPlaying()
+
+    const leave = screen.getByRole('link', { name: /^Leave this routine/ })
+    // The ✕ is decorative now that words carry the meaning.
+    expect(leave.textContent).toContain('Leave this routine')
+    expect(leave.querySelector('[aria-hidden="true"]')?.textContent).toBe('✕')
+  })
+
+  it('states a 44px floor and does not use the palette\'s weakest contrast', async () => {
+    await renderPlaying()
+
+    const leave = screen.getByRole('link', { name: /^Leave this routine/ })
+    // jsdom has no layout, so the class is the only mechanical proxy for the
+    // hit target. Asserted anyway: it fails loudly if someone reverts to a
+    // fixed h-10, which is exactly how 40px shipped the first time.
+    expect(leave.className).toContain('min-h-11')
+    expect(leave.className).not.toContain('h-10')
+    // ink-tertiary is for supporting prose, never for the only exit from a
+    // full-screen takeover.
+    expect(leave.className).toContain('text-ink-secondary')
+    expect(leave.className).not.toContain('text-ink-tertiary')
+  })
+
+  it('is the same control on the ready screen', async () => {
+    // Constraint: one control, both surfaces. A ready-screen variant would be
+    // free to drift from the one people use mid-routine.
+    renderPlayer()
+    await screen.findByRole('heading', { name: 'Recovery stretch' })
+
+    const leave = screen.getByRole('link', { name: /^Leave this routine/ })
+    expect(leave.textContent).toContain('Leave this routine')
+    expect(leave.className).toContain('min-h-11')
+  })
+})
+
+describe('the accessible name never disagrees with the visible label', () => {
+  it('starts with the visible string in every locale (WCAG 2.5.3)', () => {
+    // A translator has no reason to know these two strings are coupled, so the
+    // property is asserted rather than trusted. Voice-control users speak what
+    // they can see; a name that does not begin with it is unreachable by voice.
+    for (const [locale, bundle] of Object.entries({ en, fr, zhCN })) {
+      expect(bundle.leaveAriaLabel.startsWith(bundle.leave), `${locale}: ${bundle.leaveAriaLabel}`).toBe(true)
+      // And the visible label has to be short enough to be a label rather than
+      // a sentence — the aria-label is where the longer form belongs.
+      expect(bundle.leave.length, `${locale}`).toBeLessThan(bundle.leaveAriaLabel.length)
+    }
   })
 })

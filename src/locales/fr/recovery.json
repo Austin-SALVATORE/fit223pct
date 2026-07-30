@@ -1,4 +1,5 @@
 {
+  "leave": "Quitter cette routine",
   "leaveAriaLabel": "Quitter cette routine et revenir à Aujourd'hui",
   "startRoutine": "Lancer cette routine",
   "ready": {

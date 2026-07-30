@@ -150,8 +150,31 @@ function Takeover({ children }: { children: ReactNode }) {
  * Leaving, identical from the ready screen and from mid-routine.
  *
  * Shared rather than duplicated so the two cannot drift: the ready screen is
- * the one place a user is most likely to change their mind, and an ✕ that
+ * the one place a user is most likely to change their mind, and an exit that
  * behaved differently there would be the worst possible place for it.
+ *
+ * **It was a 40×40 icon-only ✕ at `text-ink-tertiary`, and the owner could
+ * not reliably hit it on a phone.** Three faults stacked: under the 44 pt
+ * platform minimum, no visible label, and the weakest contrast token in the
+ * palette — which is for supporting prose, not for the only exit from a
+ * full-screen takeover. Fixed as all three, since any one alone still leaves
+ * a control that does not read as one.
+ *
+ * `min-h-11` rather than padding arithmetic: padding plus a text line lands at
+ * 40px and looks like it should be enough, which is how the original passed
+ * review. The floor is stated so it cannot drift below 44 by someone adjusting
+ * spacing.
+ *
+ * **Still one tap, with no confirm.** Making the exit more prominent must not
+ * make it more expensive — a confirm here would assert that leaving costs you
+ * something, which is the no-tracking ruling eroding as UI rather than as
+ * data. Skipping is always fine.
+ *
+ * The `aria-label` is kept rather than dropped, and it **begins with the
+ * visible string** — "Leave this routine" — so the accessible name extends the
+ * label instead of disagreeing with it (WCAG 2.5.3). A locale test asserts
+ * that prefix property in all three languages, because it is the kind of thing
+ * a translator would reasonably break.
  */
 function LeaveLink() {
   const { t } = useTranslation('recovery')
@@ -159,9 +182,10 @@ function LeaveLink() {
     <Link
       to="/"
       aria-label={t('leaveAriaLabel')}
-      className="-ml-2 flex h-10 w-10 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
+      className="-ml-3 inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
     >
-      ✕
+      <span aria-hidden="true">✕</span>
+      {t('leave')}
     </Link>
   )
 }
