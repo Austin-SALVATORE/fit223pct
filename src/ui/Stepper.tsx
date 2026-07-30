@@ -22,6 +22,32 @@ const HOLD_RAMP_AFTER_TICKS = 8
 const HOLD_RAMP_STEP_MS = 10
 const HOLD_MIN_INTERVAL_MS = 60
 
+/**
+ * How long the value must sit still before it is announced.
+ *
+ * **Backlog A10, made worse by the ramp.** The visible value lives in an
+ * `<output>`, which is a `role="status"` live region, so every repeat tick
+ * announced. At the old fixed 140ms that was ~7 announcements/sec, already
+ * recorded as a defect on 27 Jul; the acceleration floor of 60ms took it to
+ * ~17/sec. A screen-reader user holding `+` got an unusable flood.
+ *
+ * **Debounced rather than announced-on-release**, which was the other option
+ * the backlog named. Release is the wrong thing to hang it on: it is a
+ * pointer event, and the value also changes by keyboard (Enter/Space arrive
+ * as a click with `detail === 0`) and by typing (committed on blur or Enter).
+ * Announce-on-release needs a trigger wired to each input path and silently
+ * misses the next one added. Debouncing keys on the *value*, so every path is
+ * covered by construction — a tap announces once, a hold announces once when
+ * it settles, and a rapid double-tap announces once rather than twice.
+ *
+ * `TimerRing` solved the same flood by silencing its region outright
+ * (`<time aria-live="off">`) and letting a focus move carry the
+ * announcement at each phase boundary. That does not transfer: pressing `+`
+ * moves no focus, so silence alone would leave a discrete tap unannounced —
+ * and knowing the control worked is the whole point of announcing it.
+ */
+const ANNOUNCE_DEBOUNCE_MS = 300
+
 function intervalForTick(tick: number): number {
   if (tick < HOLD_RAMP_AFTER_TICKS) return HOLD_INTERVAL_MS
   const shortened = HOLD_INTERVAL_MS - (tick - HOLD_RAMP_AFTER_TICKS + 1) * HOLD_RAMP_STEP_MS
@@ -112,6 +138,11 @@ export function Stepper({
    * Typing is additive — the buttons are untouched — so this adds a route to
    * the same value rather than replacing one.
    */
+  const spoken = (v: number) => `${formatNumber(v, i18n.language)}${unit ? ` ${unit}` : ''}`
+  // Seeded with the current value so the effect's first run writes the same
+  // string and React bails out — a live region announces changes, and a value
+  // nobody touched is not one.
+  const [announced, setAnnounced] = useState(() => spoken(value))
   const [draft, setDraft] = useState<string | null>(null)
   const editing = draft !== null
   const inputRef = useRef<HTMLInputElement>(null)
@@ -125,6 +156,13 @@ export function Stepper({
   useEffect(() => {
     if (editing) inputRef.current?.select()
   }, [editing])
+
+  // Every change restarts the timer, so a sustained hold announces once — on
+  // settling — rather than once per tick.
+  useEffect(() => {
+    const id = setTimeout(() => setAnnounced(spoken(value)), ANNOUNCE_DEBOUNCE_MS)
+    return () => clearTimeout(id)
+  })
 
   /**
    * **Validation happens here and nowhere else.** Clamping per keystroke
@@ -237,6 +275,9 @@ export function Stepper({
             <output
               data-numeric
               aria-label={label}
+              // Silent, the same way TimerRing's `<time>` is: visually live,
+              // and announced only by the debounced region below.
+              aria-live="off"
               className="block min-w-14 text-center text-3xl font-semibold text-ink"
             >
               {formatNumber(value, i18n.language)}
@@ -244,6 +285,15 @@ export function Stepper({
             </output>
           </button>
         )}
+        {/*
+          The announcement, separated from the number on screen so the two can
+          run at different rates: the display updates every tick, this one
+          settles first. Deliberately unlabelled, so it is not a second
+          competing name for the value.
+        */}
+        <span role="status" className="sr-only">
+          {announced}
+        </span>
         <StepButton
           symbol="+"
           ariaLabel={t('stepper.increase', { label })}

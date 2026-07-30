@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -203,12 +204,19 @@ describe('the buttons and the announcement still work', () => {
     expect(onChange).toHaveBeenCalledWith(69.9)
   })
 
-  it('keeps the value in a live region so button changes are announced', () => {
+  it('keeps a live region for the value, so button changes are announced', () => {
     renderStepper()
-    // <output> is role=status. Losing it would make the buttons silent to a
-    // screen reader, which typing must not cost.
-    expect(screen.getByLabelText('Weight').tagName).toBe('OUTPUT')
-    expect(screen.getByRole('status', { name: 'Weight' })).toBeInTheDocument()
+    // The claim has not changed — button changes must reach a screen reader —
+    // but the mechanism has. The visible <output> is now `aria-live="off"`
+    // and a dedicated unlabelled region carries the announcement on a
+    // debounce (A10). Asserting both halves so neither can quietly go.
+    const value = screen.getByLabelText('Weight')
+    expect(value.tagName).toBe('OUTPUT')
+    expect(value).toHaveAttribute('aria-live', 'off')
+
+    const announcer = screen.getAllByRole('status').find((n) => n !== value)
+    expect(announcer, 'no live region left to announce the value').toBeDefined()
+    expect(announcer).toHaveTextContent('70')
   })
 
   it('gives the edit affordance and the value separate names', async () => {
@@ -221,7 +229,10 @@ describe('the buttons and the announcement still work', () => {
 
     const input = await startTyping()
     expect(input).toHaveAccessibleName('Weight')
-    expect(screen.queryByRole('status')).toBeNull()
+    // The *named* status is gone while editing, so the input is the only
+    // thing describing the value. The announcer stays, unlabelled, and does
+    // not compete — which is what "separate names" means here.
+    expect(screen.queryByRole('status', { name: 'Weight' })).toBeNull()
   })
 })
 
@@ -407,5 +418,153 @@ describe('the displayed separator matches the one the user types', () => {
 
     expect(screen.getByLabelText('Weight')).toHaveTextContent('1234')
     expect(screen.getByLabelText('Weight')).not.toHaveTextContent('1,234')
+  })
+})
+
+describe('a sustained hold does not flood the live region (A10)', () => {
+  /**
+   * The backlog recorded this at the old fixed 140ms — ~7 announcements/sec —
+   * and the hold acceleration took it to ~17/sec at the 60ms floor. The
+   * display still updates every tick; only the announcement is debounced.
+   *
+   * Counted as updates-per-window rather than as a total, for the same reason
+   * the ramp test is: a total passes with the flood intact, because the value
+   * genuinely does change many times.
+   */
+  const ANNOUNCE_MS = 300
+
+  /**
+   * A *controlled* host, unlike `renderStepper`, whose spy never feeds the
+   * value back. Announcement is driven by the value prop actually changing,
+   * so a harness that holds it fixed would show silence and prove nothing.
+   */
+  function renderControlled(props: { value: number; step: number; unit?: string }) {
+    const changes: number[] = []
+    function Host() {
+      const [value, setValue] = useState(props.value)
+      return (
+        <Stepper
+          label="Weight"
+          value={value}
+          step={props.step}
+          min={0}
+          unit={props.unit ?? 'kg'}
+          onChange={(next) => {
+            changes.push(next)
+            setValue(next)
+          }}
+        />
+      )
+    }
+    render(<Host />)
+    return { changes }
+  }
+
+  function announcer() {
+    const value = screen.getByLabelText('Weight')
+    const found = screen.getAllByRole('status').find((n) => n !== value)
+    if (!found) throw new Error('no live region')
+    return found
+  }
+
+  /**
+   * Distinct texts the live region took on while the clock advanced —
+   * i.e. how many times a screen reader would have spoken.
+   *
+   * Seeded with the text *before* advancing: an unseeded version counts the
+   * first sample as a change (nothing !== something) and reports one
+   * announcement for a region that never moved.
+   */
+  function announcementsDuring(ms: number, sampleMs = 20) {
+    let previous = announcer().textContent ?? ''
+    const spoken: string[] = []
+    for (let elapsed = 0; elapsed < ms; elapsed += sampleMs) {
+      act(() => {
+        vi.advanceTimersByTime(sampleMs)
+      })
+      const text = announcer().textContent ?? ''
+      if (text !== previous) {
+        spoken.push(text)
+        previous = text
+      }
+    }
+    return spoken
+  }
+
+  it('announces once for a hold that changes the value many times', () => {
+    vi.useFakeTimers()
+    try {
+      const { changes } = renderControlled({ value: 70, step: 0.1 })
+      fireEvent.pointerDown(screen.getByRole('button', { name: 'Increase Weight' }), { pointerId: 1 })
+
+      // Two seconds of holding, well past the ramp.
+      const announcements = announcementsDuring(2000)
+      // The value really is changing throughout — this is a flood being
+      // suppressed, not an absence of activity.
+      expect(changes.length).toBeGreaterThan(15)
+      // ...and the region stayed silent while it did.
+      expect(
+        announcements.length,
+        `live region updated ${announcements.length} times mid-hold`,
+      ).toBe(0)
+
+      fireEvent.pointerUp(screen.getByRole('button', { name: 'Increase Weight' }), { pointerId: 1 })
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('announces the value it landed on once the hold ends', () => {
+    // Silence during the hold is only acceptable because the result arrives
+    // after it. Losing that would be a worse defect than the flood.
+    vi.useFakeTimers()
+    try {
+      renderControlled({ value: 70, step: 0.1 })
+      const button = screen.getByRole('button', { name: 'Increase Weight' })
+      fireEvent.pointerDown(button, { pointerId: 1 })
+      act(() => {
+        vi.advanceTimersByTime(1000)
+      })
+      fireEvent.pointerUp(button, { pointerId: 1 })
+
+      const settled = announcementsDuring(ANNOUNCE_MS + 100)
+      expect(settled).toHaveLength(1)
+      expect(announcer()).toHaveTextContent('kg')
+      // And it is the value actually reached, not the one it started from.
+      expect(announcer()).not.toHaveTextContent('70 kg')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('still announces a single discrete tap', () => {
+    // The constraint that rules out silencing the region outright: one tap is
+    // one change, and announcing it is how a screen-reader user knows the
+    // control worked.
+    vi.useFakeTimers()
+    try {
+      renderControlled({ value: 70, step: 0.1 })
+      fireEvent.pointerDown(screen.getByRole('button', { name: 'Increase Weight' }), { pointerId: 1 })
+      fireEvent.pointerUp(screen.getByRole('button', { name: 'Increase Weight' }), { pointerId: 1 })
+
+      const announcements = announcementsDuring(ANNOUNCE_MS + 100)
+      expect(announcements).toHaveLength(1)
+      expect(announcer()).toHaveTextContent('70.1 kg')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('says nothing on mount, when nobody has changed anything', () => {
+    vi.useFakeTimers()
+    try {
+      renderControlled({ value: 70, step: 0.1 })
+      // A live region announces *changes*. Writing the initial value into it
+      // a moment after render would be a change, and would announce a value
+      // the user never touched.
+      expect(announcementsDuring(ANNOUNCE_MS + 200)).toHaveLength(0)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })
