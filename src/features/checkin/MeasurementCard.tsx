@@ -24,28 +24,43 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
   const { t } = useTranslation('checkin')
   const { t: tCommon } = useTranslation('common')
   const [editing, setEditing] = useState(false)
+  /**
+   * **Revealing the body-fat stepper is not entering a reading.**
+   *
+   * This tap used to write `DEFAULT_BODY_FAT_PERCENT` straight to the
+   * database — 20%, indistinguishable from a measurement, and feeding the
+   * lean-mass REE — directly under a comment saying body fat should be
+   * "entered by someone who has a method, not defaulted into by everyone".
+   * Same class as the seeded `heightCm: 180` and the old `DEFAULT_PAL`: a
+   * guess made load-bearing, in code whose own comment forbids it.
+   *
+   * Now it only reveals the control, matching what weight and waist have
+   * always done — their defaults are display values handed to a Stepper and
+   * nothing persists until `onChange` fires.
+   */
+  const [bodyFatRevealed, setBodyFatRevealed] = useState(false)
   // Body fat is deliberately NOT part of "complete": it is measured far less
   // often than weight and waist, and requiring it would leave the card
   // permanently expanded for anyone without a way to measure it.
   const complete = checkIn?.weightKg != null && checkIn?.waistCm != null
   const expanded = editing || !complete
 
+  /**
+   * Writes one measurement. **Every rating stays null** — a measurement-only
+   * row is not a check-in, and verified not to read as one anywhere: readiness
+   * treats zero answered signals exactly like no record (`dayTier`), the
+   * consistency rate and the weekly review take workouts rather than check-ins,
+   * and `CheckInCard`'s completeness needs all five signals. Locked in by
+   * `MeasurementCard.test.tsx`.
+   *
+   * Merging through the repository rather than rebuilding the row from the
+   * `checkIn` prop: the prop is one `useLiveQuery` frame old, so two writes
+   * inside a frame would both start from the same snapshot and the second
+   * would drop the first. Reachable from one card by adjusting two steppers
+   * quickly, and more so now that Settings writes the same row.
+   */
   async function save(field: 'weightKg' | 'waistCm' | 'bodyFatPercent', value: number) {
-    const next: CheckIn = {
-      id: `checkin-${dateKey}`,
-      date: dateKey,
-      sleep: null,
-      energy: null,
-      soreness: null,
-      stress: null,
-      motivation: null,
-      weightKg: null,
-      waistCm: null,
-      bodyFatPercent: null,
-      ...checkIn,
-      [field]: value,
-    }
-    await checkinRepo.put(next)
+    await checkinRepo.mergeByDate(dateKey, { [field]: value })
   }
 
   if (!expanded) {
@@ -98,10 +113,10 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
         materially — so it should be entered by someone who has a method,
         not defaulted into by everyone.
       */}
-      {checkIn?.bodyFatPercent == null ? (
+      {checkIn?.bodyFatPercent == null && !bodyFatRevealed ? (
         <button
           type="button"
-          onClick={() => void save('bodyFatPercent', DEFAULT_BODY_FAT_PERCENT)}
+          onClick={() => setBodyFatRevealed(true)}
           className="mt-5 w-full rounded-card border border-border py-3 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
         >
           {t('measurement.bodyFatAdd')}
@@ -110,7 +125,12 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
         <div className="mt-5 flex justify-center">
           <Stepper
             label={t('measurement.bodyFatLabel')}
-            value={checkIn.bodyFatPercent}
+            // A display value until touched, exactly like weight and waist
+            // above. The cost, shared with them: someone whose reading really
+            // is the default has to nudge it and back to store it. That is the
+            // right side of the trade — the alternative is inventing a figure
+            // for everyone who merely looked.
+            value={checkIn?.bodyFatPercent ?? DEFAULT_BODY_FAT_PERCENT}
             step={0.5}
             min={3}
             max={70}

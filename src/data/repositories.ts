@@ -103,6 +103,42 @@ export const checkinRepo = {
   getAll: (): Promise<CheckIn[]> => db.checkins.orderBy('date').toArray(),
 
   put: (checkIn: CheckIn): Promise<string> => db.checkins.put(checkIn),
+
+  /**
+   * Merges fields into the given day's check-in, creating the row if absent.
+   *
+   * **Transactional read-modify-write, not read-then-put** — the same reason
+   * `workoutRepo.mutateActive` exists. A card that builds the next row from a
+   * React prop reads whatever the last `useLiveQuery` frame gave it, so two
+   * writes landing inside one frame both start from the same snapshot and the
+   * second silently drops the first's field. That was reachable from one card
+   * by adjusting two steppers quickly; it became reachable from two surfaces
+   * once measurements were enterable from Settings as well as Today.
+   *
+   * The blank row lives here rather than in each caller, so a new nullable
+   * `CheckIn` column cannot be forgotten by one surface and written by
+   * another — which is how two rows for the same concept start to differ.
+   */
+  async mergeByDate(dateKey: string, patch: Partial<Omit<CheckIn, 'id' | 'date'>>): Promise<void> {
+    await db.transaction('rw', db.checkins, async () => {
+      // Read inside the transaction's scope so it serialises against a
+      // sibling call's write rather than racing it.
+      const existing = await db.checkins.where('date').equals(dateKey).first()
+      const base: CheckIn = existing ?? {
+        id: `checkin-${dateKey}`,
+        date: dateKey,
+        sleep: null,
+        energy: null,
+        soreness: null,
+        stress: null,
+        motivation: null,
+        weightKg: null,
+        waistCm: null,
+        bodyFatPercent: null,
+      }
+      await db.checkins.put({ ...base, ...patch })
+    })
+  },
 }
 
 export const settingsRepo = {

@@ -18,8 +18,8 @@
     "motivation": "动力"
   },
   "measurement": {
-    "sectionLabel": "体重和腰围",
-    "heading": "体重与腰围",
+    "sectionLabel": "身体测量数据",
+    "heading": "身体测量",
     "weightLabel": "体重",
     "waistLabel": "腰围",
     "bodyFatLabel": "体脂率",

@@ -18,8 +18,8 @@
     "motivation": "Motivation"
   },
   "measurement": {
-    "sectionLabel": "Weight and waist measurement",
-    "heading": "Weight & waist",
+    "sectionLabel": "Body measurements",
+    "heading": "Measurements",
     "weightLabel": "Weight",
     "waistLabel": "Waist",
     "bodyFatLabel": "Body fat",

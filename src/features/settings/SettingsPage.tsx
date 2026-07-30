@@ -11,6 +11,7 @@ import { SecondaryButton } from '@/ui/SecondaryButton'
 import { LanguageSwitcher } from '@/ui/LanguageSwitcher'
 import { ProfileCard } from '@/features/profile/ProfileCard'
 import { BaselineCard } from '@/features/profile/BaselineCard'
+import { TodayMeasurementCard } from '@/features/checkin/TodayMeasurementCard'
 import type { SupportedLocale } from '@/domain/types'
 
 type ExportState = { status: 'idle' } | { status: 'done'; message: string }
@@ -63,6 +64,12 @@ export function SettingsPage() {
       {/* Profile first: it is the section a new install most needs, and the
           only one whose absence changes what the rest of the app can show. */}
       <ProfileCard />
+      {/* Measurements sit between the stated facts and the figure derived from
+          them, and before the baseline for the same reason the profile form is:
+          a number the user was never given a chance to enter should not appear
+          as theirs. Writes today's CheckIn — never a second copy on
+          UserSettings, which would drift (docs/UserProfile.md). */}
+      <TodayMeasurementCard />
       {/* Renders nothing until the profile is confirmed — a baseline computed
           before the user was asked would show the seeded height as theirs. */}
       <BaselineCard />

@@ -106,7 +106,7 @@ describe('Today on a checkpoint day', () => {
     renderApp()
 
     expect(await screen.findByRole('heading', { name: 'Weekly checkpoint' })).toBeInTheDocument()
-    expect(await screen.findByRole('heading', { name: 'Weight & waist' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Measurements' })).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
     await userEvent.click(screen.getByRole('button', { name: 'Increase Waist' }))
@@ -120,6 +120,6 @@ describe('Today on a checkpoint day', () => {
     await programRepo.put(recoveryProgram)
     renderApp()
     await screen.findByRole('heading', { name: 'Recovery walk & stretch' })
-    expect(screen.queryByRole('heading', { name: 'Weight & waist' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'Measurements' })).toBeNull()
   })
 })

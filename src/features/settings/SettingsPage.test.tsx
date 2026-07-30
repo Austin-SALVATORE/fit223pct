@@ -64,7 +64,10 @@ describe('SettingsPage', () => {
     const [filename, content] = vi.mocked(shareOrDownloadFile).mock.calls[0]
     expect(filename).toMatch(/^fit223-export-\d{4}-\d{2}-\d{2}\.json$/)
     expect(() => JSON.parse(content)).not.toThrow()
-    expect(await screen.findByRole('status')).toHaveTextContent('Backup saved.')
+    // Queried by its text, not by being the page's only `role="status"`:
+    // Settings now also mounts the measurement card, whose Steppers each
+    // render an `<output>`. Narrowing the selector rather than the assertion.
+    expect(await screen.findByText('Backup saved.')).toBeInTheDocument()
   })
 
   it('falls back to Today when opened with no origin state (e.g. a direct URL)', async () => {

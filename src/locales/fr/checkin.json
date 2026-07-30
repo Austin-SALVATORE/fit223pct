@@ -18,8 +18,8 @@
     "motivation": "Motivation"
   },
   "measurement": {
-    "sectionLabel": "Poids et tour de taille",
-    "heading": "Poids et taille",
+    "sectionLabel": "Mesures corporelles",
+    "heading": "Mesures",
     "weightLabel": "Poids",
     "waistLabel": "Taille",
     "bodyFatLabel": "Masse grasse",
