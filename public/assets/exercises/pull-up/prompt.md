@@ -5,7 +5,7 @@
 | Exercise id | `pull-up` |
 | Category | Back / Pull |
 | Camera | `side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Pull-up bar |
 | Status | `planned` |
 
@@ -75,7 +75,7 @@ angle and the bar all remain readable in every frame.
 Equipment: simple straight chrome horizontal bar, supports out of frame. The
 bar sits high enough that both feet hang clear of the shared ground line in
 every frame. No band, no platform, no assistance of any kind.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Dead hang. Both hands on the bar just wider than shoulder width, palms facing
@@ -85,17 +85,12 @@ Frames:
 2. Scapular set. Arms still straight. Shoulder blades retract and depress so the
    chest lifts and the whole body rises two or three centimetres with no elbow
    bend at all. Ribs stay stacked over the pelvis.
-3. Early pull. Elbows bent to roughly 140 degrees and driving down toward the
-   ribs. Chin still below the bar, chest opening upward, a slight backward lean
-   through the upper back.
-4. Top position, highest point. Chin clearly above the bar, elbows bent to
+3. Top position, highest point. Chin clearly above the bar, elbows bent to
    roughly 45 degrees and tucked close to the sides, shoulder blades fully
    retracted and depressed, chest travelling toward the bar, pelvis directly
    under the shoulders with no swing, legs still straight and together.
-5. Controlled descent, halfway. Elbows opening back toward 140 degrees, chin
+4. Controlled descent, halfway. Elbows opening back toward 140 degrees, chin
    just below the bar, shoulders still held down, body still vertical.
-6. Return to a full dead hang, identical to frame 1. Elbows fully extended,
-   shoulders allowed to rise under control, feet still clear of the ground.
 
 TECHNIQUE — must be correct in every frame:
 - The body stays vertical — no kipping, no hip swing, no leg drive.
@@ -108,10 +103,10 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Frame 4 shows the chin clearly above the bar with a neutral neck
+- [ ] Frame 3 shows the chin clearly above the bar with a neutral neck
 - [ ] Frame 2 shows scapular depression with the arms still straight
-- [ ] Body stays vertical in all six frames — no kip or swing
-- [ ] Feet clear of the ground in all six frames
+- [ ] Body stays vertical in all four frames — no kip or swing
+- [ ] Feet clear of the ground in all four frames
 - [ ] No band, platform, or assistance of any kind visible
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as a pull-up at 64 px wide

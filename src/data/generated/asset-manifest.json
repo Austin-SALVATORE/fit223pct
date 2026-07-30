@@ -437,34 +437,34 @@
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
+      1913,
       822
     ],
     "frameSizes": [
       [
-        489,
+        475,
         822
       ],
       [
-        387,
+        444,
         822
       ],
       [
-        472,
+        452,
         822
       ],
       [
-        566,
+        494,
         822
       ]
     ],
-    "referenceHash": "7d516ffce9",
-    "thumbnailHash": "eaa9b4dbc7",
+    "referenceHash": "b8921e9b94",
+    "thumbnailHash": "7b4cd79613",
     "frameHashes": [
-      "016be356b1",
-      "85c2ccaf56",
-      "cd6da14f33",
-      "02ef9cd71f"
+      "14a7bc7cc2",
+      "605931ea1b",
+      "3e083daaf7",
+      "4b701ab565"
     ]
   },
   "bench-press": {
@@ -843,47 +843,37 @@
     ]
   },
   "cable-row": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
+      1913,
       822
     ],
     "frameSizes": [
       [
-        343,
+        478,
         822
       ],
       [
-        497,
+        470,
         822
       ],
       [
-        131,
+        473,
         822
       ],
       [
-        190,
-        822
-      ],
-      [
-        420,
-        822
-      ],
-      [
-        333,
+        470,
         822
       ]
     ],
-    "referenceHash": "0475978abd",
-    "thumbnailHash": "74a75b5a53",
+    "referenceHash": "4393a7e3e0",
+    "thumbnailHash": "2f38021773",
     "frameHashes": [
-      "53cbdd942a",
-      "e3606cc3f5",
-      "f7e256d1ae",
-      "d913e08744",
-      "2369d75494",
-      "3fb3377ce8"
+      "47e3065e5a",
+      "4f68087146",
+      "d154158cdf",
+      "a20f88497e"
     ]
   },
   "cable-woodchop": {
@@ -1438,47 +1428,37 @@
     ]
   },
   "diamond-push-up": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1913,
-      822
+      1918,
+      820
     ],
     "frameSizes": [
       [
-        240,
-        822
+        485,
+        820
       ],
       [
-        328,
-        822
+        485,
+        820
       ],
       [
-        429,
-        822
+        493,
+        820
       ],
       [
-        324,
-        822
-      ],
-      [
-        339,
-        822
-      ],
-      [
-        253,
-        822
+        455,
+        820
       ]
     ],
-    "referenceHash": "49abf53f4b",
-    "thumbnailHash": "218a65d304",
+    "referenceHash": "cf1f4727dc",
+    "thumbnailHash": "53d63d9ab6",
     "frameHashes": [
-      "a089187ed0",
-      "c7bc155d29",
-      "7de1ff4143",
-      "89c4af910f",
-      "c0553d8e79",
-      "74baa10591"
+      "950a376c17",
+      "973316aafd",
+      "64e42a26aa",
+      "5533f64021"
     ]
   },
   "dip": {
@@ -2232,47 +2212,37 @@
     ]
   },
   "hip-thrust": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
       1912,
       823
     ],
     "frameSizes": [
       [
-        312,
+        480,
         823
       ],
       [
-        339,
+        450,
         823
       ],
       [
-        232,
+        477,
         823
       ],
       [
-        404,
-        823
-      ],
-      [
-        324,
-        823
-      ],
-      [
-        301,
+        505,
         823
       ]
     ],
-    "referenceHash": "c709cc748b",
-    "thumbnailHash": "56f1628b3a",
+    "referenceHash": "b5b8685ead",
+    "thumbnailHash": "741a748c8d",
     "frameHashes": [
-      "cff592ea37",
-      "86550c02a9",
-      "f0713a1f34",
-      "33119f191e",
-      "a1d4043aeb",
-      "3decb10a00"
+      "fd764d1bcd",
+      "5d71efb6cc",
+      "566563b6ec",
+      "c3eb1dbcb7"
     ]
   },
   "incline-bench-press": {
@@ -3168,47 +3138,37 @@
     ]
   },
   "pull-up": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
       1914,
       822
     ],
     "frameSizes": [
       [
-        395,
+        427,
         822
       ],
       [
-        242,
+        407,
         822
       ],
       [
-        307,
+        400,
         822
       ],
       [
-        266,
-        822
-      ],
-      [
-        373,
-        822
-      ],
-      [
-        331,
+        412,
         822
       ]
     ],
-    "referenceHash": "c152498358",
-    "thumbnailHash": "03c83621e5",
+    "referenceHash": "aa09805050",
+    "thumbnailHash": "86aee32252",
     "frameHashes": [
-      "617e0d785f",
-      "fbc76078b8",
-      "412be7fb4e",
-      "1d26ca1003",
-      "83524dace5",
-      "bc5c880388"
+      "46c403b8ba",
+      "850783812f",
+      "66835106e6",
+      "2164b45bf8"
     ]
   },
   "push-up": {

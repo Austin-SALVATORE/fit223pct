@@ -5,7 +5,7 @@
 | Exercise id | `diamond-push-up` |
 | Category | Chest Variants |
 | Camera | `floor-side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | None — bodyweight only |
 | Status | `planned` |
 
@@ -74,7 +74,7 @@ Camera: floor-side view, the body seen from the side so the straight line from
 head to heels, the joined hands under the sternum and the elbows tracking
 straight back are all readable.
 Equipment: none — bodyweight only.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Top position. Prone on hands and toes. Both hands placed together directly
@@ -84,21 +84,15 @@ Frames:
    not locked hard, head in line with the spine, ribs down, glutes braced,
    body one straight line from the crown of the head through the hips to the
    heels, feet about hip width apart.
-2. Early descent, elbows bent to roughly 20 degrees and pointing straight back
-   toward the feet, staying close against the ribs — not out to the sides.
-   The straight body line is unchanged and the hands stay joined in the
-   diamond under the sternum.
-3. Half descent, elbows at roughly 90 degrees and brushing the ribs, forearms
+2. Half descent, elbows at roughly 90 degrees and brushing the ribs, forearms
    angled inward over the single narrow hand base, chest lowering toward the
    joined hands, wrists under the centre of the chest.
-4. Bottom position, deepest point. Chest just above the joined hands, roughly
+3. Bottom position, deepest point. Chest just above the joined hands, roughly
    a fist above the floor, elbows pointing straight back past the ribs, hips
    level with the shoulders and heels — no sag in the lower back and no pike
    at the hips. Hands still together in the diamond under the sternum.
-5. Ascent, back to roughly a half push-up. Elbows extending straight back
+4. Ascent, back to roughly a half push-up. Elbows extending straight back
    along the ribs, chest and hips rising together as one rigid unit.
-6. Top position again, identical to frame 1, elbows extended, hands still
-   joined in the diamond under the sternum.
 
 TECHNIQUE — must be correct in every frame:
 - Both hands stay pressed together in the diamond directly under the sternum
@@ -114,13 +108,13 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Both hands touching in a diamond directly under the sternum in all six
+- [ ] Both hands touching in a diamond directly under the sternum in all four
       frames — visibly narrower than shoulder width (the differentiator from
       the standard `push-up` asset)
 - [ ] Elbows track straight back along the ribs, never flared out
-- [ ] Body forms one straight head-to-heel line in all six frames
+- [ ] Body forms one straight head-to-heel line in all four frames
 - [ ] Bottom frame lowers the chest to just above the joined hands without
       hip sag
-- [ ] Wrists stay under the centre of the chest in all six frames
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Wrists stay under the centre of the chest in all four frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as a diamond push-up, not a standard push-up, at 64 px wide

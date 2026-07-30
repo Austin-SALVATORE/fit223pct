@@ -5,7 +5,7 @@
 | Exercise id | `cable-row` |
 | Category | Back / Pull |
 | Camera | `machine-three-quarter` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Cable machine — mid pulley, standing two-handed |
 | Status | `planned` |
 
@@ -80,7 +80,7 @@ hip-width apart and level with each other, both feet flat, knees softly bent,
 hips hinged slightly so the torso inclines forward roughly 15 degrees. The
 standing square stance and the two-handed handle are what distinguish this from
 the seated cable row and from the one-arm cable row.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Start position. Standing in the square stance, knees softly bent, hips
@@ -90,19 +90,13 @@ Frames:
 2. Initiation. Both arms still straight. The shoulder blades retract and
    depress — the shoulders pull back and down — before either elbow bends.
    Stance and torso angle unchanged.
-3. Early pull. Both elbows bent to roughly 130 degrees, travelling straight
-   back close to the ribs, forearms in line with the cable, torso angle still
-   fixed at the same slight hinge.
-4. End position, deepest point. Handle drawn to the sternum, both elbows bent
+3. End position, deepest point. Handle drawn to the sternum, both elbows bent
    to roughly 45 degrees and tucked behind the torso line, shoulder blades
    fully retracted and depressed, chest tall, torso angle unchanged, wrists
    straight.
-5. Controlled return, halfway. Elbows opening back toward 130 degrees, handle
+4. Controlled return, halfway. Elbows opening back toward 130 degrees, handle
    travelling forward at the same height, shoulder blades beginning to
    protract.
-6. Return to full stretch, identical to frame 1. Both arms fully extended
-   forward, shoulders reaching forward under control, square stance and torso
-   angle unchanged.
 
 TECHNIQUE — must be correct in every frame:
 - Both feet stay in the same square hip-width stance and never move.
@@ -118,11 +112,11 @@ TECHNIQUE — must be correct in every frame:
 ## Form checkpoints (QA)
 
 - [ ] Standing square stance with both hands on the handle, no bench and no
-      footplate, in all six frames
-- [ ] Torso hinge angle identical in all six frames — no trunk swing
+      footplate, in all four frames
+- [ ] Torso hinge angle identical in all four frames — no trunk swing
 - [ ] Handle finishes at the sternum with both elbows behind the torso
 - [ ] Frame 2 shows scapular retraction with both arms still straight
 - [ ] Distinguishable at a glance from the seated cable row (no bench, no
       footplate) and from the one-arm cable row (two hands, square stance)
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as a standing cable pull at 64 px wide

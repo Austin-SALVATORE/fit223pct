@@ -2,47 +2,37 @@
   "exerciseId": "diamond-push-up",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1913,
-      822
+      1918,
+      820
     ],
     "frameSizes": [
       [
-        240,
-        822
+        485,
+        820
       ],
       [
-        328,
-        822
+        485,
+        820
       ],
       [
-        429,
-        822
+        493,
+        820
       ],
       [
-        324,
-        822
-      ],
-      [
-        339,
-        822
-      ],
-      [
-        253,
-        822
+        455,
+        820
       ]
     ],
-    "referenceHash": "49abf53f4b",
-    "thumbnailHash": "218a65d304",
+    "referenceHash": "cf1f4727dc",
+    "thumbnailHash": "53d63d9ab6",
     "frameHashes": [
-      "a089187ed0",
-      "c7bc155d29",
-      "7de1ff4143",
-      "89c4af910f",
-      "c0553d8e79",
-      "74baa10591"
+      "950a376c17",
+      "973316aafd",
+      "64e42a26aa",
+      "5533f64021"
     ]
   },
   "credits": {

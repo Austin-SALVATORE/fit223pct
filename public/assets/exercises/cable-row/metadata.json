@@ -2,47 +2,37 @@
   "exerciseId": "cable-row",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
+      1913,
       822
     ],
     "frameSizes": [
       [
-        343,
+        478,
         822
       ],
       [
-        497,
+        470,
         822
       ],
       [
-        131,
+        473,
         822
       ],
       [
-        190,
-        822
-      ],
-      [
-        420,
-        822
-      ],
-      [
-        333,
+        470,
         822
       ]
     ],
-    "referenceHash": "0475978abd",
-    "thumbnailHash": "74a75b5a53",
+    "referenceHash": "4393a7e3e0",
+    "thumbnailHash": "2f38021773",
     "frameHashes": [
-      "53cbdd942a",
-      "e3606cc3f5",
-      "f7e256d1ae",
-      "d913e08744",
-      "2369d75494",
-      "3fb3377ce8"
+      "47e3065e5a",
+      "4f68087146",
+      "d154158cdf",
+      "a20f88497e"
     ]
   },
   "credits": {

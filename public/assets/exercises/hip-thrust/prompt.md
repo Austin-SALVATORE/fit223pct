@@ -5,7 +5,7 @@
 | Exercise id | `hip-thrust` |
 | Category | Hip Hinge / Glutes |
 | Camera | `bench-side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Dumbbell + Flat bench |
 | Status | `planned` |
 
@@ -82,7 +82,7 @@ standing horizontally behind her; and one matte black hexagonal-head dumbbell
 with a brushed chrome knurled handle, laid horizontally across the crease of
 the hips, both hands holding the dumbbell heads to keep it in place. There is
 NO barbell, no plates and no bar pad anywhere in the image.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Setup. She is seated on the ground with her upper back against the edge of
@@ -91,22 +91,17 @@ Frames:
    lockout the shins will be vertical. The dumbbell rests across the hip
    crease with a hand on each head, hips resting low near the floor, chin
    tucked, gaze forward and slightly down.
-2. Early drive. Hips have lifted a few inches off the ground, weight shifted
-   into the heels, shoulder blades pivoting on the bench edge, ribs still down,
-   spine neutral, the dumbbell held steady on the hips.
-3. Mid-range, roughly halfway up. Torso rising as one rigid unit with the hips,
+2. Mid-range, roughly halfway up. Torso rising as one rigid unit with the hips,
    knees bending further as the hips travel forward and up, lower back still
    neutral with no arching.
-4. Top position, full lockout. Hips fully extended so that the torso is roughly
+3. Top position, full lockout. Hips fully extended so that the torso is roughly
    parallel to the ground and in a straight line from the knees through the
    hips to the shoulders. Shins vertical, feet flat, glutes visibly contracted,
    ribs pulled down, chin tucked with the gaze forward, lumbar spine neutral —
    the range comes from the hips, not from arching the back. The dumbbell sits
    level on the hip crease, held by both hands.
-5. Controlled descent, back through roughly halfway. Hips lowering under
+4. Controlled descent, back through roughly halfway. Hips lowering under
    control, torso following, knees straightening slightly, heels still planted.
-6. Bottom again, identical to frame 1, hips low near the floor, ready for the
-   next rep.
 
 TECHNIQUE — must be correct in every frame:
 - The bench edge stays just below the shoulder blades and the shoulder blades
@@ -125,11 +120,11 @@ TECHNIQUE — must be correct in every frame:
 ## Form checkpoints (QA)
 
 - [ ] ONE dumbbell across the hip crease, both hands on it — no barbell, no plates, no pad
-- [ ] Bench edge sits just below the shoulder blades in all six frames
+- [ ] Bench edge sits just below the shoulder blades in all four frames
 - [ ] Shins vertical at the top frame, feet flat and heels down
 - [ ] Torso parallel to the ground at lockout, straight knee-hip-shoulder line
 - [ ] Lumbar spine neutral at the top — no lower-back arch, ribs down
 - [ ] Chin tucked and gaze forward throughout, not craned back
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale, sharing one bench height and ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale, sharing one bench height and ground line
 - [ ] Readable as a hip thrust at 64 px wide

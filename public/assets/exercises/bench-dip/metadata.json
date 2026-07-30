@@ -5,34 +5,34 @@
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
+      1913,
       822
     ],
     "frameSizes": [
       [
-        489,
+        475,
         822
       ],
       [
-        387,
+        444,
         822
       ],
       [
-        472,
+        452,
         822
       ],
       [
-        566,
+        494,
         822
       ]
     ],
-    "referenceHash": "7d516ffce9",
-    "thumbnailHash": "eaa9b4dbc7",
+    "referenceHash": "b8921e9b94",
+    "thumbnailHash": "7b4cd79613",
     "frameHashes": [
-      "016be356b1",
-      "85c2ccaf56",
-      "cd6da14f33",
-      "02ef9cd71f"
+      "14a7bc7cc2",
+      "605931ea1b",
+      "3e083daaf7",
+      "4b701ab565"
     ]
   },
   "credits": {

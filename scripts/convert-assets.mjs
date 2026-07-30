@@ -285,26 +285,31 @@ function opaqueProfile(rgba, width, height) {
  * an error and the run fails naming it — re-rendered art removes itself from
  * this list by force, exactly like KNOWN_MISSING in the asset coverage tests.
  *
- * 44 entries as of 29 Jul. The count should only ever go down.
+ * 40 entries as of 30 Jul, down from 44. The pilot re-render cleared
+ * cable-row, hip-thrust, pull-up and diamond-push-up: all four now slice with
+ * every cut on background and no object severed, and the list shed them
+ * because leaving them here failed the run as stale.
  *
- * cable-row is the odd one: every cut lands on clean background, so it is
- * unsafe by the *straddle* measure rather than the ink one — two cuts fall in
- * the gaps between one figure's own limbs, splitting a pose across frames. It
- * has six poses (297-318px spans, 29929-30539px areas — one athlete at
- * identical scale), and the owner's four-poses-maximum ruling means it
- * becomes a four-frame strip when re-rendered.
+ * bench-dip did NOT clear, and it is a different defect from the rest of this
+ * list. Its four poses never touch — they sit at different heights, a shoe
+ * beside a bench — but their x-ranges *overlap* by 1, 8 and 3 px. A vertical
+ * cut cannot separate objects that overlap in x however far apart they are
+ * vertically, so no column between them is free of ink (the thinnest carry
+ * 10, 26 and 21 opaque px). Re-rendering it needs horizontal separation
+ * specifically, which is a stricter requirement than non-overlapping figures.
+ *
+ * cable-row was the odd one — unsafe by the straddle measure while every cut
+ * sat on clean background — and it cleared in the pilot re-render.
  */
 const UNSAFE_SLICE_ALLOWLIST = new Set([
   'assisted-pull-up', 'barbell-back-squat', 'barbell-row', 'bench-dip', 'bench-press',
-  'bird-dog', 'bodyweight-squat', 'bulgarian-split-squat', 'cable-fly', 'cable-pull-through', 'cable-row',
-  'cable-woodchop', 'close-grip-bench-press', 'close-grip-lat-pulldown', 'db-floor-press',
-  'dead-bug', 'deadlift', 'diamond-push-up', 'dip', 'dumbbell-bench-press', 'dumbbell-fly',
-  'front-squat', 'hack-squat', 'hanging-leg-raise', 'hip-thrust', 'incline-bench-press',
-  'incline-dumbbell-curl', 'incline-dumbbell-press', 'incline-push-up', 'inverted-row',
-  'kettlebell-swing', 'lateral-raise', 'machine-shoulder-press', 'pull-up', 'push-up',
-  'reverse-crunch', 'russian-twist', 'seated-dumbbell-shoulder-press', 'single-leg-hip-thrust',
-  'single-leg-romanian-deadlift', 'smith-machine-squat', 'sumo-deadlift',
-  'tempo-bodyweight-squat', 'wide-grip-lat-pulldown',
+  'bird-dog', 'bodyweight-squat', 'bulgarian-split-squat', 'cable-fly', 'cable-pull-through',
+  'cable-woodchop', 'close-grip-bench-press', 'close-grip-lat-pulldown', 'db-floor-press', 'dead-bug',
+  'deadlift', 'dip', 'dumbbell-bench-press', 'dumbbell-fly', 'front-squat',
+  'hack-squat', 'hanging-leg-raise', 'incline-bench-press', 'incline-dumbbell-curl', 'incline-dumbbell-press',
+  'incline-push-up', 'inverted-row', 'kettlebell-swing', 'lateral-raise', 'machine-shoulder-press',
+  'push-up', 'reverse-crunch', 'russian-twist', 'seated-dumbbell-shoulder-press', 'single-leg-hip-thrust',
+  'single-leg-romanian-deadlift', 'smith-machine-squat', 'sumo-deadlift', 'tempo-bodyweight-squat', 'wide-grip-lat-pulldown',
 ])
 
 /**

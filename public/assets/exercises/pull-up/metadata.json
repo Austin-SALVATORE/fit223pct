@@ -2,47 +2,37 @@
   "exerciseId": "pull-up",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
       1914,
       822
     ],
     "frameSizes": [
       [
-        395,
+        427,
         822
       ],
       [
-        242,
+        407,
         822
       ],
       [
-        307,
+        400,
         822
       ],
       [
-        266,
-        822
-      ],
-      [
-        373,
-        822
-      ],
-      [
-        331,
+        412,
         822
       ]
     ],
-    "referenceHash": "c152498358",
-    "thumbnailHash": "03c83621e5",
+    "referenceHash": "aa09805050",
+    "thumbnailHash": "86aee32252",
     "frameHashes": [
-      "617e0d785f",
-      "fbc76078b8",
-      "412be7fb4e",
-      "1d26ca1003",
-      "83524dace5",
-      "bc5c880388"
+      "46c403b8ba",
+      "850783812f",
+      "66835106e6",
+      "2164b45bf8"
     ]
   },
   "credits": {

@@ -2,47 +2,37 @@
   "exerciseId": "hip-thrust",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
       1912,
       823
     ],
     "frameSizes": [
       [
-        312,
+        480,
         823
       ],
       [
-        339,
+        450,
         823
       ],
       [
-        232,
+        477,
         823
       ],
       [
-        404,
-        823
-      ],
-      [
-        324,
-        823
-      ],
-      [
-        301,
+        505,
         823
       ]
     ],
-    "referenceHash": "c709cc748b",
-    "thumbnailHash": "56f1628b3a",
+    "referenceHash": "b5b8685ead",
+    "thumbnailHash": "741a748c8d",
     "frameHashes": [
-      "cff592ea37",
-      "86550c02a9",
-      "f0713a1f34",
-      "33119f191e",
-      "a1d4043aeb",
-      "3decb10a00"
+      "fd764d1bcd",
+      "5d71efb6cc",
+      "566563b6ec",
+      "c3eb1dbcb7"
     ]
   },
   "credits": {
