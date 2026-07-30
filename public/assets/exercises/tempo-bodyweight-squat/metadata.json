@@ -2,47 +2,37 @@
   "exerciseId": "tempo-bodyweight-squat",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1912,
-      823
+      1916,
+      821
     ],
     "frameSizes": [
       [
-        253,
-        823
+        270,
+        821
       ],
       [
-        351,
-        823
+        470,
+        821
       ],
       [
-        317,
-        823
+        464,
+        821
       ],
       [
-        335,
-        823
-      ],
-      [
-        269,
-        823
-      ],
-      [
-        255,
-        823
+        318,
+        821
       ]
     ],
-    "referenceHash": "a9fc196683",
-    "thumbnailHash": "3ad6784138",
+    "referenceHash": "4a5f2f647e",
+    "thumbnailHash": "793c444565",
     "frameHashes": [
-      "9edbc4ed7e",
-      "7d3f98175c",
-      "0a06956127",
-      "76b97a5804",
-      "3d2558a3bf",
-      "e1895b857c"
+      "8ebab1c14c",
+      "52d2f77bea",
+      "a894324a2d",
+      "17325d1ea7"
     ]
   },
   "credits": {

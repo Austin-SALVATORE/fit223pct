@@ -2,47 +2,37 @@
   "exerciseId": "db-floor-press",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
-      822
+      1918,
+      820
     ],
     "frameSizes": [
       [
-        329,
-        822
+        490,
+        820
       ],
       [
-        315,
-        822
+        479,
+        820
       ],
       [
-        325,
-        822
+        472,
+        820
       ],
       [
-        307,
-        822
-      ],
-      [
-        323,
-        822
-      ],
-      [
-        315,
-        822
+        477,
+        820
       ]
     ],
-    "referenceHash": "d1df1a3976",
-    "thumbnailHash": "7691e5dca1",
+    "referenceHash": "a3867eeec2",
+    "thumbnailHash": "7dc5d25dc5",
     "frameHashes": [
-      "cebcf04cbc",
-      "445b29544e",
-      "b33cb31b03",
-      "f3f65f2a04",
-      "bb7ca0484b",
-      "d6bc77ee51"
+      "933efa2615",
+      "f906b826dc",
+      "f31aec51c3",
+      "2e82ec135a"
     ]
   },
   "credits": {

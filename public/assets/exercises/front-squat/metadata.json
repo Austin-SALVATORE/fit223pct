@@ -2,47 +2,37 @@
   "exerciseId": "front-squat",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1912,
-      823
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        351,
-        823
+        461,
+        822
       ],
       [
-        299,
-        823
+        458,
+        822
       ],
       [
-        314,
-        823
+        463,
+        822
       ],
       [
-        291,
-        823
-      ],
-      [
-        312,
-        823
-      ],
-      [
-        345,
-        823
+        463,
+        822
       ]
     ],
-    "referenceHash": "7e9fa89fa4",
-    "thumbnailHash": "57d9fa8804",
+    "referenceHash": "3b763ba767",
+    "thumbnailHash": "9ec6b977db",
     "frameHashes": [
-      "8f270248be",
-      "73ee5edcc0",
-      "3aa0f11849",
-      "1cc872f232",
-      "4b091688b7",
-      "115d97a03e"
+      "b83f2c3edc",
+      "31d66b9410",
+      "c78bb27ac4",
+      "132d3a874a"
     ]
   },
   "credits": {

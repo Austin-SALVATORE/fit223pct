@@ -5,7 +5,7 @@
 | Exercise id | `incline-dumbbell-press` |
 | Category | Chest / Push |
 | Camera | `bench-side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Dumbbell (one per hand), Incline bench |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -77,7 +84,7 @@ knurled handles, one in each hand, plus one matte black padded bench set to
 roughly 30 degrees on a black steel frame. The backrest rises toward the left
 of each frame at a clearly visible 30 degree angle, the seat pad is horizontal,
 and the feet reach the floor.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Lockout start. Seated back against the 30 degree incline, head, upper back
@@ -85,19 +92,15 @@ Frames:
    the floor. Arms extended perpendicular to the torso, dumbbells held over the
    upper chest and collarbones, roughly shoulder width apart, palms facing
    forward.
-2. Early descent, elbows bent to roughly 25 degrees. The dumbbells travel down
-   and slightly out, upper arms tucking toward roughly 45 degrees from the
-   torso.
-3. Half descent, elbows at roughly 90 degrees, forearms vertical, dumbbells
+2. Half descent, elbows at roughly 90 degrees, forearms vertical, dumbbells
    level with the front of the shoulders, shoulder blades pinned back and down
    into the incline pad.
-4. Bottom position. Dumbbells at upper-chest level just outside the ribcage,
+3. Bottom position. Dumbbells at upper-chest level just outside the ribcage,
    elbows tucked to roughly 45 degrees and directly under the wrists, forearms
    vertical, the elbows not driven far behind the plane of the torso. Chest
    lifted, glutes on the seat, feet flat.
-5. Ascent, back to roughly a half press. Elbows extending, dumbbells pressing
+4. Ascent, back to roughly a half press. Elbows extending, dumbbells pressing
    up and slightly inward along the line of the torso, staying separate.
-6. Lockout again, identical to frame 1, elbows extended over the upper chest.
 
 TECHNIQUE — must be correct in every frame:
 - The bench angle stays at roughly 30 degrees and reads clearly as an incline
@@ -113,10 +116,10 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Bench reads as roughly 30 degrees in all six frames
+- [ ] Bench reads as roughly 30 degrees in all four frames
 - [ ] Elbow angle clearly changes across the frames — reads as a press, not a fly
 - [ ] Dumbbells stop at upper-chest level just outside the ribcage
 - [ ] Elbows tucked to roughly 45 degrees, forearms vertical at the bottom
 - [ ] Glutes and upper back stay on the pad, feet flat on the floor
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as an incline dumbbell press at 64 px wide

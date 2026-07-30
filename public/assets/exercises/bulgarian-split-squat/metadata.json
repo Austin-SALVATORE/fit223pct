@@ -2,47 +2,37 @@
   "exerciseId": "bulgarian-split-squat",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1923,
-      818
+      1893,
+      831
     ],
     "frameSizes": [
       [
-        268,
-        818
+        451,
+        831
       ],
       [
-        337,
-        818
+        474,
+        831
       ],
       [
-        332,
-        818
+        438,
+        831
       ],
       [
-        335,
-        818
-      ],
-      [
-        313,
-        818
-      ],
-      [
-        338,
-        818
+        495,
+        831
       ]
     ],
-    "referenceHash": "27f7da5ab9",
-    "thumbnailHash": "a57371182b",
+    "referenceHash": "f02790fce6",
+    "thumbnailHash": "66d6ab7e01",
     "frameHashes": [
-      "bf4b0f921c",
-      "70b4e484a9",
-      "e518b4dfc5",
-      "4ebedf891e",
-      "41da8b3b90",
-      "15481ed7ef"
+      "bee539eea3",
+      "e8a4647b13",
+      "24c5e2129b",
+      "7f960027a0"
     ]
   },
   "credits": {

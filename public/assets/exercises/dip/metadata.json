@@ -2,47 +2,37 @@
   "exerciseId": "dip",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
       1912,
       823
     ],
     "frameSizes": [
       [
-        328,
+        403,
         823
       ],
       [
-        310,
+        418,
         823
       ],
       [
-        270,
+        439,
         823
       ],
       [
-        325,
-        823
-      ],
-      [
-        314,
-        823
-      ],
-      [
-        365,
+        422,
         823
       ]
     ],
-    "referenceHash": "ee983503b1",
-    "thumbnailHash": "73c62d6661",
+    "referenceHash": "ffebbda0bf",
+    "thumbnailHash": "06036dd030",
     "frameHashes": [
-      "e7a7179366",
-      "cca31a4919",
-      "76f9e22e23",
-      "8194557d91",
-      "764ae32738",
-      "3c3a5719eb"
+      "ac7ce37741",
+      "99dedc74c2",
+      "ecafddd35b",
+      "f49dfab586"
     ]
   },
   "credits": {

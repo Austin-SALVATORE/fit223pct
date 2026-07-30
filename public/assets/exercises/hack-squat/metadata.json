@@ -2,47 +2,37 @@
   "exerciseId": "hack-squat",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1869,
-      842
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        325,
-        842
+        476,
+        822
       ],
       [
-        291,
-        842
+        480,
+        822
       ],
       [
-        276,
-        842
+        467,
+        822
       ],
       [
-        317,
-        842
-      ],
-      [
-        323,
-        842
-      ],
-      [
-        337,
-        842
+        487,
+        822
       ]
     ],
-    "referenceHash": "96fcacafa1",
-    "thumbnailHash": "27423b85b4",
+    "referenceHash": "b8e215bfa6",
+    "thumbnailHash": "fe4131b2eb",
     "frameHashes": [
-      "ff06f127b2",
-      "73929c4cd1",
-      "ba75d8a5a0",
-      "d655a629d8",
-      "180c0b1b18",
-      "203d1bb050"
+      "5c58e0612b",
+      "e9488f36fd",
+      "62e12abec6",
+      "4270ae53b3"
     ]
   },
   "credits": {

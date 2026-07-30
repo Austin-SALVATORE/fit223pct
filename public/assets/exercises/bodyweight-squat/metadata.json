@@ -2,47 +2,37 @@
   "exerciseId": "bodyweight-squat",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1921,
-      819
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        277,
-        819
+        275,
+        822
       ],
       [
-        339,
-        819
+        463,
+        822
       ],
       [
-        321,
-        819
+        468,
+        822
       ],
       [
-        326,
-        819
-      ],
-      [
-        316,
-        819
-      ],
-      [
-        262,
-        819
+        447,
+        822
       ]
     ],
-    "referenceHash": "e4f11e297c",
-    "thumbnailHash": "46678bd036",
+    "referenceHash": "6818298798",
+    "thumbnailHash": "07f85d5e73",
     "frameHashes": [
-      "eec298b78a",
-      "04ef51ffb4",
-      "b37be1d175",
-      "31a2dd3ebe",
-      "268fdb1879",
-      "9dc077d7a6"
+      "5984d72f4d",
+      "9c636706dd",
+      "611443b3c9",
+      "e97aa205df"
     ]
   },
   "credits": {

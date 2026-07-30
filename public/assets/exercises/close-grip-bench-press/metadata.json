@@ -2,47 +2,37 @@
   "exerciseId": "close-grip-bench-press",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1913,
-      822
+      1902,
+      827
     ],
     "frameSizes": [
       [
-        344,
-        822
+        484,
+        827
       ],
       [
-        308,
-        822
+        453,
+        827
       ],
       [
-        322,
-        822
+        453,
+        827
       ],
       [
-        323,
-        822
-      ],
-      [
-        318,
-        822
-      ],
-      [
-        298,
-        822
+        491,
+        827
       ]
     ],
-    "referenceHash": "37c4fa09e9",
-    "thumbnailHash": "3ea1116196",
+    "referenceHash": "397fb3fae1",
+    "thumbnailHash": "ef0b600e5d",
     "frameHashes": [
-      "cbcf804d71",
-      "f07201d3b2",
-      "4817778643",
-      "2a89897905",
-      "91190733ec",
-      "5b7d066ccc"
+      "096cc0beff",
+      "ed6f628065",
+      "429749b297",
+      "d05854b93a"
     ]
   },
   "credits": {

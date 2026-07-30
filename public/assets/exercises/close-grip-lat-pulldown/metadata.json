@@ -2,47 +2,37 @@
   "exerciseId": "close-grip-lat-pulldown",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1893,
-      831
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        352,
-        831
+        457,
+        822
       ],
       [
-        303,
-        831
+        422,
+        822
       ],
       [
-        288,
-        831
+        416,
+        822
       ],
       [
-        304,
-        831
-      ],
-      [
-        302,
-        831
-      ],
-      [
-        344,
-        831
+        419,
+        822
       ]
     ],
-    "referenceHash": "a2a878c6c4",
-    "thumbnailHash": "4fefeceb4c",
+    "referenceHash": "3ddec8a3e9",
+    "thumbnailHash": "ce74028cd2",
     "frameHashes": [
-      "f288283c39",
-      "6d5bdc7c90",
-      "64f43bad19",
-      "940778ca3a",
-      "9361ac6485",
-      "8ef10fc4b6"
+      "5215fea8d1",
+      "452c05b11b",
+      "f74b16b983",
+      "f35d8c7fe9"
     ]
   },
   "credits": {

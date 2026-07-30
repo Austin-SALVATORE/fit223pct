@@ -2,47 +2,37 @@
   "exerciseId": "dumbbell-bench-press",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
-      822
+      2035,
+      773
     ],
     "frameSizes": [
       [
-        332,
-        822
+        526,
+        773
       ],
       [
-        310,
-        822
+        509,
+        773
       ],
       [
-        316,
-        822
+        530,
+        773
       ],
       [
-        324,
-        822
-      ],
-      [
-        335,
-        822
-      ],
-      [
-        297,
-        822
+        470,
+        773
       ]
     ],
-    "referenceHash": "0562b741bb",
-    "thumbnailHash": "a83d244d32",
+    "referenceHash": "fc777a1c80",
+    "thumbnailHash": "4623922d52",
     "frameHashes": [
-      "ec5873df52",
-      "ce01402159",
-      "bb731f2869",
-      "bd7de8ec98",
-      "7866ba329f",
-      "78b3269947"
+      "547ebcfba7",
+      "60c15d1888",
+      "3aedd3942c",
+      "7061cb922d"
     ]
   },
   "credits": {

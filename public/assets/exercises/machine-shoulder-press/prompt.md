@@ -5,7 +5,7 @@
 | Exercise id | `machine-shoulder-press` |
 | Category | Shoulders |
 | Camera | `machine-three-quarter` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Smith / press machine |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -72,7 +79,7 @@ MOVEMENT FOR THIS IMAGE:
 Exercise: Machine Shoulder Press
 Camera: machine three-quarter view, so the frame, the guided path of the handles and the body position are all readable together.
 Equipment: a matte black frame with chrome guide rails and simple black handles, configured as a seated shoulder press with an upright back pad and the handles starting at shoulder height.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Start position. Seated with the hips all the way back, the upper back and
@@ -80,19 +87,15 @@ Frames:
    hip-width apart. Hands on the handles at shoulder height, elbows bent to
    roughly 90 degrees and stacked directly under the wrists, wrists neutral
    and straight rather than bent back.
-2. Early press, roughly a quarter of the range. Handles at ear height, the
-   forearms still in line with the guide rails, torso unchanged against the
-   pad.
-3. Mid press. Handles just above the top of the head, elbows at roughly 120
+2. Mid press. Handles just above the top of the head, elbows at roughly 120
    degrees, shoulders beginning to shrug and upwardly rotate, the lower back
    still in contact with the pad.
-4. Lockout, the highest point. Elbows fully extended but not hyperextended,
+3. Lockout, the highest point. Elbows fully extended but not hyperextended,
    arms following the fixed path of the rails, ribs down and not flared,
    hips and shoulder blades still pinned to the seat and pad.
-5. Controlled descent, back to roughly the height of frame 2. Elbows tracking
+4. Controlled descent, back down to roughly ear height, handles level with the
+   ears and the forearms still in line with the guide rails. Elbows tracking
    back down along the same fixed path, wrists still neutral.
-6. Return to the start position, identical to frame 1. Handles back at
-   shoulder height, elbows under the wrists.
 
 TECHNIQUE — must be correct in every frame:
 - The upper back and shoulder blades stay in contact with the back pad in
@@ -108,11 +111,11 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Machine frame, rails and handles identical in all six frames
+- [ ] Machine frame, rails and handles identical in all four frames
 - [ ] Both handles at the same height in every frame
 - [ ] Upper back stays in contact with the pad; no arching off the seat
 - [ ] Wrists neutral and stacked over elbows throughout
 - [ ] Both feet flat on the ground in every frame
 - [ ] Correct scale of the machine against the body
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as a seated machine shoulder press at 64 px wide

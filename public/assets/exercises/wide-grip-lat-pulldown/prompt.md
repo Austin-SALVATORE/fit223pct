@@ -5,7 +5,7 @@
 | Exercise id | `wide-grip-lat-pulldown` |
 | Category | Back Variants |
 | Camera | `machine-three-quarter` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Lat pulldown — long bar, wide overhand grip |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -78,33 +85,26 @@ black bar. The woman is seated on the pad with both thighs locked under the
 thigh pad, feet flat on the floor, shins vertical. The grip is the loudest
 visual element: each hand a full hand-span outside its shoulder, palms facing
 forward, in every frame.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Start position. Seated tall, thighs pinned under the pad, both arms fully
    extended overhead in a wide V, each hand a full hand-span outside its
    shoulder on the long bar, palms facing forward. Shoulder blades elevated
    toward the ears by the load, elbows straight but not locked, torso vertical.
-2. Initiation. Arms still straight in the wide V, palms forward, hands still
-   far outside the shoulders. The shoulder blades retract and depress — the
-   shoulders visibly drop away from the ears — before the elbows bend. Torso
-   begins a small backward lean of about 10 degrees from vertical.
-3. Early pull. Elbows bent to roughly 140 degrees and driving down and out to
+2. Early pull. Elbows bent to roughly 140 degrees and driving down and out to
    the sides in the plane of the wide bar, hands still well outside the
    shoulders, palms forward. Bar at forehead height, chest lifting toward the
    bar, torso lean now 15 degrees and fixed there.
-4. End position, deepest point. Bar just under the chin at upper-chest height,
+3. End position, deepest point. Bar just under the chin at upper-chest height,
    hands still a full hand-span outside each shoulder, palms forward, elbows
    bent to roughly 60 degrees and pointing down and out, wide of the torso,
    shoulder blades fully retracted and depressed, chest tall, torso still at
    the same 15-degree backward lean, wrists straight and stacked over the
    forearms.
-5. Controlled return, halfway. Elbows opening back toward 140 degrees, bar at
+4. Controlled return, halfway. Elbows opening back toward 140 degrees, bar at
    forehead height, hands still wide, shoulder blades still held down, torso
    lean unchanged.
-6. Return to full stretch, identical to frame 1. Arms fully extended overhead
-   in the wide V, hands far outside the shoulders, shoulder blades allowed to
-   rise again under control, thighs still locked under the pad.
 
 TECHNIQUE — must be correct in every frame:
 - Each hand stays a full hand-span outside its shoulder with the palms facing
@@ -122,15 +122,17 @@ TECHNIQUE — must be correct in every frame:
 
 - [ ] Hands a full hand-span outside each shoulder, palms forward, in every
       frame — the arms form a clear wide V overhead
-- [ ] Frame 2 shows scapular depression with the elbows still straight
+- [ ] Shoulder blades progress from elevated toward the ears in frame 1 to
+      fully retracted and depressed by frame 3, as the elbows bend through the
+      pull
 - [ ] Bar finishes at the upper chest in front of the head — never behind
       the neck
-- [ ] Torso lean identical in frames 3 through 6 — no rocking
+- [ ] Torso lean identical in frames 2 through 4 — no rocking
 - [ ] Distinct from `lat-pulldown` (hands just wider than the shoulders),
       `close-grip-lat-pulldown` (hands inside the shoulders, underhand) and
       `neutral-grip-lat-pulldown` (compact parallel-grip handle) — the giveaway
       here is how far outside the shoulders the hands sit
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as a vertical pull at 64 px wide
 
 > Note: at 64 px thumbnails this asset, `lat-pulldown`,

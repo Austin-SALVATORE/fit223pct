@@ -5,7 +5,7 @@
 | Exercise id | `kettlebell-swing` |
 | Category | Hip Hinge / Glutes |
 | Camera | `side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Kettlebell |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -74,34 +81,27 @@ Camera: side view, so the hip hinge, the flat back and the arc of the bell are
 all clearly readable.
 Equipment: one matte black cast-iron kettlebell with a smooth rounded handle,
 held in both hands with straight arms.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Standing tall at the top of a swing, feet shoulder-width apart and flat,
    knees straight but not locked, hips fully extended, glutes contracted, ribs
    down, spine neutral, arms straight and the kettlebell floating at roughly
    chest height, level with the sternum, gaze forward.
-2. Start of the backswing. Hips travel backwards, knees soften to a slight
-   fixed bend, torso inclining forward, arms still straight, the kettlebell
-   dropping and travelling back toward the body with the upper arms brushing
-   the ribs.
-3. Bottom of the backswing, the hike position. Torso at roughly 45 degrees,
+2. Bottom of the backswing, the hike position. Torso at roughly 45 degrees,
    hips at their furthest back point, shins near vertical, kettlebell passing
    high between and behind the thighs with the forearms pressed against the
    inner thighs, lumbar spine flat, head in line with the spine, shoulders
    packed down.
-4. Explosive hip drive. Hips snapping forward, knees extending, torso rising
+3. Explosive hip drive. Hips snapping forward, knees extending, torso rising
    fast toward vertical, kettlebell just leaving the thighs and starting
    forward, arms still completely straight and hanging relaxed from the
    shoulders.
-5. Top of the swing. Hips and knees fully locked out, body in a vertical
+4. Top of the swing. Hips and knees fully locked out, body in a vertical
    standing plank, glutes and abs braced, ribs down, and the kettlebell out in
    front at roughly chest height, carried there by momentum from the hips with
    the arms straight and loose — this is not a front raise, the shoulders are
    not lifting the bell.
-6. Start of the next backswing. Bell falling back toward the body, hips already
-   travelling backwards to receive it, arms straight, upper arms reconnecting
-   with the ribs, back flat.
 
 TECHNIQUE — must be correct in every frame:
 - The movement is driven entirely by the hips; the arms are ropes that hang
@@ -121,12 +121,12 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Arms straight in all six frames — no elbow bend, no front-raise shoulder action
+- [ ] Arms straight in all four frames — no elbow bend, no front-raise shoulder action
 - [ ] Backswing frame shows the bell high between the thighs, above knee height
 - [ ] Hips travel backwards with near-vertical shins — reads as a hinge, not a squat
 - [ ] Lumbar spine flat at the bottom of the backswing
 - [ ] Top frame is vertical with hips locked out, ribs down, no backwards lean
 - [ ] Bell rises no higher than chest height
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a kettlebell swing at 64 px wide

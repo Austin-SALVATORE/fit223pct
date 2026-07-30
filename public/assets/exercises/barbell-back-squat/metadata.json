@@ -2,47 +2,37 @@
   "exerciseId": "barbell-back-squat",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1915,
-      821
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        349,
-        821
+        476,
+        822
       ],
       [
-        323,
-        821
+        467,
+        822
       ],
       [
-        317,
-        821
+        469,
+        822
       ],
       [
-        293,
-        821
-      ],
-      [
-        282,
-        821
-      ],
-      [
-        344,
-        821
+        501,
+        822
       ]
     ],
-    "referenceHash": "dcd80f89fe",
-    "thumbnailHash": "47e0a4d203",
+    "referenceHash": "433383fc1e",
+    "thumbnailHash": "6369b53f78",
     "frameHashes": [
-      "390d761349",
-      "5d87678d27",
-      "0fd4a7be76",
-      "adeda59183",
-      "120fbb677c",
-      "bedb3856de"
+      "78ee7b7db2",
+      "6a45abe46e",
+      "2f431de9c2",
+      "1c9a4c9f40"
     ]
   },
   "credits": {

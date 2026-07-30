@@ -5,7 +5,7 @@
 | Exercise id | `inverted-row` |
 | Category | Back Variants |
 | Camera | `side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Smith / press machine — bar racked low |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -78,7 +85,7 @@ The woman lies supine on the ground line beneath the bar, gripping it overhand
 with the hands slightly wider than the shoulders. Her legs are straight with
 only the heels touching the ground, so the whole body hangs as one rigid
 straight line from heels to shoulders, inclined at a shallow angle.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Start position. Hanging under the racked bar with both arms fully extended,
@@ -86,22 +93,16 @@ Frames:
    protracted. Body one rigid straight line from heels to shoulders, hips
    level, legs straight, only the heels on the ground, head neutral looking up
    at the bar.
-2. Initiation. Arms still straight. The shoulder blades retract and depress —
-   the chest lifts slightly toward the bar — before either elbow bends. The
-   body line stays rigid and straight.
-3. Early pull. Both elbows bent to roughly 130 degrees, driving down and back
+2. Early pull. Both elbows bent to roughly 130 degrees, driving down and back
    close to the ribs, chest rising toward the bar, hips rising exactly in line
    with the shoulders so the body stays one straight line.
-4. Top position, deepest point. Mid-chest almost touching the bar, both elbows
+3. Top position, deepest point. Mid-chest almost touching the bar, both elbows
    bent to roughly 45 degrees and pointing down behind the torso line,
    shoulder blades fully retracted and depressed, body still one rigid
    straight line from heels to shoulders — no sagging hips, no piked hips —
    wrists straight.
-5. Controlled lowering, halfway. Elbows opening back toward 130 degrees, the
+4. Controlled lowering, halfway. Elbows opening back toward 130 degrees, the
    body descending as one rigid line, shoulder blades beginning to protract.
-6. Return to the full hang, identical to frame 1. Arms fully extended,
-   shoulder blades protracted under control, heels still the only ground
-   contact.
 
 TECHNIQUE — must be correct in every frame:
 - The bar stays locked at the same height on the rails — the body moves, the
@@ -116,13 +117,14 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Bar locked at identical height on the rails in all six frames
+- [ ] Bar locked at identical height on the rails in all four frames
 - [ ] Body one rigid straight line from heels to shoulders — no hip sag or
       pike in any frame
-- [ ] Only the heels touch the ground, legs straight, in all six frames
-- [ ] Frame 2 shows scapular retraction with both arms still straight
+- [ ] Only the heels touch the ground, legs straight, in all four frames
+- [ ] Shoulder blades progress from protracted in frame 1 to fully retracted
+      and depressed by frame 3, as the elbows bend through the pull
 - [ ] Mid-chest meets the bar in the top frame, not the chin or the hips
 - [ ] Distinguishable at a glance from the pull-up — the body is horizontal
       and the heels stay grounded
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as a horizontal bodyweight pull at 64 px wide

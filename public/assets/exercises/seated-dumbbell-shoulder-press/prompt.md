@@ -5,7 +5,7 @@
 | Exercise id | `seated-dumbbell-shoulder-press` |
 | Category | Shoulders |
 | Camera | `three-quarter-front` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Dumbbell (pair) + Incline bench |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -72,7 +79,7 @@ MOVEMENT FOR THIS IMAGE:
 Exercise: Seated Dumbbell Shoulder Press
 Camera: three-quarter-front view, so the torso, the bench back pad and both arms all stay visible.
 Equipment: a pair of matte black hexagonal-head dumbbells with brushed chrome knurled handles, one in each hand, and a matte black padded bench set to roughly 30 degrees on a black steel frame, positioned so the back pad rises behind the seated torso and supports it.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Start position, seated. Hips all the way back into the seat, the upper
@@ -81,19 +88,16 @@ Frames:
    the collarbones, palms facing forward, elbows bent to roughly 90 degrees
    and stacked directly under the wrists, upper arms slightly in front of
    the frontal plane.
-2. Early press, roughly a quarter of the range. Dumbbells at ear height,
-   forearms vertical under the weights, back still flat against the pad.
-3. Mid press. Dumbbells just above the top of the head, elbows at roughly 120
+2. Mid press. Dumbbells just above the top of the head, elbows at roughly 120
    degrees, shoulders beginning to shrug and upwardly rotate, the lower back
    still in contact with the pad rather than arching away from it.
-4. Lockout, the highest point. Elbows fully extended but not hyperextended,
+3. Lockout, the highest point. Elbows fully extended but not hyperextended,
    dumbbells finishing close together over the ears, biceps near the ears,
    wrists stacked over the elbows and shoulders, ribs down, hips and upper
    back still pinned to the seat and pad.
-5. Controlled descent, back to roughly the height of frame 2. Elbows tracking
-   back down along the same arc, forearms vertical.
-6. Return to the start position, identical to frame 1. Dumbbells back at
-   shoulder height, elbows under the wrists, torso still supported.
+4. Controlled descent, back down to roughly ear height, dumbbells level with
+   the ears, forearms vertical under the weights. Elbows tracking back down
+   along the same arc.
 
 TECHNIQUE — must be correct in every frame:
 - The upper back and shoulder blades stay in contact with the back pad in
@@ -108,11 +112,11 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Bench and back pad clearly visible and identical in all six frames
+- [ ] Bench and back pad clearly visible and identical in all four frames
 - [ ] Upper back stays in contact with the pad; no arching off the bench
 - [ ] Both feet flat on the ground in every frame
 - [ ] Both dumbbells at identical height in every frame
 - [ ] Forearms vertical and wrists stacked over elbows throughout
 - [ ] Clearly distinguishable from the standing dumbbell shoulder press
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as a seated overhead dumbbell press at 64 px wide

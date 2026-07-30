@@ -5,7 +5,7 @@
 | Exercise id | `dumbbell-bench-press` |
 | Category | Chest / Push |
 | Camera | `bench-side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Dumbbell (one per hand), Flat bench |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -77,28 +84,23 @@ knurled handles, one in each hand, plus one low matte black padded bench on a
 simple black steel frame. The bench lies along the frame with the head end
 toward the left. The dumbbells are held with the handles in line with each
 other and the palms facing forward toward the feet.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Lockout start. Lying face up on the flat bench, head, upper back and glutes
    on the pad, slight natural arch in the lower back, feet flat on the floor.
    Arms vertical, elbows extended but not locked hard, the two dumbbells held
    over the upper chest roughly shoulder width apart and not touching.
-2. Early descent, elbows bent to roughly 25 degrees. The dumbbells travel down
-   and slightly out, upper arms beginning to tuck toward roughly 45 degrees
-   from the torso, wrists stacked over the elbows.
-3. Half descent, elbows at roughly 90 degrees, forearms vertical, dumbbells
+2. Half descent, elbows at roughly 90 degrees, forearms vertical, dumbbells
    level with the front of the shoulders, shoulder blades pinned back and down
    into the bench.
-4. Bottom position. Dumbbells at chest level just outside the ribcage, handles
+3. Bottom position. Dumbbells at chest level just outside the ribcage, handles
    roughly level with the lower chest, elbows tucked to roughly 45 degrees and
    sitting directly under the wrists, forearms vertical from this side view.
    The elbows do not drop far below the line of the bench. Chest lifted, upper
    back tight, glutes on the bench, feet flat.
-5. Ascent, back to roughly a half press. Elbows extending, dumbbells pressing
+4. Ascent, back to roughly a half press. Elbows extending, dumbbells pressing
    up and slightly inward, staying separate and never clashing.
-6. Lockout again, identical to frame 1, elbows extended, dumbbells over the
-   upper chest and still roughly shoulder width apart.
 
 TECHNIQUE — must be correct in every frame:
 - The elbow clearly bends and extends across the frames — this is a press, not
@@ -118,5 +120,5 @@ TECHNIQUE — must be correct in every frame:
 - [ ] Forearms vertical with wrists stacked over elbows in the bottom frame
 - [ ] Dumbbells stay separate at lockout, roughly shoulder width apart
 - [ ] Glutes and upper back stay on the bench, feet flat on the floor
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as a dumbbell bench press at 64 px wide

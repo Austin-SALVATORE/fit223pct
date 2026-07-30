@@ -2,47 +2,37 @@
   "exerciseId": "assisted-pull-up",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1774,
-      887
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        267,
-        887
+        456,
+        822
       ],
       [
-        322,
-        887
+        450,
+        822
       ],
       [
-        289,
-        887
+        435,
+        822
       ],
       [
-        308,
-        887
-      ],
-      [
-        293,
-        887
-      ],
-      [
-        295,
-        887
+        425,
+        822
       ]
     ],
-    "referenceHash": "84394fbeef",
-    "thumbnailHash": "bc33fa22c9",
+    "referenceHash": "81212eb84a",
+    "thumbnailHash": "7ac7bf1fdd",
     "frameHashes": [
-      "bf5db7fee8",
-      "0b914e02f0",
-      "d94f54548b",
-      "f6284ca6dc",
-      "327e1c91fa",
-      "dda1f2cf98"
+      "f32d2816c2",
+      "c4f27ab675",
+      "7a80a44552",
+      "213ab0e866"
     ]
   },
   "credits": {

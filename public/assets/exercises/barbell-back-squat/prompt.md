@@ -5,7 +5,7 @@
 | Exercise id | `barbell-back-squat` |
 | Category | Squat / Lower Body |
 | Camera | `side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Barbell |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -76,25 +83,20 @@ Equipment: one long brushed chrome bar with matte black bumper plates, evenly
 loaded both sides, resting across the upper back on the shelf of the rear
 deltoids and mid-trapezius, hands gripping the bar just outside the shoulders,
 elbows pointing down and slightly back, wrists stacked over the bar.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Standing tall, feet slightly wider than shoulder-width and flat, toes turned
    out roughly 20 degrees, hips and knees fully extended, bar centred over the
    midfoot, chest up, gaze forward.
-2. Early descent, roughly a quarter squat. Hips travel back first, knees bent
-   about 30 degrees, torso inclined forward slightly, bar still stacked
-   vertically over the midfoot.
-3. Half squat, thighs at roughly 45 degrees. Hips back, knees bent about 70
+2. Half squat, thighs at roughly 45 degrees. Hips back, knees bent about 70
    degrees and tracking out over the toes, back flat, bar path still vertical
    over the midfoot.
-4. Bottom position, deepest point. Hips just below knee level, thighs below
+3. Bottom position, deepest point. Hips just below knee level, thighs below
    parallel, heels flat, shins inclined forward, torso inclined forward about
    40 degrees with a neutral spine, bar still directly above the midfoot.
-5. Ascent, back to roughly a half squat. Hips and shoulders rising at the same
+4. Ascent, back to roughly a half squat. Hips and shoulders rising at the same
    rate so the torso angle is unchanged, knees still tracking over the toes.
-6. Standing tall again, identical to frame 1, hips and knees fully extended,
-   ribs down.
 
 TECHNIQUE — must be correct in every frame:
 - The bar stays stacked vertically over the midfoot in every frame.
@@ -107,11 +109,11 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Bar sits on the upper back, not on the neck, in all six frames
+- [ ] Bar sits on the upper back, not on the neck, in all four frames
 - [ ] Bar stays vertically over the midfoot through the whole strip
 - [ ] Bottom frame reaches hips below knees with heels down
 - [ ] Knees track over toes — no valgus collapse
 - [ ] Plates evenly loaded and identical on both sides in every frame
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a barbell squat at 64 px wide

@@ -5,7 +5,7 @@
 | Exercise id | `single-leg-romanian-deadlift` |
 | Category | Lower Body Variants |
 | Camera | `side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Dumbbell |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -75,34 +82,28 @@ head to rear heel are all clearly readable.
 Equipment: one matte black hexagonal-head dumbbell with a brushed chrome
 knurled handle, held in the hand opposite the stance leg, arm straight and
 hanging vertically.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Standing tall with full weight on the stance leg, stance knee straight but
    not locked, the free foot resting lightly on its toes just behind the
    body, dumbbell hanging in front of the thigh, shoulders level, gaze
    forward.
-2. Start of the hinge. Stance knee softens to a fixed slight bend and holds
-   there for the rest of the rep. Hips travel backwards, torso tips forward
-   about 20 degrees, the free leg begins extending straight behind, dumbbell
-   sliding down close to the stance thigh.
-3. Mid-range. Torso at roughly 45 degrees, rear leg extended behind in one
+2. Mid-range. Torso at roughly 45 degrees, rear leg extended behind in one
    line with the torso, hips square to the ground, dumbbell at knee height
    and close to the stance leg.
-4. Bottom position. Torso close to parallel with the ground and the rear leg
+3. Bottom position. Torso close to parallel with the ground and the rear leg
    extended straight behind as a counterbalance, forming one straight line
    from the head through the rear heel. Hips level and square — the hip of
    the raised leg does not rotate open toward the ceiling. Rear toes point
    down at the floor. Dumbbell at mid-shin, close to the stance leg, lumbar
    spine neutral.
-5. Ascent. Hips drive forward, torso rising and the rear leg lowering
+4. Ascent. Hips drive forward, torso rising and the rear leg lowering
    together at the same rate, dumbbell tracking back up close to the leg.
-6. Standing tall again, identical to frame 1, hips fully extended, shoulders
-   level.
 
 TECHNIQUE — must be correct in every frame:
-- This is a hinge on one leg — the stance knee bend is set in frame 2 and
-  does not change until the lockout.
+- This is a hinge on one leg — the stance knee bend is set early in the hinge
+  and does not change until the lockout.
 - Hips stay square and level; the raised-leg hip never rotates open.
 - The rear toes point down toward the floor, not out to the side.
 - Head, spine, pelvis and rear heel form one straight line at the bottom.
@@ -114,9 +115,9 @@ TECHNIQUE — must be correct in every frame:
 
 - [ ] Bottom frame shows one straight line from head to rear heel, torso near parallel
 - [ ] Hips level and square in every frame — the raised hip never opens toward the ceiling
-- [ ] Stance knee bend visibly identical in frames 2 through 5 — a hinge, not a squat
+- [ ] Stance knee bend visibly identical in frames 2 through 4 — a hinge, not a squat
 - [ ] Rear toes point down at the floor, not out to the side
 - [ ] Dumbbell hangs vertically and stays close to the stance leg
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a single-leg hinge at 64 px wide

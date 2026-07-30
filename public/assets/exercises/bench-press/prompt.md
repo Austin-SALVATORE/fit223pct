@@ -5,7 +5,7 @@
 | Exercise id | `bench-press` |
 | Category | Chest / Push |
 | Camera | `bench-side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Barbell, Flat bench |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -75,8 +82,12 @@ the elbow angle and the arch of the upper back are all readable.
 Equipment: one long brushed chrome bar with matte black bumper plates, evenly
 loaded both sides, plus one low matte black padded bench on a simple black
 steel frame. The bench lies along the frame with the head end toward the left
-and the feet toward the right; no uprights or rack in frame.
-Number of frames: 6, evenly spaced left to right.
+and the feet toward the right; no uprights or rack in frame. The bench's own
+legs are the widest part of this pose horizontally — keep the entire bench,
+including both legs, well inside this pose's exclusive vertical band, with the
+same wide clear magenta column beyond the bench legs as beyond the bar plates
+on the other side.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Lockout start. Lying face up on the flat bench, head, upper back and glutes
@@ -84,21 +95,16 @@ Frames:
    the floor under or slightly behind the knees. Hands just wider than shoulder
    width with a full thumbs-around grip, wrists stacked directly over the
    elbows, arms vertical, bar held over the upper chest.
-2. Early descent, elbows bent to roughly 25 degrees. The bar has left lockout
-   and travels down and very slightly toward the feet, upper arms starting to
-   tuck to roughly 45 degrees from the torso rather than flaring to 90.
-3. Half descent, elbows at roughly 90 degrees, forearms vertical, bar level
+2. Half descent, elbows at roughly 90 degrees, forearms vertical, bar level
    with the front of the shoulders, shoulder blades pinned back and down into
    the bench.
-4. Bottom position. The bar lightly touches the lower chest just below the
+3. Bottom position. The bar lightly touches the lower chest just below the
    nipple line, elbows still tucked to roughly 45 degrees and sitting under the
    wrists, forearms vertical from this side view, chest lifted, upper back
    tight, glutes still on the bench, feet still flat.
-5. Ascent, back to roughly a half press. The bar drives up and very slightly
+4. Ascent, back to roughly a half press. The bar drives up and very slightly
    back toward the shoulders on a shallow arc, elbows extending, hips staying
    down on the bench.
-6. Lockout again, identical to frame 1, elbows fully extended, bar over the
-   upper chest.
 
 TECHNIQUE — must be correct in every frame:
 - Shoulder blades stay retracted and pinned into the bench throughout.
@@ -114,9 +120,9 @@ TECHNIQUE — must be correct in every frame:
 ## Form checkpoints (QA)
 
 - [ ] Bar touches the lower chest at the bottom, not the throat or the belly
-- [ ] Elbows tucked to roughly 45 degrees in all six frames
+- [ ] Elbows tucked to roughly 45 degrees in all four frames
 - [ ] Forearms vertical with wrists stacked over elbows in the bottom frame
 - [ ] Glutes and upper back stay on the bench, feet flat on the floor
-- [ ] Bar stays level and evenly loaded in all six frames
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Bar stays level and evenly loaded in all four frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as a barbell bench press at 64 px wide

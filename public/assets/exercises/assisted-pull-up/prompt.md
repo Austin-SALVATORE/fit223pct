@@ -5,7 +5,7 @@
 | Exercise id | `assisted-pull-up` |
 | Category | Back / Pull |
 | Camera | `side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Pull-up bar + long elastic assistance band |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -77,26 +84,22 @@ one long matte near-black elastic assistance band looped over the middle of the
 bar. The band hangs down in front of the body and the woman rests both shins in
 its bottom loop with her knees bent behind her and her ankles together. The band
 is the visual difference between this exercise and the unassisted pull-up and
-must be clearly visible in all six frames.
-Number of frames: 6, evenly spaced left to right.
+must be clearly visible in all four frames.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Bottom of the hang. Both hands on the bar just wider than shoulder width,
    palms facing forward, arms fully extended, shoulders relaxed up toward the
    ears. Knees bent to roughly 90 degrees behind the body with both shins in the
    band loop, the band stretched long and thin under the load.
-2. Scapular set. Arms still straight. Shoulder blades retract and depress, the
-   chest lifts, the whole body rises slightly and the band shortens a little.
-3. Early pull. Elbows bent to roughly 140 degrees driving down toward the ribs,
+2. Early pull. Elbows bent to roughly 140 degrees driving down toward the ribs,
    chin still below the bar, the band visibly slackening as the body rises.
-4. Top position, highest point. Chin clearly above the bar, elbows bent to
+3. Top position, highest point. Chin clearly above the bar, elbows bent to
    roughly 45 degrees and tucked close to the sides, shoulder blades fully
    retracted and depressed, shins still in the loop, band now noticeably shorter
    and less stretched than in frame 1.
-5. Controlled descent, halfway. Elbows opening back toward 140 degrees, chin
+4. Controlled descent, halfway. Elbows opening back toward 140 degrees, chin
    just below the bar, band re-stretching, shoulders still held down.
-6. Return to the bottom of the hang, identical to frame 1. Arms fully extended,
-   band stretched long again, shins still in the loop.
 
 TECHNIQUE — must be correct in every frame:
 - The band assists but never bounces the body — the pull stays deliberate.
@@ -110,10 +113,10 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Assistance band visible and correctly routed over the bar and under both shins in all six frames
+- [ ] Assistance band visible and correctly routed over the bar and under both shins in all four frames
 - [ ] Band reads longer and thinner at the bottom, shorter at the top
-- [ ] Frame 4 shows the chin clearly above the bar
+- [ ] Frame 3 shows the chin clearly above the bar
 - [ ] Knees stay bent behind the body — the feet never touch the ground line
 - [ ] Distinguishable at a glance from the unassisted pull-up asset
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as an assisted pull-up at 64 px wide

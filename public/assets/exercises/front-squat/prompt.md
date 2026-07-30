@@ -5,7 +5,7 @@
 | Exercise id | `front-squat` |
 | Category | Squat / Lower Body |
 | Camera | `side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Barbell |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -76,24 +83,20 @@ Equipment: one long brushed chrome bar with matte black bumper plates, evenly
 loaded both sides, resting across the front of the shoulders on the anterior
 deltoids, held in a front rack with the elbows pointed high and forward and the
 fingertips of both hands under the bar just outside the shoulders.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Standing tall, feet shoulder-width apart and flat, toes turned out roughly
    15 degrees, hips and knees fully extended, bar racked on the front deltoids,
    elbows high, chest tall, gaze forward.
-2. Early descent, roughly a quarter squat. Knees break first and travel
-   forward, hips drop straight down, torso stays close to vertical, elbows
-   still high.
-3. Half squat, thighs at roughly 45 degrees. Knees bent about 70 degrees and
+2. Half squat, thighs at roughly 45 degrees. Knees bent about 70 degrees and
    travelling forward past the toes, torso far more upright than in a back
    squat, bar over the midfoot.
-4. Bottom position, deepest point. Hips below knee level, thighs below
+3. Bottom position, deepest point. Hips below knee level, thighs below
    parallel, heels flat, torso close to vertical with a neutral spine, elbows
    still pointing high and forward so the bar stays racked.
-5. Ascent, back to roughly a half squat. Hips and chest rising together,
+4. Ascent, back to roughly a half squat. Hips and chest rising together,
    elbows driving up to keep the bar seated, knees tracking over the toes.
-6. Standing tall again, identical to frame 1, hips and knees fully extended.
 
 TECHNIQUE — must be correct in every frame:
 - Elbows stay high and forward in every frame — they never drop.
@@ -106,11 +109,11 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Elbows high and forward in all six frames — no dropped rack
+- [ ] Elbows high and forward in all four frames — no dropped rack
 - [ ] Torso visibly more upright than a back squat
 - [ ] Bottom frame reaches hips below knees with heels down
 - [ ] Bar stays in contact with the front deltoids throughout
 - [ ] Knees track over toes — no valgus collapse
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a front squat at 64 px wide

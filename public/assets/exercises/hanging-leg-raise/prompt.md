@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -73,10 +80,17 @@ Exercise: Hanging Leg Raise
 Camera: side view in full profile so the hanging body line and the hip angle are
 both readable.
 Equipment: a simple straight chrome horizontal bar with its supports out of
-frame, gripped overhand at just wider than shoulder width.
+frame, gripped overhand at just wider than shoulder width. The bar is drawn as
+a SEPARATE short segment directly above each figure's own hands only — it must
+NOT run continuously across the image. Each bar segment starts and ends well
+inside that pose's own exclusive vertical band, with the same wide clear
+background column beyond each end of the bar as beyond every other part of the
+pose, so the bar breaks cleanly into background in every gap between poses,
+exactly like the hands and feet do.
 Number of frames: 4, evenly spaced left to right.
-All four figures hang from one continuous shared horizontal bar at exactly
-identical scale and spacing, their feet clear of the shared invisible ground
+All four figures hang at exactly identical scale and spacing from their own
+separate bar segment, all segments at the same height and rendered identically
+so they read as the same bar, their feet clear of the shared invisible ground
 line, so the whole strip reads as a single aligned sequence.
 
 Frames:
@@ -111,5 +125,7 @@ TECHNIQUE — must be correct in every frame:
 - [ ] Top frame shows thighs past horizontal with a posterior pelvic tilt
 - [ ] No body swing or counterbalancing torso lean
 - [ ] Same face, hair, wardrobe, and body proportions in all four frames
-- [ ] All four figures identical scale, hanging from one aligned bar
+- [ ] All four figures identical scale, each hanging from its own separate bar
+      segment at identical height — the bar does not run continuously across
+      the image and breaks into background between poses
 - [ ] Readable as a hanging leg raise at 64 px wide

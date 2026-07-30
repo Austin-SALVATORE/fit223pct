@@ -3,37 +3,7 @@
   "version": 1,
   "media": {
     "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1691,
-      930
-    ],
-    "frameSizes": [
-      [
-        324,
-        930
-      ],
-      [
-        499,
-        930
-      ],
-      [
-        448,
-        930
-      ],
-      [
-        420,
-        930
-      ]
-    ],
-    "referenceHash": "dbe21d1769",
-    "thumbnailHash": "fa8c19b600",
-    "frameHashes": [
-      "573be5b489",
-      "52e68fbbcb",
-      "26f3e9a8af",
-      "21590e01c3"
-    ]
+    "thumbnailFrame": 3
   },
   "credits": {
     "source": "gpt-5.6-sol",

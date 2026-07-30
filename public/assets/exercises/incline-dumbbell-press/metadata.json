@@ -2,47 +2,37 @@
   "exerciseId": "incline-dumbbell-press",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
       1915,
       821
     ],
     "frameSizes": [
       [
-        353,
+        503,
         821
       ],
       [
-        303,
+        468,
         821
       ],
       [
-        317,
+        461,
         821
       ],
       [
-        341,
-        821
-      ],
-      [
-        304,
-        821
-      ],
-      [
-        297,
+        483,
         821
       ]
     ],
-    "referenceHash": "d9e2039e6d",
-    "thumbnailHash": "4880528c01",
+    "referenceHash": "bf97e6c4ef",
+    "thumbnailHash": "cd09ab2976",
     "frameHashes": [
-      "139cb5ce4f",
-      "35162b5f5b",
-      "7879d3df2f",
-      "f0dbb3b378",
-      "2857d772cb",
-      "a0f32ffc70"
+      "690f611376",
+      "0420cd715e",
+      "524fd84ec1",
+      "3193308dd1"
     ]
   },
   "credits": {

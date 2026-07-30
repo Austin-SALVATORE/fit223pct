@@ -2,47 +2,37 @@
   "exerciseId": "barbell-row",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
       1914,
       822
     ],
     "frameSizes": [
       [
-        353,
+        485,
         822
       ],
       [
-        312,
+        464,
         822
       ],
       [
-        309,
+        452,
         822
       ],
       [
-        317,
-        822
-      ],
-      [
-        303,
-        822
-      ],
-      [
-        320,
+        491,
         822
       ]
     ],
-    "referenceHash": "b6006fd70d",
-    "thumbnailHash": "acf76de643",
+    "referenceHash": "7d59ffe582",
+    "thumbnailHash": "384c20e6d9",
     "frameHashes": [
-      "ef35d4959e",
-      "89a5144c7e",
-      "e7a873d889",
-      "a7501c6167",
-      "d097d01fdd",
-      "84d943b19a"
+      "c0be6be027",
+      "2be594078f",
+      "f91e363fc1",
+      "70e5a117c9"
     ]
   },
   "credits": {

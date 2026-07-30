@@ -5,7 +5,7 @@
 | Exercise id | `cable-pull-through` |
 | Category | Hip Hinge / Glutes |
 | Camera | `machine-three-quarter` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Cable machine |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -76,36 +83,30 @@ Equipment: one matte black upright column with a brushed chrome cable and a
 simple black handle attachment, set at the lowest pulley position. She stands
 facing away from the column with the cable running forward between her legs;
 both hands hold the handle with straight arms.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Standing tall a short distance in front of the column, feet shoulder-width
    apart and flat, knees straight but not locked, cable taut and running
    between the legs, hands holding the handle in front of the hips, arms
    straight, glutes contracted, ribs down, spine neutral, gaze forward.
-2. Start of the hinge. Knees soften to a slight fixed bend, hips travel
-   backwards toward the column, torso inclining maybe 20 degrees, hands
-   travelling backwards between the thighs as the arms stay straight.
-3. Mid-range, torso at roughly 45 degrees. Hips clearly behind the heels, shins
-   near vertical, knee angle unchanged from frame 2, hands passing between the
-   knees, cable running in a straight line from the pulley to the hands, lower
-   back flat.
-4. Bottom position, torso close to parallel with the ground, hips at their
+2. Mid-range, torso at roughly 45 degrees. Hips clearly behind the heels, shins
+   near vertical, knees holding a slight fixed bend that stays constant
+   through the rest of the hinge, hands passing between the knees, cable
+   running in a straight line from the pulley to the hands, lower back flat.
+3. Bottom position, torso close to parallel with the ground, hips at their
    furthest back point, hands reaching back behind the knees between the
    thighs, hamstrings visibly lengthened, lumbar spine still neutral with no
    rounding, head in line with the spine, arms still straight and completely
    passive.
-5. Ascent, back through roughly 45 degrees. Hips drive forward, torso and hips
+4. Ascent, back through roughly 45 degrees. Hips drive forward, torso and hips
    rising together, hands travelling forward between the thighs purely because
    the hips are moving — the arms do not pull.
-6. Standing tall again, identical to frame 1. Hips fully extended, glutes
-   contracted, handle back in front of the hips, ribs down, no leaning back
-   past vertical.
 
 TECHNIQUE — must be correct in every frame:
-- This is a hip hinge, not a squat — the knee angle is set in frame 2 and does
-  not change until the lockout.
-- The arms stay straight and passive in all six frames; they are a connection
+- This is a hip hinge, not a squat — the knee angle is set at the start of the
+  hinge and does not change until the lockout.
+- The arms stay straight and passive in all four frames; they are a connection
   to the cable, never a pulling arm action.
 - The lumbar spine stays neutral and flat at every point, including the bottom.
 - The cable stays taut and runs in a straight line from the low pulley between
@@ -117,12 +118,12 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Knee angle visibly identical in frames 2 through 5 — reads as a hinge, not a squat
-- [ ] Arms straight and passive in all six frames, no elbow bend or rowing
+- [ ] Knee angle visibly identical in frames 2 through 4 — reads as a hinge, not a squat
+- [ ] Arms straight and passive in all four frames, no elbow bend or rowing
 - [ ] Cable taut and straight from the low pulley between the legs in every frame
 - [ ] Lumbar spine flat at the bottom frame, no rounding at the low back
 - [ ] Shins near vertical throughout, hips clearly travelling backwards
 - [ ] Lockout upright with ribs down and no backwards lean
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a cable hinge at 64 px wide

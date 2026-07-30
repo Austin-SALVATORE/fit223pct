@@ -5,7 +5,7 @@
 | Exercise id | `hack-squat` |
 | Category | Lower Body Variants |
 | Camera | `machine-three-quarter` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Hack squat machine |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -78,23 +85,19 @@ her back and hips flat against the sled's back pad, shoulders under the
 shoulder pads, hands gripping the handles beside the pads. The machine rests
 on the same shared ground line in every frame, drawn at an identical scale,
 angle and position; only the figure and the sled carriage move between frames.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Top position. Standing tall on the footplate, feet shoulder-width apart at
    mid-plate, knees extended but not locked, back and hips flat on the back
    pad, shoulders under the pads, gaze forward.
-2. Early descent, roughly a quarter squat. Knees bending and beginning to
-   track over the toes, the carriage sliding a short way down the rails, back
-   still flat on the pad.
-3. Half squat, thighs at roughly 45 degrees to the footplate. Knees tracking
+2. Half squat, thighs at roughly 45 degrees to the footplate. Knees tracking
    in line with the toes, heels flat on the plate, hips still on the pad.
-4. Bottom position, deepest point. Thighs parallel to the footplate, knees
+3. Bottom position, deepest point. Thighs parallel to the footplate, knees
    stacked over the toes, both heels still flat on the plate, hips and lower
    back still in full contact with the back pad.
-5. Ascent, back to roughly a half squat. Driving through the whole foot, hips
+4. Ascent, back to roughly a half squat. Driving through the whole foot, hips
    and shoulders rising together along the line of the rails.
-6. Top position again, identical to frame 1, knees extended but not locked.
 
 TECHNIQUE — must be correct in every frame:
 - Hips and lower back stay in full contact with the back pad — no gap opens
@@ -108,9 +111,9 @@ TECHNIQUE — must be correct in every frame:
 ## Form checkpoints (QA)
 
 - [ ] Bottom frame reaches thighs parallel to the footplate with heels flat
-- [ ] Hips and lower back stay on the back pad in all six frames — no gap at depth
+- [ ] Hips and lower back stay on the back pad in all four frames — no gap at depth
 - [ ] Knees track over the toes in every frame — no valgus collapse
-- [ ] Machine drawn at identical scale, angle and position in all six frames
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Machine drawn at identical scale, angle and position in all four frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a machine squat at 64 px wide

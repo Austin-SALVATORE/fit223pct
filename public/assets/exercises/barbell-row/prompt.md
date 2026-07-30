@@ -5,7 +5,7 @@
 | Exercise id | `barbell-row` |
 | Category | Back / Pull |
 | Camera | `side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Barbell |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -75,28 +82,23 @@ flat back and the bar path all stay readable.
 Equipment: one long brushed chrome bar with matte black bumper plates, evenly
 loaded both sides, held in an overhand grip just outside shoulder width, arms
 hanging straight down from the shoulders.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Set position. Feet hip-width apart and flat, knees bent to roughly 20 degrees,
    hips pushed back into a hinge so the torso sits at about 45 degrees to the
    floor, spine long and flat from tailbone to head, neck in line with the spine,
    arms hanging vertically, bar just below the knees over the mid-foot.
-2. Initiation. Arms still straight. Shoulder blades retract and depress, the
-   upper back tightens and the bar rises a few centimetres. Hip and torso angles
-   unchanged.
-3. Early pull. Elbows bent to roughly 130 degrees, driving up and back along the
+2. Early pull. Elbows bent to roughly 130 degrees, driving up and back along the
    sides of the ribs, bar tracking close to the thighs, torso angle still 45
    degrees.
-4. End position, highest point. Bar touching the lower abdomen just below the
+3. End position, highest point. Bar touching the lower abdomen just below the
    navel, elbows bent to roughly 45 degrees and clearly behind the torso line,
    shoulder blades fully retracted, back still flat, hips still back, knee angle
    unchanged, head neutral.
-5. Controlled descent, halfway. Elbows opening back toward 130 degrees, bar
+4. Controlled descent, halfway. Elbows opening back toward 130 degrees, bar
    lowering along the thighs, shoulder blades beginning to release, torso angle
    still 45 degrees.
-6. Return to the set position, identical to frame 1. Arms fully extended, bar
-   just below the knees, back still flat.
 
 TECHNIQUE — must be correct in every frame:
 - The torso angle stays fixed at roughly 45 degrees — it never rises with the bar.
@@ -109,10 +111,10 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Torso angle identical in all six frames — no trunk rise on the pull
+- [ ] Torso angle identical in all four frames — no trunk rise on the pull
 - [ ] Flat neutral spine at every point, including the bottom
 - [ ] Bar contacts the lower abdomen, not the sternum
-- [ ] Knee angle constant across all six frames
+- [ ] Knee angle constant across all four frames
 - [ ] Plates evenly loaded and identical on both sides
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as a bent-over barbell row at 64 px wide

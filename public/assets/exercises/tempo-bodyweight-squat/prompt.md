@@ -5,7 +5,7 @@
 | Exercise id | `tempo-bodyweight-squat` |
 | Category | Seeded Program |
 | Camera | `side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | None — bodyweight only |
 | Status | `planned` |
 
@@ -63,10 +63,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -81,25 +88,20 @@ Camera: side view, turned very slightly toward the viewer so both the torso and
 the working leg stay readable.
 Equipment: none — bodyweight only. Arms extend forward at chest height as a
 counterbalance during the descent and return to the sides at the top.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Standing tall, feet shoulder-width apart and flat, toes turned out roughly
    10 to 15 degrees, hips and knees fully extended, arms hanging at the sides,
    chest up, gaze forward.
-2. Early descent, roughly a quarter squat, perfectly balanced mid-tempo. Hips
-   have travelled back, knees bent about 30 degrees, torso leaning forward
-   only a few degrees, arms beginning to lift forward.
-3. Half squat, thighs at roughly 45 degrees. Knees bent about 70 degrees and
+2. Half squat, thighs at roughly 45 degrees. Knees bent about 70 degrees and
    tracking forward over the toes, hips clearly back, back flat, arms extended
    forward at chest height, whole body still and controlled.
-4. Bottom position, deepest point. Hips below knee level, thighs below
+3. Bottom position, deepest point. Hips below knee level, thighs below
    parallel, shins inclined forward, heels flat on the ground, chest up, spine
    neutral, arms straight forward at chest height.
-5. Ascent, back to roughly a half squat. Hips and chest rising together at the
+4. Ascent, back to roughly a half squat. Hips and chest rising together at the
    same rate, knees still tracking over the toes, arms starting to lower.
-6. Standing tall again, identical to frame 1, hips and knees fully extended,
-   arms back at the sides.
 
 TECHNIQUE — must be correct in every frame:
 - Heels stay flat on the ground through the whole rep, including the bottom.
@@ -113,10 +115,10 @@ TECHNIQUE — must be correct in every frame:
 ## Form checkpoints (QA)
 
 - [ ] Bottom frame reaches hips below knees with heels down
-- [ ] Knees track over toes in all six frames — no valgus collapse
+- [ ] Knees track over toes in all four frames — no valgus collapse
 - [ ] Lumbar spine neutral at depth, not rounded
 - [ ] Arm counterbalance rises and falls consistently across the strip
 - [ ] Descent frames read as controlled and balanced, not collapsing
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a squat at 64 px wide

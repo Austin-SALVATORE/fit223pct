@@ -5,7 +5,7 @@
 | Exercise id | `close-grip-lat-pulldown` |
 | Category | Back Variants |
 | Camera | `machine-three-quarter` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Lat pulldown — long bar, close underhand grip |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -78,32 +85,25 @@ black bar. The woman is seated on the pad with both thighs locked under the
 thigh pad, feet flat on the floor, shins vertical. The grip is the loudest
 visual element: hands clearly inside shoulder width on the centre of the bar,
 underhand with the palms facing her, in every frame.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Start position. Seated tall, thighs pinned under the pad, both arms fully
    extended overhead, hands clearly inside shoulder width on the centre of the
    long bar, underhand grip with the palms facing her. Shoulder blades elevated
    toward the ears by the load, elbows straight but not locked, torso vertical.
-2. Initiation. Arms still straight, underhand palms facing her, hands still
-   inside shoulder width. The shoulder blades retract and depress — the
-   shoulders visibly drop away from the ears — before the elbows bend. Torso
-   begins a small backward lean of about 10 degrees from vertical.
-3. Early pull. Elbows bent to roughly 140 degrees and driving straight down in
+2. Early pull. Elbows bent to roughly 140 degrees and driving straight down in
    front of the ribs — the close underhand grip keeps them tucked and pointing
    forward-down, not flared. Bar at forehead height, hands still inside
    shoulder width, palms facing her, torso lean now 15 degrees and fixed there.
-4. End position, deepest point. Bar just under the chin at upper-chest height,
+3. End position, deepest point. Bar just under the chin at upper-chest height,
    hands still inside shoulder width with the palms facing her, elbows bent to
    roughly 60 degrees and tucked close in front of the ribs, shoulder blades
    fully retracted and depressed, chest tall, torso still at the same
    15-degree backward lean, wrists straight, never curled.
-5. Controlled return, halfway. Elbows opening back toward 140 degrees, bar at
+4. Controlled return, halfway. Elbows opening back toward 140 degrees, bar at
    forehead height, underhand grip unchanged, shoulder blades still held down,
    torso lean unchanged.
-6. Return to full stretch, identical to frame 1. Arms fully extended overhead,
-   hands inside shoulder width, palms facing her, shoulder blades allowed to
-   rise again under control, thighs still locked under the pad.
 
 TECHNIQUE — must be correct in every frame:
 - Hands stay clearly inside shoulder width with an underhand grip, palms
@@ -122,7 +122,9 @@ TECHNIQUE — must be correct in every frame:
 
 - [ ] Hands inside shoulder width, underhand with the palms facing her, in
       every frame
-- [ ] Frame 2 shows scapular depression with the elbows still straight
+- [ ] Shoulder blades progress from elevated toward the ears in frame 1 to
+      fully retracted and depressed by frame 3, as the elbows bend through the
+      pull
 - [ ] Bar finishes at the upper chest in front of the head — never behind
       the neck
 - [ ] Elbows tucked in front of the ribs, never flared sideways
@@ -131,7 +133,7 @@ TECHNIQUE — must be correct in every frame:
       `wide-grip-lat-pulldown` (hands far outside the shoulders, overhand) and
       `neutral-grip-lat-pulldown` (compact parallel-grip handle) — the giveaway
       here is the narrow underhand grip on the long bar
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as a vertical pull at 64 px wide
 
 > Note: at 64 px thumbnails this asset, `lat-pulldown`,

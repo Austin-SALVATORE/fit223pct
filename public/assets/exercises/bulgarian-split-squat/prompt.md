@@ -5,7 +5,7 @@
 | Exercise id | `bulgarian-split-squat` |
 | Category | Squat / Lower Body |
 | Camera | `three-quarter-side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Dumbbell, Flat bench |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -76,25 +83,21 @@ Equipment: one low matte black padded bench on a simple black steel frame,
 placed behind the figure; the rear foot rests laces-down on the bench pad. One
 matte black hexagonal-head dumbbell with a brushed chrome knurled handle held
 in the hand opposite the front leg, hanging at arm's length beside the hip.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Split stance set up. Front foot flat on the ground about two foot-lengths
    ahead of the bench, rear foot resting on the bench pad, front leg straight,
    hips square and level, torso tall, dumbbell hanging at the side.
-2. Early descent. Front knee bent about 30 degrees, rear knee dropping down and
-   slightly behind the hip, torso still tall, hips still square.
-3. Mid descent. Front knee bent about 60 degrees and tracking forward over the
+2. Mid descent. Front knee bent about 60 degrees and tracking forward over the
    front foot, rear thigh angling down and back, torso leaning forward only
    slightly.
-4. Bottom position, deepest point. Front thigh parallel to the ground, front
+3. Bottom position, deepest point. Front thigh parallel to the ground, front
    knee stacked over the front foot with the heel flat, rear knee low and just
    short of the ground, rear hip in slight extension, torso upright with a
    neutral spine, dumbbell hanging vertically beside the front shin.
-5. Ascent. Front knee bent about 50 degrees, weight driven through the front
+4. Ascent. Front knee bent about 50 degrees, weight driven through the front
    heel, hips rising, rear leg still relaxed and only guiding balance.
-6. Back to the top, identical to frame 1, front hip and knee fully extended,
-   rear foot still on the bench.
 
 TECHNIQUE — must be correct in every frame:
 - Weight stays on the front leg; the rear leg only balances and never pushes.
@@ -107,11 +110,11 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Rear foot stays on the bench in all six frames
+- [ ] Rear foot stays on the bench in all four frames
 - [ ] Bottom frame shows the front thigh parallel with the front heel flat
 - [ ] Front knee tracks over the front foot — no valgus collapse
 - [ ] Hips square and level, no visible rotation
 - [ ] Both legs remain clearly separable in the three-quarter view
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a split squat at 64 px wide

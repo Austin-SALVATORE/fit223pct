@@ -112,47 +112,37 @@
     ]
   },
   "assisted-pull-up": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1774,
-      887
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        267,
-        887
+        456,
+        822
       ],
       [
-        322,
-        887
+        450,
+        822
       ],
       [
-        289,
-        887
+        435,
+        822
       ],
       [
-        308,
-        887
-      ],
-      [
-        293,
-        887
-      ],
-      [
-        295,
-        887
+        425,
+        822
       ]
     ],
-    "referenceHash": "84394fbeef",
-    "thumbnailHash": "bc33fa22c9",
+    "referenceHash": "81212eb84a",
+    "thumbnailHash": "7ac7bf1fdd",
     "frameHashes": [
-      "bf5db7fee8",
-      "0b914e02f0",
-      "d94f54548b",
-      "f6284ca6dc",
-      "327e1c91fa",
-      "dda1f2cf98"
+      "f32d2816c2",
+      "c4f27ab675",
+      "7a80a44552",
+      "213ab0e866"
     ]
   },
   "band-curl": {
@@ -302,47 +292,37 @@
     ]
   },
   "barbell-back-squat": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1915,
-      821
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        349,
-        821
+        476,
+        822
       ],
       [
-        323,
-        821
+        467,
+        822
       ],
       [
-        317,
-        821
+        469,
+        822
       ],
       [
-        293,
-        821
-      ],
-      [
-        282,
-        821
-      ],
-      [
-        344,
-        821
+        501,
+        822
       ]
     ],
-    "referenceHash": "dcd80f89fe",
-    "thumbnailHash": "47e0a4d203",
+    "referenceHash": "433383fc1e",
+    "thumbnailHash": "6369b53f78",
     "frameHashes": [
-      "390d761349",
-      "5d87678d27",
-      "0fd4a7be76",
-      "adeda59183",
-      "120fbb677c",
-      "bedb3856de"
+      "78ee7b7db2",
+      "6a45abe46e",
+      "2f431de9c2",
+      "1c9a4c9f40"
     ]
   },
   "barbell-hip-thrust": {
@@ -390,47 +370,37 @@
     ]
   },
   "barbell-row": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
       1914,
       822
     ],
     "frameSizes": [
       [
-        353,
+        485,
         822
       ],
       [
-        312,
+        464,
         822
       ],
       [
-        309,
+        452,
         822
       ],
       [
-        317,
-        822
-      ],
-      [
-        303,
-        822
-      ],
-      [
-        320,
+        491,
         822
       ]
     ],
-    "referenceHash": "b6006fd70d",
-    "thumbnailHash": "acf76de643",
+    "referenceHash": "7d59ffe582",
+    "thumbnailHash": "384c20e6d9",
     "frameHashes": [
-      "ef35d4959e",
-      "89a5144c7e",
-      "e7a873d889",
-      "a7501c6167",
-      "d097d01fdd",
-      "84d943b19a"
+      "c0be6be027",
+      "2be594078f",
+      "f91e363fc1",
+      "70e5a117c9"
     ]
   },
   "bench-dip": {
@@ -468,47 +438,37 @@
     ]
   },
   "bench-press": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1916,
-      821
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        349,
-        821
+        495,
+        823
       ],
       [
-        324,
-        821
+        465,
+        823
       ],
       [
-        313,
-        821
+        478,
+        823
       ],
       [
-        329,
-        821
-      ],
-      [
-        313,
-        821
-      ],
-      [
-        288,
-        821
+        457,
+        823
       ]
     ],
-    "referenceHash": "70059d24dd",
-    "thumbnailHash": "e5614e8946",
+    "referenceHash": "884d7ff992",
+    "thumbnailHash": "2355a36b01",
     "frameHashes": [
-      "8b181e51f5",
-      "9ec289c99f",
-      "f223408ac9",
-      "64386f3d0c",
-      "165849d8d6",
-      "08002a0afa"
+      "f007caf549",
+      "7794094a0f",
+      "78b459c032",
+      "016e06a30f"
     ]
   },
   "biceps-curl": {
@@ -575,91 +535,71 @@
     ]
   },
   "bodyweight-squat": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1921,
-      819
+      1914,
+      822
     ],
     "frameSizes": [
       [
-        277,
-        819
+        275,
+        822
       ],
       [
-        339,
-        819
+        463,
+        822
       ],
       [
-        321,
-        819
+        468,
+        822
       ],
       [
-        326,
-        819
-      ],
-      [
-        316,
-        819
-      ],
-      [
-        262,
-        819
+        447,
+        822
       ]
     ],
-    "referenceHash": "e4f11e297c",
-    "thumbnailHash": "46678bd036",
+    "referenceHash": "6818298798",
+    "thumbnailHash": "07f85d5e73",
     "frameHashes": [
-      "eec298b78a",
-      "04ef51ffb4",
-      "b37be1d175",
-      "31a2dd3ebe",
-      "268fdb1879",
-      "9dc077d7a6"
+      "5984d72f4d",
+      "9c636706dd",
+      "611443b3c9",
+      "e97aa205df"
     ]
   },
   "bulgarian-split-squat": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1923,
-      818
+      1893,
+      831
     ],
     "frameSizes": [
       [
-        268,
-        818
+        451,
+        831
       ],
       [
-        337,
-        818
+        474,
+        831
       ],
       [
-        332,
-        818
+        438,
+        831
       ],
       [
-        335,
-        818
-      ],
-      [
-        313,
-        818
-      ],
-      [
-        338,
-        818
+        495,
+        831
       ]
     ],
-    "referenceHash": "27f7da5ab9",
-    "thumbnailHash": "a57371182b",
+    "referenceHash": "f02790fce6",
+    "thumbnailHash": "66d6ab7e01",
     "frameHashes": [
-      "bf4b0f921c",
-      "70b4e484a9",
-      "e518b4dfc5",
-      "4ebedf891e",
-      "41da8b3b90",
-      "15481ed7ef"
+      "bee539eea3",
+      "e8a4647b13",
+      "24c5e2129b",
+      "7f960027a0"
     ]
   },
   "cable-curl": {
@@ -700,34 +640,34 @@
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1774,
-      887
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        496,
-        887
+        522,
+        823
       ],
       [
-        421,
-        887
+        482,
+        823
       ],
       [
-        423,
-        887
+        477,
+        823
       ],
       [
-        432,
-        887
+        431,
+        823
       ]
     ],
-    "referenceHash": "0968f2336c",
-    "thumbnailHash": "104434caa0",
+    "referenceHash": "23b79e14f0",
+    "thumbnailHash": "65fb1a5ac0",
     "frameHashes": [
-      "0b22fe0c1d",
-      "72bb6fa917",
-      "82a49d6278",
-      "3df41366fb"
+      "b756d14298",
+      "dc1eb15278",
+      "c5619342f1",
+      "3e87b8958f"
     ]
   },
   "cable-lateral-raise": {
@@ -765,47 +705,37 @@
     ]
   },
   "cable-pull-through": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1942,
-      809
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        319,
-        809
+        446,
+        822
       ],
       [
-        326,
-        809
+        490,
+        822
       ],
       [
-        326,
-        809
+        439,
+        822
       ],
       [
-        324,
-        809
-      ],
-      [
-        338,
-        809
-      ],
-      [
-        309,
-        809
+        469,
+        822
       ]
     ],
-    "referenceHash": "5f5d06eaba",
-    "thumbnailHash": "e1c5f9cabb",
+    "referenceHash": "e0438277b9",
+    "thumbnailHash": "ec82c94401",
     "frameHashes": [
-      "315d79a50b",
-      "b0e51ac1e1",
-      "a6f3eb6b76",
-      "97e3a0ff9a",
-      "a303e2002c",
-      "d096bfecdd"
+      "209199da91",
+      "93dbc19d19",
+      "2f14031573",
+      "256403ebff"
     ]
   },
   "cable-rear-delt-fly": {
@@ -885,29 +815,29 @@
     ],
     "frameSizes": [
       [
-        597,
+        582,
         822
       ],
       [
-        317,
+        332,
         822
       ],
       [
-        481,
+        452,
         822
       ],
       [
-        421,
+        378,
         822
       ]
     ],
-    "referenceHash": "b01b020882",
-    "thumbnailHash": "3bf63e8e1a",
+    "referenceHash": "e553d283b4",
+    "thumbnailHash": "d8c8afddba",
     "frameHashes": [
-      "394a9f8c76",
-      "735ad10f1f",
-      "8a69e3d8ad",
-      "7ff0e6ef5a"
+      "4430fe983b",
+      "e5ec629d67",
+      "0be79205de",
+      "d56e8e65d6"
     ]
   },
   "chest-press-machine": {
@@ -1023,91 +953,71 @@
     ]
   },
   "close-grip-bench-press": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1913,
+      1902,
+      827
+    ],
+    "frameSizes": [
+      [
+        484,
+        827
+      ],
+      [
+        453,
+        827
+      ],
+      [
+        453,
+        827
+      ],
+      [
+        491,
+        827
+      ]
+    ],
+    "referenceHash": "397fb3fae1",
+    "thumbnailHash": "ef0b600e5d",
+    "frameHashes": [
+      "096cc0beff",
+      "ed6f628065",
+      "429749b297",
+      "d05854b93a"
+    ]
+  },
+  "close-grip-lat-pulldown": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1914,
       822
     ],
     "frameSizes": [
       [
-        344,
+        457,
         822
       ],
       [
-        308,
+        422,
         822
       ],
       [
-        322,
+        416,
         822
       ],
       [
-        323,
-        822
-      ],
-      [
-        318,
-        822
-      ],
-      [
-        298,
+        419,
         822
       ]
     ],
-    "referenceHash": "37c4fa09e9",
-    "thumbnailHash": "3ea1116196",
+    "referenceHash": "3ddec8a3e9",
+    "thumbnailHash": "ce74028cd2",
     "frameHashes": [
-      "cbcf804d71",
-      "f07201d3b2",
-      "4817778643",
-      "2a89897905",
-      "91190733ec",
-      "5b7d066ccc"
-    ]
-  },
-  "close-grip-lat-pulldown": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
-    "referenceSize": [
-      1893,
-      831
-    ],
-    "frameSizes": [
-      [
-        352,
-        831
-      ],
-      [
-        303,
-        831
-      ],
-      [
-        288,
-        831
-      ],
-      [
-        304,
-        831
-      ],
-      [
-        302,
-        831
-      ],
-      [
-        344,
-        831
-      ]
-    ],
-    "referenceHash": "a2a878c6c4",
-    "thumbnailHash": "4fefeceb4c",
-    "frameHashes": [
-      "f288283c39",
-      "6d5bdc7c90",
-      "64f43bad19",
-      "940778ca3a",
-      "9361ac6485",
-      "8ef10fc4b6"
+      "5215fea8d1",
+      "452c05b11b",
+      "f74b16b983",
+      "f35d8c7fe9"
     ]
   },
   "concentration-curl": {
@@ -1179,76 +1089,66 @@
     ]
   },
   "db-floor-press": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
-      822
+      1918,
+      820
     ],
     "frameSizes": [
       [
-        329,
-        822
+        490,
+        820
       ],
       [
-        315,
-        822
+        479,
+        820
       ],
       [
-        325,
-        822
+        472,
+        820
       ],
       [
-        307,
-        822
-      ],
-      [
-        323,
-        822
-      ],
-      [
-        315,
-        822
+        477,
+        820
       ]
     ],
-    "referenceHash": "d1df1a3976",
-    "thumbnailHash": "7691e5dca1",
+    "referenceHash": "a3867eeec2",
+    "thumbnailHash": "7dc5d25dc5",
     "frameHashes": [
-      "cebcf04cbc",
-      "445b29544e",
-      "b33cb31b03",
-      "f3f65f2a04",
-      "bb7ca0484b",
-      "d6bc77ee51"
+      "933efa2615",
+      "f906b826dc",
+      "f31aec51c3",
+      "2e82ec135a"
     ]
   },
   "dead-bug": {
     "frameCount": 3,
     "thumbnailFrame": 2,
     "referenceSize": [
-      1916,
-      821
+      2159,
+      728
     ],
     "frameSizes": [
       [
-        559,
-        821
+        620,
+        728
       ],
       [
-        689,
-        821
+        824,
+        728
       ],
       [
-        668,
-        821
+        715,
+        728
       ]
     ],
-    "referenceHash": "69560a8e44",
-    "thumbnailHash": "6880e8cb8b",
+    "referenceHash": "ca1275be03",
+    "thumbnailHash": "991e0f070e",
     "frameHashes": [
-      "b6bdc618f6",
-      "c47aa5f44f",
-      "62969391ee"
+      "0107d2f4ed",
+      "9bc485a6b5",
+      "32458710dc"
     ]
   },
   "deadlift": {
@@ -1452,91 +1352,71 @@
     ]
   },
   "dip": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
       1912,
       823
     ],
     "frameSizes": [
       [
-        328,
+        403,
         823
       ],
       [
-        310,
+        418,
         823
       ],
       [
-        270,
+        439,
         823
       ],
       [
-        325,
-        823
-      ],
-      [
-        314,
-        823
-      ],
-      [
-        365,
+        422,
         823
       ]
     ],
-    "referenceHash": "ee983503b1",
-    "thumbnailHash": "73c62d6661",
+    "referenceHash": "ffebbda0bf",
+    "thumbnailHash": "06036dd030",
     "frameHashes": [
-      "e7a7179366",
-      "cca31a4919",
-      "76f9e22e23",
-      "8194557d91",
-      "764ae32738",
-      "3c3a5719eb"
+      "ac7ce37741",
+      "99dedc74c2",
+      "ecafddd35b",
+      "f49dfab586"
     ]
   },
   "dumbbell-bench-press": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
-      822
+      2035,
+      773
     ],
     "frameSizes": [
       [
-        332,
-        822
+        526,
+        773
       ],
       [
-        310,
-        822
+        509,
+        773
       ],
       [
-        316,
-        822
+        530,
+        773
       ],
       [
-        324,
-        822
-      ],
-      [
-        335,
-        822
-      ],
-      [
-        297,
-        822
+        470,
+        773
       ]
     ],
-    "referenceHash": "0562b741bb",
-    "thumbnailHash": "a83d244d32",
+    "referenceHash": "fc777a1c80",
+    "thumbnailHash": "4623922d52",
     "frameHashes": [
-      "ec5873df52",
-      "ce01402159",
-      "bb731f2869",
-      "bd7de8ec98",
-      "7866ba329f",
-      "78b3269947"
+      "547ebcfba7",
+      "60c15d1888",
+      "3aedd3942c",
+      "7061cb922d"
     ]
   },
   "dumbbell-biceps-curl": {
@@ -1577,34 +1457,34 @@
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1916,
-      821
+      1905,
+      825
     ],
     "frameSizes": [
       [
-        488,
-        821
+        476,
+        825
       ],
       [
-        455,
-        821
+        467,
+        825
       ],
       [
-        505,
-        821
+        503,
+        825
       ],
       [
-        468,
-        821
+        452,
+        825
       ]
     ],
-    "referenceHash": "83597dc158",
-    "thumbnailHash": "60f5961674",
+    "referenceHash": "ac8f426189",
+    "thumbnailHash": "27c75a8482",
     "frameHashes": [
-      "59ffb7621b",
-      "05459f5db2",
-      "ed7f1c1493",
-      "a586344f30"
+      "34d93a585f",
+      "24b7bf751f",
+      "0b9db1707c",
+      "6dab03d660"
     ]
   },
   "dumbbell-rdl": {
@@ -1900,47 +1780,37 @@
     ]
   },
   "front-squat": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1912,
-      823
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        351,
-        823
+        461,
+        822
       ],
       [
-        299,
-        823
+        458,
+        822
       ],
       [
-        314,
-        823
+        463,
+        822
       ],
       [
-        291,
-        823
-      ],
-      [
-        312,
-        823
-      ],
-      [
-        345,
-        823
+        463,
+        822
       ]
     ],
-    "referenceHash": "7e9fa89fa4",
-    "thumbnailHash": "57d9fa8804",
+    "referenceHash": "3b763ba767",
+    "thumbnailHash": "9ec6b977db",
     "frameHashes": [
-      "8f270248be",
-      "73ee5edcc0",
-      "3aa0f11849",
-      "1cc872f232",
-      "4b091688b7",
-      "115d97a03e"
+      "b83f2c3edc",
+      "31d66b9410",
+      "c78bb27ac4",
+      "132d3a874a"
     ]
   },
   "glute-bridge": {
@@ -2066,47 +1936,37 @@
     ]
   },
   "hack-squat": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1869,
-      842
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        325,
-        842
+        476,
+        822
       ],
       [
-        291,
-        842
+        480,
+        822
       ],
       [
-        276,
-        842
+        467,
+        822
       ],
       [
-        317,
-        842
-      ],
-      [
-        323,
-        842
-      ],
-      [
-        337,
-        842
+        487,
+        822
       ]
     ],
-    "referenceHash": "96fcacafa1",
-    "thumbnailHash": "27423b85b4",
+    "referenceHash": "b8e215bfa6",
+    "thumbnailHash": "fe4131b2eb",
     "frameHashes": [
-      "ff06f127b2",
-      "73929c4cd1",
-      "ba75d8a5a0",
-      "d655a629d8",
-      "180c0b1b18",
-      "203d1bb050"
+      "5c58e0612b",
+      "e9488f36fd",
+      "62e12abec6",
+      "4270ae53b3"
     ]
   },
   "half-kneeling-hip-flexor-stretch": {
@@ -2169,37 +2029,7 @@
   },
   "hanging-leg-raise": {
     "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1691,
-      930
-    ],
-    "frameSizes": [
-      [
-        324,
-        930
-      ],
-      [
-        499,
-        930
-      ],
-      [
-        448,
-        930
-      ],
-      [
-        420,
-        930
-      ]
-    ],
-    "referenceHash": "dbe21d1769",
-    "thumbnailHash": "fa8c19b600",
-    "frameHashes": [
-      "573be5b489",
-      "52e68fbbcb",
-      "26f3e9a8af",
-      "21590e01c3"
-    ]
+    "thumbnailFrame": 3
   },
   "hip-thrust": {
     "frameCount": 4,
@@ -2314,47 +2144,37 @@
     ]
   },
   "incline-dumbbell-press": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
       1915,
       821
     ],
     "frameSizes": [
       [
-        353,
+        503,
         821
       ],
       [
-        303,
+        468,
         821
       ],
       [
-        317,
+        461,
         821
       ],
       [
-        341,
-        821
-      ],
-      [
-        304,
-        821
-      ],
-      [
-        297,
+        483,
         821
       ]
     ],
-    "referenceHash": "d9e2039e6d",
-    "thumbnailHash": "4880528c01",
+    "referenceHash": "bf97e6c4ef",
+    "thumbnailHash": "cd09ab2976",
     "frameHashes": [
-      "139cb5ce4f",
-      "35162b5f5b",
-      "7879d3df2f",
-      "f0dbb3b378",
-      "2857d772cb",
-      "a0f32ffc70"
+      "690f611376",
+      "0420cd715e",
+      "524fd84ec1",
+      "3193308dd1"
     ]
   },
   "incline-push-up": {
@@ -4262,47 +4082,37 @@
     ]
   },
   "tempo-bodyweight-squat": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1912,
-      823
+      1916,
+      821
     ],
     "frameSizes": [
       [
-        253,
-        823
+        270,
+        821
       ],
       [
-        351,
-        823
+        470,
+        821
       ],
       [
-        317,
-        823
+        464,
+        821
       ],
       [
-        335,
-        823
-      ],
-      [
-        269,
-        823
-      ],
-      [
-        255,
-        823
+        318,
+        821
       ]
     ],
-    "referenceHash": "a9fc196683",
-    "thumbnailHash": "3ad6784138",
+    "referenceHash": "4a5f2f647e",
+    "thumbnailHash": "793c444565",
     "frameHashes": [
-      "9edbc4ed7e",
-      "7d3f98175c",
-      "0a06956127",
-      "76b97a5804",
-      "3d2558a3bf",
-      "e1895b857c"
+      "8ebab1c14c",
+      "52d2f77bea",
+      "a894324a2d",
+      "17325d1ea7"
     ]
   },
   "triceps-pushdown": {

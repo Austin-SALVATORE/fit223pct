@@ -5,7 +5,7 @@
 | Exercise id | `close-grip-bench-press` |
 | Category | Arms |
 | Camera | `bench-side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Flat bench + Barbell |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -78,29 +85,23 @@ brushed chrome bar with matte black bumper plates, evenly loaded both
 sides, gripped overhand with the hands roughly shoulder-width apart —
 narrower than a standard bench press but not touching, wrists stacked
 directly over the forearms.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Start. Lying face up along the flat bench, head, shoulder blades and hips
    in contact with it, both feet flat on the floor either side. Arms
    pressed straight up, elbows extended but not locked, the bar held over
    the lower chest with a shoulder-width grip.
-2. Early descent, elbows bent to roughly 30 degrees and already tucking in
-   toward the ribs rather than flaring out. The bar has dropped a short
-   way and is tracking down and slightly toward the lower chest.
-3. Mid descent, elbows bent to roughly 70 degrees and held at about 45
+2. Mid descent, elbows bent to roughly 70 degrees and held at about 45
    degrees to the torso — clearly tucked, not flared to 90. Shoulder
    blades pulled together and down into the bench, wrists straight.
-4. Bottom position, the bar lightly touching the lower chest just below the
+3. Bottom position, the bar lightly touching the lower chest just below the
    sternum. Elbows tucked at roughly 45 degrees to the torso and sitting
    close under the wrists, forearms vertical, shoulder blades still
    retracted, hips and both feet still down.
-5. Ascent, back through roughly 70 degrees of elbow flexion. The bar rises on
+4. Ascent, back through roughly 70 degrees of elbow flexion. The bar rises on
    the same tucked path, elbows still close to the ribs, wrists still
    stacked over the forearms, hips still on the bench.
-6. Lockout, identical to frame 1. Elbows fully extended but not
-   hyperextended, the bar back over the lower chest, shoulder blades still
-   retracted and both feet still flat on the floor.
 
 TECHNIQUE — must be correct in every frame:
 - The grip is roughly shoulder-width — clearly narrower than a standard
@@ -119,11 +120,11 @@ TECHNIQUE — must be correct in every frame:
 ## Form checkpoints (QA)
 
 - [ ] Grip is visibly narrower than a standard bench press but hands are apart
-- [ ] Elbows tucked at roughly 45 degrees in all six frames — no flaring
+- [ ] Elbows tucked at roughly 45 degrees in all four frames — no flaring
 - [ ] Bar touches the lower chest below the sternum at the bottom
 - [ ] Forearms vertical under the bar at the bottom position
-- [ ] Hips stay on the bench and both feet stay flat in all six frames
+- [ ] Hips stay on the bench and both feet stay flat in all four frames
 - [ ] Elbows extended but not hyperextended at lockout
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a close-grip press at 64 px wide

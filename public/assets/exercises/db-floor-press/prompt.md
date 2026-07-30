@@ -5,7 +5,7 @@
 | Exercise id | `db-floor-press` |
 | Category | Seeded Program |
 | Camera | `floor-side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Two dumbbells — no bench |
 | Status | `planned` |
 
@@ -62,10 +62,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -79,7 +86,7 @@ the elbow touching down, and the flat-on-the-floor torso are all readable.
 Equipment: two matte black hexagonal-head dumbbells with brushed chrome
 knurled handles, one held in each hand. There is NO bench — she lies directly
 on the invisible ground line.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Lockout. Lying flat on her back on the ground, knees bent to roughly 60
@@ -87,19 +94,15 @@ Frames:
    all in contact with the ground. Both arms extended vertically over the
    lower chest, elbows straight but not hyperextended, dumbbells directly
    above the shoulders with neutral wrists.
-2. Early descent. Elbows bending, upper arms lowering toward the floor at
-   roughly 45 degrees to the torso, forearms staying vertical, dumbbells
-   directly above the elbows.
-3. Mid descent, elbows at roughly 90 degrees, the backs of the upper arms
+2. Mid descent, elbows at roughly 90 degrees, the backs of the upper arms
    hovering just above the floor, forearms still vertical, wrists stacked over
    the elbows.
-4. Bottom position. The entire back of each upper arm rests flat on the floor
+3. Bottom position. The entire back of each upper arm rests flat on the floor
    — the floor stops the range. Elbows on the ground at roughly 45 degrees
    from the ribs, forearms vertical, dumbbells held steadily above the elbows,
    head and hips still down, lower back gently neutral against the floor.
-5. Ascent, halfway back up. Upper arms have pressed off the floor, elbows
+4. Ascent, halfway back up. Upper arms have pressed off the floor, elbows
    extending, dumbbells travelling straight up over the shoulders.
-6. Lockout again, identical to frame 1, both arms fully extended.
 
 TECHNIQUE — must be correct in every frame:
 - No bench appears in any frame — the whole back is on the ground.
@@ -118,6 +121,6 @@ TECHNIQUE — must be correct in every frame:
 - [ ] Forearms vertical with wrists stacked over elbows in every frame
 - [ ] Upper arms at roughly 45 degrees from the ribs, not flared to 90
 - [ ] Knees bent with both feet flat on the floor throughout
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a floor press (not a bench press) at 64 px wide

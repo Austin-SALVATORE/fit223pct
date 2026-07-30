@@ -5,7 +5,7 @@
 | Exercise id | `dip` |
 | Category | Chest / Push |
 | Camera | `side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Parallel bars — rendered as Pull-up bar (straight chrome bar, supports out of frame) |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -75,7 +82,7 @@ lean, the elbow angle and the shoulder position all stay readable.
 Equipment: two simple straight chrome horizontal bars set parallel at slightly
 wider than shoulder width, supports out of frame. The near bar is drawn so that
 it does not hide the body.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Top position. Supported on straight arms between the parallel bars, hands
@@ -84,21 +91,17 @@ Frames:
    the ears, chest leaning forward roughly 20 degrees from vertical, legs
    together with the knees bent back behind the body and the ankles crossed,
    feet clear of the ground.
-2. Early descent, elbows bent to roughly 25 degrees. The body lowers straight
-   down, the forward torso lean unchanged, upper arms travelling back and
-   staying close to the ribs rather than flaring out to the sides.
-3. Half descent, elbows at roughly 60 degrees, forearms close to vertical,
+2. Half descent, elbows at roughly 60 degrees, forearms close to vertical,
    shoulders still packed down, the hips staying under the shoulders rather
    than swinging forward.
-4. Bottom position, deepest point. Elbows bent to roughly 90 degrees with the
+3. Bottom position, deepest point. Elbows bent to roughly 90 degrees with the
    upper arms roughly parallel to the ground and the shoulders level with or
    just above the elbows — no deeper. Shoulders still pressed down and never
    rolled forward past the line of the hands, forward torso lean still roughly
    20 degrees, chest open, legs still bent behind the body.
-5. Ascent, back to roughly a half dip. Elbows extending, the body rising in a
+4. Ascent, back to roughly a half dip. Elbows extending, the body rising in a
    straight vertical line with the torso lean and the leg position unchanged,
    no swinging.
-6. Top position again, identical to frame 1, elbows extended, shoulders down.
 
 TECHNIQUE — must be correct in every frame:
 - Shoulders stay pressed down away from the ears and never roll forward past
@@ -117,8 +120,8 @@ TECHNIQUE — must be correct in every frame:
 
 - [ ] Bottom frame stops at upper arms parallel — shoulders never below elbows
 - [ ] Shoulders stay pressed down and never roll forward past the hands
-- [ ] Forward torso lean of roughly 20 degrees is identical in all six frames
+- [ ] Forward torso lean of roughly 20 degrees is identical in all four frames
 - [ ] Elbows travel back close to the ribs, not flared out wide
 - [ ] Leg position identical in every frame — no swinging
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as a dip at 64 px wide

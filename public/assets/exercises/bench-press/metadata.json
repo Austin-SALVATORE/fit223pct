@@ -2,47 +2,37 @@
   "exerciseId": "bench-press",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1916,
-      821
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        349,
-        821
+        495,
+        823
       ],
       [
-        324,
-        821
+        465,
+        823
       ],
       [
-        313,
-        821
+        478,
+        823
       ],
       [
-        329,
-        821
-      ],
-      [
-        313,
-        821
-      ],
-      [
-        288,
-        821
+        457,
+        823
       ]
     ],
-    "referenceHash": "70059d24dd",
-    "thumbnailHash": "e5614e8946",
+    "referenceHash": "884d7ff992",
+    "thumbnailHash": "2355a36b01",
     "frameHashes": [
-      "8b181e51f5",
-      "9ec289c99f",
-      "f223408ac9",
-      "64386f3d0c",
-      "165849d8d6",
-      "08002a0afa"
+      "f007caf549",
+      "7794094a0f",
+      "78b459c032",
+      "016e06a30f"
     ]
   },
   "credits": {

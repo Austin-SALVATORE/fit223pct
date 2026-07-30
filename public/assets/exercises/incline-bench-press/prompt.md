@@ -5,7 +5,7 @@
 | Exercise id | `incline-bench-press` |
 | Category | Chest / Push |
 | Camera | `bench-side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Barbell, Incline bench |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -76,7 +83,7 @@ Equipment: one long brushed chrome bar with matte black bumper plates, evenly
 loaded both sides, plus one matte black padded bench set to roughly 30 degrees
 on a black steel frame. The backrest rises toward the left of each frame at a
 clearly visible 30 degree angle; no uprights or rack in frame.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Lockout start. Seated back against the 30 degree incline, head, upper back
@@ -84,19 +91,14 @@ Frames:
    the floor. Hands just wider than shoulder width with a full thumbs-around
    grip, arms extended perpendicular to the torso, the bar held over the
    collarbones.
-2. Early descent, elbows bent to roughly 25 degrees. The bar travels down
-   toward the upper chest, upper arms tucking toward roughly 45 degrees from
-   the torso rather than flaring to 90.
-3. Half descent, elbows at roughly 90 degrees, forearms vertical, bar level
+2. Half descent, elbows at roughly 90 degrees, forearms vertical, bar level
    with the front of the shoulders, shoulder blades pinned back and down.
-4. Bottom position. The bar lightly touches the upper chest just below the
+3. Bottom position. The bar lightly touches the upper chest just below the
    collarbones, elbows still tucked to roughly 45 degrees and sitting under the
    wrists, forearms vertical from this side view, wrists neutral, chest lifted,
    glutes on the seat, feet flat.
-5. Ascent, back to roughly a half press. The bar drives up along the line of
+4. Ascent, back to roughly a half press. The bar drives up along the line of
    the torso on a shallow arc, elbows extending, hips staying down on the seat.
-6. Lockout again, identical to frame 1, elbows extended, bar over the
-   collarbones.
 
 TECHNIQUE — must be correct in every frame:
 - The bench angle stays at roughly 30 degrees and reads clearly as an incline
@@ -112,10 +114,10 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Bench reads as roughly 30 degrees in all six frames
+- [ ] Bench reads as roughly 30 degrees in all four frames
 - [ ] Bar touches the upper chest below the collarbones, never the throat
-- [ ] Elbows tucked to roughly 45 degrees in all six frames
+- [ ] Elbows tucked to roughly 45 degrees in all four frames
 - [ ] Forearms vertical with wrists stacked over elbows at the bottom
 - [ ] Glutes and upper back stay on the pad, feet flat on the floor
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as an incline barbell bench press at 64 px wide

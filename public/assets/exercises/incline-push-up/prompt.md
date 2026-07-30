@@ -5,7 +5,7 @@
 | Exercise id | `incline-push-up` |
 | Category | Chest Variants |
 | Camera | `side` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Plyo box / step |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -75,7 +82,7 @@ to heels and the incline of the body against the box are both readable.
 Equipment: one simple matte black rectangular box with flat vertical sides,
 knee height, standing on the ground toward the left of each figure. The hands
 are on the flat top of the box; there is no other equipment.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Top position. Hands flat on the top of the knee-high box just outside
@@ -83,20 +90,15 @@ Frames:
    straight line from head through hips to heels, angled so the head and
    chest sit clearly higher than the feet, on the balls of the feet, feet
    about hip width apart on the floor.
-2. Early descent, elbows bent to roughly 20 degrees. Upper arms have begun to
-   travel back at roughly 45 degrees to the torso, not flared out to 90. The
-   straight body line is unchanged.
-3. Half descent, elbows at roughly 90 degrees, upper arms at roughly 45
+2. Half descent, elbows at roughly 90 degrees, upper arms at roughly 45
    degrees to the ribs, chest lowering toward the near top edge of the box,
    wrists stacked under the elbows.
-4. Bottom position. Chest just above the top edge of the box, elbows behind
+3. Bottom position. Chest just above the top edge of the box, elbows behind
    the wrists and still tucked to roughly 45 degrees, hips holding the
    straight line from shoulders to heels — no sag in the lower back and no
    pike at the hips.
-5. Ascent, back to roughly a half push-up. Elbows extending, chest and hips
+4. Ascent, back to roughly a half push-up. Elbows extending, chest and hips
    rising together as one rigid unit, hips never leading.
-6. Top position again, identical to frame 1, elbows extended, body still one
-   straight inclined line.
 
 TECHNIQUE — must be correct in every frame:
 - The hands are elevated on the box and the feet are on the floor, so the
@@ -115,9 +117,9 @@ TECHNIQUE — must be correct in every frame:
 
 - [ ] Hands on the box top, feet on the floor — chest higher than the feet in
       every frame, never a decline
-- [ ] Body forms one straight head-to-heel line in all six frames
+- [ ] Body forms one straight head-to-heel line in all four frames
 - [ ] Elbows tucked to roughly 45 degrees, never flared to 90
 - [ ] Bottom frame brings the chest just above the box edge without hip sag
-- [ ] Box identical size and position in all six frames
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
+- [ ] Box identical size and position in all four frames
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] Readable as an incline push-up at 64 px wide

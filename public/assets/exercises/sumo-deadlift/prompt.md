@@ -5,7 +5,7 @@
 | Exercise id | `sumo-deadlift` |
 | Category | Hip Hinge / Glutes |
 | Camera | `three-quarter-front` |
-| Frames | 6 |
+| Frames | 4 |
 | Equipment | Barbell |
 | Status | `planned` |
 
@@ -58,10 +58,17 @@ proportions with believable weight and correct scale against the body.
 
 COMPOSITION:
 All figures stand on one shared invisible ground line, at exactly the same
-scale, evenly spaced with clear background gaps between them. No figure overlaps,
-touches, or is cropped by another. The entire body is visible in every frame,
-including both feet. Generous background margin above and below. Eye-level camera at
-an identical angle and distance for every frame.
+scale. Each pose occupies its own exclusive vertical band running the full
+height of the image: a wide column of solid background magenta separates it
+from every neighboring pose on both sides, and no part of any pose —
+including hands, feet, or equipment — may share a horizontal (left-right)
+position with any part of another pose, even when the two sit at different
+heights. A straight vertical line drawn anywhere in a gap must be able to
+pass from the top of the image to the bottom without touching either
+neighboring pose. No figure overlaps, touches, or is cropped by another. The
+entire body is visible in every frame, including both feet. Generous
+background margin above and below. Eye-level camera at an identical angle and
+distance for every frame.
 
 STRICTLY EXCLUDE:
 Text, numbers, labels, captions, arrows, motion lines, panel borders, dividing
@@ -76,7 +83,7 @@ visible.
 Equipment: one long brushed chrome bar with matte black bumper plates, evenly
 loaded both sides, resting on the ground at the start; hands gripping inside
 the knees at roughly shoulder width, arms straight and vertical.
-Number of frames: 6, evenly spaced left to right.
+Number of frames: 4, evenly spaced left to right.
 
 Frames:
 1. Setup. Stance wide, feet well outside shoulder width with the toes turned
@@ -84,26 +91,20 @@ Frames:
    bar over the mid-foot, hips lower and closer to the bar than in a
    conventional pull, torso more upright, arms straight and hanging inside the
    knees, chest set, lumbar spine neutral.
-2. Break from the floor. Bar just off the ground at low-shin height, knees
-   pushing outward in line with the turned-out toes, hips and chest rising
-   together, torso angle unchanged, bar riding straight up.
-3. Bar at knee height. Knees still driven out over the toes, hips travelling
+2. Bar at knee height. Knees still driven out over the toes, hips travelling
    forward and up, torso still more upright than a conventional deadlift, bar
    in contact with the legs, lower back flat.
-4. Mid-thigh. Hips driving forward into the bar, knees continuing to extend
+3. Mid-thigh. Hips driving forward into the bar, knees continuing to extend
    while still tracking outward, bar sliding up the thighs in contact,
    shoulders coming back.
-5. Lockout. Hips and knees fully extended, stance unchanged, bar resting on the
+4. Lockout. Hips and knees fully extended, stance unchanged, bar resting on the
    upper thighs, torso vertical, ribs down, glutes contracted, shoulders back
    and down, no backwards lean.
-6. Start of the controlled descent. Hips pushed back and knees beginning to
-   bend outward again, bar at upper-thigh height and still touching the legs,
-   back flat, weight balanced over the mid-foot.
 
 TECHNIQUE — must be correct in every frame:
 - Knees track outward in line with the turned-out toes and never collapse
   inward.
-- The stance and foot angle are identical in all six frames.
+- The stance and foot angle are identical in all four frames.
 - The lumbar spine stays neutral throughout — no rounding off the floor.
 - The torso stays more upright than a conventional deadlift, but this is still
   a hinge: the hips move backwards and forwards, not straight up and down.
@@ -114,12 +115,12 @@ TECHNIQUE — must be correct in every frame:
 
 ## Form checkpoints (QA)
 
-- [ ] Stance width and toe-out angle identical in all six frames
+- [ ] Stance width and toe-out angle identical in all four frames
 - [ ] Knees track over the toes in every frame — no valgus collapse
 - [ ] Hands gripping inside the knees, arms straight and vertical
 - [ ] Lumbar spine neutral at the floor setup, not rounded
 - [ ] Bar path vertical and in contact with the legs above the knee
 - [ ] Lockout vertical with no backwards lean
-- [ ] Same face, hair, wardrobe, and body proportions in all six frames
-- [ ] All six figures identical scale on one shared ground line
+- [ ] Same face, hair, wardrobe, and body proportions in all four frames
+- [ ] All four figures identical scale on one shared ground line
 - [ ] Readable as a wide-stance pull at 64 px wide

@@ -2,47 +2,37 @@
   "exerciseId": "cable-pull-through",
   "version": 1,
   "media": {
-    "frameCount": 6,
-    "thumbnailFrame": 4,
+    "frameCount": 4,
+    "thumbnailFrame": 3,
     "referenceSize": [
-      1942,
-      809
+      1913,
+      822
     ],
     "frameSizes": [
       [
-        319,
-        809
+        446,
+        822
       ],
       [
-        326,
-        809
+        490,
+        822
       ],
       [
-        326,
-        809
+        439,
+        822
       ],
       [
-        324,
-        809
-      ],
-      [
-        338,
-        809
-      ],
-      [
-        309,
-        809
+        469,
+        822
       ]
     ],
-    "referenceHash": "5f5d06eaba",
-    "thumbnailHash": "e1c5f9cabb",
+    "referenceHash": "e0438277b9",
+    "thumbnailHash": "ec82c94401",
     "frameHashes": [
-      "315d79a50b",
-      "b0e51ac1e1",
-      "a6f3eb6b76",
-      "97e3a0ff9a",
-      "a303e2002c",
-      "d096bfecdd"
+      "209199da91",
+      "93dbc19d19",
+      "2f14031573",
+      "256403ebff"
     ]
   },
   "credits": {
