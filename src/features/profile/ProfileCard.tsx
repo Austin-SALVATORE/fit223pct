@@ -159,7 +159,17 @@ export function ProfileCard() {
 
           Chromium measured this input at exactly 308px in a 308px box before
           the change — it fits there and overflows on the phone, so a green
-          desktop pass proves nothing about the defect.
+          desktop pass proves nothing about the defect. Desktop WebKit does
+          not reproduce it either: measured without the fix, `appearance:
+          auto` and no overflow at 390px or 1280px.
+
+          **Confirmed fixed on the owner's iPhone, 30 Jul — so do not remove
+          any of the four.** We know they work as a set and we do not know
+          which one was the lever, because no engine available here exhibits
+          the defect to A/B against. Dropping whichever looks redundant would
+          be unpicking a verified fix against an engine nobody in this repo
+          can observe, to save four classes. "Cannot be tested here" and
+          "must not be reduced" are separate instructions; this is the second.
         */}
         <input
           type="date"
