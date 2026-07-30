@@ -95,7 +95,20 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
       <h2 id={headingId} className="eyebrow">
         {t('measurement.heading')}
       </h2>
-      <div className="mt-4 flex justify-center gap-8">
+      {/*
+        **Wraps rather than assuming both steppers fit side by side.** They do
+        not at phone width: 156 + 32 gap + 162 needs 350px against the card's
+        308px content box at 390px, and `justify-center` then spilled the
+        overflow 21px past the padding on *each* side, so the controls sat
+        flush against the card's border. On a desktop-width card the same
+        markup fits with room to spare, which is exactly why it read as a
+        minor centring quirk on a PC and as content bleeding out of the card
+        on a phone — one layout, two verdicts.
+
+        `flex-wrap` with a row gap is the adaptive form: side by side where
+        there is room, stacked where there is not, and never overflowing.
+      */}
+      <div className="mt-4 flex flex-wrap justify-center gap-x-8 gap-y-4">
         <Stepper
           label={t('measurement.weightLabel')}
           value={checkIn?.weightKg ?? DEFAULT_WEIGHT_KG}

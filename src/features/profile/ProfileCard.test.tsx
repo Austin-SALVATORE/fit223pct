@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
@@ -60,7 +60,7 @@ describe('saving the profile', () => {
     render(<ProfileCard />)
 
     await userEvent.click(await screen.findByRole('button', { name: /Set up your profile/ }))
-    await userEvent.click(screen.getByRole('button', { name: 'Sex: Male' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Male' }))
     await userEvent.click(screen.getByRole('button', { name: 'Save profile' }))
 
     await waitFor(async () => {
@@ -255,5 +255,87 @@ describe('the form can be abandoned', () => {
     // Back to the summary, and nothing was written.
     expect(await screen.findByText(/178 cm/)).toBeInTheDocument()
     expect((await settingsRepo.get())?.activityLevel).toBeUndefined()
+  })
+})
+
+describe('sex is a text choice, not a digit control', () => {
+  /**
+   * `RatingPicker` — the 1–5 check-in control, `h-11 w-11` circles sized for a
+   * single character — was being handed the words "Female" and "Male". The
+   * boxes stayed 44px and 6px apart while the *text* overflowed them and
+   * collided, which is why it looked like a spacing bug and why spacing was
+   * never the fix. Asserted on structure and roles, since jsdom has no layout
+   * to measure the overlap with.
+   */
+  async function openForm() {
+    await settingsRepo.update({ heightCm: 180 })
+    render(<ProfileCard />)
+    await userEvent.click(await screen.findByRole('button', { name: /Set up your profile/ }))
+  }
+
+  it('renders both options as distinct controls in one labelled group', async () => {
+    await openForm()
+
+    const group = screen.getByRole('group', { name: 'Sex' })
+    const options = within(group).getAllByRole('button')
+    expect(options).toHaveLength(2)
+    expect(options.map((b) => b.textContent)).toEqual(['Female', 'Male'])
+    // Two elements, not one element rendering both words.
+    expect(new Set(options).size).toBe(2)
+  })
+
+  it('sizes each option by the group rather than by its text', async () => {
+    // The regression guard for the actual defect: a fixed square cannot hold a
+    // translated word, and the three locales differ in length again. Each
+    // option flexes to share the row, so no label can outgrow its own control.
+    await openForm()
+
+    const options = within(screen.getByRole('group', { name: 'Sex' })).getAllByRole('button')
+    for (const option of options) {
+      expect(option.className).toContain('flex-1')
+      // The digit geometry that caused the overlap must not come back.
+      expect(option.className).not.toMatch(/\bw-11\b/)
+      expect(option.className).not.toMatch(/\bh-11\b/)
+      expect(option.className).not.toContain('rounded-full')
+    }
+  })
+
+  it('holds exactly one pressed state, and none before a choice', async () => {
+    await openForm()
+    const pressed = () =>
+      within(screen.getByRole('group', { name: 'Sex' }))
+        .getAllByRole('button')
+        .filter((b) => b.getAttribute('aria-pressed') === 'true')
+
+    expect(pressed()).toHaveLength(0)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Female' }))
+    expect(pressed().map((b) => b.textContent)).toEqual(['Female'])
+
+    await userEvent.click(screen.getByRole('button', { name: 'Male' }))
+    expect(pressed().map((b) => b.textContent)).toEqual(['Male'])
+  })
+
+  it('is keyboard reachable and selectable', async () => {
+    await openForm()
+
+    const female = screen.getByRole('button', { name: 'Female' })
+    female.focus()
+    expect(female).toHaveFocus()
+    await userEvent.keyboard('{Enter}')
+    expect(female).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('matches the option-card shape the activity level already uses', async () => {
+    // The two are text choices in the same form; looking like one control
+    // family is the point of the replacement, not a coincidence of styling.
+    await openForm()
+
+    const sex = within(screen.getByRole('group', { name: 'Sex' })).getAllByRole('button')[0]
+    const activity = screen.getByRole('button', { name: /^Sedentary/ })
+    for (const shared of ['rounded-card', 'border', 'px-4', 'py-3']) {
+      expect(sex.className, `sex option missing ${shared}`).toContain(shared)
+      expect(activity.className, `activity option missing ${shared}`).toContain(shared)
+    }
   })
 })

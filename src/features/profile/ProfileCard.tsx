@@ -7,7 +7,6 @@ import { resolveProfile, type Sex } from '@/domain/profile'
 import { toDateKey } from '@/lib/dates'
 import { CARD_SECTION } from '@/ui/cardSection'
 import { Stepper } from '@/ui/Stepper'
-import { RatingPicker } from '@/ui/RatingPicker'
 
 /**
  * The profile: height, birth date, sex, and optional targets.
@@ -161,14 +160,9 @@ export function ProfileCard() {
         */}
         <p className="mt-1 text-xs leading-relaxed text-ink-tertiary">{t('sexWhy')}</p>
         <div className="mt-2">
-          <RatingPicker
-            label={t('sexLabel')}
-            options={[
-              { value: 0, display: t('sexFemale') },
-              { value: 1, display: t('sexMale') },
-            ]}
-            value={draft.sex === null ? null : draft.sex === 'male' ? 1 : 0}
-            onChange={(value) => setDraft({ ...draft, sex: value === 1 ? 'male' : 'female' })}
+          <SexPicker
+            value={draft.sex}
+            onChange={(sex) => setDraft({ ...draft, sex })}
           />
         </div>
       </div>
@@ -242,6 +236,67 @@ export function ProfileCard() {
         {tCommon('cancel')}
       </button>
     </section>
+  )
+}
+
+/**
+ * Female / male, as text options sized by their own words.
+ *
+ * **This replaced `RatingPicker`, which was the wrong primitive rather than a
+ * misconfigured one.** RatingPicker is the 1–5 check-in control: `h-11 w-11`
+ * circles sized for a single digit. Given words, the circle geometry held and
+ * the content overflowed it — "Female" rendered far outside its own 44px
+ * button and collided with its neighbour's label. Measured at 390px, the
+ * boxes were correct and 6px apart; only the text overlapped, which is what
+ * made it look like a spacing bug and is why spacing was never the fix. The
+ * three locales make the widths differ again, so any padding tuned to one
+ * would be wrong in the other two.
+ *
+ * Same option-card shape as `ActivityPicker` below — a text choice in the
+ * same form that already reads correctly — so the two look like one control
+ * family. Full width, so the label length cannot affect the geometry.
+ *
+ * Semantics kept from RatingPicker deliberately: a labelled `role="group"` of
+ * plain toggle buttons with `aria-pressed`, not `role="radio"`, because the
+ * ARIA radio pattern promises arrow-key roving-tabindex navigation that this
+ * does not implement.
+ */
+function SexPicker({
+  value,
+  onChange,
+}: {
+  value: Sex | null
+  onChange: (value: Sex) => void
+}) {
+  const { t } = useTranslation('profile')
+  const options: { sex: Sex; labelKey: string }[] = [
+    { sex: 'female', labelKey: 'sexFemale' },
+    { sex: 'male', labelKey: 'sexMale' },
+  ]
+  return (
+    <div role="group" aria-label={t('sexLabel')} className="flex gap-2">
+      {options.map(({ sex, labelKey }) => {
+        const selected = value === sex
+        return (
+          <button
+            key={sex}
+            type="button"
+            aria-pressed={selected}
+            onClick={() => onChange(sex)}
+            // Selection carries fill and weight as well as hue — the same
+            // non-colour cue RatingPicker adopted for backlog A6, so the
+            // choice survives greyscale and forced-colours mode.
+            className={`flex-1 rounded-card border px-4 py-3 text-center text-sm transition-colors ${
+              selected
+                ? 'border-amber bg-amber/10 font-semibold text-ink'
+                : 'border-border font-medium text-ink-secondary hover:border-border-strong hover:text-ink'
+            }`}
+          >
+            {t(labelKey)}
+          </button>
+        )
+      })}
+    </div>
   )
 }
 
