@@ -19,6 +19,24 @@ import { NAMESPACES } from './i18next'
  * unrelated device check. Parity was green the whole time. It cost a manual
  * pass to find something that belongs in a diff.
  *
+ * ## Why the dev-time log is not a substitute
+ *
+ * `missingKeyHandler` (`i18next.ts:57-66`) already logs a missing key in DEV,
+ * which is what eventually surfaced `common:cancel` — but it only fires for a
+ * code path someone actually renders, in a build nobody ships, watched by
+ * somebody who happens to be reading the console. This runs on every commit
+ * over every literal key, rendered or not.
+ *
+ * It is also a weaker signal than it looks, in a way worth stating because it
+ * misled a diagnosis: the handler logs its `languages` argument, and with
+ * `saveMissing` on but **`saveMissingTo` left unset** — which is the case
+ * here, verified: the option appears nowhere in `i18next.ts` — i18next's
+ * default is `'fallback'`, so the log names `en` even while rendering French.
+ * That reads as "missing in English" when it means "missing, reported against
+ * the fallback". Anyone setting `saveMissingTo: 'all'` would change what those
+ * logs say without touching the handler, so do not treat the locale in that
+ * message as evidence of which bundle has the hole.
+ *
  * ## Deliberately conservative in one direction
  *
  * A key is accepted if it resolves in **any** namespace the file loads,
@@ -87,8 +105,14 @@ function declared(bundle: Bundle | undefined, key: string): boolean {
 
   const scope = node as Record<string, unknown>
   if (leaf in scope) return true
-  // `ageValue` is declared as ageValue_one / ageValue_other — CLDR families
-  // are a real declaration, and 'other' is i18next's universal fallback.
+  // `ageValue` is declared as ageValue_one / ageValue_other — a CLDR family is
+  // a real declaration of the key.
+  //
+  // Only `_other` counts, deliberately, rather than "any plural suffix":
+  // localeParity already requires every family to carry `other` in every
+  // locale (it is i18next's universal plural fallback), and all 20 families in
+  // en do. So this never false-positives, and it is usefully stricter — a
+  // family declared with only `_one` would be caught here as well as there.
   return `${leaf}_other` in scope
 }
 
