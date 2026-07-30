@@ -11,6 +11,7 @@ import {
 import { weightGoalProgress, type GoalProgress } from '@/domain/goals'
 import { weightTrend } from '@/domain/trends'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
+import { CARD_SECTION } from '@/ui/cardSection'
 
 /**
  * The energy baseline and goal distance — the milestone's visible output.
@@ -56,7 +57,7 @@ export function BaselineCard() {
   return (
     <section
       aria-label={t('baseline.sectionLabel')}
-      className="mt-8 rounded-card border border-border bg-surface p-5"
+      className={CARD_SECTION}
     >
       <h2 className="eyebrow">{t('baseline.heading')}</h2>
 

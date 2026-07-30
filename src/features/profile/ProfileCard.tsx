@@ -5,6 +5,7 @@ import { checkinRepo, settingsRepo } from '@/data/repositories'
 import { PAL_ORDER, type PhysicalActivityLevel } from '@/domain/energyReference'
 import { resolveProfile, type Sex } from '@/domain/profile'
 import { toDateKey } from '@/lib/dates'
+import { CARD_SECTION } from '@/ui/cardSection'
 import { Stepper } from '@/ui/Stepper'
 import { RatingPicker } from '@/ui/RatingPicker'
 
@@ -121,7 +122,7 @@ export function ProfileCard() {
     <section
       id={PROFILE_ANCHOR_ID}
       aria-label={t('sectionLabel')}
-      className="mt-8 rounded-card border border-border bg-surface p-5"
+      className={CARD_SECTION}
     >
       <h2 className="eyebrow">{t('heading')}</h2>
 
@@ -314,7 +315,7 @@ function Unconfirmed({ onStart }: { onStart: () => void }) {
     <section
       id={PROFILE_ANCHOR_ID}
       aria-label={t('sectionLabel')}
-      className="mt-8 rounded-card border border-border bg-surface p-5"
+      className={CARD_SECTION}
     >
       <h2 className="eyebrow">{t('heading')}</h2>
       <p className="mt-2 leading-relaxed text-ink-secondary">{t('unconfirmedBody')}</p>
@@ -360,7 +361,7 @@ function Summary({
     <section
       id={PROFILE_ANCHOR_ID}
       aria-label={t('sectionLabel')}
-      className="mt-8 rounded-card border border-border bg-surface p-5"
+      className={CARD_SECTION}
     >
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="eyebrow">{t('heading')}</h2>

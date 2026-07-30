@@ -6,6 +6,7 @@ import { seedDatabase } from '@/data/seed'
 import { settingsRepo } from '@/data/repositories'
 import i18n from '@/i18n/i18next'
 import { LocaleSync } from '@/i18n/LocaleSync'
+import { CARD_SECTION } from '@/ui/cardSection'
 import { SettingsPage } from './SettingsPage'
 
 vi.mock('@/lib/shareOrDownloadFile', () => ({
@@ -106,6 +107,56 @@ describe('SettingsPage', () => {
     expect((await settingsRepo.get())?.locale).toBe('fr')
     await waitFor(() =>
       expect(screen.getByRole('button', { name: 'Français' })).toHaveAttribute('aria-pressed', 'true'),
+    )
+  })
+})
+
+describe('the page speaks one visual language', () => {
+  /**
+   * Settings had bare `mt-8` sections until the profile work added card-styled
+   * ones beside them. Their contents then started 21px apart — measured at
+   * 390px, card contents at x=357 against bare headings at x=336 — so headings
+   * jogged left halfway down the page. The owner saw it before any review did,
+   * because it is invisible in a diff: each section was individually correct.
+   *
+   * Asserted on the shared class rather than on pixels, which jsdom has no
+   * layout to produce. `CARD_SECTION` is imported rather than spelled out, so
+   * a future change to the treatment moves this test with it instead of
+   * against it.
+   */
+  it('dresses every top-level section in the same card treatment', async () => {
+    renderApp()
+    // Waits on structure, not on a localized name: the cards mount behind
+    // useLiveQuery, and earlier tests in this file drive real language
+    // switches, so a name-based anchor would be both slower and locale-bound.
+    await waitFor(() => expect(document.querySelectorAll('section').length).toBeGreaterThanOrEqual(4))
+
+    const sections = [...document.querySelectorAll('section')].filter(
+      (node) => node.parentElement?.closest('section') === null,
+    )
+
+    const undressed = sections
+      .filter((node) => !CARD_SECTION.split(' ').every((cls) => node.classList.contains(cls)))
+      .map((node) => node.getAttribute('aria-label') ?? node.className)
+
+    expect(
+      undressed,
+      'Every top-level Settings section wears CARD_SECTION. A bare section sits 21px ' +
+        'left of its neighbours, which reads as a broken page rather than as a variant.',
+    ).toEqual([])
+  })
+
+  it('names the sections a user can see', async () => {
+    // Each card is a landmark, so each needs a name — and the measurement card
+    // takes its name from its own visible heading rather than a parallel
+    // string, which is what stopped the two drifting apart.
+    renderApp()
+    await waitFor(() => expect(document.querySelectorAll('section').length).toBeGreaterThanOrEqual(4))
+
+    const named = screen.getAllByRole('region').map((r) => r.getAttribute('aria-label') ?? r.textContent?.slice(0, 20))
+    // Every card is a landmark, so every card needs a name.
+    expect(screen.getAllByRole('region').length, `named: ${named.join(' | ')}`).toBe(
+      document.querySelectorAll('section').length,
     )
   })
 })

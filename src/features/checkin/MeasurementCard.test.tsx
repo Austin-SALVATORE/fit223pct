@@ -238,3 +238,18 @@ describe('the profile page writes a CheckIn, never UserSettings', () => {
     expect(screen.getByRole('heading', { name: 'Measurements' })).toBeInTheDocument()
   })
 })
+
+describe('the region is named by what a sighted user reads', () => {
+  it('takes its accessible name from its own visible heading', () => {
+    // These had drifted: the region announced "Body measurements" while the
+    // heading read "Measurements", so the two audiences heard different
+    // section names. Asserting the relationship rather than either string
+    // means a copy change to the heading cannot reintroduce the gap.
+    renderCard()
+
+    const region = screen.getByRole('region')
+    const heading = screen.getByRole('heading', { level: 2 })
+    expect(heading).toHaveTextContent('Measurements')
+    expect(region).toHaveAccessibleName(heading.textContent ?? '')
+  })
+})

@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { checkinRepo } from '@/data/repositories'
+import { CARD_SECTION } from '@/ui/cardSection'
 import { Stepper } from '@/ui/Stepper'
 import type { CheckIn } from '@/domain/types'
 
@@ -39,6 +40,7 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
    * nothing persists until `onChange` fires.
    */
   const [bodyFatRevealed, setBodyFatRevealed] = useState(false)
+  const headingId = useId()
   // Body fat is deliberately NOT part of "complete": it is measured far less
   // often than weight and waist, and requiring it would leave the card
   // permanently expanded for anyone without a way to measure it.
@@ -68,7 +70,7 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="mt-8 flex w-full items-baseline justify-between gap-4 rounded-card border border-border bg-surface p-5 text-left"
+        className={`${CARD_SECTION} flex w-full items-baseline justify-between gap-4 text-left`}
       >
         <div className="min-w-0">
           <h2 className="eyebrow">{t('measurement.heading')}</h2>
@@ -83,11 +85,16 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
   }
 
   return (
-    <section
-      aria-label={t('measurement.sectionLabel')}
-      className="mt-8 rounded-card border border-border bg-surface p-5"
-    >
-      <h2 className="eyebrow">{t('measurement.heading')}</h2>
+    // Named by its own heading rather than by a parallel `aria-label` string.
+    // The two had drifted — the region announced "Body measurements" while the
+    // heading read "Measurements", so a screen-reader user and a sighted user
+    // did not hear the same section name. Pointing at the heading makes them
+    // the same string by construction instead of by upkeep across three
+    // locales.
+    <section aria-labelledby={headingId} className={CARD_SECTION}>
+      <h2 id={headingId} className="eyebrow">
+        {t('measurement.heading')}
+      </h2>
       <div className="mt-4 flex justify-center gap-8">
         <Stepper
           label={t('measurement.weightLabel')}

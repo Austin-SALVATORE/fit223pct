@@ -9,6 +9,7 @@ import { originTarget, resolveOrigin } from '@/lib/navigationOrigin'
 import { useLocale } from '@/i18n/useLocale'
 import { SecondaryButton } from '@/ui/SecondaryButton'
 import { LanguageSwitcher } from '@/ui/LanguageSwitcher'
+import { CARD_SECTION } from '@/ui/cardSection'
 import { ProfileCard } from '@/features/profile/ProfileCard'
 import { BaselineCard } from '@/features/profile/BaselineCard'
 import { TodayMeasurementCard } from '@/features/checkin/TodayMeasurementCard'
@@ -74,7 +75,7 @@ export function SettingsPage() {
           before the user was asked would show the seeded height as theirs. */}
       <BaselineCard />
 
-      <section className="mt-8" aria-label={t('language.sectionLabel')}>
+      <section className={CARD_SECTION} aria-label={t('language.sectionLabel')}>
         <h2 className="eyebrow">{t('language.heading')}</h2>
         <div className="mt-4">
           <LanguageSwitcher
@@ -85,7 +86,7 @@ export function SettingsPage() {
         </div>
       </section>
 
-      <section className="mt-8" aria-label={t('backup.sectionLabel')}>
+      <section className={CARD_SECTION} aria-label={t('backup.sectionLabel')}>
         <h2 className="eyebrow">{t('backup.heading')}</h2>
         <p className="mt-2 text-sm leading-relaxed text-ink-secondary">{t('backup.description')}</p>
         <div className="mt-4">
