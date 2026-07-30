@@ -1,6 +1,7 @@
 {
   "noSession": "目前没有进行中的训练。",
   "backToToday": "返回今天",
+  "pause": "暂停训练",
   "pauseAriaLabel": "暂停训练并返回今天",
   "progressAriaLabel": "训练进度",
   "progressValueText": "{{logged}} / {{total}} 组",

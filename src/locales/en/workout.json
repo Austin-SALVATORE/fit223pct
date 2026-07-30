@@ -1,6 +1,7 @@
 {
   "noSession": "There's no session in progress.",
   "backToToday": "Back to Today",
+  "pause": "Pause session",
   "pauseAriaLabel": "Pause session and go back to Today",
   "progressAriaLabel": "Session progress",
   "progressValueText": "{{logged}} of {{total}} sets",

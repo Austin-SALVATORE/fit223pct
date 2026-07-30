@@ -158,12 +158,45 @@ export function WorkoutPage() {
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-8 pt-[max(1rem,env(safe-area-inset-top))]">
       <header className="flex items-center gap-4">
+        {/*
+          **It says pause, not leave, and that is a verified promise rather
+          than reassuring wording.** Position is a pure function of persisted
+          sets (`workoutPosition`, domain/workout.ts:60-67) and every log
+          write-throughs immediately (`handleLog` above), so returning lands on
+          the same set. WorkoutPage.test.tsx proves both: exact-set resume, and
+          a navigation round-trip via the Technique detour.
+
+          It was a 40×40 icon-only ✕ at `text-ink-tertiary` — the control the
+          routine player's was copied from, and the owner could not reliably
+          hit that one on a phone. Same three faults, same floor: `min-h-11`
+          stated rather than emerging from padding arithmetic, a visible text
+          label, and `text-ink-secondary` for prominence — note that tertiary
+          already passed WCAG AA on contrast, so the argument is "this is the
+          only exit from a takeover", not a conformance failure.
+
+          A bare ✕ was actively misleading here, which is why the owner ruled
+          on the wording: it gave no hint the sets survive, and *closing* is
+          the scarier of the two readings.
+
+          **Deliberately worded differently from the routine player's "Leave
+          this routine"** (`RoutinePlayer.tsx` LeaveLink) — the behaviours
+          differ, so the promises must. A routine writes nothing and there is
+          nothing to come back to; a session preserves every logged set. Do not
+          unify these two labels: borrowing "leave" here would tell someone
+          they are abandoning work that is in fact safe.
+
+          No "your sets are saved" line beside it, on purpose. This header
+          already carries a progress bar, a conditional undo and the options
+          menu, and Workout Mode is one decision at a time — a fifth thing to
+          read mid-set costs more than the word "pause" already conveys.
+        */}
         <Link
           to="/"
           aria-label={t('pauseAriaLabel')}
-          className="-ml-2 flex h-10 w-10 items-center justify-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
+          className="-ml-3 inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-3 text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
         >
-          ✕
+          <span aria-hidden="true">‖</span>
+          {t('pause')}
         </Link>
         <div
           role="progressbar"

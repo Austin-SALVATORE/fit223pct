@@ -1,7 +1,8 @@
 {
   "noSession": "Aucune séance en cours.",
   "backToToday": "Retour à Aujourd'hui",
-  "pauseAriaLabel": "Mettre la séance en pause et retourner à Aujourd'hui",
+  "pause": "Pause",
+  "pauseAriaLabel": "Pause de la séance, retour à Aujourd'hui",
   "progressAriaLabel": "Progression de la séance",
   "progressValueText": "{{logged}} sur {{total}} séries",
   "sessionSheet": {
