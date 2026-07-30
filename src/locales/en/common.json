@@ -25,6 +25,7 @@
     "checkpoint": "Checkpoint"
   },
   "edit": "Edit",
+  "cancel": "Cancel",
   "done": "Done",
   "settings": "Settings",
   "stepper": {

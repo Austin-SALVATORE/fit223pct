@@ -236,3 +236,24 @@ describe('the activity level is stated, never assumed', () => {
     }
   })
 })
+
+describe('the form can be abandoned', () => {
+  it('offers a translated Cancel that discards the draft', async () => {
+    // Regression guard for a real defect: `common:cancel` existed in no
+    // locale, so this button rendered the raw key — a lowercase "cancel" —
+    // and logged [i18n] missing key on every render of the form. Every
+    // console error observed on /settings was this one key. Asserted by its
+    // exact name, which is what fails if the key goes missing again: the
+    // fallback renders the key path, never the intended label.
+    await settingsRepo.update({ heightCm: 178, profileConfirmedAt: '2026-07-30' })
+    render(<ProfileCard />)
+
+    await userEvent.click(await screen.findByRole('button', { name: /^Edit/ }))
+    await userEvent.click(screen.getByRole('button', { name: /^Vigorous/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    // Back to the summary, and nothing was written.
+    expect(await screen.findByText(/178 cm/)).toBeInTheDocument()
+    expect((await settingsRepo.get())?.activityLevel).toBeUndefined()
+  })
+})

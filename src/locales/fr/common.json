@@ -25,6 +25,7 @@
     "checkpoint": "Bilan"
   },
   "edit": "Modifier",
+  "cancel": "Annuler",
   "done": "Terminé",
   "settings": "Réglages",
   "stepper": {
