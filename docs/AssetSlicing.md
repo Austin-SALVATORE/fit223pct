@@ -71,6 +71,36 @@ lever.**
 The eight clean stretch assets are 2-pose at ~930px each. At ~319px the
 model crowds poses regardless of instruction.
 
+### The re-render requirement is horizontal separation, not "no overlap"
+
+**Discovered on the pilot, 30 Jul, and it is stricter than the template
+says.** `bench-dip` came back with four poses that genuinely do not
+touch — verified by zoomed crop, a shoe beside a bench at different
+heights — and it still could not be sliced.
+
+Its four objects sit at x 23-476, 476-928, 921-1374, 1372-1825.
+**Consecutive pairs overlap in x by 1, 8 and 3 px.** At every boundary
+the number of clean background columns is **zero**; the thinnest carry
+10, 26 and 21 opaque pixels.
+
+Two measurements, both correct, answering different questions:
+
+- *Do the figures touch?* No — they are vertically separated.
+- *Is there a background column to cut on?* No.
+
+**A vertical cut cannot separate objects whose x-ranges overlap, however
+far apart they are vertically.** Only the second question is the one
+slicing has to answer.
+
+So the brief for a re-render must demand **no shared x between poses**,
+not merely that figures do not overlap. A 1px x-overlap is invisible to
+the eye and invisible to a touch test, and it is precisely what a
+generator aiming for "no overlap" produces at the edges.
+
+`bench-dip` remains allowlisted. Its current frames are an improvement
+on what they replace — 4-pose art in 4 frames rather than 4-pose art in
+6 — but they are **not correct**, and the record should not soften that.
+
 ### Owner ruling, 29 Jul: **four poses per strip, maximum.**
 
 This is a ~2/3 reduction in failure rate, **not a guarantee** — expect

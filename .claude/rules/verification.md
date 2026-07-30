@@ -12,6 +12,21 @@ Claims are verified by running commands, not by reading reports.
   Before accepting "deployed", check the artifact or the device.
 - Report failures with their output. A skipped step is stated as
   skipped. "Green except known failures" is not green — name them.
+- **Git is deliberately blind to part of the asset tree, so it cannot
+  answer questions about it.** `public/assets/exercises/*/reference.png`
+  is gitignored (`.gitignore:34`) — the authoring source is untracked
+  while its derived AVIFs and manifest entries are committed. So
+  `git status` and `git diff HEAD` report **nothing** for a reference
+  image that has completely changed, and a clean status is not evidence
+  that asset content is unchanged.
+
+  Claims about whether asset content moved come from **mtimes, content
+  hashes, or the manifest** — never from git. (30 Jul: the lead
+  concluded a regenerated art batch had been lost because
+  `git diff HEAD` showed no change; the art was intact on disk. The dev
+  had checked `git status` during the same episode and was equally
+  unable to see it. Both instruments were blind to the subject, and the
+  conclusion was asserted anyway.)
 - **A generated artifact older than its source is stale, and nothing
   downstream will notice.** When a brief is corrected mid-flight, some
   subset of what already exists was produced under the old one — and
