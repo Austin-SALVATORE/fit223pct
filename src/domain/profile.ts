@@ -49,6 +49,8 @@ export interface ProfileSettings {
   sex?: Sex | null
   targetWeightKg?: number | null
   targetBodyFatPercent?: number | null
+  /** ISO date of the user's first profile save — see UserSettings. */
+  profileConfirmedAt?: string | null
 }
 
 /** The `CheckIn` fields this module reads — the weight series, plus body fat once it exists. */
@@ -68,6 +70,12 @@ export interface ResolvedProfile {
   currentBodyFatPercent: number | null
   targetWeightKg: number | null
   targetBodyFatPercent: number | null
+  /**
+   * Whether the user has ever been through the profile form. Lets a surface
+   * tell "never asked" from "asked, and left this blank" — the two look
+   * identical in the values alone and want different copy.
+   */
+  confirmed: boolean
 }
 
 export interface KcalRange {
@@ -105,14 +113,25 @@ export function resolveProfile(
   today: Date = new Date(),
 ): ResolvedProfile {
   const newestFirst = [...checkins].sort((a, b) => b.date.localeCompare(a.date))
+  // Until the profile has been confirmed, nothing sourced from settings is
+  // trusted — not merely the seeded height. Gating here rather than inside
+  // restingEnergyExpenditure is what makes the baseline fall away for free:
+  // the existing null-on-missing rule already refuses to compute from a null
+  // height or sex, so no separate "is it confirmed" branch is needed anywhere
+  // downstream, and none can be forgotten.
+  //
+  // Measurements are exempt on purpose. Weight and body fat come from
+  // check-ins the user entered deliberately, which is its own confirmation.
+  const confirmed = settings.profileConfirmedAt != null
   return {
-    heightCm: settings.heightCm ?? null,
-    age: ageOn(settings.birthDate, today),
-    sex: settings.sex ?? null,
+    heightCm: confirmed ? settings.heightCm ?? null : null,
+    age: confirmed ? ageOn(settings.birthDate, today) : null,
+    sex: confirmed ? settings.sex ?? null : null,
     currentWeightKg: newestFirst.find((c) => c.weightKg != null)?.weightKg ?? null,
     currentBodyFatPercent: newestFirst.find((c) => c.bodyFatPercent != null)?.bodyFatPercent ?? null,
-    targetWeightKg: settings.targetWeightKg ?? null,
-    targetBodyFatPercent: settings.targetBodyFatPercent ?? null,
+    targetWeightKg: confirmed ? settings.targetWeightKg ?? null : null,
+    targetBodyFatPercent: confirmed ? settings.targetBodyFatPercent ?? null : null,
+    confirmed,
   }
 }
 

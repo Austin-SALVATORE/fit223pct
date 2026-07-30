@@ -9,6 +9,7 @@ import { originTarget, resolveOrigin } from '@/lib/navigationOrigin'
 import { useLocale } from '@/i18n/useLocale'
 import { SecondaryButton } from '@/ui/SecondaryButton'
 import { LanguageSwitcher } from '@/ui/LanguageSwitcher'
+import { ProfileCard } from '@/features/profile/ProfileCard'
 import type { SupportedLocale } from '@/domain/types'
 
 type ExportState = { status: 'idle' } | { status: 'done'; message: string }
@@ -57,6 +58,10 @@ export function SettingsPage() {
         <span aria-hidden="true">←</span> {tCommon(backTarget.labelKey)}
       </Link>
       <h1 className="text-display mt-6 text-4xl text-ink">{t('heading')}</h1>
+
+      {/* Profile first: it is the section a new install most needs, and the
+          only one whose absence changes what the rest of the app can show. */}
+      <ProfileCard />
 
       <section className="mt-8" aria-label={t('language.sectionLabel')}>
         <h2 className="eyebrow">{t('language.heading')}</h2>

@@ -211,13 +211,21 @@ describe('Fit223Database version 3 → 4 migration', () => {
 
     const resolved = resolveProfile(settings!, checkins)
 
-    expect(resolved.heightCm).toBe(180)
-    expect(resolved.currentWeightKg).toBe(81)
+    // The record still HOLDS the seeded 180 — the migration does not clear
+    // it — but it resolves as missing, because nothing ever asked the owner
+    // to confirm it and there is no confirmation marker on a v3 record. That
+    // gap between "stored" and "confirmed" is the whole reason the marker
+    // exists.
+    expect(settings!.heightCm).toBe(180)
+    expect(resolved.confirmed).toBe(false)
+    expect(resolved.heightCm).toBeNull()
     expect(resolved.age).toBeNull()
     expect(resolved.sex).toBeNull()
     expect(resolved.targetWeightKg).toBeNull()
     expect(resolved.currentBodyFatPercent).toBeNull()
-    // No sex and no birth date, so no baseline — not a partial one.
+    // The weight is the user's own — they logged it themselves.
+    expect(resolved.currentWeightKg).toBe(81)
+    // No trusted inputs, so no baseline — not a partial one.
     expect(restingEnergyExpenditure(resolved)).toBeNull()
   })
 })

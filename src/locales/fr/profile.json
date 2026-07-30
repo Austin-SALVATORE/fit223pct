@@ -1,0 +1,22 @@
+{
+  "sectionLabel": "Ton profil",
+  "heading": "Ton profil",
+  "unconfirmedBody": "Quelques informations sur toi permettent à l'app de calculer l'énergie que ton corps utilise au repos. Rien n'est partagé nulle part.",
+  "unconfirmedAction": "Configurer ton profil",
+  "heightLabel": "Taille",
+  "heightValue": "{{heightCm}} cm",
+  "birthDateLabel": "Date de naissance",
+  "birthDateWhy": "Enregistrée comme une date, pour que ton âge reste juste sans que tu aies à le modifier.",
+  "sexLabel": "Sexe",
+  "sexWhy": "Sert à calculer l'énergie que ton corps utilise au repos — la formule diffère.",
+  "sexFemale": "Femme",
+  "sexMale": "Homme",
+  "ageValue_one": "{{count}} an",
+  "ageValue_other": "{{count}} ans",
+  "targetWeightLabel": "Poids cible",
+  "targetOptional": "Optionnel. Rien n'en est prédit — tu verras l'écart, jamais une date.",
+  "targetWeightAdd": "Ajouter un poids cible",
+  "targetWeightClear": "Retirer",
+  "targetWeightValue": "Cible {{targetWeightKg}} kg",
+  "save": "Enregistrer le profil"
+}

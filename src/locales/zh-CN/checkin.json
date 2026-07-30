@@ -21,6 +21,8 @@
     "sectionLabel": "体重和腰围",
     "heading": "体重与腰围",
     "weightLabel": "体重",
-    "waistLabel": "腰围"
+    "waistLabel": "腰围",
+    "bodyFatLabel": "体脂率",
+    "bodyFatAdd": "添加体脂测量"
   }
 }

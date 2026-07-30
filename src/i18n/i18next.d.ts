@@ -10,6 +10,7 @@ import type seed from '@/locales/en/seed.json'
 import type plan from '@/locales/en/plan.json'
 import type settings from '@/locales/en/settings.json'
 import type recovery from '@/locales/en/recovery.json'
+import type profile from '@/locales/en/profile.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -26,6 +27,7 @@ declare module 'i18next' {
       plan: typeof plan
       settings: typeof settings
       recovery: typeof recovery
+      profile: typeof profile
     }
   }
 }

@@ -1,0 +1,22 @@
+{
+  "sectionLabel": "Your profile",
+  "heading": "Your profile",
+  "unconfirmedBody": "A few facts about you let the app work out the energy your body uses at rest. Nothing here is shared anywhere.",
+  "unconfirmedAction": "Set up your profile",
+  "heightLabel": "Height",
+  "heightValue": "{{heightCm}} cm",
+  "birthDateLabel": "Date of birth",
+  "birthDateWhy": "Stored as a date, so your age stays right without you updating it.",
+  "sexLabel": "Sex",
+  "sexWhy": "Used to work out the energy your body uses at rest — the formula differs.",
+  "sexFemale": "Female",
+  "sexMale": "Male",
+  "ageValue_one": "{{count}} year",
+  "ageValue_other": "{{count}} years",
+  "targetWeightLabel": "Target weight",
+  "targetOptional": "Optional. Nothing is predicted from it — you will see the distance, never a date.",
+  "targetWeightAdd": "Add a target weight",
+  "targetWeightClear": "Remove",
+  "targetWeightValue": "Target {{targetWeightKg}} kg",
+  "save": "Save profile"
+}

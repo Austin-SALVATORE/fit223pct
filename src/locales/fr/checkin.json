@@ -21,6 +21,8 @@
     "sectionLabel": "Poids et tour de taille",
     "heading": "Poids et taille",
     "weightLabel": "Poids",
-    "waistLabel": "Taille"
+    "waistLabel": "Taille",
+    "bodyFatLabel": "Masse grasse",
+    "bodyFatAdd": "Ajouter une mesure de masse grasse"
   }
 }

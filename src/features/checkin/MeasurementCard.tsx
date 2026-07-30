@@ -11,6 +11,7 @@ interface MeasurementCardProps {
 
 const DEFAULT_WEIGHT_KG = 70
 const DEFAULT_WAIST_CM = 80
+const DEFAULT_BODY_FAT_PERCENT = 20
 
 /**
  * Checkpoint-day input — the only surface that ever writes
@@ -23,10 +24,13 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
   const { t } = useTranslation('checkin')
   const { t: tCommon } = useTranslation('common')
   const [editing, setEditing] = useState(false)
+  // Body fat is deliberately NOT part of "complete": it is measured far less
+  // often than weight and waist, and requiring it would leave the card
+  // permanently expanded for anyone without a way to measure it.
   const complete = checkIn?.weightKg != null && checkIn?.waistCm != null
   const expanded = editing || !complete
 
-  async function save(field: 'weightKg' | 'waistCm', value: number) {
+  async function save(field: 'weightKg' | 'waistCm' | 'bodyFatPercent', value: number) {
     const next: CheckIn = {
       id: `checkin-${dateKey}`,
       date: dateKey,
@@ -37,6 +41,7 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
       motivation: null,
       weightKg: null,
       waistCm: null,
+      bodyFatPercent: null,
       ...checkIn,
       [field]: value,
     }
@@ -54,6 +59,7 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
           <h2 className="eyebrow">{t('measurement.heading')}</h2>
           <p className="mt-2 text-ink" data-numeric>
             {checkIn!.weightKg} kg · {checkIn!.waistCm} cm
+            {checkIn!.bodyFatPercent != null && ` · ${checkIn!.bodyFatPercent}%`}
           </p>
         </div>
         <span className="shrink-0 text-sm text-ink-tertiary">{tCommon('edit')}</span>
@@ -85,6 +91,34 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
           onChange={(value) => void save('waistCm', value)}
         />
       </div>
+      {/*
+        Body fat is opt-in rather than a third always-present stepper. Its
+        usefulness depends entirely on how it was measured — a scale's guess
+        and a caliper reading differ enough to move the Cunningham figure
+        materially — so it should be entered by someone who has a method,
+        not defaulted into by everyone.
+      */}
+      {checkIn?.bodyFatPercent == null ? (
+        <button
+          type="button"
+          onClick={() => void save('bodyFatPercent', DEFAULT_BODY_FAT_PERCENT)}
+          className="mt-5 w-full rounded-card border border-border py-3 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
+        >
+          {t('measurement.bodyFatAdd')}
+        </button>
+      ) : (
+        <div className="mt-5 flex justify-center">
+          <Stepper
+            label={t('measurement.bodyFatLabel')}
+            value={checkIn.bodyFatPercent}
+            step={0.5}
+            min={3}
+            max={70}
+            unit="%"
+            onChange={(value) => void save('bodyFatPercent', value)}
+          />
+        </div>
+      )}
       {complete && (
         <button
           type="button"

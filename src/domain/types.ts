@@ -281,4 +281,24 @@ export interface UserSettings {
   /** An intention, not a measurement — hence settings, not a dated record. */
   targetWeightKg?: number | null
   targetBodyFatPercent?: number | null
+  /**
+   * ISO date the user first saved the profile form. **This is what makes
+   * "never confirmed" representable**, which the missing-data contract
+   * requires and nothing in the schema could previously express: a stored
+   * value and a value the user actually gave were indistinguishable.
+   *
+   * Absent means the user has never been through the profile, *whatever
+   * values happen to sit in the record*. In particular the owner's install
+   * carries a seeded `heightCm: 180` that nothing asked him to confirm; it
+   * stays where it is — deleting a value he may since have verified would be
+   * its own invention — but it is not trusted until this is set.
+   *
+   * Not indexed, so it needs no Dexie version of its own: the version schema
+   * declares indexes, not fields.
+   *
+   * Deliberately not inferred from whether other fields are populated. That
+   * works until someone fills in a birth date and nothing else, and then a
+   * guess is load-bearing again with no way to tell.
+   */
+  profileConfirmedAt?: string | null
 }

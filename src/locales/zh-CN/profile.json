@@ -1,0 +1,21 @@
+{
+  "sectionLabel": "你的资料",
+  "heading": "你的资料",
+  "unconfirmedBody": "几项关于你的信息，可以让应用算出你身体在静息状态下消耗的能量。这些内容不会分享到任何地方。",
+  "unconfirmedAction": "设置你的资料",
+  "heightLabel": "身高",
+  "heightValue": "{{heightCm}} 厘米",
+  "birthDateLabel": "出生日期",
+  "birthDateWhy": "按日期保存，这样你的年龄会自动保持准确，不用你去改。",
+  "sexLabel": "性别",
+  "sexWhy": "用于计算你身体在静息状态下消耗的能量——公式因性别而不同。",
+  "sexFemale": "女",
+  "sexMale": "男",
+  "ageValue_other": "{{count}} 岁",
+  "targetWeightLabel": "目标体重",
+  "targetOptional": "可选。不会由此做任何预测——你只会看到差距，不会看到日期。",
+  "targetWeightAdd": "添加目标体重",
+  "targetWeightClear": "移除",
+  "targetWeightValue": "目标 {{targetWeightKg}} 公斤",
+  "save": "保存资料"
+}

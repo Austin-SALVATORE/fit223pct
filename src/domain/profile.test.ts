@@ -20,6 +20,7 @@ function profile(overrides: Partial<ResolvedProfile> = {}): ResolvedProfile {
     currentBodyFatPercent: null,
     targetWeightKg: null,
     targetBodyFatPercent: null,
+    confirmed: true,
     ...overrides,
   }
 }
@@ -162,18 +163,50 @@ describe('resolveProfile reads the series rather than shadowing it', () => {
       currentBodyFatPercent: null,
       targetWeightKg: null,
       targetBodyFatPercent: null,
+      confirmed: false,
     })
   })
 
   it('treats a settings record without the new fields as missing, not defaulted', () => {
-    // A v3 record predates birthDate/sex/targets entirely. Absent must read as
-    // missing — the alternative recreates the seeded-height problem elsewhere.
+    // A v3 record predates birthDate/sex/targets entirely, and predates the
+    // confirmation marker too — so even its stored height is untrusted.
     const resolved = resolveProfile({ heightCm: 180 }, [])
 
-    expect(resolved.heightCm).toBe(180)
+    expect(resolved.confirmed).toBe(false)
+    expect(resolved.heightCm).toBeNull()
     expect(resolved.age).toBeNull()
     expect(resolved.sex).toBeNull()
     expect(resolved.targetWeightKg).toBeNull()
+  })
+
+  it('trusts stored settings once the profile has been confirmed', () => {
+    const resolved = resolveProfile(
+      { heightCm: 178, birthDate: '1990-01-01', sex: 'male', profileConfirmedAt: '2026-07-30' },
+      [],
+      new Date(2026, 6, 30),
+    )
+
+    expect(resolved.confirmed).toBe(true)
+    expect(resolved.heightCm).toBe(178)
+    expect(resolved.age).toBe(36)
+    expect(resolved.sex).toBe('male')
+  })
+
+  it('never trusts the seeded height until it is confirmed, however complete the rest looks', () => {
+    // The defect the marker exists for: this record has everything a
+    // baseline needs, but nobody ever asked the owner whether 180 is his
+    // height. No marker, no baseline — and deliberately not inferred from
+    // the other fields being populated.
+    const unconfirmed = resolveProfile(
+      { heightCm: 180, birthDate: '1990-01-01', sex: 'male' },
+      [{ date: '2026-07-01', weightKg: 82 }],
+      new Date(2026, 6, 30),
+    )
+
+    expect(unconfirmed.heightCm).toBeNull()
+    expect(restingEnergyExpenditure(unconfirmed)).toBeNull()
+    // The measurement is still the user's own — they entered it themselves.
+    expect(unconfirmed.currentWeightKg).toBe(82)
   })
 
   it('does not mutate the check-in list it was given', () => {

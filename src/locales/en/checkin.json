@@ -21,6 +21,8 @@
     "sectionLabel": "Weight and waist measurement",
     "heading": "Weight & waist",
     "weightLabel": "Weight",
-    "waistLabel": "Waist"
+    "waistLabel": "Waist",
+    "bodyFatLabel": "Body fat",
+    "bodyFatAdd": "Add a body-fat reading"
   }
 }
