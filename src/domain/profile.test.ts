@@ -3,6 +3,7 @@ import { PAL_BANDS } from './energyReference'
 import {
   ageOn,
   leanBodyMassKg,
+  maintenanceByBand,
   maintenanceKcal,
   resolveProfile,
   restingEnergyExpenditure,
@@ -16,6 +17,9 @@ function profile(overrides: Partial<ResolvedProfile> = {}): ResolvedProfile {
     heightCm: 178,
     age: 30,
     sex: 'male',
+    // Default null, matching a real install confirmed before the field
+    // existed: the resting figure must survive it.
+    activityLevel: null,
     currentWeightKg: 80,
     currentBodyFatPercent: null,
     targetWeightKg: null,
@@ -159,6 +163,7 @@ describe('resolveProfile reads the series rather than shadowing it', () => {
       heightCm: null,
       age: null,
       sex: null,
+      activityLevel: null,
       currentWeightKg: null,
       currentBodyFatPercent: null,
       targetWeightKg: null,
@@ -243,5 +248,66 @@ describe('maintenance energy is a range, not a point', () => {
     // hundreds of kcal, and that scale has no traceable source.
     expect(PAL_BANDS.sedentary.min).toBeGreaterThan(1.2)
     expect(maintenanceKcal(1650, 'sedentary').min).toBeGreaterThan(1650 * 1.2)
+  })
+})
+
+describe('with no band stated, every band is offered and none is chosen', () => {
+  it('returns all three bands, lightest first', () => {
+    const bands = maintenanceByBand(1650)
+
+    expect(bands.map((band) => band.level)).toEqual(['sedentary', 'active', 'vigorous'])
+    for (const band of bands) {
+      expect(band.range).toEqual(maintenanceKcal(1650, band.level))
+      expect(band.range.max).toBeGreaterThan(band.range.min)
+    }
+  })
+
+  it('marks nothing as recommended and carries no extra field to hide one in', () => {
+    // Which band a trainee belongs in is a training-content judgement and
+    // belongs to the owner's coach. A `recommended` or `default` flag here is
+    // how that judgement would arrive without anyone deciding to make it.
+    for (const band of maintenanceByBand(1650)) {
+      expect(Object.keys(band).sort()).toEqual(['level', 'range'])
+    }
+  })
+
+  it('ascends without overlapping, so the three rows read as a ladder', () => {
+    const bands = maintenanceByBand(1650)
+
+    for (let i = 1; i < bands.length; i += 1) {
+      expect(bands[i].range.min).toBeGreaterThan(bands[i - 1].range.max)
+    }
+  })
+})
+
+describe('an unstated activity level is a normal state of a confirmed profile', () => {
+  it('resolves to null without touching confirmed', () => {
+    // The migration case: the owner's install has profileConfirmedAt set and
+    // no activityLevel, and must keep its baseline.
+    const resolved = resolveProfile(
+      { heightCm: 178, birthDate: '1990-01-01', sex: 'male', profileConfirmedAt: '2026-07-30' },
+      [checkIn('2026-07-01', 84)],
+      new Date('2026-07-30T12:00:00'),
+    )
+
+    expect(resolved.activityLevel).toBeNull()
+    expect(resolved.confirmed).toBe(true)
+  })
+
+  it('does not suppress the resting figure', () => {
+    // This is the whole point of keeping the band out of the REE inputs: a
+    // field added after the fact must not retroactively blank a baseline.
+    expect(restingEnergyExpenditure(profile({ activityLevel: null }))).not.toBeNull()
+    expect(restingEnergyExpenditure(profile({ activityLevel: null }))).toBe(
+      restingEnergyExpenditure(profile({ activityLevel: 'active' })),
+    )
+  })
+
+  it('reads a stated band back, and stays null on an unconfirmed profile', () => {
+    const settings = { activityLevel: 'vigorous' as const, profileConfirmedAt: '2026-07-30' }
+
+    expect(resolveProfile(settings, []).activityLevel).toBe('vigorous')
+    // Unconfirmed: every settings-sourced fact reads as missing, this one too.
+    expect(resolveProfile({ activityLevel: 'vigorous' }, []).activityLevel).toBeNull()
   })
 })

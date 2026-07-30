@@ -137,3 +137,102 @@ describe('targets predict nothing', () => {
     })
   })
 })
+
+describe('the activity level is stated, never assumed', () => {
+  it('preselects nothing, so an unanswered band stays unanswered', async () => {
+    await settingsRepo.update({ heightCm: 180 })
+    render(<ProfileCard />)
+
+    await userEvent.click(await screen.findByRole('button', { name: /Set up your profile/ }))
+
+    for (const band of ['Sedentary', 'Active', 'Vigorous']) {
+      expect(screen.getByRole('button', { name: new RegExp(`^${band}`) })).toHaveAttribute(
+        'aria-pressed',
+        'false',
+      )
+    }
+  })
+
+  it('saves as null when no band was chosen — no default is invented', async () => {
+    // The whole point of the field: the card used to attribute 'sedentary' to
+    // someone who had never been asked. A default written here would put that
+    // defect back one layer down, where the UI could no longer tell.
+    await settingsRepo.update({ heightCm: 180 })
+    render(<ProfileCard />)
+
+    await userEvent.click(await screen.findByRole('button', { name: /Set up your profile/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save profile' }))
+
+    await waitFor(async () => {
+      const settings = await settingsRepo.get()
+      expect(settings?.profileConfirmedAt).toBeDefined()
+      expect(settings?.activityLevel).toBeNull()
+    })
+  })
+
+  it('persists the chosen band and reads it back on a fresh mount', async () => {
+    await settingsRepo.update({ heightCm: 180 })
+    const { unmount } = render(<ProfileCard />)
+
+    await userEvent.click(await screen.findByRole('button', { name: /Set up your profile/ }))
+    await userEvent.click(screen.getByRole('button', { name: /^Vigorous/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save profile' }))
+
+    await waitFor(async () => {
+      expect((await settingsRepo.get())?.activityLevel).toBe('vigorous')
+    })
+
+    // Survives a reload: remount reads storage, not the discarded draft.
+    unmount()
+    render(<ProfileCard />)
+    expect(await screen.findByText(/Vigorous/)).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: /^Edit/ }))
+    expect(screen.getByRole('button', { name: /^Vigorous/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
+  it('describes each band by the whole day, not by training frequency', async () => {
+    // The FAO caveat, which has to reach the user: PAL comes from total daily
+    // expenditure including all non-exercise movement, so someone training
+    // three times a week reads themselves as "active" by gym intuition and
+    // lands a band too high.
+    await settingsRepo.update({ heightCm: 180 })
+    render(<ProfileCard />)
+
+    await userEvent.click(await screen.findByRole('button', { name: /Set up your profile/ }))
+
+    expect(screen.getByText(/not how often you train/)).toBeInTheDocument()
+    expect(screen.getByText(/Desk work and sitting for most of the day/)).toBeInTheDocument()
+    expect(screen.getByText(/On your feet for a good part of the day/)).toBeInTheDocument()
+    expect(screen.getByText(/Physically demanding work/)).toBeInTheDocument()
+  })
+
+  it('offers the band as part of the form behind Save, not as a live control', async () => {
+    // Choosing must not write until Save: activity level is part of what
+    // profileConfirmedAt confirms, and a marker set by brushing a control is
+    // not a confirmation.
+    await settingsRepo.update({ heightCm: 178, profileConfirmedAt: '2026-07-30' })
+    render(<ProfileCard />)
+
+    await userEvent.click(await screen.findByRole('button', { name: /^Edit/ }))
+    await userEvent.click(screen.getByRole('button', { name: /^Active/ }))
+
+    expect((await settingsRepo.get())?.activityLevel).toBeUndefined()
+  })
+
+  it('leaves a profile confirmed before the field existed confirmed, and shows no gap', async () => {
+    // The migration case at this surface: an install with profileConfirmedAt
+    // and no activityLevel is complete, not half-filled.
+    await settingsRepo.update({ heightCm: 178, profileConfirmedAt: '2026-07-30' })
+    render(<ProfileCard />)
+
+    expect(await screen.findByText(/178 cm/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Set up your profile/ })).toBeNull()
+    for (const band of ['Sedentary', 'Active', 'Vigorous']) {
+      expect(screen.queryByText(band)).toBeNull()
+    }
+  })
+})

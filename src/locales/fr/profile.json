@@ -11,6 +11,18 @@
   "sexWhy": "Sert à calculer l'énergie que ton corps utilise au repos — la formule diffère.",
   "sexFemale": "Femme",
   "sexMale": "Homme",
+  "activityLabel": "Niveau d'activité",
+  "activityWhy": "Ce que tu bouges sur toute la journée — travail, déplacements, temps passé debout — et non la fréquence de tes séances. C'est ce qui transforme la valeur au repos en total quotidien, et c'en est l'élément le moins certain.",
+  "activityName": {
+    "sedentary": "Sédentaire",
+    "active": "Actif",
+    "vigorous": "Très actif"
+  },
+  "activityDescription": {
+    "sedentary": "Travail de bureau, assis la majeure partie de la journée, peu de marche.",
+    "active": "Debout une bonne partie de la journée, ou des déplacements à pied.",
+    "vigorous": "Travail physique, ou de longues heures en mouvement la plupart des jours."
+  },
   "ageValue_one": "{{count}} an",
   "ageValue_other": "{{count}} ans",
   "targetWeightLabel": "Poids cible",
@@ -25,6 +37,9 @@
     "restingValue": "{{kcal}} kcal par jour",
     "restingWhat": "À peu près l'énergie que ton corps utilise au repos.",
     "maintenanceValue": "{{min}} à {{max}} kcal par jour avec l'activité",
+    "maintenanceUnknown": "Ce que tu dépenses dans une journée dépend de ton niveau d'activité :",
+    "maintenanceBandValue": "{{min}} à {{max}} kcal",
+    "choosePal": "Choisir ton niveau d'activité",
     "leanMassValue": "À partir de la masse maigre : {{kcal}} kcal par jour.",
     "provenance": "Mifflin–St Jeor (1990) pour la valeur au repos, Cunningham (1991) à partir de la masse maigre, et les tranches d'activité FAO/OMS/UNU (2001). La tranche d'activité est un intervalle parce que la valeur publiée en est un — c'est l'élément le moins certain ici.",
     "noFigure": "Pas encore de base — il manque quelques informations, et un chiffre construit sur des suppositions serait pire que rien.",

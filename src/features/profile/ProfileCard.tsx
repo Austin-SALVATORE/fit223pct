@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { checkinRepo, settingsRepo } from '@/data/repositories'
+import { PAL_ORDER, type PhysicalActivityLevel } from '@/domain/energyReference'
 import { resolveProfile, type Sex } from '@/domain/profile'
 import { toDateKey } from '@/lib/dates'
 import { Stepper } from '@/ui/Stepper'
@@ -25,6 +26,15 @@ import { RatingPicker } from '@/ui/RatingPicker'
 const DEFAULT_HEIGHT_CM = 170
 const DEFAULT_TARGET_WEIGHT_KG = 75
 
+/**
+ * Anchor target for BaselineCard's "Choose your activity level".
+ *
+ * Carried on all three of this card's states, so the link never points at
+ * nothing: which state renders depends on stored data the baseline card
+ * cannot see.
+ */
+export const PROFILE_ANCHOR_ID = 'profile'
+
 export function ProfileCard() {
   const { t } = useTranslation('profile')
   const { t: tCommon } = useTranslation('common')
@@ -38,6 +48,12 @@ export function ProfileCard() {
     heightCm: number
     birthDate: string
     sex: Sex | null
+    /**
+     * Starts at whatever is stored, **including null**, and saves as null if
+     * still unchosen. No default: attributing an activity level to someone
+     * who has not stated one is the defect this field was added to fix.
+     */
+    activityLevel: PhysicalActivityLevel | null
     targetWeightKg: number | null
   } | null>(null)
 
@@ -55,6 +71,7 @@ export function ProfileCard() {
             heightCm: settings?.heightCm ?? DEFAULT_HEIGHT_CM,
             birthDate: settings?.birthDate ?? '',
             sex: settings?.sex ?? null,
+            activityLevel: settings?.activityLevel ?? null,
             targetWeightKg: settings?.targetWeightKg ?? null,
           })
         }
@@ -68,12 +85,14 @@ export function ProfileCard() {
         heightCm={profile.heightCm}
         age={profile.age}
         sex={profile.sex}
+        activityLevel={profile.activityLevel}
         targetWeightKg={profile.targetWeightKg}
         onEdit={() =>
           setDraft({
             heightCm: profile.heightCm ?? DEFAULT_HEIGHT_CM,
             birthDate: settings?.birthDate ?? '',
             sex: profile.sex,
+            activityLevel: profile.activityLevel,
             targetWeightKg: profile.targetWeightKg,
           })
         }
@@ -87,6 +106,10 @@ export function ProfileCard() {
       heightCm: draft.heightCm,
       birthDate: draft.birthDate === '' ? null : draft.birthDate,
       sex: draft.sex,
+      // Written through as null when unchosen. A confirmed profile with no
+      // band is a normal state: it suppresses the single maintenance range
+      // and nothing else.
+      activityLevel: draft.activityLevel,
       targetWeightKg: draft.targetWeightKg,
       // The act that makes everything above trusted.
       profileConfirmedAt: toDateKey(new Date()),
@@ -96,6 +119,7 @@ export function ProfileCard() {
 
   return (
     <section
+      id={PROFILE_ANCHOR_ID}
       aria-label={t('sectionLabel')}
       className="mt-8 rounded-card border border-border bg-surface p-5"
     >
@@ -144,6 +168,28 @@ export function ProfileCard() {
             ]}
             value={draft.sex === null ? null : draft.sex === 'male' ? 1 : 0}
             onChange={(value) => setDraft({ ...draft, sex: value === 1 ? 'male' : 'female' })}
+          />
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <span className="text-sm text-ink-secondary">{t('activityLabel')}</span>
+        {/*
+          The FAO caveat has to reach the user or they will pick the wrong
+          band. PAL is derived from *total* daily expenditure including all
+          non-exercise movement, while the fitness convention's "sedentary" is
+          defined more narrowly (energyReference.ts). Someone training three
+          times a week reads themselves as "active" by gym intuition, where
+          FAO puts a modal Western sedentary lifestyle at ~1.60 — a band
+          boundary away. So every option is described in terms of the whole
+          day, and the copy says outright that training frequency is not what
+          this measures.
+        */}
+        <p className="mt-1 text-xs leading-relaxed text-ink-tertiary">{t('activityWhy')}</p>
+        <div className="mt-2">
+          <ActivityPicker
+            value={draft.activityLevel}
+            onChange={(activityLevel) => setDraft({ ...draft, activityLevel })}
           />
         </div>
       </div>
@@ -199,6 +245,65 @@ export function ProfileCard() {
 }
 
 /**
+ * The three FAO/WHO/UNU bands, each described by what a whole day looks like.
+ *
+ * Stacked rows rather than `RatingPicker`: these options need a sentence each,
+ * which a 44px circle cannot carry, and the description is the part that
+ * prevents the wrong choice. Each button's accessible name is the band name
+ * *plus* its description, deliberately — a screen-reader user choosing between
+ * three bands needs the same information a sighted one is reading.
+ *
+ * Plain toggle buttons with `aria-pressed`, not `role="radio"`, for
+ * `RatingPicker`'s stated reason: the ARIA radio pattern promises arrow-key
+ * roving-tabindex navigation that this does not implement, and claiming the
+ * role would promise behaviour that is not there.
+ *
+ * **No option is preselected, marked recommended, or ordered by likelihood.**
+ * `PAL_ORDER` is lightest-first because that is a property of the bands, not
+ * a hint about the user. Which band a trainee belongs in is a training-content
+ * judgement and belongs to the owner's coach.
+ */
+function ActivityPicker({
+  value,
+  onChange,
+}: {
+  value: PhysicalActivityLevel | null
+  onChange: (value: PhysicalActivityLevel) => void
+}) {
+  const { t } = useTranslation('profile')
+  return (
+    <div role="group" aria-label={t('activityLabel')} className="space-y-2">
+      {PAL_ORDER.map((level) => {
+        const selected = value === level
+        return (
+          <button
+            key={level}
+            type="button"
+            aria-pressed={selected}
+            onClick={() => onChange(level)}
+            // Selection carries weight and fill as well as hue, the same
+            // non-colour cue RatingPicker adopted for backlog A6: the choice
+            // has to survive greyscale and forced-colours mode.
+            className={`block w-full rounded-card border px-4 py-3 text-left transition-colors ${
+              selected
+                ? 'border-amber bg-amber/10 text-ink'
+                : 'border-border text-ink-secondary hover:border-border-strong hover:text-ink'
+            }`}
+          >
+            <span className={`block text-sm ${selected ? 'font-semibold' : 'font-medium'}`}>
+              {t(`activityName.${level}`)}
+            </span>
+            <span className="mt-0.5 block text-xs leading-relaxed text-ink-tertiary">
+              {t(`activityDescription.${level}`)}
+            </span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/**
  * Invites completion **once, quietly**. Not a progress bar and not a nag:
  * "profile 60% complete" is the same mechanic as a streak, and this app does
  * not chase people.
@@ -207,6 +312,7 @@ function Unconfirmed({ onStart }: { onStart: () => void }) {
   const { t } = useTranslation('profile')
   return (
     <section
+      id={PROFILE_ANCHOR_ID}
       aria-label={t('sectionLabel')}
       className="mt-8 rounded-card border border-border bg-surface p-5"
     >
@@ -227,12 +333,14 @@ function Summary({
   heightCm,
   age,
   sex,
+  activityLevel,
   targetWeightKg,
   onEdit,
 }: {
   heightCm: number | null
   age: number | null
   sex: Sex | null
+  activityLevel: PhysicalActivityLevel | null
   targetWeightKg: number | null
   onEdit: () => void
 }) {
@@ -242,10 +350,15 @@ function Summary({
     heightCm !== null ? t('heightValue', { heightCm }) : null,
     age !== null ? t('ageValue', { count: age }) : null,
     sex !== null ? t(sex === 'male' ? 'sexMale' : 'sexFemale') : null,
+    // Absent simply does not appear, like every other fact here — a "not set"
+    // placeholder would read as a gap to fill, and an unstated band is a
+    // normal state rather than an omission.
+    activityLevel !== null ? t(`activityName.${activityLevel}`) : null,
   ].filter((fact): fact is string => fact !== null)
 
   return (
     <section
+      id={PROFILE_ANCHOR_ID}
       aria-label={t('sectionLabel')}
       className="mt-8 rounded-card border border-border bg-surface p-5"
     >

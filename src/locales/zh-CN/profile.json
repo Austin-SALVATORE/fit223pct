@@ -11,6 +11,18 @@
   "sexWhy": "用于计算你身体在静息状态下消耗的能量——公式因性别而不同。",
   "sexFemale": "女",
   "sexMale": "男",
+  "activityLabel": "活动水平",
+  "activityWhy": "指你一整天的活动量——工作、通勤、站着走动的时间，而不是训练的频率。它把静息值换算成一天的总消耗，也是其中最不确定的部分。",
+  "activityName": {
+    "sedentary": "久坐",
+    "active": "活跃",
+    "vigorous": "高强度"
+  },
+  "activityDescription": {
+    "sedentary": "坐着工作，一天大部分时间都坐着，很少走动。",
+    "active": "一天里有不少时间站着，或者常常走路出门。",
+    "vigorous": "体力工作，或者大部分日子长时间都在活动。"
+  },
   "ageValue_other": "{{count}} 岁",
   "targetWeightLabel": "目标体重",
   "targetOptional": "可选。不会由此做任何预测——你只会看到差距，不会看到日期。",
@@ -24,6 +36,9 @@
     "restingValue": "每天 {{kcal}} 千卡",
     "restingWhat": "大致是你身体在静息状态下消耗的能量。",
     "maintenanceValue": "算上活动量，每天 {{min}}–{{max}} 千卡",
+    "maintenanceUnknown": "你一天的总消耗取决于你的活动水平：",
+    "maintenanceBandValue": "{{min}}–{{max}} 千卡",
+    "choosePal": "选择你的活动水平",
     "leanMassValue": "按去脂体重计算：每天 {{kcal}} 千卡。",
     "provenance": "静息值用 Mifflin–St Jeor（1990），去脂体重用 Cunningham（1991），活动系数用 FAO/WHO/UNU（2001）的区间。活动系数是一个区间，因为公开发表的数值本身就是区间——这也是这里最不确定的部分。",
     "noFigure": "还算不出基准——还缺几项信息，用猜出来的数字反而不如没有。",

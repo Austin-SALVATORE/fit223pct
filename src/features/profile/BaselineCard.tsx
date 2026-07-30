@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { checkinRepo, settingsRepo } from '@/data/repositories'
-import type { PhysicalActivityLevel } from '@/domain/energyReference'
 import {
+  maintenanceByBand,
   maintenanceKcal,
   resolveProfile,
   restingEnergyExpenditure,
@@ -26,8 +26,15 @@ import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
  *    `GoalProgress` has no field for a duration and `goals.guard.test.ts`
  *    stops one being added, but the copy has to hold the line too: nothing
  *    here says "on track" or "at this rate", both of which imply an arrival.
+ *
+ * The first of those was broken here for one release. This card hardcoded a
+ * `DEFAULT_PAL` of `'sedentary'`, computed maintenance from it, and then
+ * *labelled the output as sedentary* — asserting an activity level about
+ * someone who had never been asked, in the one place a rule against it was
+ * written down. It is the same defect as the seeded `heightCm: 180`, and at
+ * ~1,650 kcal REE the gap between bands is several hundred kcal/day. With no
+ * band stated the card now shows all three ranges and claims nothing.
  */
-const DEFAULT_PAL: PhysicalActivityLevel = 'sedentary'
 
 export function BaselineCard() {
   const { t } = useTranslation('profile')
@@ -64,21 +71,28 @@ export function BaselineCard() {
             {t('baseline.restingWhat')}
           </p>
 
-          {/*
-            The range is the honest output: the FAO activity bands are ranges,
-            so a single maintenance figure would be precision the source does
-            not have. Its width is a fair report of how uncertain the activity
-            multiplier is — the largest uncertainty in the whole chain.
-          */}
-          <p className="mt-4 text-ink" data-numeric>
-            {t('baseline.maintenanceValue', {
-              min: Math.round(maintenanceKcal(ree, DEFAULT_PAL).min),
-              max: Math.round(maintenanceKcal(ree, DEFAULT_PAL).max),
-            })}
-          </p>
-          <p className="mt-1 text-sm leading-relaxed text-ink-tertiary">
-            {t(`baseline.pal.${DEFAULT_PAL}`)}
-          </p>
+          {profile.activityLevel === null ? (
+            <AllBands ree={ree} />
+          ) : (
+            <>
+              {/*
+                The range is the honest output: the FAO activity bands are
+                ranges, so a single maintenance figure would be precision the
+                source does not have. Its width is a fair report of how
+                uncertain the activity multiplier is — the largest uncertainty
+                in the whole chain.
+              */}
+              <p className="mt-4 text-ink" data-numeric>
+                {t('baseline.maintenanceValue', {
+                  min: Math.round(maintenanceKcal(ree, profile.activityLevel).min),
+                  max: Math.round(maintenanceKcal(ree, profile.activityLevel).max),
+                })}
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-ink-tertiary">
+                {t(`baseline.pal.${profile.activityLevel}`)}
+              </p>
+            </>
+          )}
 
           {leanMassRee !== null && (
             <p className="mt-3 text-sm leading-relaxed text-ink-tertiary" data-numeric>
@@ -96,6 +110,59 @@ export function BaselineCard() {
 
       {goal && <GoalDistance goal={goal} trend={trend} />}
     </section>
+  )
+}
+
+/**
+ * Every band's range, when the user has not said which one they are.
+ *
+ * Showing all three rather than hiding maintenance entirely: the question
+ * "how much do I burn in a day" still gets an answer, and seeing what each
+ * band implies is how a person recognises which one they are — better than
+ * any wording could explain. Nothing is highlighted or recommended, because
+ * which band a trainee belongs in is a training-content judgement and belongs
+ * to the owner's coach.
+ *
+ * A missing band is not in the `Missing` list above and must not be added to
+ * it. That list means "no figure can be computed"; this means "here are all
+ * the figures, pick which is yours" — and a confirmed profile with no band is
+ * a normal state, not an incomplete one.
+ */
+function AllBands({ ree }: { ree: number }) {
+  const { t } = useTranslation('profile')
+  return (
+    <>
+      <p className="mt-4 text-sm leading-relaxed text-ink-secondary">
+        {t('baseline.maintenanceUnknown')}
+      </p>
+      <dl className="mt-2 space-y-1">
+        {maintenanceByBand(ree).map(({ level, range }) => (
+          <div key={level} className="flex items-baseline justify-between gap-4">
+            <dt className="text-sm text-ink-secondary">{t(`activityName.${level}`)}</dt>
+            <dd className="text-ink" data-numeric>
+              {t('baseline.maintenanceBandValue', {
+                min: Math.round(range.min),
+                max: Math.round(range.max),
+              })}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      {/*
+        A link to the profile form rather than a control here: activity level
+        is a stated fact about the person, so it is set alongside height,
+        birth date and sex and becomes part of what profileConfirmedAt
+        confirms. A segmented control on this card would make a profile fact
+        editable outside the form that owns profile facts, and confirmation
+        would stop being a deliberate act.
+      */}
+      <a
+        href="#profile"
+        className="mt-3 inline-block rounded-full border border-border px-4 py-2 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
+      >
+        {t('baseline.choosePal')}
+      </a>
+    </>
   )
 }
 

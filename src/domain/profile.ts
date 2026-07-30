@@ -2,6 +2,7 @@ import {
   CUNNINGHAM,
   MIFFLIN,
   PAL_BANDS,
+  PAL_ORDER,
   type PhysicalActivityLevel,
 } from './energyReference'
 
@@ -47,6 +48,15 @@ export interface ProfileSettings {
    * as missing.
    */
   sex?: Sex | null
+  /**
+   * The user's stated PAL band. **Absent is a normal state of a confirmed
+   * profile**, not an incomplete one: installs confirmed before this field
+   * existed carry no band, and they must keep their resting figure. Nothing
+   * about `confirmed`, and nothing in `restingEnergyExpenditure`, may come to
+   * depend on it — a missing band suppresses exactly one thing, the single
+   * maintenance range.
+   */
+  activityLevel?: PhysicalActivityLevel | null
   targetWeightKg?: number | null
   targetBodyFatPercent?: number | null
   /** ISO date of the user's first profile save — see UserSettings. */
@@ -65,6 +75,12 @@ export interface ResolvedProfile {
   /** Derived from birthDate at read time, never stored. */
   age: number | null
   sex: Sex | null
+  /**
+   * Null means the user has not said, which is why maintenance is shown as
+   * all three bands rather than one. It is never inferred — not from the
+   * program, not from training frequency, not from a default.
+   */
+  activityLevel: PhysicalActivityLevel | null
   /** Most recent check-in with a non-null weight — resolved from the series, never copied. */
   currentWeightKg: number | null
   currentBodyFatPercent: number | null
@@ -127,6 +143,9 @@ export function resolveProfile(
     heightCm: confirmed ? settings.heightCm ?? null : null,
     age: confirmed ? ageOn(settings.birthDate, today) : null,
     sex: confirmed ? settings.sex ?? null : null,
+    // Gated with the other settings-sourced facts, and read-only here: note
+    // that `confirmed` above is computed before this and never consults it.
+    activityLevel: confirmed ? settings.activityLevel ?? null : null,
     currentWeightKg: newestFirst.find((c) => c.weightKg != null)?.weightKg ?? null,
     currentBodyFatPercent: newestFirst.find((c) => c.bodyFatPercent != null)?.bodyFatPercent ?? null,
     targetWeightKg: confirmed ? settings.targetWeightKg ?? null : null,
@@ -194,4 +213,28 @@ export function restingEnergyExpenditureFromLeanMass(profile: ResolvedProfile): 
 export function maintenanceKcal(ree: number, pal: PhysicalActivityLevel): KcalRange {
   const band = PAL_BANDS[pal]
   return { min: ree * band.min, max: ree * band.max }
+}
+
+export interface MaintenanceBand {
+  level: PhysicalActivityLevel
+  range: KcalRange
+}
+
+/**
+ * Every band's range, lightest first — what to show when the user has not
+ * said how active they are.
+ *
+ * The alternative was picking a band and labelling the output with it, which
+ * is what this replaced: the card asserted "sedentary" about someone who had
+ * never been asked, breaking its own rule against showing a figure whose
+ * provenance is a default. Showing all three asserts nothing while still
+ * answering the question, and seeing what each band implies is how a person
+ * recognises which one they are.
+ *
+ * No band is marked recommended and none is derived from the program. Which
+ * band a trainee belongs in is a training-content judgement, which belongs to
+ * the owner's coach and not to this repo.
+ */
+export function maintenanceByBand(ree: number): MaintenanceBand[] {
+  return PAL_ORDER.map((level) => ({ level, range: maintenanceKcal(ree, level) }))
 }

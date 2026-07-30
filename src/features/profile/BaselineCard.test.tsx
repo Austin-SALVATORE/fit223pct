@@ -67,18 +67,94 @@ describe('the baseline is shown only when every input is real', () => {
     expect(screen.queryByText(/kcal a day/)).toBeNull()
   })
 
-  it('shows the resting figure, a maintenance RANGE, and its provenance', async () => {
+  it('shows the resting figure and its provenance', async () => {
     await settingsRepo.update(CONFIRMED)
     await logWeight('2026-07-01', 84)
     render(<BaselineCard />)
 
     // Mifflin for 84kg / 178cm / 36y / male: 840 + 1112.5 - 180 + 5 = 1777.5
     expect(await screen.findByText(/1778 kcal a day/)).toBeInTheDocument()
-    // A range, never a point — the bands are ranges and collapsing one would
-    // manufacture precision the source does not have.
-    expect(screen.getByText(/2489–3004 kcal a day with activity/)).toBeInTheDocument()
     expect(screen.getByText(/Mifflin–St Jeor \(1990\)/)).toBeInTheDocument()
     expect(screen.getByText(/FAO\/WHO\/UNU \(2001\)/)).toBeInTheDocument()
+  })
+})
+
+describe('maintenance is never attributed to an activity level the user did not state', () => {
+  it('offers all three bands, claiming none of them, when no band is set', async () => {
+    // The defect this replaced: the card hardcoded 'sedentary', computed one
+    // range from it, and labelled the output sedentary — about someone who
+    // had never been asked.
+    await settingsRepo.update(CONFIRMED)
+    await logWeight('2026-07-01', 84)
+    render(<BaselineCard />)
+
+    await screen.findByText(/1778 kcal a day/)
+    expect(screen.getByText(/depends on how active you are/)).toBeInTheDocument()
+
+    // 1777.5 × each band, lightest first.
+    expect(screen.getByText('2489–3004 kcal')).toBeInTheDocument()
+    expect(screen.getByText('3022–3537 kcal')).toBeInTheDocument()
+    expect(screen.getByText('3555–4266 kcal')).toBeInTheDocument()
+
+    // No band is asserted as this user's: the sentence form that names one
+    // ("Assuming mostly sitting…") must not appear at all.
+    expect(screen.queryByText(/^Assuming/)).toBeNull()
+    expect(screen.queryByText(/kcal a day with activity/)).toBeNull()
+  })
+
+  it('marks no band as recommended — every row is presented identically', async () => {
+    // Which band a trainee belongs in is the coach's judgement. A highlighted
+    // row would make that claim in styling, where no test would see it.
+    await settingsRepo.update(CONFIRMED)
+    await logWeight('2026-07-01', 84)
+    render(<BaselineCard />)
+
+    await screen.findByText('2489–3004 kcal')
+    const names = ['Sedentary', 'Active', 'Vigorous'].map((name) => screen.getByText(name))
+    const classes = new Set(names.map((node) => node.className))
+    expect(classes.size).toBe(1)
+  })
+
+  it('points at the profile form rather than offering the choice here', async () => {
+    // Activity level is a stated fact about the person, so it is set behind
+    // the profile form's Save with the other stated facts. A control on this
+    // card would make a profile fact editable outside the form that owns it.
+    await settingsRepo.update(CONFIRMED)
+    await logWeight('2026-07-01', 84)
+    render(<BaselineCard />)
+
+    const link = await screen.findByRole('link', { name: 'Choose your activity level' })
+    expect(link).toHaveAttribute('href', '#profile')
+  })
+
+  it('shows that band alone, with its label, once one is stated', async () => {
+    await settingsRepo.update({ ...CONFIRMED, activityLevel: 'active' })
+    await logWeight('2026-07-01', 84)
+    render(<BaselineCard />)
+
+    expect(await screen.findByText(/3022–3537 kcal a day with activity/)).toBeInTheDocument()
+    expect(screen.getByText(/Assuming an active day/)).toBeInTheDocument()
+    // The other bands are gone, and so is the prompt to choose.
+    expect(screen.queryByText('2489–3004 kcal')).toBeNull()
+    expect(screen.queryByRole('link', { name: 'Choose your activity level' })).toBeNull()
+  })
+
+  it('keeps the resting figure for a profile confirmed before the field existed', async () => {
+    // The migration case, written explicitly: the owner's install already has
+    // profileConfirmedAt with no activityLevel. An added field must not
+    // retroactively blank a baseline, and a missing band is not a missing
+    // input — it must not appear in the "what is missing" list either.
+    await settingsRepo.update(CONFIRMED)
+    await logWeight('2026-07-01', 84)
+    render(<BaselineCard />)
+
+    expect(await screen.findByText(/1778 kcal a day/)).toBeInTheDocument()
+    // Not the no-figure state, and not the missing-input list: an unstated
+    // band means "here are all three ranges", never "a fact is absent".
+    expect(screen.queryByText(/No baseline yet/)).toBeNull()
+    for (const missingLabel of ['Your height', 'Your date of birth', 'Sex, which the formula needs']) {
+      expect(screen.queryByText(missingLabel)).toBeNull()
+    }
   })
 })
 

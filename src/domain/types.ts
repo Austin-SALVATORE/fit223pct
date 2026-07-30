@@ -1,5 +1,10 @@
 import type { ReadinessSignal, ReadinessTier } from './readiness'
 import type { IsoWeekday } from '@/lib/dates'
+// Imported rather than redeclared, unlike Sex above: PhysicalActivityLevel is
+// `keyof typeof PAL_BANDS`, so a hand-written copy would silently stop
+// matching if a band were ever added. energyReference imports nothing, so
+// there is no cycle to worry about.
+import type { PhysicalActivityLevel } from './energyReference'
 
 export type MuscleGroup =
   | 'quads'
@@ -278,6 +283,27 @@ export interface UserSettings {
    * picking a default, which is inventing the user's body.
    */
   sex?: Sex | null
+  /**
+   * The user's stated FAO/WHO/UNU PAL band, set in the profile form.
+   *
+   * **A stated fact about the person, not a measurement** — which is why it
+   * lives here with height, birth date and sex rather than as a live control
+   * on the baseline card, and why it is part of what `profileConfirmedAt`
+   * confirms. A segmented control outside the form would make a profile fact
+   * editable outside the form that owns profile facts, and confirmation would
+   * stop being an act.
+   *
+   * **Absent is normal, including on a confirmed profile.** Records confirmed
+   * before this field existed carry no band and must keep their resting
+   * figure: a missing band suppresses the single maintenance range and
+   * nothing else. It must never be defaulted — attributing "sedentary" to
+   * someone who was never asked is the same defect as the seeded `heightCm`,
+   * and it shifted every maintenance figure by ~660 kcal/day when it was one.
+   *
+   * Not indexed, so no Dexie version — the version schema declares indexes,
+   * not fields. v5 is M11's.
+   */
+  activityLevel?: PhysicalActivityLevel | null
   /** An intention, not a measurement — hence settings, not a dated record. */
   targetWeightKg?: number | null
   targetBodyFatPercent?: number | null

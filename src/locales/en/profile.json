@@ -11,6 +11,18 @@
   "sexWhy": "Used to work out the energy your body uses at rest — the formula differs.",
   "sexFemale": "Female",
   "sexMale": "Male",
+  "activityLabel": "Activity level",
+  "activityWhy": "How much you move across the whole day — work, getting around, time on your feet — not how often you train. This is what turns the resting figure into a daily total, and it is the least certain part of it.",
+  "activityName": {
+    "sedentary": "Sedentary",
+    "active": "Active",
+    "vigorous": "Vigorous"
+  },
+  "activityDescription": {
+    "sedentary": "Desk work and sitting for most of the day, with little walking.",
+    "active": "On your feet for a good part of the day, or getting around on foot.",
+    "vigorous": "Physically demanding work, or long hours of movement most days."
+  },
   "ageValue_one": "{{count}} year",
   "ageValue_other": "{{count}} years",
   "targetWeightLabel": "Target weight",
@@ -25,6 +37,9 @@
     "restingValue": "{{kcal}} kcal a day",
     "restingWhat": "Roughly the energy your body uses at rest.",
     "maintenanceValue": "{{min}}–{{max}} kcal a day with activity",
+    "maintenanceUnknown": "What you burn in a day depends on how active you are:",
+    "maintenanceBandValue": "{{min}}–{{max}} kcal",
+    "choosePal": "Choose your activity level",
     "leanMassValue": "From lean mass instead: {{kcal}} kcal a day.",
     "provenance": "Mifflin–St Jeor (1990) for the resting figure, Cunningham (1991) from lean mass, and FAO/WHO/UNU (2001) activity bands. The activity band is a range because the published figure is a range — it is the least certain part of this.",
     "noFigure": "No baseline yet — a few facts are still missing, and a figure built on guesses would be worse than none.",

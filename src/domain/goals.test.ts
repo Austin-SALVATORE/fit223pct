@@ -8,6 +8,7 @@ function profile(overrides: Partial<ResolvedProfile> = {}): ResolvedProfile {
     heightCm: 178,
     age: 36,
     sex: 'male',
+    activityLevel: null,
     currentWeightKg: 84,
     currentBodyFatPercent: null,
     targetWeightKg: null,
