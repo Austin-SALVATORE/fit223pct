@@ -163,14 +163,23 @@ describe('the decimal separator follows the user, not the code', () => {
   })
 })
 
-describe('the keypad matches the field', () => {
+describe('the keypad defaults to decimal and only integral fields opt out', () => {
   it('asks for a decimal keypad where the step is fractional', async () => {
     renderStepper({ step: 0.1 })
     expect(await startTyping()).toHaveAttribute('inputmode', 'decimal')
   })
 
-  it('asks for a numeric keypad where the step is whole', async () => {
-    renderStepper({ label: 'Reps', value: 10, step: 1, min: 1 })
+  it('still asks for decimal when the step is whole but the value is not', async () => {
+    // The regression this rule was inverted for. Workout Mode's weight uses
+    // `weightStepKg ?? 1`; under the old step-driven rule that produced a
+    // numeric keypad with no decimal point, and 82.5 became untypeable in the
+    // one place logging 82.5 mid-set matters most.
+    renderStepper({ step: 1 })
+    expect(await startTyping()).toHaveAttribute('inputmode', 'decimal')
+  })
+
+  it('asks for a numeric keypad only when the field is declared integral', async () => {
+    renderStepper({ label: 'Reps', value: 10, step: 1, min: 1, integer: true })
     expect(await startTyping('Reps')).toHaveAttribute('inputmode', 'numeric')
   })
 

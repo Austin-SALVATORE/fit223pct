@@ -53,6 +53,26 @@ interface StepperProps {
    * means no existing caller changes behaviour by doing nothing.
    */
   variant?: 'focal' | 'form'
+  /**
+   * The field counts whole things and a fraction of one is meaningless —
+   * reps, or seconds of a hold. Switches the on-screen keypad to `numeric`.
+   *
+   * **Defaults to false, and the direction is the whole point.** The rule was
+   * originally step-driven: `numeric` wherever the step was a whole number.
+   * That fails dangerously, because the two mistakes are not symmetrical. A
+   * decimal keypad on an integer field costs nothing — parsing and clamping
+   * already handle a stray dot. A numeric keypad on a decimal-capable field
+   * makes the value **unreachable**: Workout Mode's weight uses
+   * `weightStepKg ?? 1`, so under the old rule 82.5 could not be typed in the
+   * one place logging 82.5 mid-set matters most.
+   *
+   * So this is opt-in for the rare genuinely-integral field rather than
+   * inferred from the step. If you are tempted to set it because the step
+   * happens to be 1, that is the old rule coming back — ask instead whether a
+   * user could ever legitimately want a fraction. Height steps by 1 and
+   * 180.5cm is still a real measurement.
+   */
+  integer?: boolean
 }
 
 /**
@@ -73,7 +93,17 @@ interface StepperProps {
  * the right call for a one-decision screen, and it is not the screen anyone
  * reported a problem with.
  */
-export function Stepper({ label, value, step, min, max, unit, onChange, variant = 'focal' }: StepperProps) {
+export function Stepper({
+  label,
+  value,
+  step,
+  min,
+  max,
+  unit,
+  onChange,
+  variant = 'focal',
+  integer = false,
+}: StepperProps) {
   const { t } = useTranslation('common')
   const form = variant === 'form'
   /**
@@ -168,15 +198,13 @@ export function Stepper({ label, value, step, min, max, unit, onChange, variant 
               comma outright — yielding an empty value, so their weight would
               silently fail to save. parseDecimal accepts both separators.
 
-              inputMode picks the keypad: `decimal` where the step is
-              fractional (weight 0.1, waist and body fat 0.5), `numeric` where
-              it is whole (height, reps). Wrong here means a full alphabetic
-              keyboard for a number, on a phone.
+              The keypad defaults to `decimal` and only integral fields opt
+              out — see `integer` above for why that asymmetry is deliberate.
 
               appearance-none / min-w-0 / box-border from the start — the iOS
               width class we already met on the date input.
             */
-            inputMode={step < 1 ? 'decimal' : 'numeric'}
+            inputMode={integer ? 'numeric' : 'decimal'}
             aria-label={label}
             value={draft}
             onChange={(event) => setDraft(event.target.value)}

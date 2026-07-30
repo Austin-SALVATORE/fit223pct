@@ -144,6 +144,10 @@ export function SetScreen({
             />
           )}
           <Stepper
+            // Reps and seconds-of-hold are both counts of whole things, and
+            // this is the only genuinely integral field in the app — weight,
+            // height, waist and body fat are all legitimately fractional.
+            integer
             label={isSeconds ? t('setScreen.holdLabel') : t('setScreen.repsLabel')}
             value={effort}
             step={isSeconds ? 5 : 1}
