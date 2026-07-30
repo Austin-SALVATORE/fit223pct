@@ -14,7 +14,7 @@ export interface InsufficientTrendData {
   reason: MessageDescriptor
 }
 
-export type TrendUnit = 'kg' | 'reps' | 'seconds' | 'cm'
+export type TrendUnit = 'kg' | 'reps' | 'seconds' | 'cm' | 'percent'
 
 export interface TrendResult {
   status: TrendDirection
@@ -44,7 +44,12 @@ export type ConsistencyTrend = InsufficientConsistencyData | ConsistencyResult
 const MAX_WINDOW_DAYS = 28
 /** Minimum qualifying data points before a direction is claimed — three points make a trend, two make a coincidence. */
 const MIN_TREND_POINTS = 3
-/** Minimum spread for the waist trend specifically — two measurements a day apart are noise. */
+/**
+ * Minimum spread for the body-measurement trends — two readings a day apart
+ * are noise regardless of which measurement they are. Shared by waist,
+ * weight and body fat: all three move slowly enough that a same-week cluster
+ * says nothing about direction.
+ */
 const MIN_WAIST_SPAN_DAYS = 14
 /** How many recent points a direction is judged across — keeps "trend" meaning recent, not all-time. */
 const TREND_WINDOW_POINTS = 6
@@ -191,6 +196,64 @@ export function waistTrend(checkins: readonly CheckIn[]): Trend {
   const evidence: TrendEvidencePoint[] = windowed.map((m) => ({ date: m.date, value: m.waistCm }))
 
   return { status: direction(evidence), evidence, unit: 'cm' }
+}
+
+/**
+ * Weight direction from check-in measurements. A clone of waistTrend with a
+ * different field, deliberately rather than a generalisation: the two
+ * differ only in field and unit today, and a shared abstraction would have
+ * to carry the per-measurement reason keys anyway.
+ *
+ * It inherits the property that matters most here — `Trend` has **nowhere to
+ * put a projection**. There is no field for "you will reach 78kg by March",
+ * so the predict-nothing rule is obtained from the type rather than from a
+ * rule someone has to remember. A target weight beside a direction is
+ * exactly the shape that invites a promised date, and CLAUDE.md forbids
+ * promising body-transformation outcomes.
+ */
+export function weightTrend(checkins: readonly CheckIn[]): Trend {
+  const measurements = checkins
+    .filter((c): c is CheckIn & { weightKg: number } => c.weightKg !== null)
+    .sort((a, b) => a.date.localeCompare(b.date))
+
+  if (measurements.length < MIN_TREND_POINTS) {
+    return { status: 'insufficient-data', reason: { key: 'domain:trends.needMoreWeightData' } }
+  }
+
+  const spanDays = daysBetween(measurements[0].date, measurements.at(-1)!.date)
+  if (spanDays < MIN_WAIST_SPAN_DAYS) {
+    return { status: 'insufficient-data', reason: { key: 'domain:trends.spreadWeightMeasurements' } }
+  }
+
+  const windowed = measurements.slice(-TREND_WINDOW_POINTS)
+  const evidence: TrendEvidencePoint[] = windowed.map((m) => ({ date: m.date, value: m.weightKg }))
+
+  return { status: direction(evidence), evidence, unit: 'kg' }
+}
+
+/**
+ * Body-fat direction, same shape and same guards. Body fat is measured far
+ * less often than weight, so the insufficient-data state is the normal one
+ * for a long time — that is the state doing its job, not a gap to fill.
+ */
+export function bodyFatTrend(checkins: readonly CheckIn[]): Trend {
+  const measurements = checkins
+    .filter((c): c is CheckIn & { bodyFatPercent: number } => c.bodyFatPercent != null)
+    .sort((a, b) => a.date.localeCompare(b.date))
+
+  if (measurements.length < MIN_TREND_POINTS) {
+    return { status: 'insufficient-data', reason: { key: 'domain:trends.needMoreBodyFatData' } }
+  }
+
+  const spanDays = daysBetween(measurements[0].date, measurements.at(-1)!.date)
+  if (spanDays < MIN_WAIST_SPAN_DAYS) {
+    return { status: 'insufficient-data', reason: { key: 'domain:trends.spreadBodyFatMeasurements' } }
+  }
+
+  const windowed = measurements.slice(-TREND_WINDOW_POINTS)
+  const evidence: TrendEvidencePoint[] = windowed.map((m) => ({ date: m.date, value: m.bodyFatPercent }))
+
+  return { status: direction(evidence), evidence, unit: 'percent' }
 }
 
 /**

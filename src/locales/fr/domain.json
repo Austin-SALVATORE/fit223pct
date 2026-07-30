@@ -47,6 +47,10 @@
     "noScheduledSessions": "Aucune séance prévue ne s'est encore produite sur cette période.",
     "needMoreStrengthData": "Enregistre cet exercice quelques fois de plus pour voir une tendance de force.",
     "needMoreWaistData": "Quelques mesures de tour de taille de plus feront apparaître une tendance.",
-    "spreadWaistMeasurements": "Étale tes mesures sur quelques semaines pour voir apparaître une tendance."
+    "spreadWaistMeasurements": "Étale tes mesures sur quelques semaines pour voir apparaître une tendance.",
+    "needMoreWeightData": "Quelques pesées de plus feront apparaître une tendance.",
+    "spreadWeightMeasurements": "Étale tes pesées sur quelques semaines pour voir apparaître une tendance.",
+    "needMoreBodyFatData": "Quelques mesures de masse grasse de plus feront apparaître une tendance.",
+    "spreadBodyFatMeasurements": "Étale tes mesures de masse grasse sur quelques semaines pour voir apparaître une tendance."
   }
 }

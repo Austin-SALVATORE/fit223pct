@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { consistencyTrend, strengthTrend, waistTrend } from './trends'
+import { bodyFatTrend, consistencyTrend, strengthTrend, waistTrend, weightTrend } from './trends'
 import type { CheckIn, Program, Workout } from './types'
 
 const program: Program = {
@@ -251,6 +251,126 @@ describe('waistTrend', () => {
       checkIn('2026-07-01', 94),
       checkIn('2026-07-05', null),
       checkIn('2026-07-10', 93),
+    ])
+    expect(trend.status).toBe('insufficient-data')
+  })
+})
+
+
+/**
+ * weightTrend and bodyFatTrend (M10 phase 2) are waistTrend clones over
+ * different fields, so they inherit its guards: three points minimum, and
+ * enough calendar spread that a same-week cluster cannot claim a direction.
+ *
+ * The property worth guarding hardest is what `Trend` *cannot* express.
+ * There is no field for a projection, so no amount of goal display can turn
+ * a direction into a promised date — the predict-nothing rule comes from the
+ * type, not from a convention.
+ */
+function measured(
+  date: string,
+  fields: { weightKg?: number | null; bodyFatPercent?: number | null },
+): CheckIn {
+  return {
+    id: `m-${date}`,
+    date,
+    sleep: null,
+    energy: null,
+    soreness: null,
+    stress: null,
+    motivation: null,
+    weightKg: fields.weightKg ?? null,
+    waistCm: null,
+    bodyFatPercent: fields.bodyFatPercent ?? null,
+  }
+}
+
+describe('weightTrend', () => {
+  it('reports insufficient data below three weigh-ins', () => {
+    const trend = weightTrend([
+      measured('2026-07-01', { weightKg: 82 }),
+      measured('2026-07-15', { weightKg: 81 }),
+    ])
+    expect(trend.status).toBe('insufficient-data')
+  })
+
+  it('reports insufficient data when weigh-ins are clustered in one week', () => {
+    const trend = weightTrend([
+      measured('2026-07-01', { weightKg: 82 }),
+      measured('2026-07-02', { weightKg: 82 }),
+      measured('2026-07-03', { weightKg: 81 }),
+    ])
+    expect(trend.status).toBe('insufficient-data')
+  })
+
+  it('detects a decreasing trend across a spread-out series, in kg', () => {
+    const trend = weightTrend([
+      measured('2026-07-01', { weightKg: 84 }),
+      measured('2026-07-10', { weightKg: 83 }),
+      measured('2026-07-20', { weightKg: 82 }),
+    ])
+    expect(trend.status).toBe('decreasing')
+    if (trend.status !== 'insufficient-data') {
+      expect(trend.unit).toBe('kg')
+      expect(trend.evidence).toHaveLength(3)
+    }
+  })
+
+  it('ignores check-ins with no weight logged', () => {
+    const trend = weightTrend([
+      measured('2026-07-01', { weightKg: 84 }),
+      measured('2026-07-05', {}),
+      measured('2026-07-20', { weightKg: 82 }),
+    ])
+    expect(trend.status).toBe('insufficient-data')
+  })
+
+  it('carries no field that could express a projection', () => {
+    const trend = weightTrend([
+      measured('2026-07-01', { weightKg: 84 }),
+      measured('2026-07-10', { weightKg: 83 }),
+      measured('2026-07-20', { weightKg: 82 }),
+    ])
+    if (trend.status === 'insufficient-data') throw new Error('expected a direction')
+    // Every date in the result is an observation. If a forecast field is ever
+    // added to Trend, this fails and names the reason.
+    expect(Object.keys(trend).sort()).toEqual(['evidence', 'status', 'unit'])
+    for (const point of trend.evidence) {
+      expect(Object.keys(point).sort()).toEqual(['date', 'value'])
+    }
+  })
+})
+
+describe('bodyFatTrend', () => {
+  it('reports insufficient data below three readings', () => {
+    const trend = bodyFatTrend([
+      measured('2026-07-01', { bodyFatPercent: 22 }),
+      measured('2026-07-20', { bodyFatPercent: 21 }),
+    ])
+    expect(trend.status).toBe('insufficient-data')
+  })
+
+  it('detects a decreasing trend across a spread-out series, in percent', () => {
+    const trend = bodyFatTrend([
+      measured('2026-07-01', { bodyFatPercent: 24 }),
+      measured('2026-07-10', { bodyFatPercent: 23 }),
+      measured('2026-07-20', { bodyFatPercent: 22 }),
+    ])
+    expect(trend.status).toBe('decreasing')
+    if (trend.status !== 'insufficient-data') {
+      expect(trend.unit).toBe('percent')
+    }
+  })
+
+  it('treats an absent bodyFatPercent the same as an explicit null', () => {
+    // Pre-v4 check-ins have no such field at all; both must be skipped.
+    const withoutField = { ...measured('2026-07-05', {}) }
+    delete (withoutField as { bodyFatPercent?: number | null }).bodyFatPercent
+
+    const trend = bodyFatTrend([
+      measured('2026-07-01', { bodyFatPercent: 24 }),
+      withoutField,
+      measured('2026-07-20', { bodyFatPercent: 22 }),
     ])
     expect(trend.status).toBe('insufficient-data')
   })

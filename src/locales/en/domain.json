@@ -47,6 +47,10 @@
     "noScheduledSessions": "No scheduled sessions have fallen in this window yet.",
     "needMoreStrengthData": "Log this exercise a few more times to see a strength trend.",
     "needMoreWaistData": "A few more waist measurements will show a trend.",
-    "spreadWaistMeasurements": "Spread your measurements out over a couple of weeks to see a trend."
+    "spreadWaistMeasurements": "Spread your measurements out over a couple of weeks to see a trend.",
+    "needMoreWeightData": "A few more weigh-ins will show a trend.",
+    "spreadWeightMeasurements": "Spread your weigh-ins out over a couple of weeks to see a trend.",
+    "needMoreBodyFatData": "A few more body-fat readings will show a trend.",
+    "spreadBodyFatMeasurements": "Spread your body-fat readings out over a couple of weeks to see a trend."
   }
 }

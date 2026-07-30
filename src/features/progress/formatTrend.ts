@@ -7,6 +7,7 @@ const UNIT_KEY: Record<TrendUnit, string> = {
   cm: 'progress:unit.cm',
   seconds: 'progress:unit.seconds',
   reps: 'progress:unit.reps',
+  percent: 'progress:unit.percent',
 }
 
 /**

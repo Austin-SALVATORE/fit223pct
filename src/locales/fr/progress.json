@@ -35,6 +35,7 @@
     "seconds_one": "{{value}} s",
     "seconds_other": "{{value}} s",
     "reps_one": "{{value}} répétition",
-    "reps_other": "{{value}} répétitions"
+    "reps_other": "{{value}} répétitions",
+    "percent": "{{value}} %"
   }
 }

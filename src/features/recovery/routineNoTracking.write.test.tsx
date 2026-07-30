@@ -76,11 +76,19 @@ function renderPlayer() {
 }
 
 describe('a routine writes nothing', () => {
-  it('adds no storage at all — same tables, same schema version', () => {
+  it('adds no storage at all — no table exists for routine data', () => {
     // If someone later adds a `routineCompletions` table, this fails before
     // any behavioural test has to notice.
     expect(db.tables.length).toBe(5)
-    expect(db.verno).toBe(3)
+    for (const table of db.tables) {
+      expect(table.name).not.toMatch(/routine|completion/i)
+    }
+    // This deliberately no longer asserts a specific db.verno. It did, and
+    // M10's additive v4 bump broke it — which was the assertion failing for
+    // the wrong reason: the schema version says nothing about whether
+    // routines persist anything, so pinning it made an unrelated migration
+    // look like a routine regression. The table-name check is what the guard
+    // actually means.
   })
 
   it('leaves every table byte-identical after a routine is played to the end', async () => {

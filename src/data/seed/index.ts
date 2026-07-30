@@ -25,10 +25,14 @@ export async function seedDatabase(): Promise<void> {
 
     const existing = await db.settings.get('user')
     if (!existing) {
+      // No heightCm, and no birthDate/sex/targets either. Seeding a height
+      // was inventing a fact about the user: 180 was never displayed and
+      // never confirmed, and an energy baseline computed from it would be
+      // wrong in a way nothing could detect. The profile surface asks; until
+      // it does, absent means missing.
       await db.settings.put({
         id: 'user',
         name: 'Austin',
-        heightCm: 180,
         weeklyGoal: 3,
         lastSeenWeeklyReviewWeekStart: null,
       })

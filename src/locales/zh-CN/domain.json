@@ -45,6 +45,10 @@
     "noScheduledSessions": "这段时间内还没有安排的训练。",
     "needMoreStrengthData": "多记录几次这个动作，才能看出力量趋势。",
     "needMoreWaistData": "再多测量几次腰围，才能看出趋势。",
-    "spreadWaistMeasurements": "把测量时间分散在几周内，才能看出趋势。"
+    "spreadWaistMeasurements": "把测量时间分散在几周内，才能看出趋势。",
+    "needMoreWeightData": "再多称几次体重，才能看出趋势。",
+    "spreadWeightMeasurements": "把称重时间分散在几周内，才能看出趋势。",
+    "needMoreBodyFatData": "再多测量几次体脂，才能看出趋势。",
+    "spreadBodyFatMeasurements": "把体脂测量时间分散在几周内，才能看出趋势。"
   }
 }

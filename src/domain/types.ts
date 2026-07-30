@@ -213,6 +213,12 @@ export interface CheckIn {
   motivation: Rating | null
   weightKg: number | null
   waistCm: number | null
+  /**
+   * Body-fat percentage. A **series**, not a stable fact — it changes over
+   * time exactly as weight does, so it belongs on the dated record rather
+   * than on UserSettings. Absent on every pre-v4 check-in.
+   */
+  bodyFatPercent?: number | null
 }
 
 /**
@@ -221,16 +227,58 @@ export interface CheckIn {
  * layer — src/i18n/i18next.ts imports SupportedLocale from here instead
  * of defining its own copy.
  */
+export type Sex = 'male' | 'female'
+
 export const SUPPORTED_LOCALES = ['en', 'fr', 'zh-CN'] as const
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number]
 
 export interface UserSettings {
   id: 'user'
   name: string
-  heightCm: number
+  /**
+   * **Optional because "never asked" has to be representable.** The seed used
+   * to write 180 for the owner — a value nothing displayed and nobody
+   * confirmed. It was harmless while nothing read it; the moment an energy
+   * baseline reads it, an invented number silently shifts every calorie
+   * figure downstream. New installs therefore carry no height until the
+   * profile surface asks (M10 phase 3), and absent reads as missing.
+   *
+   * Records created before M10 still hold their seeded 180. The v4 migration
+   * deliberately does not clear it — deleting a value the owner may have
+   * since verified would be its own kind of invention — so the surface must
+   * present it as unconfirmed rather than as fact.
+   */
+  heightCm?: number | null
   weeklyGoal: number
   /** weekStart (Monday date key) of the last weekly review shown — null if none has been */
   lastSeenWeeklyReviewWeekStart: string | null
   /** Absent on pre-M7 records and until LocaleSync's first-launch write lands one. */
   locale?: SupportedLocale
+
+  // --- profile (M10). All optional: an installed app holds a v3 record
+  // without them, and the v4 migration deliberately writes NO defaults.
+  // Absent means missing (src/domain/profile.ts's contract), because a
+  // default here would recreate exactly the problem heightCm already has —
+  // an invented value that becomes load-bearing the moment something reads
+  // it.
+
+  /**
+   * ISO date (yyyy-mm-dd). **A birth date, never a stored age**: an age is
+   * silently wrong within a year and nothing detects the staleness.
+   */
+  birthDate?: string | null
+  /**
+   * **Required for an energy baseline — do not relax the requirement.**
+   * Mifflin–St Jeor is two equations differing by a constant term, selected
+   * by sex, so without it there is no baseline at all: not a less precise
+   * one, none. Optional here only because a stored record may predate the
+   * field; the profile surface asks for it, and a missing value yields no
+   * figure rather than a guessed one. Making it genuinely optional would
+   * mean either refusing to compute for whoever skips it, or silently
+   * picking a default, which is inventing the user's body.
+   */
+  sex?: Sex | null
+  /** An intention, not a measurement — hence settings, not a dated record. */
+  targetWeightKg?: number | null
+  targetBodyFatPercent?: number | null
 }

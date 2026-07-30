@@ -31,6 +31,7 @@
     "kg": "{{value}} kg",
     "cm": "{{value}} cm",
     "seconds_other": "{{value}} 秒",
-    "reps_other": "{{value}} 次"
+    "reps_other": "{{value}} 次",
+    "percent": "{{value}}%"
   }
 }

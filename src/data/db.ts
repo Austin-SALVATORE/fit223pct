@@ -70,6 +70,25 @@ export class Fit223Database extends Dexie {
             }
           })
       })
+    // M10 user profile: UserSettings gains birthDate / sex / targetWeightKg /
+    // targetBodyFatPercent, and CheckIn gains bodyFatPercent. All are
+    // non-indexed, so there is no index diff to declare — the empty stores()
+    // records the schema generation rather than changing an index.
+    //
+    // **Deliberately no upgrade callback.** Additive and defaultless: a v3
+    // record simply lacks these fields, and absent already means missing
+    // (src/domain/profile.ts). Writing a default for any of them — a height,
+    // a sex, a target — would manufacture a fact about the user that nothing
+    // asked them to confirm, which is the precise defect the seeded
+    // `heightCm: 180` already represents. Migrating one into existence in a
+    // second place would make it harder to remove, not easier.
+    //
+    // Version allocation is tracked across plans because it has moved
+    // several times: **M10 is v4, M11 (nutrition) is v5**, and day-plan
+    // rescheduling is deferred and takes the next free version whenever it
+    // is scheduled. A stale version number lands as a broken migration
+    // rather than a typo, which is why it is written down here too.
+    this.version(4).stores({})
   }
 }
 
