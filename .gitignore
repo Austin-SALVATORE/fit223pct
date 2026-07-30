@@ -28,6 +28,11 @@ dist-ssr
 # Playwright MCP browser session artifacts
 .playwright-mcp/
 
+# Agent worktree isolation — Claude Code creates one checkout per agent here.
+# Transient scratch space, never content anyone should commit, and one
+# `git add -A` away from being committed if left untracked.
+.claude/worktrees/
+
 # Exercise asset sources — regenerable from prompt.md via scripts/ (~$0.15/strip);
 # runtime AVIFs are committed instead. Exception: the goblet-squat style anchor,
 # the irreplaceable ground truth every generation is matched against.

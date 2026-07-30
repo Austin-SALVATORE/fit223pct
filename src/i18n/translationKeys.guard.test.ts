@@ -110,9 +110,18 @@ function declared(bundle: Bundle | undefined, key: string): boolean {
   //
   // Only `_other` counts, deliberately, rather than "any plural suffix":
   // localeParity already requires every family to carry `other` in every
-  // locale (it is i18next's universal plural fallback), and all 20 families in
-  // en do. So this never false-positives, and it is usefully stricter — a
-  // family declared with only `_one` would be caught here as well as there.
+  // locale (it is i18next's universal plural fallback), and every family in en
+  // does — measured, so this never false-positives, and it is usefully
+  // stricter: a family declared with only `_one` is caught here as well.
+  //
+  // **en holds 20 plural families under 18 distinct leaf names**, and the
+  // difference is not a miscount by either party. A family is a full dotted
+  // path within a namespace, which is also what localeParity means by it
+  // (`collectLeaves` builds `prefix.childKey`). Counting the bare JSON key
+  // instead — which is all a grep over the files can see — collapses
+  // `sets` and `inMinutes`, each of which occurs in both `plan` and `today`.
+  // Recorded because a number in a docblock gets trusted and copied, and this
+  // one is ambiguous unless it says what it counts.
   return `${leaf}_other` in scope
 }
 
