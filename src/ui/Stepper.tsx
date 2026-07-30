@@ -1,6 +1,33 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+/**
+ * Press-and-hold repeat, and the ramp that keeps a long hold usable.
+ *
+ * The base interval is unchanged, deliberately: a short press has to behave
+ * exactly as it did, because the same button serves "nudge 82.4 to 82.5" and
+ * "get from 70 to 82.5". Only after `HOLD_RAMP_AFTER_TICKS` at the base rate
+ * does the interval start shortening, so fine adjustment is never fighting an
+ * accelerating control.
+ *
+ * `HOLD_MIN_INTERVAL_MS` is a landability floor rather than a performance
+ * one. Faster is easy; stopping on a chosen value is what gets hard, because
+ * overshoot is release-latency x rate. At 60ms a ~200ms human release costs
+ * about three steps, which is recoverable with a tap or two. Typing is the
+ * answer for large jumps, so this does not need to be fast enough to replace
+ * it — an explicit coarse +2/-2 pair was considered and ruled out.
+ */
+const HOLD_INTERVAL_MS = 140
+const HOLD_RAMP_AFTER_TICKS = 8
+const HOLD_RAMP_STEP_MS = 10
+const HOLD_MIN_INTERVAL_MS = 60
+
+function intervalForTick(tick: number): number {
+  if (tick < HOLD_RAMP_AFTER_TICKS) return HOLD_INTERVAL_MS
+  const shortened = HOLD_INTERVAL_MS - (tick - HOLD_RAMP_AFTER_TICKS + 1) * HOLD_RAMP_STEP_MS
+  return Math.max(HOLD_MIN_INTERVAL_MS, shortened)
+}
+
 interface StepperProps {
   label: string
   value: number
@@ -58,7 +85,8 @@ export function Stepper({ label, value, step, min, max, unit, onChange, variant 
   const [draft, setDraft] = useState<string | null>(null)
   const editing = draft !== null
   const inputRef = useRef<HTMLInputElement>(null)
-  const repeat = useRef<ReturnType<typeof setInterval> | null>(null)
+  const repeat = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const holdTick = useRef(0)
   const latest = useRef({ value, step, min, max, onChange })
   latest.current = { value, step, min, max, onChange }
 
@@ -98,14 +126,26 @@ export function Stepper({ label, value, step, min, max, unit, onChange, variant 
   function startRepeat(direction: 1 | -1) {
     apply(direction)
     stopRepeat()
-    repeat.current = setInterval(() => apply(direction), 140)
+    // A self-rescheduling timeout rather than an interval, because the delay
+    // has to change between ticks.
+    const schedule = () => {
+      repeat.current = setTimeout(() => {
+        apply(direction)
+        holdTick.current += 1
+        schedule()
+      }, intervalForTick(holdTick.current))
+    }
+    schedule()
   }
 
   function stopRepeat() {
     if (repeat.current !== null) {
-      clearInterval(repeat.current)
+      clearTimeout(repeat.current)
       repeat.current = null
     }
+    // Reset on release, so a second press starts slow again rather than
+    // resuming at whatever speed the last one reached.
+    holdTick.current = 0
   }
 
   return (

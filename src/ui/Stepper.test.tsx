@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import i18n from '@/i18n/i18next'
 import { Stepper } from './Stepper'
@@ -213,5 +213,138 @@ describe('the buttons and the announcement still work', () => {
     const input = await startTyping()
     expect(input).toHaveAccessibleName('Weight')
     expect(screen.queryByRole('status')).toBeNull()
+  })
+})
+
+describe('holding a button accelerates, without losing fine control', () => {
+  /**
+   * Time-based, so asserted on fake timers with the interval measured rather
+   * than inferred. The naive version of this test — "holding changes the
+   * value" — passes with no acceleration whatsoever, which is why every
+   * assertion below is a *rate* over a window rather than a total.
+   *
+   * Base rate is 140ms; the ramp starts after 8 ticks and floors at 60ms.
+   */
+  const BASE_MS = 140
+  const RAMP_AFTER = 8
+  const FLOOR_MS = 60
+
+  function press(name: string) {
+    fireEvent.pointerDown(screen.getByRole('button', { name }), { pointerId: 1 })
+  }
+  function release(name: string) {
+    fireEvent.pointerUp(screen.getByRole('button', { name }), { pointerId: 1 })
+  }
+  /** Calls made while the clock advances by `ms`. */
+  function callsDuring(onChange: ReturnType<typeof vi.fn>, ms: number) {
+    const before = onChange.mock.calls.length
+    act(() => {
+      vi.advanceTimersByTime(ms)
+    })
+    return onChange.mock.calls.length - before
+  }
+
+  it('holds the base rate first, so a short press is unchanged', () => {
+    vi.useFakeTimers()
+    try {
+      const { onChange } = renderStepper()
+      press('Increase Weight')
+      // The immediate apply on press.
+      expect(onChange).toHaveBeenCalledTimes(1)
+
+      // Across the pre-ramp window the rate is exactly the old one.
+      const ticks = callsDuring(onChange, BASE_MS * RAMP_AFTER)
+      expect(ticks).toBe(RAMP_AFTER)
+      release('Increase Weight')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('shortens the interval under a sustained hold', () => {
+    vi.useFakeTimers()
+    try {
+      const { onChange } = renderStepper()
+      press('Increase Weight')
+      // Through the base window and the whole ramp.
+      callsDuring(onChange, BASE_MS * RAMP_AFTER + 1000)
+
+      // Now at the floor: a 600ms window yields 600/60 = 10 ticks, where the
+      // un-accelerated control would manage 600/140 ≈ 4. This is the
+      // assertion that fails if the ramp is removed.
+      const atSpeed = callsDuring(onChange, 600)
+      expect(atSpeed).toBeGreaterThanOrEqual(600 / FLOOR_MS - 1)
+      expect(atSpeed).toBeGreaterThan(600 / BASE_MS + 2)
+      release('Increase Weight')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('never exceeds the landability floor', () => {
+    vi.useFakeTimers()
+    try {
+      const { onChange } = renderStepper()
+      press('Increase Weight')
+      callsDuring(onChange, 5000)
+
+      // Held far past the ramp, the rate is capped rather than climbing.
+      const atSpeed = callsDuring(onChange, 600)
+      expect(atSpeed).toBeLessThanOrEqual(600 / FLOOR_MS)
+      release('Increase Weight')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('resets to the base rate on release, so the next press starts slow', () => {
+    vi.useFakeTimers()
+    try {
+      const { onChange } = renderStepper()
+      press('Increase Weight')
+      callsDuring(onChange, BASE_MS * RAMP_AFTER + 2000)
+      release('Increase Weight')
+
+      // Second press: the first window must be the base rate again, not a
+      // resumption of top speed.
+      onChange.mockClear()
+      press('Increase Weight')
+      const ticks = callsDuring(onChange, BASE_MS * RAMP_AFTER)
+      // 1 immediate + RAMP_AFTER ticks; top speed would be ~18.
+      expect(ticks).toBe(RAMP_AFTER)
+      release('Increase Weight')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('stops immediately on release', () => {
+    vi.useFakeTimers()
+    try {
+      const { onChange } = renderStepper()
+      press('Increase Weight')
+      callsDuring(onChange, 2000)
+      release('Increase Weight')
+
+      expect(callsDuring(onChange, 2000)).toBe(0)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('still clamps at the bound while held', () => {
+    vi.useFakeTimers()
+    try {
+      const { onChange } = renderStepper({ value: 199.9, step: 0.1, min: 20, max: 200 })
+      press('Increase Weight')
+      callsDuring(onChange, 5000)
+      release('Increase Weight')
+
+      // apply() only fires onChange when the value actually moves, so a held
+      // button at the ceiling stops calling rather than pushing past it.
+      for (const call of onChange.mock.calls) expect(call[0]).toBeLessThanOrEqual(200)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })
