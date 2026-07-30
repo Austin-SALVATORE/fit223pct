@@ -127,6 +127,7 @@ export function ProfileCard() {
 
       <div className="mt-5">
         <Stepper
+          variant="form"
           label={t('heightLabel')}
           value={draft.heightCm}
           step={1}
@@ -139,11 +140,32 @@ export function ProfileCard() {
 
       <label className="mt-6 block">
         <span className="text-sm text-ink-secondary">{t('birthDateLabel')}</span>
+        {/*
+          **The width defences are for iOS Safari, which no check available
+          here exercises.** WebKit gives `input[type="date"]` a native control
+          appearance whose intrinsic minimum width comes from the inner
+          `::-webkit-date-and-time-value`. That intrinsic width beats
+          `width: 100%`, so the control renders wider than its card and its
+          border sits outside the card's — most visibly when empty, which is
+          the state a new profile is in. Owner-reported on iPhone.
+
+          All four are applied together rather than one at a time, because
+          they cannot be A/B'd against the engine that fails: `appearance-none`
+          drops the native styling carrying the intrinsic width, `min-w-0`
+          allows shrinking below min-content, `box-border` keeps `px-4` inside
+          the declared width rather than adding to it, and the inner
+          pseudo-element is given its own width since that is the part
+          actually holding the box open.
+
+          Chromium measured this input at exactly 308px in a 308px box before
+          the change — it fits there and overflows on the phone, so a green
+          desktop pass proves nothing about the defect.
+        */}
         <input
           type="date"
           value={draft.birthDate}
           onChange={(event) => setDraft({ ...draft, birthDate: event.target.value })}
-          className="mt-1.5 w-full rounded-card border border-border bg-raised px-4 py-3 text-ink"
+          className="mt-1.5 box-border w-full min-w-0 appearance-none rounded-card border border-border bg-raised px-4 py-3 text-ink [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-date-and-time-value]:w-full [&::-webkit-date-and-time-value]:text-left"
         />
         <span className="mt-1 block text-xs text-ink-tertiary">{t('birthDateWhy')}</span>
       </label>
@@ -203,6 +225,7 @@ export function ProfileCard() {
         ) : (
           <div className="mt-2 flex items-start gap-4">
             <Stepper
+              variant="form"
               label={t('targetWeightLabel')}
               value={draft.targetWeightKg}
               step={0.5}

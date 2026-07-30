@@ -9,28 +9,46 @@ interface StepperProps {
   max?: number
   unit?: string
   onChange: (value: number) => void
+  /**
+   * How the stepper presents itself — **not** where its caller puts it.
+   *
+   * `'focal'` (default) is the original: centred, with an uppercase eyebrow
+   * label. It suits a control that *is* the screen, like Workout Mode's set
+   * entry, where the stepper is the one decision being made.
+   *
+   * `'form'` left-aligns and gives the label the same sentence-case
+   * treatment every other field label uses, so a stepper can sit in a column
+   * of fields without being the only thing on a different edge.
+   *
+   * This is a prop rather than a flat change because the two are genuinely
+   * different jobs, not one screen's preference: a form of four fields needs
+   * one edge, and a takeover screen needs a focus. Defaulting to `'focal'`
+   * means no existing caller changes behaviour by doing nothing.
+   */
+  variant?: 'focal' | 'form'
 }
 
 /**
  * Large-touch-target numeric stepper. Hold a button to repeat — nobody
  * should tap "+" ten times between sets.
  *
- * **Left-aligned, with a sentence-case label** (owner ruling, 30 Jul). Both
- * were previously centred and uppercase *inside this component*, which is why
- * the profile form could not be made consistent from its call sites: a
- * container can move the stepper, but only this file can move the label
- * relative to the buttons or change its style. That made a form of four
- * fields carry two label styles and two alignments with no way to reconcile
- * them short of changing this.
+ * **Alignment and label style live here, not in the caller** — which is the
+ * whole reason `variant` exists. A container can move the stepper, but only
+ * this file can move the label relative to its own buttons or change its
+ * style, so the profile form could not be made consistent from its call
+ * sites at all: it carried two label styles and two alignments with nothing
+ * a caller could do about it.
  *
- * The blast radius was known and accepted rather than discovered: seven call
- * sites across profile, check-in and Workout Mode. A caller that wants the
- * whole control centred still centres it from its own container — what is
- * fixed here is the relationship between a stepper's label and its own
- * buttons, which was never the caller's to decide.
+ * The fix is a prop rather than a flat change (owner ruling, 30 Jul), so the
+ * seven call sites across profile, check-in and Workout Mode keep their
+ * current behaviour unless they ask for the other one. Workout Mode's set
+ * entry stays `'focal'` deliberately: a centred stepper there is plausibly
+ * the right call for a one-decision screen, and it is not the screen anyone
+ * reported a problem with.
  */
-export function Stepper({ label, value, step, min, max, unit, onChange }: StepperProps) {
+export function Stepper({ label, value, step, min, max, unit, onChange, variant = 'focal' }: StepperProps) {
   const { t } = useTranslation('common')
+  const form = variant === 'form'
   const repeat = useRef<ReturnType<typeof setInterval> | null>(null)
   const latest = useRef({ value, step, min, max, onChange })
   latest.current = { value, step, min, max, onChange }
@@ -57,8 +75,8 @@ export function Stepper({ label, value, step, min, max, unit, onChange }: Steppe
   }
 
   return (
-    <div className="flex flex-col items-start gap-2">
-      <span className="text-sm text-ink-secondary">{label}</span>
+    <div className={`flex flex-col gap-2 ${form ? 'items-start' : 'items-center'}`}>
+      <span className={form ? 'text-sm text-ink-secondary' : 'eyebrow'}>{label}</span>
       <div className="flex items-center gap-1">
         <StepButton
           symbol="−"

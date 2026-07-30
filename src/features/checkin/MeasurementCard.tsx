@@ -110,6 +110,7 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
       */}
       <div className="mt-4 flex flex-wrap gap-x-8 gap-y-4">
         <Stepper
+          variant="form"
           label={t('measurement.weightLabel')}
           value={checkIn?.weightKg ?? DEFAULT_WEIGHT_KG}
           step={0.1}
@@ -118,6 +119,7 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
           onChange={(value) => void save('weightKg', value)}
         />
         <Stepper
+          variant="form"
           label={t('measurement.waistLabel')}
           value={checkIn?.waistCm ?? DEFAULT_WAIST_CM}
           step={0.5}
@@ -144,6 +146,7 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
       ) : (
         <div className="mt-5">
           <Stepper
+            variant="form"
             label={t('measurement.bodyFatLabel')}
             // A display value until touched, exactly like weight and waist
             // above. The cost, shared with them: someone whose reading really
