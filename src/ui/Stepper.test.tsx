@@ -357,3 +357,55 @@ describe('holding a button accelerates, without losing fine control', () => {
     }
   })
 })
+
+describe('the displayed separator matches the one the user types', () => {
+  /**
+   * The app used to accept `82,5` from a French user and read it back as
+   * `82.5` — disagreeing with the input it had just taken. Pre-existing, and
+   * invisible until direct entry gave the user a separator of their own to
+   * supply.
+   */
+  it('shows a comma decimal in French', async () => {
+    await i18n.changeLanguage('fr')
+    renderStepper({ value: 82.5 })
+
+    expect(screen.getByLabelText('Weight')).toHaveTextContent('82,5')
+    expect(screen.getByLabelText('Weight')).not.toHaveTextContent('82.5')
+  })
+
+  it('shows a dot decimal in English and Chinese', async () => {
+    for (const locale of ['en', 'zh-CN']) {
+      await i18n.changeLanguage(locale)
+      const { unmount } = render(
+        <Stepper label="Weight" value={82.5} step={0.1} min={20} unit="kg" onChange={vi.fn()} />,
+      )
+      expect(screen.getByLabelText('Weight'), locale).toHaveTextContent('82.5')
+      unmount()
+    }
+  })
+
+  it('round-trips: what is shown can be retyped and re-shown', async () => {
+    // The property that matters more than either separator on its own — the
+    // field is seeded from the display, so the value a user sees is one they
+    // can edit without translating it first.
+    await i18n.changeLanguage('fr')
+    const { onChange } = renderStepper({ value: 82.5 })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Modifier Weight' }))
+    const input = screen.getByRole('textbox', { name: 'Weight' })
+    expect(input).toHaveValue('82,5')
+
+    // Committing the seeded value unchanged writes nothing, which is what
+    // keeps the body-fat invariant intact through a localised round trip.
+    await userEvent.tab()
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('does not group thousands, so a comma never means two things at once', async () => {
+    await i18n.changeLanguage('en')
+    renderStepper({ value: 1234, step: 1, min: 0 })
+
+    expect(screen.getByLabelText('Weight')).toHaveTextContent('1234')
+    expect(screen.getByLabelText('Weight')).not.toHaveTextContent('1,234')
+  })
+})

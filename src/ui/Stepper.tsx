@@ -104,7 +104,7 @@ export function Stepper({
   variant = 'focal',
   integer = false,
 }: StepperProps) {
-  const { t } = useTranslation('common')
+  const { t, i18n } = useTranslation('common')
   const form = variant === 'form'
   /**
    * Direct entry. Reaching 82.5 from 70 at `step={0.1}` is ~125 taps, which
@@ -225,7 +225,7 @@ export function Stepper({
           <button
             type="button"
             aria-label={t('stepper.edit', { label })}
-            onClick={() => setDraft(formatNumber(value))}
+            onClick={() => setDraft(formatNumber(value, i18n.language))}
             className="rounded-card px-1 transition-colors hover:bg-raised"
           >
             {/*
@@ -239,7 +239,7 @@ export function Stepper({
               aria-label={label}
               className="block min-w-14 text-center text-3xl font-semibold text-ink"
             >
-              {formatNumber(value)}
+              {formatNumber(value, i18n.language)}
               {unit && <span className="ml-0.5 text-lg font-normal text-ink-tertiary">{unit}</span>}
             </output>
           </button>
@@ -310,6 +310,23 @@ function clamp(value: number, min: number, max?: number): number {
   return max === undefined ? lower : Math.min(lower, max)
 }
 
-function formatNumber(value: number): string {
-  return Number.isInteger(value) ? String(value) : value.toFixed(1)
+/**
+ * The displayed value, with **the separator the reader's locale uses**.
+ *
+ * It was always a dot, so a French user typed `82,5` and read back `82.5` —
+ * the app disagreeing with the input it had just accepted. Pre-existing, but
+ * invisible until direct entry gave the user a separator of their own to
+ * supply. `parseDecimal` accepts both, so the round trip holds: the field is
+ * seeded from this string, and whatever it shows can be retyped.
+ *
+ * Grouping is off deliberately. No stepper field reaches four digits, and a
+ * thousands separator would put a comma on screen in English right next to a
+ * French decimal comma — two meanings, one glyph, in the same control.
+ */
+function formatNumber(value: number, locale: string): string {
+  return new Intl.NumberFormat(locale, {
+    minimumFractionDigits: Number.isInteger(value) ? 0 : 1,
+    maximumFractionDigits: 1,
+    useGrouping: false,
+  }).format(value)
 }
