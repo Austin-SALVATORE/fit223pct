@@ -124,3 +124,84 @@ program put when a program with the seed's id already exists with
 that is how seed updates reach installs). A regression test belongs
 with the fix: import over the seed id, re-run seeding, assert the
 imported program survives.
+
+## The ladder did not climb for eight days, and a comment is why — 31 Jul
+
+The owner asked, plainly: *"I still don't understand why the log values
+don't evolve with each set's values."* They were right, and the app had
+been wrong since M8 shipped on 23 Jul.
+
+`SetScreen` pre-filled weight as `lastSetThisSession?.weightKg ?? rung
+?? suggestion`. **Whatever was logged last beat the rung.** So
+`incline-dumbbell-press`, prescribed 12×12 → 14×10 → 15×8, offered 12,
+then 12, then whatever set 2 got. The pyramid never ascended by itself;
+the owner had been raising every load by hand, believing that was the
+design.
+
+**It was a leftover, not a decision.** The carry rule entered in
+`f5953b4` (Workout Mode), when every loaded lift used double
+progression — the same weight across all sets — so carrying was
+correct. `267e9b8` introduced `setPlan` ladders months later and nobody
+revisited the pre-fill. **The rule outlived the model it was correct
+for**, which is the failure mode to look for whenever a progression
+model changes: not code that breaks, code that quietly keeps answering
+the old question.
+
+### What actually prevented the catch
+
+Not a missing test. `WorkoutPage.undo.test.tsx` carried this comment:
+
+> "Set 2 is prefilled from the mistaken set 1 — **correct**, people keep
+> the weight they just used."
+
+The defect was **documented as intended**, and passed CI for months. The
+same file's test title — "re-offers the ladder rung after an undo, not
+the mistaken weight" — already wanted the right behaviour for the undo
+case and was never generalised to every set. A reader arriving with a
+doubt met a sentence telling them the doubt was unfounded.
+
+This project has hit a lot of instruments that read green while
+measuring nothing: `tsc --noEmit -p .` against `files: []`, `git diff`
+on gitignored art, three test harnesses, an illustration rendering at
+623px inside a 200px band. **This one is worse than all of them,
+because the others were silent and this one actively reassured.** A
+wrong comment is not neutral; it is a guard against being checked.
+
+### The rule, ruled by the owner 31 Jul
+
+- **Ladder: set N always offers rung N**, weight and reps, regardless of
+  what was logged. Deviating on set 2 does not move set 3.
+- **Rep-range: keeps carrying**, because there the prescription genuinely
+  is constant across sets. The rule was narrowed, not deleted — and each
+  half has a test that fails without the other, or narrowing would be
+  indistinguishable from deleting.
+
+The owner's reasoning, which belongs beside the rule because it decides
+the cases this list does not enumerate:
+
+> The workout player should always present the coach's prescription. The
+> user is free to override it, but the app should not silently rewrite
+> the program based on an earlier deviation. This keeps a clear
+> separation between **prescription** — what the coach intended — and
+> **performance** — what the user actually completed. The progression
+> engine should analyse the completed workout *after* the session, not
+> modify the prescription *during* it.
+
+### Three things a ladder set can mean, and they are not two
+
+Collapsing these is what produced a second bug during the fix — a
+caption reading the authored ladder under a card showing the advanced
+one, so a stepped-up ladder was captioned "8 kg" above a card offering
+10:
+
+| | source | means |
+|---|---|---|
+| **authored** | `prescription.setPlan[i]` | what the coach wrote |
+| **advanced** | `nextSetTarget().prescribed` | after the engine's steps |
+| **offered** | `nextSetTarget()` top-level | what the user is handed |
+
+For a ladder, *advanced* and *offered* coincide by construction — and a
+test asserts it, so the coincidence records the redundancy **and**
+catches carrying being reintroduced. For rep-range they genuinely
+differ. Do not collapse the field on the grounds that it looks
+duplicated.
