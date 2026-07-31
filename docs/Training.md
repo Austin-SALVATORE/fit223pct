@@ -35,12 +35,22 @@ Falling short on any set repeats the same targets. At the equipment ceiling
 the whole ladder holds — never a partial advance of the lower sets, which
 would quietly collapse the coach-authored spacing between sets.
 
-**Rep-range (existing shape, minus RIR)** — bodyweight, band, timed
-(seconds-mode) work, and loaded isolation accessories (curls, lateral
-raises, flies). Fill the rep range first (add reps to the weakest set);
-once every set tops the range, add load. Isolation work stays on two
-straight working sets rather than a ladder — the goal there is quality
-contraction across a short session, not per-session progressive overload.
+**Rep-range (existing shape, minus RIR)** — bodyweight, band and timed
+(seconds-mode) work, plus any loaded accessory the coach has not written
+as weight × reps per set. Fill the rep range first (add reps to the
+weakest set); once every set tops the range, add load.
+
+A loaded isolation movement may be either shape, and **the exercise does
+not tell you which** — only the presence of `setPlan` does. Since 31 Jul
+the Shoulders & Arms accessories (lateral raise, rear delt fly, curl) are
+ladders, while `rear-delt-fly` remains a rep range in Chest & Back. Same
+id, different model, different session.
+
+**Consequence for readiness easing:** a ladder is eased by dropping its
+top rung, floored at two rungs; a rep range is eased by cutting a set. A
+two-rung ladder is therefore already at the floor and cannot be eased at
+all. The three Shoulders & Arms accessories sit exactly there, so an
+easier day now trims only the shoulder press.
 
 An 'easier' readiness day defers load increases (rep-range) and drops the
 top set of each ladder — filling the rep range, or the remaining lower sets

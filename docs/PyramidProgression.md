@@ -68,13 +68,26 @@ RIR used to provide — program authors should step small.
 Amended 22 Jul by the owner's coach (supersedes the earlier
 "every loaded lift" rule):
 
-- **Pyramid (`setPlan`)**: primary compound lifts only.
-- **Rep-range (existing)**: everything else — bodyweight, band,
-  seconds-mode work, AND loaded isolation accessories (curls, lateral
-  raises, flies). Rationale: accessory goals are quality contraction
-  and short sessions, not per-session progressive loading. `targetRir`
-  is deleted from their shape too (full RIR purge — see the RIR
-  section).
+- **Pyramid (`setPlan`)**: primary compound lifts, and any prescription
+  the coach explicitly writes as weight × reps per set.
+- **Rep-range (existing)**: everything else — bodyweight, band and
+  seconds-mode work. `targetRir` is deleted from their shape too (full
+  RIR purge — see the RIR section).
+
+> **Amended 31 Jul: loaded isolation accessories are no longer
+> categorically rep-range.** The Shoulders & Arms recalibration put
+> lateral raise, rear delt fly and dumbbell curl on ladders, on the
+> coach's ruling that Phase 1 uses one progression model for loaded
+> movements and a rep-range exception inside a session reintroduces
+> mixed models. The earlier rationale — accessory goals are quality
+> contraction and short sessions — was the coach's at the time and is
+> superseded for that session, not repealed globally: `rear-delt-fly`
+> is still prescribed as a rep range in Chest & Back.
+>
+> **So the movement never tells you the model.** The same exercise id
+> is a ladder in one session and a rep range in another. Only
+> `setPlan` decides. See
+> [`programs/phase-1-home-v3-shoulders-arms-revision.md`](./programs/phase-1-home-v3-shoulders-arms-revision.md).
 - The choice is per-prescription, carried by the presence of `setPlan`
   — the engine never infers the model from equipment or role.
 
