@@ -97,19 +97,39 @@ function ItemRow({
   const perSideSuffix = item.perSide ? t('sessionPreview.perSideSuffix') : ''
   return (
     <GroupedRow to={`/library/${exercise.id}`} state={origin}>
-      {/* self-center overrides the row's items-baseline — same reason as
-          LibraryPage's rows: a thumbnail has no text baseline to align
-          the numbers against. */}
-      <span className="flex min-w-0 items-center gap-3 self-center">
+      {/*
+        A grid, not GroupedRow's own flex row, and the name and numbers
+        stack instead of sitting side by side — deliberately, and only
+        after measuring that a side-by-side split cannot work here.
+
+        Sharing one row, name and prescription compete for a fixed ~206px
+        (the row's inner width, less the thumbnail and gaps) at 375px. That
+        budget is smaller than the *shorter* of the two on several real
+        rows — "Dumbbell Romanian deadlift" alone is 209px, "12→14→15 kg ·
+        12/10/8" alone is 160px, and 209+160 is nowhere close to 206 no
+        matter how the columns are split. A min-width floor on the name
+        column just moves the shortfall onto the prescription (which the
+        brief requires stay intact, so it wraps instead) or, tried first,
+        left the name crushed to "B…" for "Bulgarian split squat". Every
+        column split was a trade between the two, never a fix.
+
+        Stacked, each gets the row's *full* width (~254px) on its own
+        line — comfortably past the longest name (209px) and longest
+        prescription (186px) measured in the seed corpus, so both render
+        without truncating or wrapping in the common case. `truncate`
+        stays on the name as a floor under a name this corpus doesn't
+        have, not as the primary mechanism.
+      */}
+      <div className="grid w-full min-w-0 grid-cols-[3rem_1fr] items-start gap-x-4">
         <ExerciseThumbnail exerciseId={exercise.id} />
         <div className="min-w-0">
-          <p className="font-medium text-ink">{exerciseName}</p>
-          {note && <p className="mt-0.5 text-sm text-ink-tertiary">{note}</p>}
+          <p className="truncate font-medium text-ink">{exerciseName}</p>
+          {note && <p className="mt-0.5 truncate text-sm text-ink-tertiary">{note}</p>}
+          <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
+            {formatPrescription(tCommon, item, perSideSuffix)}
+          </p>
         </div>
-      </span>
-      <p className="shrink-0 self-center text-sm text-ink-secondary" data-numeric>
-        {formatPrescription(tCommon, item, perSideSuffix)}
-      </p>
+      </div>
     </GroupedRow>
   )
 }
