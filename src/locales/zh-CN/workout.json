@@ -47,7 +47,12 @@
     "logHold": "记录保持",
     "logSet": "记录这组",
     "technique": "技术",
-    "swapExercise": "更换动作"
+    "swapExercise": "更换动作",
+    "targetRung": "第 {{rung}} / {{total}} 级 · {{weight}} 公斤 × {{reps}}",
+    "targetRepRange": "目标 · {{min}}–{{max}} 次",
+    "targetSecondsRange": "目标 · {{min}}–{{max}} 秒",
+    "deltaHeavier": "↑ +{{delta}} 公斤",
+    "atMax": "上限"
   },
   "swapSheet": {
     "closeAriaLabel": "关闭",

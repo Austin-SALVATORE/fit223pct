@@ -205,8 +205,15 @@ describe('undo last set', () => {
 
     await waitFor(() => {
       const heading = screen.getByRole('heading', { name: 'Goblet squat' })
-      const describedBy = heading.getAttribute('aria-describedby') ?? ''
-      expect(document.getElementById(describedBy)).toHaveTextContent('Set 1 of 3')
+      // The heading is now described by two elements — the set-position line
+      // *and* the target caption — so landing announces which set is offered
+      // and what the target is. The claim is unchanged and wider; the lookup
+      // has to resolve each id rather than treat the whole attribute as one.
+      const describedBy = (heading.getAttribute('aria-describedby') ?? '').split(' ')
+      const described = describedBy
+        .map((id) => document.getElementById(id)?.textContent ?? '')
+        .join(' ')
+      expect(described).toContain('Set 1 of 3')
     })
   })
 })

@@ -67,7 +67,10 @@ describe('SetScreen ladder rendering', () => {
     await db.workouts.put(workout)
 
     renderWorkout()
-    expect(await screen.findByText('Set 1 of 3 — 8 kg × 12')).toBeInTheDocument()
+    // The rung moved from the eyebrow to the target caption (design §1.2):
+    // it answers "what was I told to do", which belongs beside the numbers
+    // rather than in the set-position line.
+    expect(await screen.findByText('Rung 1 of 3 · 8 kg × 12')).toBeInTheDocument()
     expect(screen.getByLabelText('Weight')).toHaveTextContent('8')
     expect(screen.getByLabelText('Reps')).toHaveTextContent('12')
   })
@@ -83,7 +86,7 @@ describe('SetScreen ladder rendering', () => {
     await db.workouts.put(logSet(workout, 0, { weightKg: 8, reps: 12, seconds: null, completedAt: '2026-07-23T09:05:00.000Z' }))
 
     renderWorkout()
-    expect(await screen.findByText('Set 2 of 3 — 10 kg × 10')).toBeInTheDocument()
+    expect(await screen.findByText('Rung 2 of 3 · 10 kg × 10')).toBeInTheDocument()
   })
 
   it('pre-fills the next rung stepped up when every rung was completed last time', async () => {
@@ -118,7 +121,7 @@ describe('SetScreen ladder rendering', () => {
     await db.workouts.put(active)
 
     renderWorkout()
-    expect(await screen.findByText('Set 1 of 3 — 10 kg × 12')).toBeInTheDocument()
+    expect(await screen.findByText('Rung 1 of 3 · 10 kg × 12')).toBeInTheDocument()
     expect(screen.getByLabelText('Weight')).toHaveTextContent('10')
   })
 
@@ -162,9 +165,15 @@ describe('SetScreen ladder rendering', () => {
     await db.workouts.put(active)
 
     renderWorkout()
-    expect(await screen.findByText('Set 1 of 3 — 8 kg × 12')).toBeInTheDocument()
+    expect(await screen.findByText('Rung 1 of 3 · 8 kg × 12')).toBeInTheDocument()
+    // The ceiling is now marked by a MAX pill in the caption rather than by a
+    // sentence. The *explanation* moves to the rest screen (design §1.2:
+    // education only during rest); what stays here is the state itself, which
+    // must not read as a failure to progress — that is the whole reason the
+    // engine distinguishes at-equipment-max from a repeat.
+    expect(screen.getByText('MAX')).toBeInTheDocument()
     expect(
-      screen.getByText('Every rung is maxed for this setup — hold the ladder and own the reps.'),
-    ).toBeInTheDocument()
+      screen.queryByText('Every rung is maxed for this setup — hold the ladder and own the reps.'),
+    ).toBeNull()
   })
 })

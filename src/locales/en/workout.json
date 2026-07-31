@@ -48,7 +48,12 @@
     "logHold": "Log hold",
     "logSet": "Log set",
     "technique": "Technique",
-    "swapExercise": "Swap exercise"
+    "swapExercise": "Swap exercise",
+    "targetRung": "Rung {{rung}} of {{total}} · {{weight}} kg × {{reps}}",
+    "targetRepRange": "Target · {{min}}–{{max}} reps",
+    "targetSecondsRange": "Target · {{min}}–{{max}} s",
+    "deltaHeavier": "↑ +{{delta}} kg",
+    "atMax": "MAX"
   },
   "swapSheet": {
     "closeAriaLabel": "Close",

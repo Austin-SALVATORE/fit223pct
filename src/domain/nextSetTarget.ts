@@ -51,6 +51,20 @@ export interface NextSetTarget {
    * the same divergence this function exists to prevent, one field further on.
    */
   progressionType: ProgressionType | 'at-equipment-max' | null
+  /**
+   * The target **before** this session's own history is applied — the ladder
+   * rung as the engine has advanced it, or the suggestion.
+   *
+   * Distinct from the fields above, which carry the weight you just lifted.
+   * The card shows what you are about to log; a caption shows what you were
+   * *told* to do, and those are different questions. Exposed here rather than
+   * recomputed by the caption because reading `prescription.setPlan[i]`
+   * directly gives the **authored** ladder, not the advanced one — so a
+   * stepped-up ladder captioned "8 kg" under a card offering 10 kg. That is
+   * the same disagreement this function exists to prevent, one field over,
+   * and it was caught by a test rather than by review.
+   */
+  prescribed: { weightKg: number | null; reps: number | null; seconds: number | null }
 }
 
 /**
@@ -109,15 +123,26 @@ export function nextSetTarget(
       : null
 
   return {
+    prescribed: {
+      weightKg: prescribedWeight,
+      reps: isSeconds ? null : prescribedEffort,
+      seconds: isSeconds ? prescribedEffort : null,
+    },
     weightKg,
     reps: isSeconds ? null : effort,
     seconds: isSeconds ? effort : null,
     source,
     delta,
+    // A ladder that advances *is* an increased load, so it maps onto the same
+    // discriminant the rep-range engine uses — otherwise a stepped-up ladder
+    // would show no delta while an identical rep-range step-up showed one.
+    // 'repeat' is not a state worth captioning: nothing changed.
     progressionType: ladder
       ? ladder.type === 'at-equipment-max'
         ? 'at-equipment-max'
-        : null
+        : ladder.type === 'advance'
+          ? 'increase-load'
+          : null
       : (suggestion?.type ?? null),
   }
 }

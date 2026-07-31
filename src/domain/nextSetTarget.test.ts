@@ -207,3 +207,24 @@ describe('it returns data, never prose', () => {
     }
   })
 })
+
+describe('a ladder that advances reads as an increased load', () => {
+  it('maps advance onto the same discriminant the rep-range engine uses', () => {
+    // Otherwise a stepped-up ladder shows no delta on the caption while an
+    // identical rep-range step-up shows one — the same event, told two ways.
+    const previous: LoggedSet[] = [
+      set({ setIndex: 0, weightKg: 20, reps: 12 }),
+      set({ setIndex: 1, weightKg: 22.5, reps: 10 }),
+      set({ setIndex: 2, weightKg: 25, reps: 8 }),
+    ]
+    const target = nextSetTarget(ladder, [], previous, 0, 'steady')
+
+    expect(target.progressionType).toBe('increase-load')
+    expect(target.weightKg).toBe(22.5)
+  })
+
+  it('reports nothing to caption when the ladder repeats', () => {
+    const previous: LoggedSet[] = [set({ setIndex: 0, weightKg: 20, reps: 8 })]
+    expect(nextSetTarget(ladder, [], previous, 0, 'steady').progressionType).toBeNull()
+  })
+})

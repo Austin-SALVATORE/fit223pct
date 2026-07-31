@@ -48,7 +48,12 @@
     "logHold": "Enregistrer le maintien",
     "logSet": "Enregistrer la série",
     "technique": "Technique",
-    "swapExercise": "Remplacer l'exercice"
+    "swapExercise": "Remplacer l'exercice",
+    "targetRung": "Palier {{rung}} sur {{total}} · {{weight}} kg × {{reps}}",
+    "targetRepRange": "Objectif · {{min}} à {{max}} répétitions",
+    "targetSecondsRange": "Objectif · {{min}} à {{max}} s",
+    "deltaHeavier": "↑ +{{delta}} kg",
+    "atMax": "MAX"
   },
   "swapSheet": {
     "closeAriaLabel": "Fermer",

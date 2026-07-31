@@ -48,7 +48,8 @@ describe('WorkoutPage against a real seeded ladder item', () => {
     renderWorkout()
     expect(await screen.findByRole('heading', { name: 'Incline dumbbell press' })).toBeInTheDocument()
     // First rung of the coach-authored ladder (docs/programs/phase-1-home-v3-coach-spec.md).
-    expect(screen.getByText('Set 1 of 3 — 12 kg × 12')).toBeInTheDocument()
+    // Rung now lives in the target caption, not the set-position eyebrow.
+    expect(screen.getByText('Rung 1 of 3 · 12 kg × 12')).toBeInTheDocument()
     expect(screen.getByLabelText('Weight')).toHaveTextContent('12')
     expect(screen.getByLabelText('Reps')).toHaveTextContent('12')
 
