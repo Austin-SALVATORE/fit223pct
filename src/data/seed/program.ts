@@ -193,29 +193,64 @@ export const seedProgram: Program = {
       id: 'shoulders-arms',
       name: 'Shoulders & Arms',
       focus: 'Shoulders & arm strength',
+      /*
+        Recalibrated by the coach 31 Jul after the first completed session
+        (docs/programs/phase-1-home-v3-shoulders-arms-revision.md) —
+        finished comfortably with recovery to spare, so the prior loads were
+        judged conservative. Every prescription in this session is now a
+        ladder: the coach's stated rationale is a unified pyramid
+        philosophy for loaded movements in Phase 1, where a rep-range
+        exception on one session would reintroduce mixed progression models
+        it is deliberately retiring here. This is a training-content
+        ruling, recorded verbatim, not adapted.
+
+        `overhead-triceps-extension` (session item 5 in the coach's spec)
+        is deliberately absent: it needs a Library promotion — cues and a
+        teaching concept only the coach can author — landing as its own
+        commit once that content exists. Do not invent placeholder copy for
+        it (CLAUDE.md).
+      */
       items: [
         ladder(
           'dumbbell-shoulder-press',
           [
-            { weightKg: 8, reps: 12 },
-            { weightKg: 10, reps: 10 },
-            { weightKg: 12, reps: 8 },
+            { weightKg: 8, reps: 10 },
+            { weightKg: 10, reps: 8 },
+            { weightKg: 12, reps: 6 },
           ],
           DUMBBELL_MAX_KG,
           DUMBBELL_STEP_KG,
         ),
-        reps('dumbbell-lateral-raise', 2, 12, 15, { start: 5, max: DUMBBELL_MAX_KG, step: DUMBBELL_STEP_KG }, {
-          restSeconds: 60,
-          role: 'accessory',
-        }),
-        reps('rear-delt-fly', 2, 12, 15, { start: 5, max: DUMBBELL_MAX_KG, step: DUMBBELL_STEP_KG }, {
-          restSeconds: 60,
-          role: 'accessory',
-        }),
-        reps('dumbbell-curl', 2, 12, 15, { start: 8, max: DUMBBELL_MAX_KG, step: DUMBBELL_STEP_KG }, {
-          restSeconds: 60,
-          role: 'accessory',
-        }),
+        ladder(
+          'dumbbell-lateral-raise',
+          [
+            { weightKg: 6, reps: 15 },
+            { weightKg: 8, reps: 12 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 60, role: 'accessory' },
+        ),
+        ladder(
+          'rear-delt-fly',
+          [
+            { weightKg: 6, reps: 15 },
+            { weightKg: 8, reps: 12 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 60, role: 'accessory' },
+        ),
+        ladder(
+          'dumbbell-curl',
+          [
+            { weightKg: 8, reps: 15 },
+            { weightKg: 10, reps: 12 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 60, role: 'accessory' },
+        ),
       ],
     },
   ],

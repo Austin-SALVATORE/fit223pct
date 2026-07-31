@@ -97,8 +97,27 @@ describe('Early start on unscheduled days', () => {
     const [workout] = await db.workouts.toArray()
     expect(workout.readiness?.tier).toBe('easier')
     expect(workout.readiness?.drivers).toContain('sleep')
+    /*
+      Shoulders & Arms is now a ladder-only session (coach recalibration,
+      31 Jul — docs/programs/phase-1-home-v3-shoulders-arms-revision.md), so
+      the mechanism that produces "Adjusted for readiness" here is the
+      3-rung shoulder-press ladder losing its top rung, not an accessory's
+      `sets` being trimmed by one — `applyReadiness` (adjustments.ts)
+      branches on `item.setPlan` before it ever looks at `role`, and a
+      ladder floors at 2 rungs.
+    */
+    const mainLift = workout.exercises.find((e) => e.exerciseId === 'dumbbell-shoulder-press')
+    expect(mainLift?.prescription.setPlan).toHaveLength(2)
+    // The accessories are 2-rung ladders too now, and 2 is already the
+    // floor `applyReadiness` won't go below — so unlike before this
+    // conversion, an easier day leaves them untouched rather than trimming
+    // a set. Asserting `setPlan` stays exactly the authored two rungs is
+    // the regression guard: silently reverting to rep-range-shaped
+    // trimming here would corrupt a ladder's rung count instead of a
+    // rep-range prescription's `sets` field.
     const accessory = workout.exercises.find((e) => e.exerciseId === 'dumbbell-lateral-raise')
-    expect(accessory?.prescription.sets).toBe(1)
+    expect(accessory?.prescription.setPlan).toHaveLength(2)
+    expect(accessory?.prescription.sets).toBe(2)
 
     await db.checkins.clear()
   })
