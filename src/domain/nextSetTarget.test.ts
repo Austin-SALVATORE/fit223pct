@@ -266,3 +266,31 @@ describe('a ladder that advances reads as an increased load', () => {
     expect(nextSetTarget(ladder, [], previous, 0, 'steady').progressionType).toBeNull()
   })
 })
+
+describe('what prescribed still distinguishes, now that ladders never carry', () => {
+  /**
+   * The ruling makes a ladder's offered value *equal* its prescribed rung, so
+   * for ladders the two coincide by construction. This asserts that, which
+   * both records the redundancy and catches its reintroduction: if carrying
+   * ever came back for ladders, the offered value would diverge from the
+   * prescription and this fails.
+   */
+  it('coincides with the offered value for a ladder, always', () => {
+    for (const setIndex of [0, 1, 2]) {
+      const target = nextSetTarget(ladder, [set({ weightKg: 99, reps: 99 })], [], setIndex, 'steady')
+      expect(target.prescribed.weightKg, `set ${setIndex + 1}`).toBe(target.weightKg)
+      expect(target.prescribed.reps, `set ${setIndex + 1}`).toBe(target.reps)
+    }
+  })
+
+  it('still diverges from the offered value for rep-range work', () => {
+    // Where the field earns its place: rep-range carrying means "what you were
+    // told" and "what you are offered" are genuinely different numbers, and a
+    // caption that wants the prescription cannot read the offered value.
+    const target = nextSetTarget(repRange, [set({ weightKg: 18, reps: 10 })], [], 1, 'steady')
+
+    expect(target.weightKg).toBe(18)
+    expect(target.prescribed.weightKg).toBe(16)
+    expect(target.prescribed.weightKg).not.toBe(target.weightKg)
+  })
+})
