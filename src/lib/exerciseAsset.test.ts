@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import manifest from '@/data/generated/asset-manifest.json'
-import { exerciseAsset, withHash } from './exerciseAsset'
+import { exerciseAsset, exerciseAssetThumbnailFrame, withHash } from './exerciseAsset'
 
 interface TestManifestEntry {
   frameCount: number
@@ -119,5 +119,40 @@ describe('exerciseAsset', () => {
     // full-strip size — proves the resolver reads per-frame dims, not a
     // single shared size.
     expect(frame?.width).not.toBe(reference?.width)
+  })
+})
+
+describe('exerciseAssetThumbnailFrame', () => {
+  /**
+   * The frame number was in the manifest and unreachable: `exerciseAsset(id,
+   * 'frame', n)` existed but `n` could only come from guessing, so a caller
+   * wanting the representative pose fell back to `thumbnail.avif` — capped at
+   * 320px on the longest side, and visibly soft at 200 CSS px on a 3x display.
+   */
+  it('returns the pipeline-chosen pose for a known id', () => {
+    // arnold-press is a 6-frame strip; the pipeline picks
+    // min(frames, floor(frames/2) + 1) = 4.
+    expect(exerciseAssetThumbnailFrame('arnold-press')).toBe(4)
+    // abductor-machine is 4 frames -> 3.
+    expect(exerciseAssetThumbnailFrame('abductor-machine')).toBe(3)
+  })
+
+  it('returns a frame that actually exists in that strip', () => {
+    const entries = manifest as unknown as Record<string, TestManifestEntry>
+    // Read from the manifest rather than recomputed, so a regeneration that
+    // changes a strip's frame count moves the pose instead of pointing past
+    // the end of it. Checked across every entry rather than a sample.
+    for (const id of Object.keys(entries)) {
+      const frame = exerciseAssetThumbnailFrame(id)
+      if (frame === null) continue
+      expect(frame, id).toBeGreaterThanOrEqual(1)
+      expect(frame, id).toBeLessThanOrEqual(entries[id].frameCount)
+      // And it resolves to a real asset through the existing accessor.
+      expect(exerciseAsset(id, 'frame', frame), id).not.toBeNull()
+    }
+  })
+
+  it('is null for an unknown id rather than throwing', () => {
+    expect(exerciseAssetThumbnailFrame('no-such-exercise')).toBeNull()
   })
 })

@@ -3,6 +3,19 @@ interface TimerRingProps {
   remaining: number
   /** Seconds the ring represents when full. */
   total: number
+  /**
+   * `lg` (default) is the routine player's 208px ring with 48px digits — the
+   * size this component was extracted at, and the one screen where the
+   * countdown *is* the content.
+   *
+   * `md` is 160px with 36px digits, for the rest screen, where the countdown
+   * has to share the screen with the next set's load. The argument is about
+   * which number is actionable: **the countdown asks nothing of you** — when
+   * it ends the screen changes by itself — while the load asks you to go
+   * change the dumbbells. The big number should be the one attached to an
+   * action.
+   */
+  size?: 'md' | 'lg'
 }
 
 /**
@@ -17,7 +30,8 @@ interface TimerRingProps {
  * second under press-and-hold. Visually live, silent to assistive tech —
  * announcements belong at phase boundaries, carried by focus moves.
  */
-export function TimerRing({ remaining, total }: TimerRingProps) {
+export function TimerRing({ remaining, total, size = 'lg' }: TimerRingProps) {
+  const md = size === 'md'
   const radius = 88
   const circumference = 2 * Math.PI * radius
   const fraction = total > 0 ? remaining / total : 0
@@ -26,7 +40,7 @@ export function TimerRing({ remaining, total }: TimerRingProps) {
   const almostDone = remaining > 0 && remaining <= 3
 
   return (
-    <div className="relative mt-6 h-52 w-52">
+    <div className={`relative mt-6 ${md ? 'h-40 w-40' : 'h-52 w-52'}`}>
       <svg viewBox="0 0 200 200" className="h-full w-full -rotate-90">
         <circle cx="100" cy="100" r={radius} fill="none" strokeWidth="6" className="stroke-raised" />
         <circle
@@ -45,7 +59,7 @@ export function TimerRing({ remaining, total }: TimerRingProps) {
       </svg>
       <time
         aria-live="off"
-        className="absolute inset-0 flex items-center justify-center text-5xl font-semibold text-ink"
+        className={`absolute inset-0 flex items-center justify-center font-semibold text-ink ${md ? 'text-4xl' : 'text-5xl'}`}
       >
         {formatClock(remaining)}
       </time>

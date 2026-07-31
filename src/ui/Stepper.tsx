@@ -104,6 +104,17 @@ interface StepperProps {
   startFrom?: number
   variant?: 'focal' | 'form'
   /**
+   * How large the value reads. **Orthogonal to `variant`, deliberately** —
+   * `variant` describes alignment and label style and is a standing ruling
+   * (see above); size is a different axis and folding them together would
+   * force a caller wanting big numbers to also accept an alignment.
+   *
+   * `md` (default) is the 30px value every existing caller has. `lg` is 60px
+   * for Workout Mode's set screen, where the owner reported the numbers they
+   * are about to log were too small to read at arm's length.
+   */
+  size?: 'md' | 'lg'
+  /**
    * The field counts whole things and a fraction of one is meaningless —
    * reps, or seconds of a hold. Switches the on-screen keypad to `numeric`.
    *
@@ -153,10 +164,12 @@ export function Stepper({
   onChange,
   startFrom,
   variant = 'focal',
+  size = 'md',
   integer = false,
 }: StepperProps) {
   const { t, i18n } = useTranslation('common')
   const form = variant === 'form'
+  const lg = size === 'lg'
   /**
    * Direct entry. Reaching 82.5 from 70 at `step={0.1}` is ~125 taps, which
    * is what the buttons alone asked of anyone with a real number in mind.
@@ -292,7 +305,7 @@ export function Stepper({
                 setDraft(null)
               }
             }}
-            className="box-border w-24 min-w-0 appearance-none rounded-card border border-amber bg-raised text-center text-3xl font-semibold text-ink"
+            className={`box-border min-w-0 appearance-none rounded-card border border-amber bg-raised text-center font-semibold text-ink ${lg ? 'w-40 text-6xl' : 'w-24 text-3xl'}`}
           />
         ) : (
           <button
@@ -313,7 +326,7 @@ export function Stepper({
               // Silent, the same way TimerRing's `<time>` is: visually live,
               // and announced only by the debounced region below.
               aria-live="off"
-              className="block min-w-14 text-center text-3xl font-semibold text-ink"
+              className={`block text-center font-semibold text-ink ${lg ? 'min-w-32 text-6xl' : 'min-w-14 text-3xl'}`}
             >
               {value === null ? (
                 // Visibly not a number. The test is whether someone could
@@ -324,7 +337,7 @@ export function Stepper({
                 <>
                   {formatNumber(value, i18n.language)}
                   {unit && (
-                    <span className="ml-0.5 text-lg font-normal text-ink-tertiary">{unit}</span>
+                    <span className={`ml-0.5 font-normal text-ink-tertiary ${lg ? 'text-2xl' : 'text-lg'}`}>{unit}</span>
                   )}
                 </>
               )}

@@ -120,6 +120,25 @@ export function exerciseAsset(
   return { url: withHash(`${base}/frames/${padded}.avif`, entry.frameHashes?.[frame - 1]), width: size[0], height: size[1] }
 }
 
+/**
+ * The frame the pipeline picked as representative — the mid-rep pose,
+ * `min(frames, floor(frames/2) + 1)` (`convert-assets.mjs`). Null for an
+ * unknown id or an entry without one.
+ *
+ * `exerciseAsset(id, 'frame', n)` already existed but `n` was not obtainable:
+ * `exerciseAssetFrameCount` is exported and `thumbnailFrame` was not, so a
+ * caller wanting the representative pose had either to guess or to fall back
+ * to `thumbnail.avif` — which is capped at 320px on the longest side and
+ * renders visibly soft at 200 CSS px on a 3x display.
+ *
+ * Read from the manifest rather than recomputed, so a regeneration that
+ * changes a strip's frame count moves the pose without breaking the caller.
+ */
+export function exerciseAssetThumbnailFrame(exerciseId: string): number | null {
+  const assetId = resolveAssetId(exerciseId)
+  return ASSET_MANIFEST[assetId]?.thumbnailFrame ?? null
+}
+
 /** How many frames to step through — 0 for an unknown id (FrameStepper renders nothing). */
 export function exerciseAssetFrameCount(exerciseId: string): number {
   const assetId = resolveAssetId(exerciseId)

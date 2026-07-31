@@ -30,7 +30,7 @@ export function HoldTimer({ onComplete }: HoldTimerProps) {
           setElapsed(0)
           setStartedAt(Date.now())
         }}
-        className="rounded-full border border-border px-4 py-2 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
+        className="inline-flex min-h-11 items-center rounded-full border border-border px-4 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
       >
         {t('holdTimer.start')}
       </button>
@@ -49,7 +49,7 @@ export function HoldTimer({ onComplete }: HoldTimerProps) {
       // visible/tabular count is enough; the final value lands in the
       // Stepper on stop.
       aria-label={t('holdTimer.stopAriaLabel')}
-      className="rounded-full border border-amber bg-amber/10 px-4 py-2 text-sm font-semibold text-amber transition-colors"
+      className="inline-flex min-h-11 items-center rounded-full border border-amber bg-amber/10 px-4 text-sm font-semibold text-amber transition-colors"
     >
       <time aria-live="off" data-numeric>
         {elapsed}s

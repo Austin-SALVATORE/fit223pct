@@ -101,7 +101,7 @@ function RestButton({ label, onClick }: { label: string; onClick: () => void }) 
     <button
       type="button"
       onClick={onClick}
-      className="rounded-full border border-border px-5 py-2.5 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
+      className="inline-flex min-h-11 items-center rounded-full border border-border px-5 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
     >
       {label}
     </button>

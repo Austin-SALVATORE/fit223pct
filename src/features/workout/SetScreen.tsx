@@ -175,18 +175,18 @@ export function SetScreen({
           {isSeconds ? t('setScreen.logHold') : t('setScreen.logSet')}
         </motion.button>
 
-        <div className="mt-4 flex items-center justify-center gap-6">
+        <div className="mt-4 flex items-center justify-center gap-2">
           <Link
             to={`/library/${exercise.id}`}
             state={{ from: 'workout' }}
-            className="text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
+            className="inline-flex min-h-11 items-center px-3 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
           >
             {t('setScreen.technique')}
           </Link>
           <button
             type="button"
             onClick={() => setSwapOpen(true)}
-            className="text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
+            className="inline-flex min-h-11 items-center px-3 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
           >
             {t('setScreen.swapExercise')}
           </button>

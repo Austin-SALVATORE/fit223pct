@@ -36,7 +36,7 @@ export function UndoLastSetButton({
       type="button"
       onClick={onUndo}
       aria-label={t('undo.ariaLabel', { exerciseName, setIndex, totalSets })}
-      className="shrink-0 rounded-full px-2 py-1 text-sm text-ink-tertiary transition-colors hover:text-ink"
+      className="inline-flex min-h-11 shrink-0 items-center rounded-full px-2 text-sm text-ink-tertiary transition-colors hover:text-ink"
     >
       {t('undo.label')}
     </button>
