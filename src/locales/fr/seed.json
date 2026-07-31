@@ -315,6 +315,18 @@
         "title": "La position du coude est essentielle",
         "body": "Si tes coudes dérivent vers l'avant quand le poids devient lourd, tes deltoïdes antérieurs prennent le relais de tes biceps. Garde-les alignés sous tes épaules pendant toute la série, même si cela veut dire choisir un haltère plus léger."
       }
+    },
+    "overhead-triceps-extension": {
+      "name": "Extension triceps à la nuque avec haltère",
+      "cues": [
+        "Garde tes coudes orientés vers l'avant pendant tout le mouvement.",
+        "Descends derrière ta tête avec contrôle, puis tends les bras sans élan.",
+        "Termine en tendant complètement les bras — ne laisse pas l'élan faire le travail."
+      ],
+      "teachingConcept": {
+        "title": "L'étirement avant la force",
+        "body": "Le chef long du triceps travaille le plus quand le bras reste au-dessus de la tête et que le coude se plie complètement, avec contrôle. Ne précipite pas la phase de descente et ne laisse pas les coudes s'écarter. Une amplitude fluide et contrôlée crée une tension plus efficace que le simple fait de soulever un haltère plus lourd."
+      }
     }
   },
   "program": {

@@ -204,11 +204,12 @@ export const seedProgram: Program = {
         it is deliberately retiring here. This is a training-content
         ruling, recorded verbatim, not adapted.
 
-        `overhead-triceps-extension` (session item 5 in the coach's spec)
-        is deliberately absent: it needs a Library promotion — cues and a
-        teaching concept only the coach can author — landing as its own
-        commit once that content exists. Do not invent placeholder copy for
-        it (CLAUDE.md).
+        `overhead-triceps-extension` (item 5) is a three-rung ladder, unlike
+        the other three accessories' two — the coach's own spec, not a
+        difference invented here. See docs/Training.md's readiness-easing
+        note: a two-rung ladder is already at `MIN_LADDER_RUNGS` and cannot
+        be eased further, so this is the only accessory in the session an
+        easier day can still shorten.
       */
       items: [
         ladder(
@@ -246,6 +247,17 @@ export const seedProgram: Program = {
           [
             { weightKg: 8, reps: 15 },
             { weightKg: 10, reps: 12 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 60, role: 'accessory' },
+        ),
+        ladder(
+          'overhead-triceps-extension',
+          [
+            { weightKg: 6, reps: 15 },
+            { weightKg: 8, reps: 12 },
+            { weightKg: 10, reps: 10 },
           ],
           DUMBBELL_MAX_KG,
           DUMBBELL_STEP_KG,

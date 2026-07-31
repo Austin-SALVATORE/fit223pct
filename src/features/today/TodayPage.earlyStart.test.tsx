@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
+import { seedProgram } from '@/data/seed/program'
 import { TodayPage } from './TodayPage'
 
 /**
@@ -118,6 +119,23 @@ describe('Early start on unscheduled days', () => {
     const accessory = workout.exercises.find((e) => e.exerciseId === 'dumbbell-lateral-raise')
     expect(accessory?.prescription.setPlan).toHaveLength(2)
     expect(accessory?.prescription.sets).toBe(2)
+    // overhead-triceps-extension is the one accessory the coach's spec
+    // prescribes as a *three*-rung ladder — unlike the other two, it isn't
+    // already at MIN_LADDER_RUNGS, so an easier day drops its top rung same
+    // as the main lift, the one place in this session where accessory
+    // easing still does something.
+    //
+    // Asserted against the *authored* ladder's own top rung sliced off,
+    // not a literal length — `toHaveLength(2)` alone can't tell "eased
+    // from 3" apart from "was already 2 and untouched", and a mutation
+    // test proved exactly that: shrinking the seed's own ladder to two
+    // rungs left this assertion green for the wrong reason.
+    const authoredTriceps = seedProgram.sessions
+      .find((s) => s.id === 'shoulders-arms')
+      ?.items.find((i) => i.exerciseId === 'overhead-triceps-extension')
+    expect(authoredTriceps?.setPlan).toHaveLength(3)
+    const triceps = workout.exercises.find((e) => e.exerciseId === 'overhead-triceps-extension')
+    expect(triceps?.prescription.setPlan).toEqual(authoredTriceps?.setPlan?.slice(0, -1))
 
     await db.checkins.clear()
   })

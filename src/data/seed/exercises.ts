@@ -237,4 +237,15 @@ export const seedExercises: Exercise[] = [
     substitutionIds: ['band-curl'],
     isUnilateral: false,
   },
+  {
+    id: 'overhead-triceps-extension',
+    muscles: ['triceps'],
+    equipment: ['dumbbell'],
+    // Not named by the coach; not invented here either — left empty
+    // rather than guessed, per program-content.md.
+    substitutionIds: [],
+    // One dumbbell, held with both hands overhead — not one-arm-at-a-time,
+    // which is what this flag distinguishes (see single-arm-db-row).
+    isUnilateral: false,
+  },
 ]

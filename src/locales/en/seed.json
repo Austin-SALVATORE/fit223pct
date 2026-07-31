@@ -315,6 +315,18 @@
         "title": "Elbow position is everything",
         "body": "If your elbows drift forward as the weight gets heavy, your front delts take over from your biceps. Keep them stacked under your shoulders for the whole set, even if that means picking a lighter dumbbell."
       }
+    },
+    "overhead-triceps-extension": {
+      "name": "Overhead triceps extension",
+      "cues": [
+        "Keep your elbows pointing forward throughout the movement.",
+        "Lower behind your head under control, then extend without swinging.",
+        "Finish by fully straightening the arms—don't let momentum do the work."
+      ],
+      "teachingConcept": {
+        "title": "Stretch before strength",
+        "body": "The long head of the triceps works hardest when the upper arm stays overhead and the elbow bends fully under control. Don't rush the lowering phase or flare the elbows. A smooth, controlled range of motion creates more effective tension than simply moving a heavier dumbbell."
+      }
     }
   },
   "program": {
