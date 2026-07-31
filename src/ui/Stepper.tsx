@@ -432,7 +432,8 @@ function clamp(value: number, min: number, max?: number): number {
  * thousands separator would put a comma on screen in English right next to a
  * French decimal comma — two meanings, one glyph, in the same control.
  */
-function formatNumber(value: number, locale: string): string {
+/** Locale-aware, tabular-friendly number formatting — shared with the rest screen's hero numbers so a value never renders differently on the two screens that must not disagree (see `nextSetTarget`). */
+export function formatNumber(value: number, locale: string): string {
   return new Intl.NumberFormat(locale, {
     minimumFractionDigits: Number.isInteger(value) ? 0 : 1,
     maximumFractionDigits: 1,

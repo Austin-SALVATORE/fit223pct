@@ -26,11 +26,26 @@
   },
   "resting": {
     "heading": "Repos",
-    "next": "Suivant",
-    "nextUp": "À suivre",
-    "setProgress": "{{exerciseName}} — série {{setIndex}} sur {{totalSets}}",
     "plusThirty": "+30s",
-    "skip": "Passer"
+    "skip": "Passer",
+    "nextSet": {
+      "label": "Série suivante · {{setIndex}} sur {{totalSets}}",
+      "heavier": "↑ {{delta}} kg de plus que la série que tu viens de faire",
+      "lighter": "↓ {{delta}} kg de moins que la série que tu viens de faire"
+    },
+    "lastSet": {
+      "label": "Dernière série · {{setIndex}} sur {{totalSets}}",
+      "sessionDone": "Ensuite, la séance est terminée."
+    },
+    "nextUp": {
+      "label": "À suivre",
+      "meta_one": "{{count}} série · repos {{restSeconds}}s",
+      "meta_other": "{{count}} séries · repos {{restSeconds}}s"
+    },
+    "numbers": {
+      "weightReps": "{{weight}} kg × {{reps}}",
+      "reps": "{{reps}} reps"
+    }
   },
   "holdTimer": {
     "start": "Démarrer le maintien",

@@ -26,11 +26,26 @@
   },
   "resting": {
     "heading": "Rest",
-    "next": "Next",
-    "nextUp": "Next up",
-    "setProgress": "{{exerciseName}} — set {{setIndex}} of {{totalSets}}",
     "plusThirty": "+30s",
-    "skip": "Skip"
+    "skip": "Skip",
+    "nextSet": {
+      "label": "Next set · {{setIndex}} of {{totalSets}}",
+      "heavier": "↑ {{delta}} kg heavier than the set you just did",
+      "lighter": "↓ {{delta}} kg lighter than the set you just did"
+    },
+    "lastSet": {
+      "label": "Last set · {{setIndex}} of {{totalSets}}",
+      "sessionDone": "Then the session is done."
+    },
+    "nextUp": {
+      "label": "Next up",
+      "meta_one": "{{count}} set · rest {{restSeconds}}s",
+      "meta_other": "{{count}} sets · rest {{restSeconds}}s"
+    },
+    "numbers": {
+      "weightReps": "{{weight}} kg × {{reps}}",
+      "reps": "{{reps}} reps"
+    }
   },
   "holdTimer": {
     "start": "Start hold",

@@ -258,6 +258,8 @@ export function WorkoutPage() {
               workout={workout}
               position={position}
               exerciseById={exerciseById}
+              completed={completed}
+              readinessTier={workout.readiness?.tier}
               onDone={() => setPhase({ kind: 'logging' })}
             />
           ) : (

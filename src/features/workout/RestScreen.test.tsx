@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { seedExercises } from '@/data/seed/exercises'
 import { seedProgram } from '@/data/seed/program'
 import { createWorkout } from '@/domain/workout'
+import type { LoggedSet, Workout } from '@/domain/types'
 import { RestScreen } from './RestScreen'
 
 /**
@@ -13,29 +14,57 @@ import { RestScreen } from './RestScreen'
  */
 
 const exerciseById = new Map(seedExercises.map((e) => [e.id, e]))
-const workout = createWorkout({
+const baseWorkout = createWorkout({
   id: 'w',
   programId: seedProgram.id,
   session: seedProgram.sessions[0],
   date: '2026-07-22',
   startedAt: '2026-07-22T09:00:00.000Z',
 })
-const position = { exerciseIndex: 0, setIndex: 1 }
+
+// 'chest-back' items, for reference:
+//  0 incline-dumbbell-press  ladder [12x12, 14x10, 15x8]  3 sets, rest 120s
+//  1 dumbbell-bench-press    ladder [10x12, 12x10, 15x8]  3 sets, rest 120s, teachingConcept "Independent control"
+//  2 single-arm-db-row       ladder, perSide                3 sets, rest 90s
+//  3 rear-delt-fly           rep-range 12-15, loaded        2 sets, teachingConcept "A fly, not a row"
+//  4 dead-bug                rep-range 10-10, bodyweight, perSide, 2 sets, no teachingConcept
+
+function set(overrides: Partial<LoggedSet> = {}): LoggedSet {
+  return {
+    setIndex: 0,
+    reps: 12,
+    weightKg: 12,
+    seconds: null,
+    completedAt: '2026-07-22T09:05:00.000Z',
+    ...overrides,
+  }
+}
+
+function withLoggedSet(workout: Workout, exerciseIndex: number, loggedSet: LoggedSet): Workout {
+  return {
+    ...workout,
+    exercises: workout.exercises.map((e, i) =>
+      i === exerciseIndex ? { ...e, sets: [...e.sets, loggedSet] } : e,
+    ),
+  }
+}
 
 afterEach(() => {
   vi.useRealTimers()
 })
 
-function renderRest() {
+function renderRest(overrides: Partial<React.ComponentProps<typeof RestScreen>> = {}) {
   return render(
     <RestScreen
       endsAt={Date.now() + 60_000}
       totalSeconds={60}
       exerciseChanged={false}
-      workout={workout}
-      position={position}
+      workout={baseWorkout}
+      position={{ exerciseIndex: 0, setIndex: 1 }}
       exerciseById={exerciseById}
+      completed={[]}
       onDone={() => {}}
+      {...overrides}
     />,
   )
 }
@@ -47,17 +76,7 @@ function ring() {
 describe('RestScreen final-seconds emphasis', () => {
   it('keeps the ring on the default accent with plenty of time left', () => {
     vi.useFakeTimers()
-    render(
-      <RestScreen
-        endsAt={Date.now() + 60_000}
-        totalSeconds={60}
-        exerciseChanged={false}
-        workout={workout}
-        position={position}
-        exerciseById={exerciseById}
-        onDone={() => {}}
-      />,
-    )
+    renderRest({ endsAt: Date.now() + 60_000, totalSeconds: 60 })
 
     expect(ring()?.getAttribute('class')).toContain('stroke-amber')
     expect(ring()?.getAttribute('class')).not.toContain('stroke-clay')
@@ -66,22 +85,23 @@ describe('RestScreen final-seconds emphasis', () => {
 
   it('emphasizes the ring in the final 3 seconds without touching the digit', () => {
     vi.useFakeTimers()
-    render(
-      <RestScreen
-        endsAt={Date.now() + 3_000}
-        totalSeconds={60}
-        exerciseChanged={false}
-        workout={workout}
-        position={position}
-        exerciseById={exerciseById}
-        onDone={() => {}}
-      />,
-    )
+    renderRest({ endsAt: Date.now() + 3_000, totalSeconds: 60 })
 
     expect(ring()?.getAttribute('class')).toContain('stroke-clay')
     // The digit itself carries no emphasis class — only the ring does.
     const digit = screen.getByText('0:03')
     expect(digit.className).not.toMatch(/clay|amber/)
+  })
+})
+
+describe('the rest timer is the md size, not the routine player\'s lg', () => {
+  it('renders 36px digits, not the 48px routine-player size', () => {
+    vi.useFakeTimers()
+    renderRest({ endsAt: Date.now() + 60_000, totalSeconds: 60 })
+
+    const digit = screen.getByText('1:00')
+    expect(digit.className).toContain('text-4xl')
+    expect(digit.className).not.toContain('text-5xl')
   })
 })
 
@@ -99,17 +119,173 @@ describe('the rest screen names itself with a heading', () => {
     await waitFor(() => expect(heading).toHaveFocus())
   })
 
-  it('keeps the next-up context as the heading\'s description, not its name', async () => {
+  it('keeps the identity+numbers card as the heading\'s description, not its name', async () => {
     renderRest()
 
     const heading = await screen.findByRole('heading', { name: 'Rest' })
     const describedBy = heading.getAttribute('aria-describedby') ?? ''
     const description = document.getElementById(describedBy)
     expect(description).not.toBeNull()
-    // The fixture's next exercise, resolved through the seed locale keys —
-    // the point is that the description carries the exercise and the set
-    // position, which is what the prohibited aria-label used to say.
     expect(description).toHaveTextContent('Incline dumbbell press')
-    expect(description).toHaveTextContent(/set \d of \d/)
+    expect(description).toHaveTextContent('14 kg')
+    // No aria-live anywhere in the described block — backlog A10's class of
+    // defect, on the screen that already learned it once.
+    expect(description?.querySelector('[aria-live]')).toBeNull()
+  })
+
+  it("excludes the coaching concept from the description, even expanded — mounting must not recite a 302-character paragraph", async () => {
+    // dumbbell-bench-press (index 1) carries a teachingConcept, so this is
+    // the case that would leak if the concept card were nested inside the
+    // described block instead of rendered as its sibling. Collapsed by
+    // default hides the body regardless of nesting, so this expands it
+    // first — the only way to actually exercise the exclusion.
+    renderRest({ exerciseChanged: true, position: { exerciseIndex: 1, setIndex: 0 } })
+    fireEvent.click(await screen.findByRole('button', { name: 'Independent control' }))
+    await screen.findByText(/Two dumbbells can drift apart/)
+
+    const heading = screen.getByRole('heading', { name: 'Rest' })
+    const describedBy = heading.getAttribute('aria-describedby') ?? ''
+    const description = document.getElementById(describedBy)
+    expect(description).not.toBeNull()
+    expect(description).toHaveTextContent('Dumbbell bench press')
+    // The concept's title is fine (it's the disclosure trigger's own text,
+    // outside the described block) — the *body* must never be reachable
+    // from here, mounted or not.
+    expect(description).not.toHaveTextContent('Two dumbbells can drift apart')
+  })
+})
+
+describe('next set, same exercise — the compact card', () => {
+  it('renders the rung as the hero number, with no illustration', async () => {
+    renderRest()
+
+    expect(await screen.findByText(/Next set/)).toBeInTheDocument()
+    expect(screen.getByText('Incline dumbbell press')).toBeInTheDocument()
+    expect(screen.getByText('14 kg × 10')).toBeInTheDocument()
+    // The next-up card renders no <img> when the same exercise continues —
+    // the identity cue is only needed for a movement the user isn't already
+    // mid-way through.
+    expect(document.querySelectorAll('img')).toHaveLength(0)
+  })
+
+  it('shows no delta when nothing has been logged this session', () => {
+    renderRest()
+    expect(screen.queryByText(/heavier than|lighter than/)).toBeNull()
+  })
+
+  it('shows the delta, directionally, against the set just logged', () => {
+    const workout = withLoggedSet(baseWorkout, 0, set({ setIndex: 0, weightKg: 12, reps: 12 }))
+    renderRest({ workout })
+
+    // Rung 2 is 14kg — 2kg heavier than the 12kg just logged.
+    expect(screen.getByText('↑ 2 kg heavier than the set you just did')).toBeInTheDocument()
+  })
+})
+
+describe('next exercise — the full card', () => {
+  it('renders identity, meta and the hero number, and no delta', async () => {
+    renderRest({ exerciseChanged: true, position: { exerciseIndex: 1, setIndex: 0 } })
+
+    expect(await screen.findByText('Next up')).toBeInTheDocument()
+    expect(screen.getByText('Dumbbell bench press')).toBeInTheDocument()
+    expect(screen.getByText('3 sets · rest 120s')).toBeInTheDocument()
+    expect(screen.getByText('10 kg × 12')).toBeInTheDocument()
+    expect(screen.queryByText(/heavier than|lighter than/)).toBeNull()
+    // alt="" and out of the tab order — the name already carries the
+    // identity, matching the set screen's illustration band.
+    const img = document.querySelector('img')
+    expect(img).not.toBeNull()
+    expect(img?.getAttribute('alt')).toBe('')
+  })
+
+  it('shows the each-side chip for a perSide prescription', async () => {
+    renderRest({ exerciseChanged: true, position: { exerciseIndex: 2, setIndex: 0 } })
+
+    expect(await screen.findByText('Single-arm dumbbell row')).toBeInTheDocument()
+    expect(screen.getByText(/each side/)).toBeInTheDocument()
+  })
+
+  it('renders reps alone, never "× 10" with nothing before it, for unloaded work', async () => {
+    renderRest({ exerciseChanged: true, position: { exerciseIndex: 4, setIndex: 0 } })
+
+    expect(await screen.findByText('Dead bug')).toBeInTheDocument()
+    expect(screen.getByText('10 reps')).toBeInTheDocument()
+    expect(screen.queryByText(/×/)).toBeNull()
+  })
+})
+
+describe('the concept disclosure', () => {
+  it('is collapsed by default and expands on click, wired by aria-expanded/aria-controls', async () => {
+    renderRest({ exerciseChanged: true, position: { exerciseIndex: 1, setIndex: 0 } })
+
+    const trigger = await screen.findByRole('button', { name: 'Independent control' })
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    const bodyId = trigger.getAttribute('aria-controls')
+    expect(bodyId).toBeTruthy()
+    expect(document.getElementById(bodyId ?? '')).toBeNull()
+
+    fireEvent.click(trigger)
+
+    expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    const body = document.getElementById(bodyId ?? '')
+    expect(body).not.toBeNull()
+    expect(body).toHaveTextContent('Two dumbbells can drift apart')
+  })
+
+  it('never promotes the concept title to a heading — A9', async () => {
+    renderRest({ exerciseChanged: true, position: { exerciseIndex: 1, setIndex: 0 } })
+
+    await screen.findByRole('button', { name: 'Independent control' })
+    expect(screen.queryByRole('heading', { name: 'Independent control' })).toBeNull()
+  })
+
+  it('falls back to the cue line when no concept is authored, with no disclosure', async () => {
+    renderRest({ exerciseChanged: true, position: { exerciseIndex: 4, setIndex: 0 } })
+
+    expect(await screen.findByText('Dead bug')).toBeInTheDocument()
+    expect(screen.getByText(/Lower back gently pressed into the floor/)).toBeInTheDocument()
+    // Only +30s and Skip remain — no disclosure trigger.
+    expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual(['+30s', 'Skip'])
+  })
+})
+
+describe('the last-set state', () => {
+  it('labels the final set, states what happens next, and shows no delta', async () => {
+    // dead-bug (index 4) is the last exercise, 2 sets — setIndex 1 is its last.
+    renderRest({
+      exerciseChanged: false,
+      position: { exerciseIndex: 4, setIndex: 1 },
+    })
+
+    expect(await screen.findByText(/Last set/)).toBeInTheDocument()
+    expect(screen.getByText('Then the session is done.')).toBeInTheDocument()
+    expect(screen.queryByText(/heavier than|lighter than/)).toBeNull()
+  })
+
+  it('takes priority over the next-exercise layout when both are true', async () => {
+    // A single-set-remaining final exercise reached by a swap would be both
+    // "new" and "last" at once — last-set must win, per the design spec.
+    renderRest({
+      exerciseChanged: true,
+      position: { exerciseIndex: 4, setIndex: 1 },
+    })
+
+    expect(await screen.findByText(/Last set/)).toBeInTheDocument()
+    expect(screen.queryByText('Next up')).toBeNull()
+  })
+})
+
+describe('touch targets and structure', () => {
+  it('keeps the rest controls at the 44px floor', () => {
+    renderRest()
+    const plusThirty = screen.getByRole('button', { name: '+30s' })
+    expect(plusThirty.className).toContain('min-h-11')
+  })
+
+  it('scopes the +30s and Skip buttons to their own row, unaffected by the card redesign', () => {
+    renderRest()
+    const row = screen.getByRole('button', { name: '+30s' }).parentElement
+    expect(row).not.toBeNull()
+    expect(within(row as HTMLElement).getByRole('button', { name: 'Skip' })).toBeInTheDocument()
   })
 })
