@@ -344,6 +344,30 @@ agent can see the other's brief.
 The tell that this went wrong is a proof that cannot be run rather than
 a proof that failed.
 
+**The working tree is not the only shared instrument.** The Playwright
+browser is shared too, and it collides the same way. (31 Jul: the lead
+drove the browser to build a status board while the dev was mid
+device-check; the dev stopped rather than clobber it, and lost its
+French measurement. The lead then did it again minutes later, having
+just written the incident up — knowing the rule is not what prevents
+this. Checking *before* reaching is.)
+
+What was then measured rather than assumed, so nobody re-derives it:
+
+- **`browser_resize` is per-page.** A second tab at 375px leaves the
+  first at 1680px. Two agents measuring different viewports do not
+  corrupt each other.
+- **Tab *selection* is one shared pointer.** `navigate`, `evaluate` and
+  `resize` all act on whichever tab is current, and neither agent can
+  see the other holding it. So a second tab shrinks the blast radius to
+  the selection itself — it does not remove it.
+- Therefore: **one agent owns the browser at a time**, and hands it back
+  explicitly. A wrong-tab result still looks like a result, which makes
+  this failure quieter than a file conflict, not louder.
+
+The general form: before using any shared instrument, ask who is holding
+it — not whether you are being careful with it.
+
 ## Task list and mailbox
 
 The task list (`~/.claude/tasks/`) and mailboxes
