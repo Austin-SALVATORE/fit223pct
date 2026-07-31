@@ -98,10 +98,13 @@ describe('undo last set', () => {
     await insertWorkout([40])
     renderWorkout()
 
-    // Set 2 is prefilled from the mistaken set 1 — correct, people keep the
-    // weight they just used.
+    // Set 2 is prefilled from its *own rung*, not from the mistaken set 1.
+    // This assertion inverted with the 31 Jul ruling: it used to expect 40,
+    // on the belief that people keep the weight they just used. That is true
+    // of rep-range work and false of a ladder, which ascends by design — the
+    // old behaviour meant the pyramid never climbed.
     await screen.findByText(/Set 2 of 3/)
-    expect(screen.getByLabelText('Weight')).toHaveTextContent('40')
+    expect(screen.getByLabelText('Weight')).not.toHaveTextContent('40')
 
     await userEvent.click(screen.getByRole('button', { name: /^Undo last set/ }))
 

@@ -48,16 +48,42 @@ function set(overrides: Partial<LoggedSet> = {}): LoggedSet {
   }
 }
 
-describe('the weight you just lifted wins over the prescription', () => {
-  it('carries the session weight rather than the ladder rung', () => {
-    // Rung 1 of the ladder is 20 kg, but the user just did 22.5 kg. The set
-    // screen offers 22.5, so the rest screen must say 22.5 — this is the
-    // disagreement the whole function exists to prevent.
-    const target = nextSetTarget(ladder, [set({ weightKg: 22.5, reps: 10 })], [], 0, 'steady')
+describe('a ladder always offers its prescribed rung', () => {
+  /**
+   * **This inverts an earlier assertion, and the inversion is the fix.** The
+   * old test asserted the carried weight beat the rung — captured accurately
+   * from code that was already wrong. A ladder ascends by design, so letting
+   * the last logged set win meant the pyramid never climbed and the owner had
+   * been raising every load by hand since M8.
+   *
+   * Owner ruling: the app presents the coach's prescription and never
+   * silently rewrites it from an earlier deviation.
+   */
+  it('offers rung N for set N even after a deviating set', () => {
+    // The user could only manage 12.5 where the rung asked more. Set 3 still
+    // offers its own rung — not 12.5, and not a step from it.
+    const target = nextSetTarget(ladder, [set({ weightKg: 12.5, reps: 10 })], [], 2, 'steady')
 
+    expect(target.weightKg).toBe(25)
+    expect(target.reps).toBe(8)
+    expect(target.source).toBe('rung')
+  })
+
+  it('never reports carried for a ladder, whatever was logged', () => {
+    // A consumer branching on this must not read 'carried' as "same exercise,
+    // later set" — for a ladder there is no such state.
+    for (const setIndex of [0, 1, 2]) {
+      const target = nextSetTarget(ladder, [set({ weightKg: 99, reps: 99 })], [], setIndex, 'steady')
+      expect(target.source, `set ${setIndex + 1}`).toBe('rung')
+    }
+  })
+
+  it('applies the rule to reps as well as weight', () => {
+    // Effort carried too, with the same defect: set 2 offered set 1's reps.
+    const target = nextSetTarget(ladder, [set({ weightKg: 20, reps: 12 })], [], 1, 'steady')
+
+    expect(target.reps).toBe(10)
     expect(target.weightKg).toBe(22.5)
-    expect(target.source).toBe('carried')
-    expect(ladder.setPlan[0].weightKg).toBe(20)
   })
 
   it('falls back to the rung when nothing has been logged this session', () => {
@@ -66,6 +92,18 @@ describe('the weight you just lifted wins over the prescription', () => {
     expect(target.weightKg).toBe(22.5)
     expect(target.reps).toBe(10)
     expect(target.source).toBe('rung')
+  })
+
+  it('keeps carrying for rep-range work, where the rule is still correct', () => {
+    // **The rule is narrowed, not deleted.** Rep-range prescriptions apply the
+    // same weight across every set, so continuing at the weight just used is
+    // right there — and a future reader tightening the ladder fix must not
+    // take this with it.
+    const target = nextSetTarget(repRange, [set({ weightKg: 18, reps: 10 })], [], 1, 'steady')
+
+    expect(target.weightKg).toBe(18)
+    expect(target.reps).toBe(10)
+    expect(target.source).toBe('carried')
   })
 
   it('falls back to the suggestion for a rep-range prescription', () => {

@@ -15,6 +15,24 @@ import type { ExercisePrescription, LoggedSet } from './types'
  * that is absent, and the redesign that prompted this exists to make that
  * number prominent.
  *
+ * **The prescription is not rewritten by performance within a session.** The
+ * owner's ruling, 31 Jul, and the sentence to meet before acting on any
+ * instinct to follow the user's actual load:
+ *
+ * > The workout player should always present the coach's prescription. The
+ * > user is free to override it, but the app should not silently rewrite the
+ * > program based on an earlier deviation. This keeps a clear separation
+ * > between prescription — what the coach intended — and performance — what
+ * > the user actually completed. **The progression engine should analyse the
+ * > completed workout after the session, not modify the prescription during
+ * > it.**
+ *
+ * So a ladder's set N offers rung N, always. If the rung asks 14 kg and the
+ * user only has 12.5 and logs that, set 3 still offers its prescribed 15 —
+ * not 13.5 carrying the deviation forward. Rep-range work keeps carrying,
+ * because there the prescription genuinely *is* constant across sets and the
+ * carry is still correct: the rule is narrowed, not deleted.
+ *
  * Pure, per `.claude/rules/architecture.md`: no React, no i18next. It returns
  * numbers and discriminants — `source`, `progressionType` — and never prose.
  * Wording is the UI's job, from those discriminants.
@@ -32,6 +50,11 @@ export interface NextSetTarget {
    *  - `carried`    — the set just logged in this session
    *  - `rung`       — this set's rung of the ladder
    *  - `suggestion` — the double-progression engine
+   *
+   * **A ladder is never `'carried'`** — every set of one reports `'rung'`,
+   * including set 3 after a deviating set 2. A consumer branching on this to
+   * word a caption must not assume `'carried'` means "same exercise, later
+   * set"; it means "rep-range work continuing at the weight you just used".
    */
   source: 'carried' | 'rung' | 'suggestion'
   /**
@@ -101,22 +124,39 @@ export function nextSetTarget(
     ? (rung?.reps ?? 0)
     : (suggestion?.targetReps ?? 0)
 
-  // Carrying is per-field on the weight and whole on the effort, matching what
-  // the set screen already did: `lastSet?.weightKg ?? prescribed` leaves a
-  // bodyweight set (weightKg null) falling through to the prescription, while
-  // the effort carries whenever any set exists.
-  const weightKg = carried?.weightKg ?? prescribedWeight
-  const effort = carried ? ((isSeconds ? carried.seconds : carried.reps) ?? 0) : prescribedEffort
+  /*
+    **Carrying applies to rep-range work only.** A ladder ascends by design —
+    12x12 -> 14x10 -> 15x8 — so letting the last logged set win meant the
+    pyramid never climbed: set 2 offered set 1's weight, and set 3 offered set
+    2's. The owner had been raising every load by hand since M8 without
+    knowing the app was meant to.
 
-  const source: NextSetTarget['source'] = carried
-    ? 'carried'
-    : prescription.setPlan
-      ? 'rung'
+    That was a leftover rather than a decision. When the carry rule was
+    written every loaded lift used double progression, where the same weight
+    genuinely does apply across all sets, and carrying was correct. M8 added
+    per-set ladders and nobody revisited it. Weight *and* effort are affected:
+    both used to carry.
+  */
+  const isLadder = prescription.setPlan !== undefined
+  const carriedEffort = carried ? ((isSeconds ? carried.seconds : carried.reps) ?? 0) : null
+  const weightKg = isLadder ? prescribedWeight : (carried?.weightKg ?? prescribedWeight)
+  const effort = isLadder ? prescribedEffort : (carriedEffort ?? prescribedEffort)
+
+  const source: NextSetTarget['source'] = isLadder
+    ? 'rung'
+    : carried
+      ? 'carried'
       : 'suggestion'
 
-  const previousEffort = carried ? ((isSeconds ? carried.seconds : carried.reps) ?? 0) : null
+  /*
+    Against the previously *logged* set, not the previous rung — deliberately.
+    After logging 12.5 the jump to a prescribed 15 is a real +2.5 on the
+    dumbbell, and that is the change the user is about to make. A delta
+    against the prescription would report +1 and be a lie about the physical
+    load.
+  */
   const weightDelta = (weightKg ?? 0) - (carried?.weightKg ?? 0)
-  const repsDelta = effort - (previousEffort ?? 0)
+  const repsDelta = effort - (carriedEffort ?? 0)
   const delta =
     carried && (weightDelta !== 0 || repsDelta !== 0)
       ? { weightKg: weightDelta, reps: repsDelta }

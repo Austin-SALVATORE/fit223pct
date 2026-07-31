@@ -213,10 +213,11 @@ describe('the offered numbers come from one place', () => {
     const workoutExercise = workout.exercises[0]
     const target = nextSetTarget(workoutExercise.prescription, workoutExercise.sets, [], 1)
 
-    // The logged set was 14 kg × 10, while the prescription starts elsewhere —
-    // so this passes only if the screen carried the session weight.
-    expect(target.source).toBe('carried')
-    expect(target.weightKg).toBe(14)
+    // Goblet squat is a ladder, so every set reports its own rung — the
+    // logged 14 kg does not carry forward (31 Jul ruling). What this test
+    // asserts is unchanged: the screen renders whatever the domain resolves,
+    // rather than a parallel calculation of its own.
+    expect(target.source).toBe('rung')
     expect(screen.getByLabelText('Weight')).toHaveTextContent(String(target.weightKg))
     expect(screen.getByLabelText('Reps')).toHaveTextContent(String(target.reps))
   })
