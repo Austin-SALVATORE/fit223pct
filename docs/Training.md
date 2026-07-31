@@ -47,10 +47,25 @@ ladders, while `rear-delt-fly` remains a rep range in Chest & Back. Same
 id, different model, different session.
 
 **Consequence for readiness easing:** a ladder is eased by dropping its
-top rung, floored at two rungs; a rep range is eased by cutting a set. A
-two-rung ladder is therefore already at the floor and cannot be eased at
-all. The three Shoulders & Arms accessories sit exactly there, so an
-easier day now trims only the shoulder press.
+top rung, floored at two rungs (`MIN_LADDER_RUNGS`, `domain/adjustments.ts`);
+a rep range is eased by cutting a set. A two-rung ladder is therefore
+already at the floor and cannot be eased at all. The three Shoulders &
+Arms accessories sit exactly there, so an easier day now trims only the
+shoulder press.
+
+> **Coach ruling, 31 Jul — do not "fix" this in the program.** The two-rung
+> ladders stay as written. A third rung must **not** be added to restore
+> easy-day trimming: the prescription states the intended stimulus for a
+> normal training day, and *"the baseline program should not be authored
+> around the limitations of the current easing rule."*
+>
+> If low-readiness sessions prove too demanding, **the readiness model is
+> what changes** — easing a two-rung ladder by load or by reps rather than
+> by removing a rung. That work is open and unowned; until it exists, the
+> reduced easing is accepted behaviour, not a defect to route around.
+>
+> This is the standing shape of the boundary: program content answers to
+> the coach, and the engine adapts to it — never the reverse.
 
 An 'easier' readiness day defers load increases (rep-range) and drops the
 top set of each ladder — filling the rep range, or the remaining lower sets
