@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import { Stepper } from '@/ui/Stepper'
 import { suggestLadderProgression, suggestProgression } from '@/domain/progression'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
+import { nextSetTarget } from '@/domain/nextSetTarget'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { usePrescriptionNote } from '@/i18n/seedProgram'
@@ -59,17 +60,24 @@ export function SetScreen({
       : { key: 'domain:progression.start' },
   )
 
-  // Within a session, people keep the weight they just used.
-  const lastSetThisSession = workoutExercise.sets.at(-1)
-  const defaultWeight =
-    lastSetThisSession?.weightKg ??
-    (prescription.setPlan ? (ladderRung?.weightKg ?? null) : (suggestion?.weightKg ?? prescription.startWeightKg))
+  /**
+   * **Resolved in the domain, not here.** The rest screen renders the same
+   * call, so the two cannot disagree — a rest screen that recomputed from the
+   * prescription would show the ladder rung while this screen offers the
+   * weight you just lifted, and the user would load the wrong one. See
+   * `nextSetTarget`.
+   */
+  const target = nextSetTarget(
+    prescription,
+    workoutExercise.sets,
+    previousSets,
+    setIndex,
+    readinessTier,
+  )
 
-  const [weightKg, setWeightKg] = useState(defaultWeight)
+  const [weightKg, setWeightKg] = useState(target.weightKg)
   const [effort, setEffort] = useState(
-    lastSetThisSession
-      ? effortValue(lastSetThisSession, prescription.mode)
-      : (prescription.setPlan ? (ladderRung?.reps ?? 0) : (suggestion?.targetReps ?? 0)),
+    (prescription.mode === 'seconds' ? target.seconds : target.reps) ?? 0,
   )
   const [swapOpen, setSwapOpen] = useState(false)
 

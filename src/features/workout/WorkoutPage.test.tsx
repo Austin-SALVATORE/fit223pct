@@ -6,6 +6,8 @@ import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { seedProgram } from '@/data/seed/program'
 import { createWorkout, logSet } from '@/domain/workout'
+import { nextSetTarget } from '@/domain/nextSetTarget'
+import { workoutRepo } from '@/data/repositories'
 import { ExercisePage } from '@/features/library/ExercisePage'
 import en from '@/locales/en/workout.json'
 import fr from '@/locales/fr/workout.json'
@@ -189,5 +191,33 @@ describe('the pause label and its accessible name never disagree', () => {
     for (const bundle of [en, fr, zhCN]) {
       expect(bundle.pause).not.toMatch(/leave|quitter|退出|close|fermer|关闭/i)
     }
+  })
+})
+
+describe('the offered numbers come from one place', () => {
+  /**
+   * **The correctness trap.** The set screen pre-fills the weight you just
+   * lifted, not the prescription's. A rest screen that recomputed from the
+   * prescription would show the rung instead, so the user reads one number,
+   * loads it, and is offered another. Both screens now render from
+   * `nextSetTarget`; this asserts the set screen really does, rather than
+   * having a second copy of the same logic that happens to agree today.
+   */
+  it('renders exactly what nextSetTarget resolves, not a parallel calculation', async () => {
+    await insertActiveWorkoutWithOneLoggedSet()
+    renderWorkout()
+    await screen.findByText(/Set 2 of 3/)
+
+    const workout = await workoutRepo.getActive()
+    if (!workout) throw new Error('expected an active workout')
+    const workoutExercise = workout.exercises[0]
+    const target = nextSetTarget(workoutExercise.prescription, workoutExercise.sets, [], 1)
+
+    // The logged set was 14 kg × 10, while the prescription starts elsewhere —
+    // so this passes only if the screen carried the session weight.
+    expect(target.source).toBe('carried')
+    expect(target.weightKg).toBe(14)
+    expect(screen.getByLabelText('Weight')).toHaveTextContent(String(target.weightKg))
+    expect(screen.getByLabelText('Reps')).toHaveTextContent(String(target.reps))
   })
 })
