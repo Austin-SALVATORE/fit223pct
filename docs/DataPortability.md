@@ -66,10 +66,13 @@ persistent datasource; imports reference it, never replace it.
 
 ## Sequencing note
 
-Phase 2 (Fitness Park) should be **delivered as the first imported
-program file**, not as more seed code — it dogfoods this pipeline the
-week it's built and proves the format on real content. Phase 1 stays
-seeded (it's live mid-phase; migrating it buys nothing).
+**Superseded 6 Aug.** This note originally planned Phase 2 (Fitness Park)
+as the first imported program file, to dogfood this pipeline on real
+content. Fitness Park was retired before it shipped — the coach's
+Mesocycle 2 is seeded directly per spec §3 ("written directly into the
+app"), not imported. The import pipeline's dogfooding on a real,
+owner-facing program is still pending; Phase 1 stays seeded regardless
+(it's live mid-phase; migrating it buys nothing).
 
 ## Record: the "every two days" question (19 Jul)
 

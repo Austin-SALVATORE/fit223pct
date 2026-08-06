@@ -32,7 +32,8 @@ and his training — it already knows what today looks like.
 - Austin, 180 cm, 92–93 kg, goal ~23% body fat while preserving muscle.
 - Plays tennis and swims; uses Apple Fitness+.
 - Phase 1 (21 Jul – 9 Aug): home gym — barbell 0–30 kg, dumbbells (1×20 kg or 2×10 kg),
-  adjustable bench, bands. Phase 2 (10 Aug →): Fitness Park gym.
+  adjustable bench, bands. Phase 2 (10 Aug →, Mesocycle 2): stays home —
+  the earlier Fitness Park plan was retired before it shipped.
 
 ## Success metrics
 

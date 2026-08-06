@@ -1,6 +1,7 @@
 // Runs under the suite's shared jsdom environment (src/test/setup.ts assumes
 // it) — this test only needs node's fs through ts.sys, which is available
 // either way.
+/// <reference types="node" />
 import path from 'node:path'
 import ts from 'typescript'
 import { describe, expect, it } from 'vitest'

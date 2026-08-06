@@ -47,6 +47,13 @@ longer Monday-only. See docs/Progress.md.
 PWA install/offline hardening, motion polish pass, accessibility audit,
 Fitness Park (gym equipment) program for Phase 2, program transition UX.
 
+**Retracted 6 Aug:** the Fitness Park program never shipped to the owner
+and was retired before its start date — the coach's Mesocycle 2 continues
+Phase 2 at the *home* tier instead (`docs/design/Mesocycle2Implementation.md`
+§9). Its markdown file and both test files that depended on it were
+deleted the same day. The transition UX and Plan page below stay; only
+the gym content did not.
+
 Added from field use (19 Jul): the **Plan page** (docs/Plan.md) — browse
 the whole program: any date's session (past = facts, future = labeled
 projections; rotation follows completed count, so projections must say
@@ -60,8 +67,10 @@ portability** (docs/DataPortability.md) — program import from JSON
 validation against the app-owned Library, upsert-with-consent, history
 never touched; program export (round-trip) and full data export
 (programs + workouts + check-ins + settings) as the local-first backup
-story. Phase 2 ships as the first *imported* program file, dogfooding
-the pipeline on real content.
+story. The plan then was for Phase 2 to ship as the first *imported*
+program file, dogfooding the pipeline on real content — retracted with
+the Fitness Park program above; Mesocycle 2 is seeded directly per the
+coach's spec §3, so the import pipeline's dogfooding is still pending.
 
 Pre-flight (real-device pass ahead of Phase 1's 21 Jul start): offline font
 caching, iOS home-screen install meta tags, safe-area padding so the status

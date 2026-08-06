@@ -191,10 +191,13 @@ export const seedExercises: Exercise[] = [
     substitutionIds: ['dead-bug'],
     isUnilateral: true,
   },
-  // Phase 2 (Fitness Park) additions — the gym unlocks movements home
-  // equipment couldn't: a rack for real barbell squats, a hip thrust
-  // station, and cable machines for vertical pulling. Each keeps its
-  // home-equipment counterpart as a substitution for a busy machine.
+  // Gym-equipment additions, from the retired Fitness Park plan (see
+  // docs/design/Mesocycle2Implementation.md §9) — a rack for real barbell
+  // squats, a hip thrust station, and cable machines for vertical pulling.
+  // Kept in the Library as legitimate machine/barbell exercises and
+  // substitution targets even though the gym phase that introduced them
+  // did not ship; each keeps its home-equipment counterpart as a
+  // substitution for a busy machine.
   {
     id: 'barbell-squat',
     muscles: ['quads', 'glutes', 'core'],

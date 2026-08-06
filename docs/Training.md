@@ -91,9 +91,11 @@ Scheduling is weekday-pinned, not A/B-rotated (`Program.schedulingMode`) —
 every training weekday always offers the same session identity, so a
 missed day never shifts what a later day offers.
 
-## Phase 2 (10 Aug →, Fitness Park)
+## Phase 2 (10 Aug →, Mesocycle 2 — Home Progressive)
 
-Program to be designed near the date; same principles, machine/heavier-load
-progressions unlock once barbell and cable equipment are available again.
-Architecture treats programs as data, so this is a content change, not a
-code change.
+The Fitness Park (gym-equipment) plan this section once described was
+retired before it shipped: the coach's Mesocycle 2 continues at the same
+15 kg-dumbbell home tier as Phase 1, rather than moving to gym machines
+(`docs/design/Mesocycle2Implementation.md` §9, 6 Aug). Architecture still
+treats programs as data, so this remains a content change, not a code
+change — only the content itself moved.
