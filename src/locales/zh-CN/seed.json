@@ -525,6 +525,23 @@
           }
         }
       }
+    },
+    "mesocycle-2-build": {
+      "name": "Mesocycle 2 — Build",
+      "session": {
+        "mesocycle2-chest-back": {
+          "name": "Chest & Back",
+          "focus": "Chest and Back Emphasis"
+        },
+        "mesocycle2-legs-core": {
+          "name": "Legs & Core",
+          "focus": "Legs and Core Emphasis"
+        },
+        "mesocycle2-shoulders-arms": {
+          "name": "Shoulders & Arms",
+          "focus": "Shoulders and Arms Emphasis"
+        }
+      }
     }
   },
   "routine": {

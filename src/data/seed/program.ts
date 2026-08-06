@@ -311,3 +311,314 @@ export const seedProgram: Program = {
     },
   },
 }
+
+/**
+ * Mesocycle 2 — Build, 10 Aug to 13 Sep 2026
+ * (Mesocycle-2-Home-Progressive-Coach-Spec-v2.7.md §3, §6-§8, §10).
+ * Weeks 1-5 only — Week 6 (Deload) is a separate, later program per §3's
+ * "Calendar and delivery ruling" and is deferred
+ * (docs/design/Mesocycle2Implementation.md §11.2), not seeded here.
+ *
+ * These are the coach's own Week 1 opening prescriptions, transcribed
+ * directly per §10 "Opening-weight handoff": "Fit223 must seed the exact
+ * Week 1 Pyramid levels from Sections 6-8; it must not infer them from
+ * workout history at runtime." Every subsequent week is computed by the
+ * engine (suggestLadderProgression), the same as phase-1-home — this
+ * program does not encode weeks 2-5 as separate records.
+ *
+ * DUMBBELL_MAX_KG/DUMBBELL_STEP_KG reused unchanged from Phase 1, on the
+ * owner's explicit instruction: §4 "Available-load steps" forbids
+ * assuming a 2 kg/15 kg grid until the athlete's real dumbbell settings
+ * are confirmed, which makes these two constants wrong in a now-
+ * documented way — but building the real settings list or changing the
+ * progression arithmetic is architect work, dated after Monday, not
+ * this commit's. Seeding the prescribed loads as written is what §4
+ * explicitly still permits.
+ *
+ * Role (main/accessory) follows §4 "Prescription roles" exactly: the
+ * five named primaries are ladder()'s default 'main'; every other
+ * movement across Sessions A-C, including Overhead Triceps Extension,
+ * is `role: 'accessory'`.
+ *
+ * Bodyweight movements with a coach-named per-level variation
+ * (hamstring walkout, dead bug, push-up, single-leg hip thrust, side
+ * plank) are seeded as null-weight ladders carrying `variantKey` per
+ * rung — item 3/4's infrastructure exists specifically for this
+ * pattern, not yet used by any prescription until now. A ladder whose
+ * every rung is null-weight returns `load-not-the-lever` once complete
+ * (never a false `at-equipment-max`), and does not report a load
+ * increase — the interim the coach names for movements at a variation
+ * ceiling (§10 "Load-ceiling progression") is therefore already the
+ * shipped behaviour for these six, not something this commit adds.
+ *
+ * Session durations (50-60 min / 50-60 min / 45-55 min) and Session A's
+ * ~30° bench angle have no field on Program or SessionTemplate — noted
+ * here rather than invented into the schema, per the owner's ruling.
+ * Rest values given as a range in the spec ("45-60 sec", "after both
+ * sides") are recorded in each prescription's own `note`, since
+ * `restSeconds` is a single number.
+ */
+export const mesocycle2Build: Program = {
+  id: 'mesocycle-2-build',
+  name: 'Mesocycle 2 — Build',
+  origin: 'seed',
+  phase: 2,
+  startDate: '2026-08-10',
+  endDate: '2026-09-13',
+  trainingWeekdays: [1, 3, 5],
+  schedulingMode: 'weekday-pinned',
+  weekdaySessions: { 1: 'mesocycle2-chest-back', 3: 'mesocycle2-legs-core', 5: 'mesocycle2-shoulders-arms' },
+  // Inert in weekday-pinned mode, kept internally consistent — see
+  // seedProgram's identical convention above.
+  rotation: ['mesocycle2-chest-back', 'mesocycle2-legs-core', 'mesocycle2-shoulders-arms'],
+  sessions: [
+    // Session A - Chest and Back Emphasis. Target 50-60 min; bench angle
+    // ~30° for incline pressing (spec §6, no schema field for either).
+    {
+      id: 'mesocycle2-chest-back',
+      name: 'Chest & Back',
+      focus: 'Chest and Back Emphasis',
+      items: [
+        ladder(
+          'incline-dumbbell-press',
+          [
+            { weightKg: 10, reps: 12 },
+            { weightKg: 12, reps: 10 },
+            { weightKg: 14, reps: 8 },
+            { weightKg: 15, reps: 6 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+        ),
+        ladder(
+          'single-arm-db-row',
+          [
+            { weightKg: 10, reps: 12 },
+            { weightKg: 12, reps: 10 },
+            { weightKg: 14, reps: 8 },
+            { weightKg: 15, reps: 6 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { perSide: true, restSeconds: 90, note: 'Rest after both sides' },
+        ),
+        ladder(
+          'dumbbell-fly',
+          [
+            { weightKg: 4, reps: 15 },
+            { weightKg: 6, reps: 12 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 75, role: 'accessory' },
+        ),
+        ladder(
+          'chest-supported-row',
+          [
+            { weightKg: 10, reps: 15 },
+            { weightKg: 12, reps: 12 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 90, role: 'accessory' },
+        ),
+        ladder(
+          'goblet-squat',
+          [
+            { weightKg: 8, reps: 20, variantKey: 'normal' },
+            { weightKg: 10, reps: 15, variantKey: 'slow' },
+            { weightKg: 12, reps: 12, variantKey: 'slow-pause' },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 90, role: 'accessory', note: 'Progress tempo first, then weight' },
+        ),
+        ladder(
+          'dumbbell-lateral-raise',
+          [
+            { weightKg: 6, reps: 15 },
+            { weightKg: 8, reps: 12 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 60, role: 'accessory' },
+        ),
+      ],
+    },
+    // Session B - Legs and Core Emphasis. Target 50-60 min (spec §7).
+    {
+      id: 'mesocycle2-legs-core',
+      name: 'Legs & Core',
+      focus: 'Legs and Core Emphasis',
+      items: [
+        ladder(
+          'bulgarian-split-squat',
+          [
+            { weightKg: 8, reps: 12 },
+            { weightKg: 10, reps: 10 },
+            { weightKg: 12, reps: 8 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { perSide: true, restSeconds: 120, note: 'Rest after both sides' },
+        ),
+        ladder(
+          'dumbbell-rdl',
+          [
+            { weightKg: 10, reps: 12 },
+            { weightKg: 12, reps: 10 },
+            { weightKg: 14, reps: 8 },
+            { weightKg: 15, reps: 6 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+        ),
+        ladder(
+          'hamstring-walkout',
+          [
+            { weightKg: null, reps: 12, variantKey: 'normal' },
+            { weightKg: null, reps: 10, variantKey: 'slow' },
+          ],
+          null,
+          null,
+          { restSeconds: 75, role: 'accessory' },
+        ),
+        ladder(
+          'standing-calf-raise',
+          [
+            { weightKg: 8, reps: 20 },
+            { weightKg: 10, reps: 15 },
+            { weightKg: 12, reps: 12 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          {
+            restSeconds: 60,
+            role: 'accessory',
+            note: 'Use load-ceiling progression when blocked (deferred — not yet implemented)',
+          },
+        ),
+        ladder(
+          'dead-bug',
+          [
+            { weightKg: null, reps: 10, variantKey: 'normal' },
+            { weightKg: null, reps: 8, variantKey: 'longer-reach' },
+            { weightKg: null, reps: 6, variantKey: 'reach-pause' },
+          ],
+          null,
+          null,
+          { perSide: true, restSeconds: 60, role: 'accessory', note: 'Rest 45-60 sec' },
+        ),
+        ladder(
+          'dumbbell-pullover',
+          [
+            { weightKg: 8, reps: 15 },
+            { weightKg: 10, reps: 12 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 75, role: 'accessory' },
+        ),
+        ladder(
+          'push-up',
+          [
+            { weightKg: null, reps: 15, variantKey: 'normal' },
+            { weightKg: null, reps: 12, variantKey: 'with-pause' },
+          ],
+          null,
+          null,
+          {
+            restSeconds: 90,
+            role: 'accessory',
+            note: 'After both levels, progress to the separate harder-leverage variation',
+          },
+        ),
+      ],
+    },
+    // Session C - Shoulders and Arms Emphasis. Target 45-55 min (spec §8).
+    {
+      id: 'mesocycle2-shoulders-arms',
+      name: 'Shoulders & Arms',
+      focus: 'Shoulders and Arms Emphasis',
+      items: [
+        ladder(
+          'dumbbell-shoulder-press',
+          [
+            { weightKg: 6, reps: 12 },
+            { weightKg: 8, reps: 10 },
+            { weightKg: 10, reps: 8 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+        ),
+        // Deliberately a different Pyramid from Session A's dumbbell-lateral-raise
+        // — spec §10: "Monday and Friday lateral raises deliberately begin with
+        // different Pyramids." Never deduplicate these two.
+        ladder(
+          'dumbbell-lateral-raise',
+          [
+            { weightKg: 4, reps: 15 },
+            { weightKg: 6, reps: 12 },
+            { weightKg: 8, reps: 10 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 60, role: 'accessory' },
+        ),
+        ladder(
+          'rear-delt-fly',
+          [
+            { weightKg: 4, reps: 15 },
+            { weightKg: 6, reps: 12 },
+            { weightKg: 8, reps: 10 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 60, role: 'accessory' },
+        ),
+        ladder(
+          'dumbbell-curl',
+          [
+            { weightKg: 8, reps: 12 },
+            { weightKg: 10, reps: 10 },
+            { weightKg: 12, reps: 8 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 75, role: 'accessory' },
+        ),
+        ladder(
+          'overhead-triceps-extension',
+          [
+            { weightKg: 10, reps: 12 },
+            { weightKg: 12, reps: 10 },
+            { weightKg: 14, reps: 8 },
+          ],
+          DUMBBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 75, role: 'accessory' },
+        ),
+        ladder(
+          'single-leg-hip-thrust',
+          [
+            { weightKg: null, reps: 15, variantKey: 'normal' },
+            { weightKg: null, reps: 12, variantKey: 'with-pause' },
+          ],
+          null,
+          null,
+          { perSide: true, restSeconds: 75, role: 'accessory' },
+        ),
+        ladder(
+          'side-plank',
+          [
+            { weightKg: null, reps: 40, variantKey: 'normal' },
+            { weightKg: null, reps: 30, variantKey: 'harder-leverage' },
+          ],
+          null,
+          null,
+          { mode: 'seconds', perSide: true, restSeconds: 60, role: 'accessory', note: 'Rest 45-60 sec' },
+        ),
+      ],
+    },
+  ],
+}

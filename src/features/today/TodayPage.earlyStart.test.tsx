@@ -152,7 +152,12 @@ describe('Early start on unscheduled days', () => {
   })
 
   it('offers no start of any kind once the phase has ended', async () => {
-    vi.setSystemTime(new Date(2026, 7, 11, 9, 0, 0)) // 11 Aug — after endDate, Phase 2 not authored yet
+    // 14 Sep — the day after mesocycle-2-build's endDate (13 Sep). Mesocycle
+    // 2 Deload (14-20 Sep) is deliberately not seeded yet
+    // (docs/design/Mesocycle2Implementation.md §11.2), so this date still
+    // has no active or upcoming program — 11 Aug no longer works for this
+    // assertion now that mesocycle-2-build covers it.
+    vi.setSystemTime(new Date(2026, 8, 14, 9, 0, 0))
     renderApp()
 
     // getActive falls back to the ended program (not undefined), so the
