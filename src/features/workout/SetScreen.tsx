@@ -381,6 +381,19 @@ function TargetCaption({
           {t('setScreen.atMax')}
         </span>
       )}
+      {/*
+        A different pill for a different reason not to advance — never both
+        at once, the engine reports one or the other. A null-weight ladder
+        (bodyweight) was never limited by load, so the MAX pill above would
+        assert an equipment ceiling that doesn't exist for this movement.
+        §10's manual bodyweight model (range, then tempo, then pause, then
+        leverage, then load) is what the athlete progresses through instead.
+      */}
+      {target.progressionType === 'load-not-the-lever' && (
+        <span className="rounded-full border border-border px-2 py-0.5 text-xs font-semibold text-ink-secondary">
+          {t('setScreen.loadNotTheLever')}
+        </span>
+      )}
       {target.progressionType === 'increase-load' && target.weightKg !== null && (
         <span className="text-amber">
           {t('setScreen.deltaHeavier', { delta: formatDelta(prescription) })}

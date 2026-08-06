@@ -24,7 +24,8 @@
     "consolidateEasier": "Tu as mérité plus de charge, mais pas aujourd'hui — même charge, garde ce saut pour un jour plus frais.",
     "addTechnique": "La charge est au maximum pour cette configuration — progresse avec un tempo excentrique plus lent, une pause, ou plus d'amplitude.",
     "increaseLoad": "Chaque série a atteint le haut de l'amplitude — il est temps d'augmenter la charge.",
-    "atEquipmentMax": "Chaque palier est au maximum pour cette configuration — maintiens l'échelle et maîtrise les répétitions."
+    "atEquipmentMax": "Chaque palier est au maximum pour cette configuration — maintiens l'échelle et maîtrise les répétitions.",
+    "loadNotTheLever": "Cet exercice ne progresse pas par la charge — avance par l'amplitude, le tempo ou le levier."
   },
   "highlight": {
     "first": "Première fois",

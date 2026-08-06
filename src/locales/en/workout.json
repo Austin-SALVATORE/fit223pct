@@ -68,7 +68,8 @@
     "targetRepRange": "Target · {{min}}–{{max}} reps",
     "targetSecondsRange": "Target · {{min}}–{{max}} s",
     "deltaHeavier": "↑ +{{delta}} kg",
-    "atMax": "MAX"
+    "atMax": "MAX",
+    "loadNotTheLever": "TECHNIQUE"
   },
   "swapSheet": {
     "closeAriaLabel": "Close",

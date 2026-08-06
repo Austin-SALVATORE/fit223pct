@@ -176,4 +176,76 @@ describe('SetScreen ladder rendering', () => {
       screen.queryByText('Every rung is maxed for this setup — hold the ladder and own the reps.'),
     ).toBeNull()
   })
+
+  /**
+   * docs/design/Mesocycle2Implementation.md §6/§12.4. A null-weight ladder
+   * (bodyweight) was never limited by load in the first place, so it must
+   * get its own caption rather than the MAX pill above — the MAX pill
+   * asserts an equipment ceiling that doesn't exist for a push-up. This is
+   * the both-directions half of the previous test: without it, a caption
+   * that fired for *both* states would pass while checking nothing.
+   */
+  it('shows load-not-the-lever messaging, never MAX, for a bodyweight ladder with nothing left to add load to', async () => {
+    // 'push-up' isn't in the Library yet (Mesocycle 2's Build program,
+    // not this batch) — goblet-squat's own id is reused here purely as a
+    // resolvable Library entry; the prescription's null weights are what
+    // simulates bodyweight work, not the exercise identity itself.
+    const bodyweightLadder: LadderPrescription = {
+      exerciseId: 'goblet-squat',
+      sets: 2,
+      mode: 'reps',
+      restSeconds: 90,
+      perSide: false,
+      setPlan: [
+        { weightKg: null, reps: 12 },
+        { weightKg: null, reps: 10 },
+      ],
+      maxWeightKg: null,
+      weightStepKg: null,
+    }
+    const bodyweightSession: SessionTemplate = {
+      id: 'bodyweight-test',
+      name: 'Bodyweight session',
+      focus: 'Push',
+      items: [bodyweightLadder],
+    }
+
+    const priorCompleted = completeWorkout(
+      [0, 1].reduce(
+        (w, i) =>
+          logSet(w, 0, {
+            weightKg: null,
+            reps: bodyweightLadder.setPlan[i].reps,
+            seconds: null,
+            completedAt: '2026-07-20T09:05:00.000Z',
+          }),
+        createWorkout({
+          id: 'test-bodyweight-prior',
+          programId: seedProgram.id,
+          session: bodyweightSession,
+          date: '2026-07-20',
+          startedAt: '2026-07-20T09:00:00.000Z',
+        }),
+      ),
+      '2026-07-20T09:40:00.000Z',
+    )
+    await db.workouts.put(priorCompleted)
+
+    const active = createWorkout({
+      id: 'test-bodyweight-active',
+      programId: seedProgram.id,
+      session: bodyweightSession,
+      date: '2026-07-23',
+      startedAt: '2026-07-23T09:00:00.000Z',
+    })
+    await db.workouts.put(active)
+
+    renderWorkout()
+    await screen.findByLabelText('Reps')
+    expect(screen.getByText('TECHNIQUE')).toBeInTheDocument()
+    expect(screen.queryByText('MAX')).toBeNull()
+    expect(
+      screen.queryByText('Every rung is maxed for this setup — hold the ladder and own the reps.'),
+    ).toBeNull()
+  })
 })

@@ -95,6 +95,7 @@ export type LadderProgressionResult =
   | { type: 'advance'; setPlan: SetTarget[] }
   | { type: 'repeat'; setPlan: SetTarget[] }
   | { type: 'at-equipment-max'; setPlan: SetTarget[] }
+  | { type: 'load-not-the-lever'; setPlan: SetTarget[] }
 
 /**
  * Classical ascending pyramid (docs/PyramidProgression.md) — completion
@@ -146,6 +147,24 @@ export function suggestLadderProgression(
   }
 
   const topRung = setPlan.at(-1)
+
+  /*
+    Two distinct reasons a ladder can't take another step, and they read
+    very differently to the athlete. A genuine ceiling has a step size, a
+    cap and a top-rung weight — the arithmetic itself fails
+    (`topRung.weightKg + weightStepKg > maxWeightKg`). Bodyweight work has
+    none of the three: there was never a load to increase in the first
+    place, so "at the equipment max" is a false claim, not a true one
+    stated early. The two cases are already cleanly separated by whether
+    all three are null — mixed/partial data (which real prescriptions
+    never produce, per adjustments.ts's own ladder() helper) falls through
+    to the ceiling branch rather than a new, unproven third state.
+  */
+  const hasNoLoadLever = weightStepKg === null && maxWeightKg === null && (topRung?.weightKg ?? null) === null
+  if (hasNoLoadLever) {
+    return { type: 'load-not-the-lever', setPlan }
+  }
+
   if (
     topRung === undefined ||
     weightStepKg === null ||

@@ -170,6 +170,56 @@ describe('suggestLadderProgression', () => {
   })
 
   /**
+   * docs/design/Mesocycle2Implementation.md §6/§12.4. A genuine ceiling
+   * (real step, real cap, real top-rung weight — the arithmetic itself
+   * fails) is a different state from bodyweight work (never had a load
+   * lever at all), and they need different copy: "every rung is maxed for
+   * this setup" is true for one and false for the other. This pair proves
+   * the distinction both ways — without the first half, a caption that
+   * fired on every "can't advance" case would pass while checking nothing.
+   */
+  it('returns at-equipment-max, never load-not-the-lever, for a genuine ceiling — the both-directions half', () => {
+    const genuineCeiling: LadderPrescription = {
+      ...ladder,
+      setPlan: [
+        { weightKg: 8, reps: 12 },
+        { weightKg: 10, reps: 10 },
+        { weightKg: 14, reps: 8 },
+      ],
+      maxWeightKg: 15,
+      weightStepKg: 2,
+    }
+    const result = suggestLadderProgression(genuineCeiling, [
+      ladderSet(0, 12, 8),
+      ladderSet(1, 10, 10),
+      ladderSet(2, 8, 14),
+    ])
+    expect(result.type).toBe('at-equipment-max')
+  })
+
+  it('returns load-not-the-lever, never at-equipment-max, for a completed bodyweight ladder', () => {
+    const bodyweight: LadderPrescription = {
+      ...ladder,
+      setPlan: [
+        { weightKg: null, reps: 12 },
+        { weightKg: null, reps: 10 },
+        { weightKg: null, reps: 8 },
+      ],
+      maxWeightKg: null,
+      weightStepKg: null,
+    }
+    const result = suggestLadderProgression(bodyweight, [
+      ladderSet(0, 12, 0),
+      ladderSet(1, 10, 0),
+      ladderSet(2, 8, 0),
+    ])
+    expect(result.type).toBe('load-not-the-lever')
+    // Not lost, not modified — the same shape 'at-equipment-max' and
+    // 'repeat' already hold theirs in.
+    expect(result.setPlan).toEqual(bodyweight.setPlan)
+  })
+
+  /**
    * docs/design/Mesocycle2Implementation.md §2.1/§4 — the Yellow-day
    * defect. `applyReadiness` truncates a ladder's top rung *before*
    * `suggestLadderProgression` ever sees it, so the completion gate above

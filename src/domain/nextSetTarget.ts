@@ -69,11 +69,17 @@ export interface NextSetTarget {
    * reason the engine distinguishes it and it must not read as a failure to
    * progress.
    *
+   * `'load-not-the-lever'` is the other reason a ladder can't take another
+   * step: a null-weight top rung (bodyweight work) was never limited by
+   * load in the first place, so `'at-equipment-max'`'s copy would assert an
+   * equipment ceiling that does not exist. Distinct from `'at-equipment-max'`
+   * on purpose — same "can't advance" outcome, different caption.
+   *
    * Beyond the spec's stated return shape, deliberately: the alternative is
    * each screen calling `suggestLadderProgression` again to find out, which is
    * the same divergence this function exists to prevent, one field further on.
    */
-  progressionType: ProgressionType | 'at-equipment-max' | null
+  progressionType: ProgressionType | 'at-equipment-max' | 'load-not-the-lever' | null
   /**
    * The target **before** this session's own history is applied — the ladder
    * rung as the engine has advanced it, or the suggestion.
@@ -180,9 +186,11 @@ export function nextSetTarget(
     progressionType: ladder
       ? ladder.type === 'at-equipment-max'
         ? 'at-equipment-max'
-        : ladder.type === 'advance'
-          ? 'increase-load'
-          : null
+        : ladder.type === 'load-not-the-lever'
+          ? 'load-not-the-lever'
+          : ladder.type === 'advance'
+            ? 'increase-load'
+            : null
       : (suggestion?.type ?? null),
   }
 }

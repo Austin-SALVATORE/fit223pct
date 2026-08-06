@@ -302,9 +302,10 @@ function NewExerciseCard({
 }
 
 /**
- * The target range/MAX-pill/per-side chip a new exercise needs and a
- * familiar one doesn't — the same decorations `SetScreen`'s TargetCaption
- * renders, reusing its locale keys rather than duplicating the wording.
+ * The target range/MAX-pill/load-not-the-lever-pill/per-side chip a new
+ * exercise needs and a familiar one doesn't — the same decorations
+ * `SetScreen`'s TargetCaption renders, reusing its locale keys rather than
+ * duplicating the wording.
  */
 function NewExerciseCaption({
   prescription,
@@ -319,9 +320,13 @@ function NewExerciseCaption({
   // rep-range work has a range wider than the single value on screen.
   const showRange = !prescription.setPlan
   const showMax = target.progressionType === 'at-equipment-max'
+  // A different pill for a different reason not to advance — never both at
+  // once. See SetScreen's TargetCaption for the full reasoning; reused here
+  // rather than re-derived so the two screens cannot disagree.
+  const showLoadNotTheLever = target.progressionType === 'load-not-the-lever'
   const showPerSide = prescription.perSide
 
-  if (!showRange && !showMax && !showPerSide) return null
+  if (!showRange && !showMax && !showLoadNotTheLever && !showPerSide) return null
 
   return (
     <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-tertiary">
@@ -336,6 +341,11 @@ function NewExerciseCaption({
       {showMax && (
         <span className="rounded-full border border-amber px-2 py-0.5 text-xs font-semibold text-amber">
           {t('setScreen.atMax')}
+        </span>
+      )}
+      {showLoadNotTheLever && (
+        <span className="rounded-full border border-border px-2 py-0.5 text-xs font-semibold text-ink-secondary">
+          {t('setScreen.loadNotTheLever')}
         </span>
       )}
       {showPerSide && (
