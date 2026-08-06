@@ -131,13 +131,30 @@ export function nextSetTarget(
     ? null
     : suggestProgression(prescription, previousSets, readinessTier)
 
+  /*
+    A custom slot (`Add Set`, coach spec §4) — an index at or beyond the
+    ladder's own rungs (`prescription.sets`, which equals `setPlan.length`
+    structurally, see workout.ts's `plannedSetIndices`). It is never a rung
+    — `rung` above is already null for it — so it cannot offer a
+    prescribed target the way a rung does. §4: "inherits ... the most
+    recently completed set values ... If no set is complete yet, use the
+    first prescribed level as the initial value." This does not contradict
+    "a ladder is never carried" below: that rule is about rungs, and a
+    custom slot has no rung to offer in the first place.
+  */
+  const isCustomSlot = prescription.setPlan !== undefined && setIndex >= prescription.sets
+
   // The prescribed target, before this session's own history is considered.
-  const prescribedWeight = prescription.setPlan
-    ? (rung?.weightKg ?? null)
-    : (suggestion?.weightKg ?? prescription.startWeightKg ?? null)
-  const prescribedEffort = prescription.setPlan
-    ? (rung?.reps ?? 0)
-    : (suggestion?.targetReps ?? 0)
+  const prescribedWeight = isCustomSlot
+    ? (carried?.weightKg ?? prescription.setPlan?.[0]?.weightKg ?? null)
+    : prescription.setPlan
+      ? (rung?.weightKg ?? null)
+      : (suggestion?.weightKg ?? prescription.startWeightKg ?? null)
+  const prescribedEffort = isCustomSlot
+    ? (carried ? ((isSeconds ? carried.seconds : carried.reps) ?? 0) : (prescription.setPlan?.[0]?.reps ?? 0))
+    : prescription.setPlan
+      ? (rung?.reps ?? 0)
+      : (suggestion?.targetReps ?? 0)
 
   /*
     **Carrying applies to rep-range work only.** A ladder ascends by design —
@@ -152,12 +169,14 @@ export function nextSetTarget(
     per-set ladders and nobody revisited it. Weight *and* effort are affected:
     both used to carry.
   */
-  const isLadder = prescription.setPlan !== undefined
+  // A custom slot is never offered as a rung, even on a ladder prescription
+  // — it carries, the same as rep-range work (see isCustomSlot above).
+  const isRung = prescription.setPlan !== undefined && !isCustomSlot
   const carriedEffort = carried ? ((isSeconds ? carried.seconds : carried.reps) ?? 0) : null
-  const weightKg = isLadder ? prescribedWeight : (carried?.weightKg ?? prescribedWeight)
-  const effort = isLadder ? prescribedEffort : (carriedEffort ?? prescribedEffort)
+  const weightKg = isRung ? prescribedWeight : (carried?.weightKg ?? prescribedWeight)
+  const effort = isRung ? prescribedEffort : (carriedEffort ?? prescribedEffort)
 
-  const source: NextSetTarget['source'] = isLadder
+  const source: NextSetTarget['source'] = isRung
     ? 'rung'
     : carried
       ? 'carried'
@@ -192,15 +211,22 @@ export function nextSetTarget(
     // discriminant the rep-range engine uses — otherwise a stepped-up ladder
     // would show no delta while an identical rep-range step-up showed one.
     // 'repeat' is not a state worth captioning: nothing changed.
-    progressionType: ladder
-      ? ladder.type === 'at-equipment-max'
-        ? 'at-equipment-max'
-        : ladder.type === 'load-not-the-lever'
-          ? 'load-not-the-lever'
-          : ladder.type === 'advance'
-            ? 'increase-load'
-            : null
-      : (suggestion?.type ?? null),
+    //
+    // A custom slot never reports the ladder's own progression state —
+    // "increase-load"/"at-equipment-max" describe the *pyramid*, and a
+    // custom set is never part of it (coach spec §4: "does not trigger
+    // load or variation progression").
+    progressionType: isCustomSlot
+      ? null
+      : ladder
+        ? ladder.type === 'at-equipment-max'
+          ? 'at-equipment-max'
+          : ladder.type === 'load-not-the-lever'
+            ? 'load-not-the-lever'
+            : ladder.type === 'advance'
+              ? 'increase-load'
+              : null
+        : (suggestion?.type ?? null),
     variantKey: rung?.variantKey,
   }
 }

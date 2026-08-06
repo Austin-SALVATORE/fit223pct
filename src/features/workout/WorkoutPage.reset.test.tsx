@@ -40,12 +40,17 @@ async function insertWorkout(setCount: number): Promise<void> {
     startedAt: '2026-07-22T09:00:00.000Z',
   })
   for (let i = 0; i < setCount; i += 1) {
-    workout = logSet(workout, 0, {
-      weightKg: 10,
-      reps: 12,
-      seconds: null,
-      completedAt: `2026-07-22T09:0${i}:00.000Z`,
-    })
+    workout = logSet(
+      workout,
+      0,
+      {
+        weightKg: 10,
+        reps: 12,
+        seconds: null,
+        completedAt: `2026-07-22T09:0${i}:00.000Z`,
+      },
+      i,
+    )
   }
   await db.workouts.put(workout)
 }

@@ -54,26 +54,121 @@ export function createWorkout(input: CreateWorkoutInput): Workout {
 }
 
 /**
+ * The set-index slots this exercise offers this session, in presentation
+ * order: prescribed levels first — skipping any in `skippedLevels`
+ * (coach spec §4 "Skipped this session") — then opened custom slots
+ * (`Add Set`) at `prescription.sets + i`.
+ *
+ * Custom indices start at `prescription.sets`, which equals
+ * `setPlan.length` for every ladder (`programImport.ts`'s
+ * `p.sets === p.setPlan.length` refinement) — so a custom set's index can
+ * never collide with a prescribed rung's, structurally, not by convention.
+ * That is what makes §3.1's defect (below) impossible once `logSet`
+ * receives its index from here rather than deriving one.
+ */
+export function plannedSetIndices(exercise: WorkoutExercise): number[] {
+  const skipped = new Set(exercise.skippedLevels ?? [])
+  const prescribed = Array.from({ length: exercise.prescription.sets }, (_, i) => i).filter(
+    (i) => !skipped.has(i),
+  )
+  const custom = Array.from(
+    { length: exercise.customSlots ?? 0 },
+    (_, i) => exercise.prescription.sets + i,
+  )
+  return [...prescribed, ...custom]
+}
+
+/**
  * The current set, derived purely from logged data — there is no separate
  * step state to lose. Reopening the app resumes at the exact set.
+ *
+ * Walks `plannedSetIndices` rather than a plain `sets.length < prescription
+ * .sets` count, so a skipped prescribed level is stepped over (never
+ * re-offered) and an opened custom slot is offered after the prescribed
+ * ones — both are session-only, coach spec §4.
  */
 export function workoutPosition(workout: Workout): WorkoutPosition | 'complete' {
   for (const [exerciseIndex, exercise] of workout.exercises.entries()) {
-    if (exercise.sets.length < exercise.prescription.sets) {
-      return { exerciseIndex, setIndex: exercise.sets.length }
+    const logged = new Set(exercise.sets.map((s) => s.setIndex))
+    const nextIndex = plannedSetIndices(exercise).find((i) => !logged.has(i))
+    if (nextIndex !== undefined) {
+      return { exerciseIndex, setIndex: nextIndex }
     }
   }
   return 'complete'
 }
 
+/**
+ * **`setIndex` is explicit, never derived from `sets.length`.** Deriving it
+ * used to assign a custom set the index of whatever prescribed level had
+ * just been skipped — `workoutPosition` above is the single authority for
+ * "what slot is this", and every caller must pass its own answer rather
+ * than let this function guess from array length.
+ *
+ * Measured defect this exists to prevent (docs/design/
+ * SessionSetCustomization.md §3.1): remove prescribed level 0, log a
+ * custom set with the old derivation — the custom set lands at index 0,
+ * the completion gate (`suggestLadderProgression`) reads it as the
+ * prescribed level, finds the target met, and advances the load. A level
+ * the athlete never did just earned a heavier one. See workout.test.ts's
+ * "the index-inheritance regression" for the reproduction.
+ */
 export function logSet(
   workout: Workout,
   exerciseIndex: number,
   set: Omit<LoggedSet, 'setIndex'>,
+  setIndex: number,
 ): Workout {
   return updateExercise(workout, exerciseIndex, (exercise) => ({
     ...exercise,
-    sets: [...exercise.sets, { ...set, setIndex: exercise.sets.length }],
+    sets: [...exercise.sets, { ...set, setIndex }],
+  }))
+}
+
+/**
+ * Removes a set slot from this session only — never the underlying
+ * prescription. A prescribed level goes to `skippedLevels` (retained for
+ * audit, coach spec §4); an unfilled custom slot decrements `customSlots`
+ * and is deleted outright, since nothing was ever logged for it.
+ *
+ * Both are pure metadata changes — neither touches `exercise.sets`, so an
+ * already-logged set can never be lost by a removal. That is also what
+ * makes `undoSkip`/`undoCustomSlot` below safe: they restore exactly the
+ * one field this function changed.
+ */
+export function skipPrescribedLevel(workout: Workout, exerciseIndex: number, level: number): Workout {
+  return updateExercise(workout, exerciseIndex, (exercise) => ({
+    ...exercise,
+    skippedLevels: [...(exercise.skippedLevels ?? []), level].sort((a, b) => a - b),
+  }))
+}
+
+/** The inverse of {@link skipPrescribedLevel} — restores exactly one skipped level. */
+export function undoSkip(workout: Workout, exerciseIndex: number, level: number): Workout {
+  return updateExercise(workout, exerciseIndex, (exercise) => ({
+    ...exercise,
+    skippedLevels: (exercise.skippedLevels ?? []).filter((l) => l !== level),
+  }))
+}
+
+/** Opens one extra set slot, up to the coach spec's two-per-exercise cap (§4). */
+export function addCustomSlot(workout: Workout, exerciseIndex: number): Workout {
+  return updateExercise(workout, exerciseIndex, (exercise) => ({
+    ...exercise,
+    customSlots: (exercise.customSlots ?? 0) + 1,
+  }))
+}
+
+/**
+ * Removes the most recently opened, unfilled custom slot. Only ever called
+ * on a slot nothing has been logged for — the set screen removes a filled
+ * custom set through `undoLastSet` instead, since that slot's `LoggedSet`
+ * needs to be discarded too, not just the slot count.
+ */
+export function undoCustomSlot(workout: Workout, exerciseIndex: number): Workout {
+  return updateExercise(workout, exerciseIndex, (exercise) => ({
+    ...exercise,
+    customSlots: Math.max(0, (exercise.customSlots ?? 0) - 1),
   }))
 }
 

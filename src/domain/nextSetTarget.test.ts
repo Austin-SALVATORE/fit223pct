@@ -115,6 +115,40 @@ describe('a ladder always offers its prescribed rung', () => {
   })
 })
 
+/**
+ * docs/design/SessionSetCustomization.md §4 — a custom slot (`Add Set`) on
+ * a ladder is never offered as a rung, even though the prescription has
+ * one. `ladder.sets` (3) is where custom indices start, matching
+ * workout.ts's `plannedSetIndices`.
+ */
+describe('a custom slot on a ladder carries, never offers a rung', () => {
+  it('inherits the most recently logged set in this session', () => {
+    const target = nextSetTarget(ladder, [set({ weightKg: 12.5, reps: 9 })], [], 3, 'steady')
+
+    expect(target.weightKg).toBe(12.5)
+    expect(target.reps).toBe(9)
+    expect(target.source).toBe('carried')
+    // Never the pyramid's own progression state — a custom set isn't part of it.
+    expect(target.progressionType).toBeNull()
+  })
+
+  it('falls back to the first prescribed level when nothing has been logged yet this session', () => {
+    const target = nextSetTarget(ladder, [], [], 3, 'steady')
+
+    expect(target.weightKg).toBe(20) // ladder.setPlan[0].weightKg
+    expect(target.reps).toBe(12) // ladder.setPlan[0].reps
+  })
+
+  it('never carries a variant chip — a custom set has no rung to read one from', () => {
+    const withVariant: LadderPrescription = {
+      ...ladder,
+      setPlan: ladder.setPlan.map((rung) => ({ ...rung, variantKey: 'slow' as const })),
+    }
+    const target = nextSetTarget(withVariant, [set({ weightKg: 12.5, reps: 9 })], [], 3, 'steady')
+    expect(target.variantKey).toBeUndefined()
+  })
+})
+
 describe('every prescription shape resolves', () => {
   it('reports reps and no seconds in reps mode', () => {
     const target = nextSetTarget(repRange, [], [], 0, 'steady')

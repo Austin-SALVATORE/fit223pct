@@ -47,7 +47,9 @@ function buildWorkout(
     startedAt: `${date}T18:00:00.000Z`,
   })
   setsPerExercise.forEach((sets, exerciseIndex) => {
-    for (const s of sets) workout = logSet(workout, exerciseIndex, s)
+    sets.forEach((s, setIndex) => {
+      workout = logSet(workout, exerciseIndex, s, setIndex)
+    })
   })
   return completed ? completeWorkout(workout, `${date}T19:00:00.000Z`) : workout
 }

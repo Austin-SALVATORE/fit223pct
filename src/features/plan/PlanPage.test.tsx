@@ -52,12 +52,17 @@ async function putCompletedWorkout(date: string, session = seedProgram.sessions[
     date,
     startedAt: `${date}T09:00:00.000Z`,
   })
-  workout = logSet(workout, 0, {
-    weightKg: 20,
-    reps: 10,
-    seconds: null,
-    completedAt: `${date}T09:10:00.000Z`,
-  })
+  workout = logSet(
+    workout,
+    0,
+    {
+      weightKg: 20,
+      reps: 10,
+      seconds: null,
+      completedAt: `${date}T09:10:00.000Z`,
+    },
+    0,
+  )
   workout = completeWorkout(workout, `${date}T09:40:00.000Z`)
   await db.workouts.put(workout)
 }

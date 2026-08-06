@@ -83,7 +83,9 @@ describe('SetScreen ladder rendering', () => {
       date: '2026-07-23',
       startedAt: '2026-07-23T09:00:00.000Z',
     })
-    await db.workouts.put(logSet(workout, 0, { weightKg: 8, reps: 12, seconds: null, completedAt: '2026-07-23T09:05:00.000Z' }))
+    await db.workouts.put(
+      logSet(workout, 0, { weightKg: 8, reps: 12, seconds: null, completedAt: '2026-07-23T09:05:00.000Z' }, 0),
+    )
 
     renderWorkout()
     expect(await screen.findByText('Rung 2 of 3 · 10 kg × 10')).toBeInTheDocument()
@@ -93,12 +95,17 @@ describe('SetScreen ladder rendering', () => {
     const priorCompleted = completeWorkout(
       [0, 1, 2].reduce(
         (w, i) =>
-          logSet(w, 0, {
-            weightKg: ladder.setPlan[i].weightKg,
-            reps: ladder.setPlan[i].reps,
-            seconds: null,
-            completedAt: '2026-07-20T09:05:00.000Z',
-          }),
+          logSet(
+            w,
+            0,
+            {
+              weightKg: ladder.setPlan[i].weightKg,
+              reps: ladder.setPlan[i].reps,
+              seconds: null,
+              completedAt: '2026-07-20T09:05:00.000Z',
+            },
+            i,
+          ),
         createWorkout({
           id: 'test-ladder-prior',
           programId: seedProgram.id,
@@ -137,12 +144,17 @@ describe('SetScreen ladder rendering', () => {
     const priorCompleted = completeWorkout(
       [0, 1, 2].reduce(
         (w, i) =>
-          logSet(w, 0, {
-            weightKg: ladder.setPlan[i].weightKg,
-            reps: ladder.setPlan[i].reps,
-            seconds: null,
-            completedAt: '2026-07-20T09:05:00.000Z',
-          }),
+          logSet(
+            w,
+            0,
+            {
+              weightKg: ladder.setPlan[i].weightKg,
+              reps: ladder.setPlan[i].reps,
+              seconds: null,
+              completedAt: '2026-07-20T09:05:00.000Z',
+            },
+            i,
+          ),
         createWorkout({
           id: 'test-ladder-cap-prior',
           programId: seedProgram.id,
@@ -213,12 +225,17 @@ describe('SetScreen ladder rendering', () => {
     const priorCompleted = completeWorkout(
       [0, 1].reduce(
         (w, i) =>
-          logSet(w, 0, {
-            weightKg: null,
-            reps: bodyweightLadder.setPlan[i].reps,
-            seconds: null,
-            completedAt: '2026-07-20T09:05:00.000Z',
-          }),
+          logSet(
+            w,
+            0,
+            {
+              weightKg: null,
+              reps: bodyweightLadder.setPlan[i].reps,
+              seconds: null,
+              completedAt: '2026-07-20T09:05:00.000Z',
+            },
+            i,
+          ),
         createWorkout({
           id: 'test-bodyweight-prior',
           programId: seedProgram.id,
@@ -302,7 +319,7 @@ describe('SetScreen ladder rendering', () => {
       startedAt: '2026-07-23T09:00:00.000Z',
     })
     await db.workouts.put(
-      logSet(workout, 0, { weightKg: null, reps: 12, seconds: null, completedAt: '2026-07-23T09:05:00.000Z' }),
+      logSet(workout, 0, { weightKg: null, reps: 12, seconds: null, completedAt: '2026-07-23T09:05:00.000Z' }, 0),
     )
 
     renderWorkout()

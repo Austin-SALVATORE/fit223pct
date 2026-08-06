@@ -112,7 +112,7 @@ describe('SwapSheet confirm-clear step', () => {
       date: '2026-07-22',
       startedAt: '2026-07-22T09:00:00.000Z',
     })
-    workout = logSet(workout, 0, { weightKg: 10, reps: 12, seconds: null, completedAt: '2026-07-22T09:05:00.000Z' })
+    workout = logSet(workout, 0, { weightKg: 10, reps: 12, seconds: null, completedAt: '2026-07-22T09:05:00.000Z' }, 0)
     await db.workouts.put(workout)
   }
 

@@ -95,7 +95,7 @@ export function WorkoutPage() {
 
   async function handleLog(set: Omit<LoggedSet, 'setIndex'>) {
     if (!workout || position === 'complete') return
-    const updated = logSet(workout, position.exerciseIndex, set)
+    const updated = logSet(workout, position.exerciseIndex, set, position.setIndex)
     const nextPosition = workoutPosition(updated)
 
     if (nextPosition === 'complete') {

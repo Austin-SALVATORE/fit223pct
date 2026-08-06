@@ -36,12 +36,17 @@ async function insertActiveWorkoutAtSidePlank() {
   for (let exerciseIndex = 0; exerciseIndex < 4; exerciseIndex++) {
     const sets = workout.exercises[exerciseIndex].prescription.sets
     for (let i = 0; i < sets; i++) {
-      workout = logSet(workout, exerciseIndex, {
-        weightKg: null,
-        reps: 10,
-        seconds: null,
-        completedAt: '2026-07-24T09:05:00.000Z',
-      })
+      workout = logSet(
+        workout,
+        exerciseIndex,
+        {
+          weightKg: null,
+          reps: 10,
+          seconds: null,
+          completedAt: '2026-07-24T09:05:00.000Z',
+        },
+        i,
+      )
     }
   }
   await db.workouts.put(workout)
