@@ -453,19 +453,6 @@
         }
       },
       "activity": {
-        "1": {
-          "title": "Zone 2 ride",
-          "item": {
-            "0": {
-              "label": "Zone 2 ride",
-              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
-            },
-            "1": {
-              "label": "Post-ride stretch",
-              "detail": "Doorway chest stretch, bench lat stretch, gentle thoracic rotation, half-kneeling hip-flexor stretch — about 30-45 sec per position"
-            }
-          }
-        },
         "2": {
           "title": "Recovery day",
           "item": {
@@ -488,23 +475,6 @@
             "4": {
               "label": "Sleep",
               "detail": "At least 7.5 hours"
-            },
-            "5": {
-              "label": "Zone 2 ride",
-              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
-            }
-          }
-        },
-        "3": {
-          "title": "Zone 2 ride",
-          "item": {
-            "0": {
-              "label": "Zone 2 ride",
-              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
-            },
-            "1": {
-              "label": "Post-ride stretch",
-              "detail": "Half-kneeling hip-flexor stretch, hamstring stretch, figure-four glute stretch, standing calf stretch — about 30-45 sec per position"
             }
           }
         },
@@ -522,23 +492,19 @@
             },
             "3": {
               "label": "Easy walking"
-            },
-            "4": {
-              "label": "Zone 2 ride",
-              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
             }
           }
         },
         "5": {
-          "title": "Zone 2 ride",
+          "title": "Recovery day",
           "item": {
             "0": {
               "label": "Zone 2 ride",
-              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+              "detail": "40 min (5 min easy warm-up, 5 min easy cool-down)"
             },
             "1": {
-              "label": "Post-ride stretch",
-              "detail": "Doorway chest stretch, cross-body posterior-shoulder stretch, overhead triceps stretch, bench lat stretch — about 30-45 sec per position"
+              "label": "Recovery-day stretching",
+              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
             }
           }
         },
@@ -554,7 +520,11 @@
             },
             "2": {
               "label": "Zone 2 ride",
-              "detail": "45 min (5 min easy warm-up, 5 min easy cool-down) — only when recovery is Green"
+              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+            },
+            "3": {
+              "label": "Post-ride stretch",
+              "detail": "Half-kneeling hip-flexor stretch, hamstring stretch, figure-four glute stretch, standing calf stretch — about 30-45 sec per position"
             }
           }
         },
@@ -572,6 +542,14 @@
             "2": {
               "label": "Prepare the coming week",
               "detail": "Confirm training times and any sport plans"
+            },
+            "3": {
+              "label": "Zone 2 ride",
+              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
+            },
+            "4": {
+              "label": "Recovery-day stretching",
+              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
             }
           }
         }

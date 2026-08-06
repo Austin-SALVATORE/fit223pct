@@ -249,9 +249,10 @@ describe('PlanDayPage states', () => {
     // activity day already renders regardless of completion.
     renderDay('2026-07-24') // Friday, scheduled, nothing logged
     expect(await screen.findByRole('heading', { name: /Friday 24 July/ })).toBeInTheDocument()
-    // "Zone 2 ride" appears twice — the activity heading and the item
-    // label within it — so assert the heading specifically.
-    expect(screen.getByRole('heading', { name: 'Zone 2 ride' })).toBeInTheDocument()
+    // Friday's activity is recovery-shaped (owner ruling, 6 Aug: 40 min,
+    // not the session's post-lift ride) — title is "Recovery day".
+    expect(screen.getByRole('heading', { name: 'Recovery day' })).toBeInTheDocument()
+    expect(screen.getByText(/40 min \(5 min easy warm-up, 5 min easy cool-down\)/)).toBeInTheDocument()
     expect(screen.queryByText('Chest & Back')).toBeNull()
     expect(screen.queryByText('Legs & Core')).toBeNull()
     expect(screen.queryByText('Shoulders & Arms')).toBeNull()

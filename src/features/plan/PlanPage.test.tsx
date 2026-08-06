@@ -98,7 +98,9 @@ describe('PlanPage', () => {
     expect(await screen.findByText('Wed 22 Jul')).toBeInTheDocument()
     const skippedRow = (await screen.findByText('Fri 24 Jul')).closest('li')
     expect(skippedRow).not.toBeNull()
-    expect(skippedRow).toHaveTextContent('Zone 2 ride')
+    // Friday's activity is recovery-shaped (owner ruling, 6 Aug) — the row
+    // shows its title, "Recovery day".
+    expect(skippedRow).toHaveTextContent('Recovery day')
     // The row itself carries no guilt copy — the page-level honesty-rule
     // note (a different, neutral sentence) is allowed to use the word.
     expect(skippedRow).not.toHaveTextContent(/missed/i)

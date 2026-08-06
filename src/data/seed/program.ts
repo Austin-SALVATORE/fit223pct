@@ -268,30 +268,43 @@ export const seedProgram: Program = {
     },
   ],
   /*
-    Rides and post-ride/recovery-day stretching added 6 Aug per the coach's
-    §12/§14 cardio and stretching tables — an owner ruling that the
-    coach's cycling/stretching model applies to the program running now,
-    not only from Mesocycle 2's 10 Aug launch. Days 1/3/5 (Mon/Wed/Fri)
-    are new entries; days 2/4/6's ride item is **appended**, never
-    prepended, to the existing list — useLocalizedActivity keys items by
-    array index (i18n/seedProgram.ts), so inserting at the front would
-    silently shift every already-translated fr/zh-CN item at that weekday
-    onto the wrong index.
+    Rides and post-ride/recovery-day stretching, corrected 6 Aug — owner
+    ruling (board, 20:41): the coach's cycling/stretching model applies to
+    phase-1-home's last four days (7-9 Aug), but only where the owner
+    actually asked for it. An earlier pass on this same day applied a
+    day-type mapping (train Mon/Wed/Fri, recover Tue/Thu, optional Sat)
+    across every remaining weekday, including 1-4 — which are this
+    program's *past* days. That mapping was a stated assumption, never a
+    coach or owner ruling, and it was withdrawn before Mon-Thu's dates
+    arrived. It's gone from here; nothing in this file should ship a
+    guess a program's own copy already disclosed as one.
 
-    Stated assumption, the coach has not written a Phase 1 cardio table:
-    durations are the coach's Mesocycle 2 Build figures, applied by day
-    type (train Mon/Wed/Fri, recover Tue/Thu, optional Sat) since Phase 1
-    and Build share that weekly shape. If the coach intended different
-    volumes for Phase 1's last four days, that's theirs to correct.
+    What's here instead is every number as the owner and coach actually
+    gave it, each attributable:
+      - Fri 7 Aug: 40 min Zone 2, recovery-shaped — the owner's own figure
+        for tomorrow (board, 20:41), not the coach's 35 (spec L519) for a
+        Build-program recovery day. Do not "correct" it to match.
+      - Sat 8 Aug: legs-core strength, 20 min Zone 2 after lifting — coach
+        spec L518's training-day shape, owner-selected duration/day
+        (board, 20:52).
+      - Sun 9 Aug: weekly checkpoint, 35 min Zone 2, recovery-shaped —
+        coach spec L519, owner-selected (board, 20:52).
+    Days 1-4 carry no ride: they are this program's past, and it ends
+    Sunday 9 Aug — there are no further Mondays or Tuesdays left to ride
+    on. Day 5 (Fri) and day 7 (Sun)'s items are edited/appended in place;
+    day 6 (Sat)'s existing "choose one" items are untouched, only its ride
+    item is replaced — useLocalizedActivity keys items by array index
+    (i18n/seedProgram.ts), so every change here is either an in-place edit
+    at an existing index or an append, never an insert at the front.
 
-    Post-ride stretch (Mon/Wed/Fri only) is plain text, not a routineId —
-    four of the coach's nine named positions have no existing step id, and
-    a step id is both a locale key and an art id (not tonight's scope, see
-    the recovery-day stretching comment below for the same reasoning).
-    Session-specific per §14's table, keyed off weekdaySessions above:
-    chest-back → doorway chest/bench lat/thoracic rotation/hip-flexor;
-    legs-core → hip-flexor/hamstring/figure-four/calf; shoulders-arms →
-    doorway chest/posterior-shoulder/triceps/bench lat.
+    Post-ride stretch is plain text, not a routineId — four of the
+    coach's nine named §14 positions have no existing step id, and a step
+    id is both a locale key and an art id (not this batch's scope).
+    Saturday's is session-specific (legs-core: hip-flexor/hamstring/
+    figure-four/calf, §14's per-session table) since its ride is
+    training-shaped; Friday's and Sunday's are the recovery-day list
+    (§14, same six positions already used for days 2/4) since both rides
+    are recovery-shaped.
 
     English fallback text only, in en/fr/zh-CN alike (seed.json) — the
     coach spec's "Localization release ruling": ship with the approved
@@ -299,23 +312,6 @@ export const seedProgram: Program = {
     hold for translation, reviewed fr/zh-CN to follow in Week 1.
   */
   weekdayActivities: {
-    1: {
-      kind: 'recovery',
-      title: 'Zone 2 ride',
-      items: [
-        {
-          label: 'Zone 2 ride',
-          detail:
-            '20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)',
-          recordable: 'ride',
-        },
-        {
-          label: 'Post-ride stretch',
-          detail:
-            'Doorway chest stretch, bench lat stretch, gentle thoracic rotation, half-kneeling hip-flexor stretch — about 30-45 sec per position',
-        },
-      ],
-    },
     2: {
       kind: 'recovery',
       title: 'Recovery day',
@@ -328,17 +324,40 @@ export const seedProgram: Program = {
         { label: 'Hydration', detail: 'Meet your daily goal' },
         { label: 'Protein', detail: 'Meet your daily target' },
         { label: 'Sleep', detail: 'At least 7.5 hours' },
+      ],
+    },
+    4: {
+      kind: 'recovery',
+      title: 'Optional recovery',
+      items: [
+        { label: 'Mobility work' },
+        { label: 'Stretching', routineId: 'recovery-stretch-v1' },
+        { label: 'Foam rolling' },
+        { label: 'Easy walking' },
+      ],
+    },
+    5: {
+      kind: 'recovery',
+      title: 'Recovery day',
+      items: [
         {
           label: 'Zone 2 ride',
-          detail: '35 min (5 min easy warm-up, 5 min easy cool-down)',
+          detail: '40 min (5 min easy warm-up, 5 min easy cool-down)',
           recordable: 'ride',
+        },
+        {
+          label: 'Recovery-day stretching',
+          detail:
+            '10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation',
         },
       ],
     },
-    3: {
-      kind: 'recovery',
-      title: 'Zone 2 ride',
+    6: {
+      kind: 'optional',
+      title: 'Optional activity',
       items: [
+        { label: 'Choose one', detail: 'Walking, cycling, swimming, tennis, or mobility work' },
+        { label: 'Complete rest is a fine choice too' },
         {
           label: 'Zone 2 ride',
           detail:
@@ -352,51 +371,6 @@ export const seedProgram: Program = {
         },
       ],
     },
-    4: {
-      kind: 'recovery',
-      title: 'Optional recovery',
-      items: [
-        { label: 'Mobility work' },
-        { label: 'Stretching', routineId: 'recovery-stretch-v1' },
-        { label: 'Foam rolling' },
-        { label: 'Easy walking' },
-        {
-          label: 'Zone 2 ride',
-          detail: '35 min (5 min easy warm-up, 5 min easy cool-down)',
-          recordable: 'ride',
-        },
-      ],
-    },
-    5: {
-      kind: 'recovery',
-      title: 'Zone 2 ride',
-      items: [
-        {
-          label: 'Zone 2 ride',
-          detail:
-            '20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)',
-          recordable: 'ride',
-        },
-        {
-          label: 'Post-ride stretch',
-          detail:
-            'Doorway chest stretch, cross-body posterior-shoulder stretch, overhead triceps stretch, bench lat stretch — about 30-45 sec per position',
-        },
-      ],
-    },
-    6: {
-      kind: 'optional',
-      title: 'Optional activity',
-      items: [
-        { label: 'Choose one', detail: 'Walking, cycling, swimming, tennis, or mobility work' },
-        { label: 'Complete rest is a fine choice too' },
-        {
-          label: 'Zone 2 ride',
-          detail: '45 min (5 min easy warm-up, 5 min easy cool-down) — only when recovery is Green',
-          recordable: 'ride',
-        },
-      ],
-    },
     7: {
       kind: 'checkpoint',
       title: 'Weekly checkpoint',
@@ -404,6 +378,16 @@ export const seedProgram: Program = {
         { label: 'Weigh in', detail: 'Same conditions each week — morning, before eating' },
         { label: 'Measure your waist', detail: 'Same spot, same conditions as last week' },
         { label: 'Prepare the coming week', detail: 'Confirm training times and any sport plans' },
+        {
+          label: 'Zone 2 ride',
+          detail: '35 min (5 min easy warm-up, 5 min easy cool-down)',
+          recordable: 'ride',
+        },
+        {
+          label: 'Recovery-day stretching',
+          detail:
+            '10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation',
+        },
       ],
     },
   },

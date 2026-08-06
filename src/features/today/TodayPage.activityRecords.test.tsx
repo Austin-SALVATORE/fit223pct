@@ -181,18 +181,23 @@ describe('Ride record against the real phase-1-home program (no synthetic fixtur
     }
   })
 
-  it('shows a ride record on a real rest day (Tuesday)', async () => {
-    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 7, 4, 9, 0, 0) }) // Tue 4 Aug 2026
+  it('shows a ride record on a real rest day (Sunday, the weekly checkpoint)', async () => {
+    // Weekdays 1-4 carry no ride (6 Aug correction — those days are this
+    // program's past and the earlier day-type mapping was withdrawn).
+    // Sunday is the surviving rest-shaped recordable day: weekday 7 isn't
+    // a training weekday, so it renders through ActivityHero, same as
+    // Tuesday did before the correction.
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 7, 9, 9, 0, 0) }) // Sun 9 Aug 2026
     try {
       renderApp()
-      expect(await screen.findByRole('heading', { name: 'Recovery day' })).toBeInTheDocument()
+      expect(await screen.findByRole('heading', { name: 'Weekly checkpoint' })).toBeInTheDocument()
       expect(screen.getByText('Ride record')).toBeInTheDocument()
 
       await userEvent.click(screen.getByRole('button', { name: 'Increase Duration' }))
       await userEvent.click(screen.getByRole('button', { name: 'Increase Avg heart rate' }))
       await userEvent.click(screen.getByRole('button', { name: 'Save ride' }))
 
-      const records = await activityRecordRepo.getByDate('2026-08-04')
+      const records = await activityRecordRepo.getByDate('2026-08-09')
       expect(records).toHaveLength(1)
       expect(records[0]).toMatchObject({ kind: 'ride', actualMinutes: 20, avgHeartRate: 130 })
     } finally {
