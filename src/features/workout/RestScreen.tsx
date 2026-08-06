@@ -302,10 +302,10 @@ function NewExerciseCard({
 }
 
 /**
- * The target range/MAX-pill/load-not-the-lever-pill/per-side chip a new
- * exercise needs and a familiar one doesn't — the same decorations
- * `SetScreen`'s TargetCaption renders, reusing its locale keys rather than
- * duplicating the wording.
+ * The target range/MAX-pill/load-not-the-lever-pill/variant-chip/per-side
+ * chip a new exercise needs and a familiar one doesn't — the same
+ * decorations `SetScreen`'s TargetCaption renders, reusing its locale keys
+ * rather than duplicating the wording.
  */
 function NewExerciseCaption({
   prescription,
@@ -315,6 +315,7 @@ function NewExerciseCaption({
   target: NextSetTarget
 }) {
   const { t } = useTranslation('workout')
+  const { t: tCommon } = useTranslation('common')
   const isSeconds = prescription.mode === 'seconds'
   // A ladder's number already is the exact target — no range to show. Only
   // rep-range work has a range wider than the single value on screen.
@@ -326,7 +327,7 @@ function NewExerciseCaption({
   const showLoadNotTheLever = target.progressionType === 'load-not-the-lever'
   const showPerSide = prescription.perSide
 
-  if (!showRange && !showMax && !showLoadNotTheLever && !showPerSide) return null
+  if (!showRange && !showMax && !showLoadNotTheLever && !target.variantKey && !showPerSide) return null
 
   return (
     <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-tertiary">
@@ -346,6 +347,14 @@ function NewExerciseCaption({
       {showLoadNotTheLever && (
         <span className="rounded-full border border-border px-2 py-0.5 text-xs font-semibold text-ink-secondary">
           {t('setScreen.loadNotTheLever')}
+        </span>
+      )}
+      {/* See SetScreen's TargetCaption for the full reasoning — reused
+          here so the two screens render the same variant, never a
+          re-derived one. */}
+      {target.variantKey && (
+        <span className="rounded-full border border-border px-2 py-0.5 text-xs">
+          {tCommon(`setVariant.${target.variantKey}`)}
         </span>
       )}
       {showPerSide && (

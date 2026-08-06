@@ -248,4 +248,65 @@ describe('SetScreen ladder rendering', () => {
       screen.queryByText('Every rung is maxed for this setup — hold the ladder and own the reps.'),
     ).toBeNull()
   })
+
+  /**
+   * docs/design/Mesocycle2Implementation.md §6.1 — a rung that varies by
+   * form rather than load shows its variant as a chip beside the target
+   * caption, translated through common:setVariant rather than stored as
+   * prose (architecture.md: storage stays locale-free). Both-directions
+   * across two rungs, mirroring the existing "second rung once the first
+   * is logged" pattern above — proves the chip tracks the *offered* rung
+   * rather than always showing the first token.
+   */
+  const variantLadder: LadderPrescription = {
+    exerciseId: 'goblet-squat',
+    sets: 2,
+    mode: 'reps',
+    restSeconds: 90,
+    perSide: false,
+    setPlan: [
+      { weightKg: null, reps: 12, variantKey: 'normal' },
+      { weightKg: null, reps: 10, variantKey: 'slow' },
+    ],
+    maxWeightKg: null,
+    weightStepKg: null,
+  }
+  const variantSession: SessionTemplate = {
+    id: 'variant-test',
+    name: 'Variant session',
+    focus: 'Push',
+    items: [variantLadder],
+  }
+
+  it("shows the first rung's variant as a translated chip", async () => {
+    const workout = createWorkout({
+      id: 'test-variant-fresh',
+      programId: seedProgram.id,
+      session: variantSession,
+      date: '2026-07-23',
+      startedAt: '2026-07-23T09:00:00.000Z',
+    })
+    await db.workouts.put(workout)
+
+    renderWorkout()
+    expect(await screen.findByText('Normal')).toBeInTheDocument()
+    expect(screen.queryByText('Slow')).toBeNull()
+  })
+
+  it("shows the second rung's variant once the first is logged", async () => {
+    const workout = createWorkout({
+      id: 'test-variant-second',
+      programId: seedProgram.id,
+      session: variantSession,
+      date: '2026-07-23',
+      startedAt: '2026-07-23T09:00:00.000Z',
+    })
+    await db.workouts.put(
+      logSet(workout, 0, { weightKg: null, reps: 12, seconds: null, completedAt: '2026-07-23T09:05:00.000Z' }),
+    )
+
+    renderWorkout()
+    expect(await screen.findByText('Slow')).toBeInTheDocument()
+    expect(screen.queryByText('Normal')).toBeNull()
+  })
 })

@@ -146,6 +146,32 @@ describe('suggestLadderProgression', () => {
     })
   })
 
+  /**
+   * docs/design/Mesocycle2Implementation.md §6.1. `variantKey` has to
+   * survive every branch of this function, not just sit on the authored
+   * `setPlan` — a stepped-up rung that silently dropped its variant would
+   * show the wrong level's label (or none) the moment a ladder advances.
+   */
+  it("carries a rung's variantKey through an advance — the level label survives the weight step", () => {
+    const withVariant: LadderPrescription = {
+      ...ladder,
+      setPlan: [
+        { weightKg: 8, reps: 12, variantKey: 'normal' },
+        { weightKg: 10, reps: 10, variantKey: 'slow' },
+        { weightKg: 12, reps: 8, variantKey: 'with-pause' },
+      ],
+    }
+    const result = suggestLadderProgression(withVariant, [
+      ladderSet(0, 12, 8),
+      ladderSet(1, 10, 10),
+      ladderSet(2, 8, 12),
+    ])
+    expect(result.type).toBe('advance')
+    expect(result.setPlan.map((rung) => rung.variantKey)).toEqual(['normal', 'slow', 'with-pause'])
+    // Not just carried — carried alongside the correctly-stepped weight.
+    expect(result.setPlan.map((rung) => rung.weightKg)).toEqual([10, 12, 14])
+  })
+
   it('holds the whole ladder unchanged at the equipment ceiling — never a partial advance', () => {
     const atCap: LadderPrescription = { ...ladder, maxWeightKg: 12 }
     const result = suggestLadderProgression(atCap, [

@@ -58,5 +58,16 @@
   "intlLocale": "zh-CN",
   "labelValue": "{{label}}：{{value}}",
   "middotJoin": "{{a}}·{{b}}",
-  "unitSeconds": " 秒"
+  "unitSeconds": " 秒",
+  "setVariant": {
+    "normal": "标准",
+    "slow": "放慢",
+    "slow-pause": "放慢+停顿",
+    "with-pause": "加停顿",
+    "longer-reach": "加大幅度",
+    "reach-pause": "加大幅度+停顿",
+    "harder-leverage": "更难角度",
+    "harder-leverage-or-pause": "更难角度或停顿",
+    "hands-elevated": "双手垫高"
+  }
 }

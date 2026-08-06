@@ -46,10 +46,36 @@ export interface RepRange {
   max: number
 }
 
+/**
+ * A closed vocabulary for how a rung differs from the default form — never
+ * free prose, so a stored value stays translatable without persisting
+ * locale-specific text (architecture.md: storage is locale-free, the
+ * `RoutineStep.id` precedent). Shared across every exercise via
+ * common:setVariant rather than a key per level per exercise.
+ * docs/design/Mesocycle2Implementation.md §6.1.
+ */
+export type SetVariant =
+  | 'normal'
+  | 'slow'
+  | 'slow-pause'
+  | 'with-pause'
+  | 'longer-reach'
+  | 'reach-pause'
+  | 'harder-leverage'
+  | 'harder-leverage-or-pause'
+  | 'hands-elevated'
+
 /** One rung of a pyramid ladder — weight climbs, reps descend, in prescription order. */
 export interface SetTarget {
   weightKg: number | null
   reps: number
+  /**
+   * How this rung differs from the default form, when the coach prescribed
+   * one — e.g. a bodyweight ladder whose levels step through range, tempo,
+   * or leverage rather than load. Absent for the common case (a rung that
+   * varies only by weight/reps).
+   */
+  variantKey?: SetVariant
 }
 
 interface ExercisePrescriptionBase {

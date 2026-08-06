@@ -1,6 +1,6 @@
 import { suggestLadderProgression, suggestProgression, type ProgressionType } from './progression'
 import type { ReadinessTier } from './readiness'
-import type { ExercisePrescription, LoggedSet } from './types'
+import type { ExercisePrescription, LoggedSet, SetVariant } from './types'
 
 /**
  * The numbers the user is about to be offered for one set — resolved **once**,
@@ -94,6 +94,15 @@ export interface NextSetTarget {
    * and it was caught by a test rather than by review.
    */
   prescribed: { weightKg: number | null; reps: number | null; seconds: number | null }
+  /**
+   * How this rung differs from the default form, when the coach prescribed
+   * one — never prose (see `SetVariant`). Read from the **offered** rung
+   * (the same one `weightKg`/`reps` above come from), not the authored
+   * one, for the same reason `prescribed` is exposed separately: an
+   * advanced or truncated rung must carry its own variant forward, never
+   * silently drop it or show the wrong level's.
+   */
+  variantKey?: SetVariant
 }
 
 /**
@@ -192,5 +201,6 @@ export function nextSetTarget(
             ? 'increase-load'
             : null
       : (suggestion?.type ?? null),
+    variantKey: rung?.variantKey,
   }
 }

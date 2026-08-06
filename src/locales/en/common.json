@@ -58,5 +58,16 @@
   "intlLocale": "en-GB",
   "labelValue": "{{label}}: {{value}}",
   "middotJoin": "{{a}} · {{b}}",
-  "unitSeconds": "s"
+  "unitSeconds": "s",
+  "setVariant": {
+    "normal": "Normal",
+    "slow": "Slow",
+    "slow-pause": "Slow + pause",
+    "with-pause": "With pause",
+    "longer-reach": "Longer reach",
+    "reach-pause": "Reach + pause",
+    "harder-leverage": "Harder leverage",
+    "harder-leverage-or-pause": "Harder leverage or pause",
+    "hands-elevated": "Hands elevated"
+  }
 }

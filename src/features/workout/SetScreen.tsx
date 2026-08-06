@@ -350,6 +350,7 @@ function TargetCaption({
   setIndex: number
 }) {
   const { t } = useTranslation('workout')
+  const { t: tCommon } = useTranslation('common')
   const isSeconds = prescription.mode === 'seconds'
 
   const targetText = prescription.setPlan
@@ -397,6 +398,19 @@ function TargetCaption({
       {target.progressionType === 'increase-load' && target.weightKg !== null && (
         <span className="text-amber">
           {t('setScreen.deltaHeavier', { delta: formatDelta(prescription) })}
+        </span>
+      )}
+      {/*
+        How this rung differs from the default form, when the coach
+        prescribed one — e.g. "Bodyweight slow" for level 2 of a push-up
+        ladder whose level 1 is plain bodyweight. Closed vocabulary, never
+        prose (docs/design/Mesocycle2Implementation.md §6.1); shared across
+        every exercise via common:setVariant rather than a key per level
+        per exercise.
+      */}
+      {target.variantKey && (
+        <span className="rounded-full border border-border px-2 py-0.5 text-xs">
+          {tCommon(`setVariant.${target.variantKey}`)}
         </span>
       )}
       {prescription.perSide && (

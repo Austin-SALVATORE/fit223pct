@@ -417,3 +417,39 @@ describe('the Yellow-day fix — an eased day defers, never inflates, an offered
     }
   })
 })
+
+/**
+ * docs/design/Mesocycle2Implementation.md §6.1 — `SetTarget.variantKey`
+ * has to reach the UI through this exact function, the same reason
+ * `prescribed` and `progressionType` are exposed here rather than
+ * recomputed by a screen: two screens calling `suggestLadderProgression`
+ * independently could resolve two different variants for the same rung.
+ */
+describe('variantKey — how a rung differs from the default form', () => {
+  const withVariants: LadderPrescription = {
+    exerciseId: 'push-up',
+    sets: 2,
+    mode: 'reps',
+    setPlan: [
+      { weightKg: null, reps: 12, variantKey: 'normal' },
+      { weightKg: null, reps: 10, variantKey: 'slow' },
+    ],
+    restSeconds: 90,
+    perSide: false,
+    maxWeightKg: null,
+    weightStepKg: null,
+  }
+
+  it("surfaces the offered rung's own variantKey, not the first rung's", () => {
+    const rung1 = nextSetTarget(withVariants, [], [], 0)
+    const rung2 = nextSetTarget(withVariants, [], [], 1)
+
+    expect(rung1.variantKey).toBe('normal')
+    expect(rung2.variantKey).toBe('slow')
+  })
+
+  it('is undefined for a ladder whose rungs carry no variant — most rungs vary only by load', () => {
+    const target = nextSetTarget(ladder, [], [], 0)
+    expect(target.variantKey).toBeUndefined()
+  })
+})
