@@ -12,6 +12,7 @@ import { useLocale } from '@/i18n/useLocale'
 import { SessionPreview } from '@/features/today/SessionPreview'
 import type { ActivityTemplate, Exercise, LoggedSet, Program, SessionTemplate, Workout } from '@/domain/types'
 import { ActivityItemList } from '@/features/recovery/ActivityItemList'
+import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
 
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
@@ -205,17 +206,45 @@ function LoggedExerciseRow({
   return (
     <li className="px-4 py-3.5">
       {exercise ? (
+        // Thumbnail and name share one Link, not two — the owner's "tap
+        // either the thumbnail or the name" is satisfied by both sitting
+        // inside a single interactive element, which is also what keeps a
+        // screen reader from hearing "Goblet squat" as two adjacent links
+        // to the same place. The logged-sets line stays outside it
+        // (PlanDayPage.test.tsx already pins the link's accessible name to
+        // just the exercise name) — history's numbers are data to read,
+        // not something this row asks you to act on.
         <Link
           to={`/library/${exercise.id}`}
           state={{ from: 'plan-day', date }}
-          className="font-medium text-ink transition-colors hover:text-amber"
+          className="flex min-h-11 items-center gap-3 transition-colors hover:text-amber focus-inset"
         >
-          {exerciseName}
+          <ExerciseThumbnail exerciseId={exercise.id} />
+          {/*
+            `min-w-0 truncate`, not the free-wrap this replaced — measured
+            live at 375px/fr: without it, "Extension triceps à la nuque
+            avec haltère" wrapped onto two lines and grew the row instead
+            of clipping. `min-w-0` is load-bearing on a flex child: without
+            it the span's automatic minimum width is its content size,
+            which blocks `truncate`'s `overflow-hidden` from ever engaging.
+            Same fix as SessionPreview's name column (`d19f38c`), same
+            reason — the full name is still real text in the DOM.
+          */}
+          <span className="min-w-0 flex-1 truncate font-medium text-ink">{exerciseName}</span>
         </Link>
       ) : (
-        <p className="font-medium text-ink">{workoutExercise.exerciseId}</p>
+        // No Library entry to link to, but still a designed tile rather
+        // than a gap — ExerciseThumbnail resolves an unknown id to the
+        // same reserved-tile placeholder, so a mixed list of known and
+        // unknown ids still reads as one deliberate layout.
+        <div className="flex items-center gap-3">
+          <ExerciseThumbnail exerciseId={workoutExercise.exerciseId} />
+          <p className="min-w-0 flex-1 truncate font-medium text-ink">{workoutExercise.exerciseId}</p>
+        </div>
       )}
-      <p className="mt-1 text-sm text-ink-secondary" data-numeric>
+      {/* pl-[3.75rem] (60px) lines the numbers up under the name, not the
+          thumbnail — thumbnail (3rem/48px) + the row's own gap-3 (12px). */}
+      <p className="mt-1 pl-[3.75rem] text-sm text-ink-secondary" data-numeric>
         {workoutExercise.sets.map((set) => formatLoggedSet(set, workoutExercise.prescription.mode)).join(' · ')}
       </p>
     </li>

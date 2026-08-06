@@ -7,9 +7,13 @@ import { seedDatabase } from '@/data/seed'
 import { seedProgram } from '@/data/seed/program'
 import { programRepo } from '@/data/repositories'
 import { createWorkout, logSet, completeWorkout } from '@/domain/workout'
+import manifest from '@/data/generated/asset-manifest.json'
 import { PlanPage } from './PlanPage'
 import { PlanDayPage } from './PlanDayPage'
 import { ExercisePage } from '@/features/library/ExercisePage'
+
+const gobletSquatThumbnailHash = (manifest as Record<string, { thumbnailHash?: string }>)['goblet-squat']
+  .thumbnailHash
 
 /**
  * Amendment (19 Jul) to docs/Plan.md — every day row is clickable.
@@ -51,6 +55,35 @@ async function putCompletedWorkout(date: string) {
     completedAt: `${date}T09:15:00.000Z`,
   })
   workout = completeWorkout(workout, `${date}T09:40:00.000Z`)
+  await db.workouts.put(workout)
+}
+
+/**
+ * Simulates a logged exercise whose id no longer resolves in the Library
+ * (removed, or a stale reference) — exercises LoggedExerciseRow's
+ * defensive fallback, which has no exercise to link to.
+ */
+async function putCompletedWorkoutWithUnknownExercise(date: string) {
+  let workout = createWorkout({
+    id: `w-unknown-${date}`,
+    programId: seedProgram.id,
+    session: seedProgram.sessions[1],
+    date,
+    startedAt: `${date}T09:00:00.000Z`,
+  })
+  workout = logSet(workout, 0, {
+    weightKg: 20,
+    reps: 10,
+    seconds: null,
+    completedAt: `${date}T09:10:00.000Z`,
+  })
+  workout = completeWorkout(workout, `${date}T09:20:00.000Z`)
+  workout = {
+    ...workout,
+    exercises: workout.exercises.map((e, i) =>
+      i === 0 ? { ...e, exerciseId: 'retired-exercise-id' } : e,
+    ),
+  }
   await db.workouts.put(workout)
 }
 
@@ -137,6 +170,76 @@ describe('PlanDayPage states', () => {
   it("today's date redirects to Today rather than duplicating it", async () => {
     renderDay('2026-07-27')
     expect(await screen.findByText('TODAY PROBE')).toBeInTheDocument()
+  })
+})
+
+/**
+ * Owner request (5 Aug): a past-session exercise row must show its Library
+ * thumbnail, and tapping either the thumbnail or the name opens the
+ * existing Library entry — never a duplicate of its cues/concept.
+ */
+describe('PlanDayPage past-session thumbnails', () => {
+  it('renders the Library thumbnail inside the exercise link, same asset as everywhere else', async () => {
+    await putCompletedWorkout('2026-07-22')
+    renderDay('2026-07-22')
+
+    const link = await screen.findByRole('link', { name: 'Goblet squat' })
+    const img = link.querySelector('img')
+    expect(img).not.toBeNull()
+    expect(img).toHaveAttribute('src', `/assets/exercises/goblet-squat/thumbnail.avif?v=${gobletSquatThumbnailHash}`)
+    expect(img).toHaveAttribute('alt', '')
+  })
+
+  it('keeps the touch target at the 44px floor', async () => {
+    await putCompletedWorkout('2026-07-22')
+    renderDay('2026-07-22')
+
+    const link = await screen.findByRole('link', { name: 'Goblet squat' })
+    expect(link.className).toContain('min-h-11')
+  })
+
+  it('gives the name a truncate floor, not a free wrap that grows the row', async () => {
+    // jsdom does not compute real layout, so this can only assert the
+    // class contract, not pixels — but it is not a vacuous assertion:
+    // measured live at 375px/fr against this exact commit, omitting
+    // `truncate` here let "Extension triceps à la nuque avec haltère"
+    // wrap onto two lines and grow the row instead of clipping, the same
+    // class of defect SessionPreview's name column was fixed for (d19f38c).
+    await putCompletedWorkout('2026-07-22')
+    renderDay('2026-07-22')
+
+    const link = await screen.findByRole('link', { name: 'Goblet squat' })
+    const span = link.querySelector('span')
+    expect(span?.className).toContain('truncate')
+    // `truncate` alone does nothing on a flex child without this — the
+    // span's automatic minimum width defaults to its content size, which
+    // blocks `overflow-hidden` from ever having anything to clip.
+    expect(span?.className).toContain('min-w-0')
+  })
+
+  it("excludes the logged numbers from the link's accessible name — they're data to read, not the action", async () => {
+    await putCompletedWorkout('2026-07-22')
+    renderDay('2026-07-22')
+
+    // Exact match: getByRole with `name` defaults to exact, so this would
+    // already fail if the sets text ("10 × 20 kg · 9 × 20 kg") had leaked
+    // into the link. Asserting it explicitly rather than relying on the
+    // absence of a failure elsewhere.
+    const link = await screen.findByRole('link', { name: 'Goblet squat' })
+    expect(link).not.toHaveTextContent('20 kg')
+  })
+
+  it('still shows a reserved thumbnail tile for a logged exercise no longer in the Library, without linking anywhere', async () => {
+    await putCompletedWorkoutWithUnknownExercise('2026-07-22')
+    renderDay('2026-07-22')
+
+    expect(await screen.findByText('retired-exercise-id')).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /retired-exercise-id/ })).toBeNull()
+    // The empty-tile placeholder, not a broken <img> — same contract as
+    // SessionPreview's thumbnails for an exercise with no resolvable asset.
+    const row = screen.getByText('retired-exercise-id').closest('li')
+    expect(row?.querySelector('[aria-hidden="true"]')).toBeInTheDocument()
+    expect(row?.querySelector('img')).toBeNull()
   })
 })
 
