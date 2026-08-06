@@ -12,12 +12,12 @@ export interface AdjustedSession {
   adjustments: Adjustment[]
 }
 
-const MIN_LADDER_RUNGS = 2
+const MIN_LADDER_RUNGS = 1
 
 /**
  * Readiness modulation — deliberately small and capped (docs/Readiness.md):
  * an easier day drops the top (heaviest) rung of every ladder — the day's
- * stress peak — never below two rungs, and trims one set off accessories.
+ * stress peak — never below one rung, and trims one set off accessories.
  * Never a rewritten workout, never a reduced rep-range main lift (the
  * reserve-based easing that used to live here is gone with RIR; rep-range
  * work's own easing is suggestProgression's readinessTier branch, a
@@ -29,6 +29,16 @@ const MIN_LADDER_RUNGS = 2
  * as an empty list, not padded with an adjustment that didn't happen. The
  * readiness tier itself still displays elsewhere; this only governs the
  * session-specific "Adjusted" badge.
+ *
+ * **The floor moved from two rungs to one by owner ruling** (see
+ * docs/Training.md's readiness-easing note) — the follow-up the 31 Jul
+ * ruling left explicitly open, now fulfilled. Two conditions travel with
+ * it: progression is disabled for that exercise on that day (already true
+ * — `suggestLadderProgression` reads `readinessTier` and never advances a
+ * completed ladder on an easier day, whatever the floor), and the eased
+ * shape never replaces the canonical prescription (already true — this
+ * function is immutable and only the workout snapshot carries the eased
+ * shape; see the "does not mutate the input session" test).
  */
 export function applyReadiness(
   session: SessionTemplate,

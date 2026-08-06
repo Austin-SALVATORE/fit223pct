@@ -240,4 +240,41 @@ describe('suggestLadderProgression', () => {
     // two rungs forever.
     expect(result).toEqual({ type: 'repeat', setPlan: ladder.setPlan })
   })
+
+  /**
+   * The owner's rung-floor ruling (docs/design/Mesocycle2Implementation.md
+   * §5, adjustments.ts's MIN_LADDER_RUNGS: 2 -> 1) named two conditions,
+   * and this is the first: "progression is disabled for that exercise on
+   * that day." Composes both changes together rather than trusting either
+   * one to imply the other — a two-rung ladder eased down to its single
+   * surviving rung, that one rung completed, must still not advance.
+   * Without this item's fix, `suggestLadderProgression` would see a
+   * "completed" one-rung ladder and offer a heavier single rung on the
+   * athlete's worst day — the exact defect this item exists to close,
+   * now also proven at the new one-rung floor the other item introduces.
+   */
+  it('a two-rung ladder eased to one rung, and that rung completed, still does not advance on an easier day', () => {
+    const twoRungLadder: LadderPrescription = {
+      exerciseId: 'lateral-raise',
+      sets: 2,
+      mode: 'reps',
+      setPlan: [
+        { weightKg: 6, reps: 15 },
+        { weightKg: 8, reps: 12 },
+      ],
+      restSeconds: 60,
+      perSide: false,
+      maxWeightKg: 15,
+      weightStepKg: 2,
+    }
+    // applyReadiness has already truncated this to its one surviving rung
+    // by the time suggestLadderProgression ever sees it.
+    const eased: LadderPrescription = { ...twoRungLadder, setPlan: [twoRungLadder.setPlan[0]], sets: 1 }
+    // That single rung was completed last time it was offered.
+    const previousSets = [ladderSet(0, 15, 6)]
+
+    const result = suggestLadderProgression(eased, previousSets, 'easier')
+
+    expect(result).toEqual({ type: 'repeat', setPlan: eased.setPlan })
+  })
 })

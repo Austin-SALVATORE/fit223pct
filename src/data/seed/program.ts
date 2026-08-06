@@ -206,10 +206,11 @@ export const seedProgram: Program = {
 
         `overhead-triceps-extension` (item 5) is a three-rung ladder, unlike
         the other three accessories' two — the coach's own spec, not a
-        difference invented here. See docs/Training.md's readiness-easing
-        note: a two-rung ladder is already at `MIN_LADDER_RUNGS` and cannot
-        be eased further, so this is the only accessory in the session an
-        easier day can still shorten.
+        difference invented here. Every ladder in this session eases on a
+        low-readiness day (owner ruling moved the rung floor from two to
+        one — docs/Training.md's readiness-easing note); this was
+        previously the one exception, since a two-rung ladder used to sit
+        exactly at the old floor.
       */
       items: [
         ladder(

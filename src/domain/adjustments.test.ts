@@ -103,15 +103,41 @@ describe('applyReadiness', () => {
     expect(item.sets).toBe(2)
   })
 
-  it('never drops a ladder below two rungs', () => {
+  /**
+   * docs/design/Mesocycle2Implementation.md §5/§12.3 — owner ruling: the
+   * floor moved from two rungs to one, so §15's "a two-level Pyramid
+   * becomes one" is representable. The floor itself did not disappear —
+   * a one-rung ladder is still a floor, just a lower one.
+   */
+  it('never drops a ladder below one rung', () => {
+    const oneRung = ladder('bench-press', [{ weightKg: 8, reps: 12 }])
+    const result = applyReadiness({ ...session, items: [oneRung] }, readiness('easier'))
+    const item = result.session.items[0]
+    expect(item.setPlan).toHaveLength(1)
+    expect(item.sets).toBe(1)
+  })
+
+  // Negative control for the floor itself, run and watched red before this
+  // landed: setting MIN_LADDER_RUNGS to 0 let a one-rung ladder's own
+  // (only) rung be sliced away, leaving `setPlan` empty — this test caught
+  // it immediately (`toHaveLength(1)` received 0).
+
+  /**
+   * The inverse of the retired "reports zero adjustments" assertion —
+   * proof this is a floor *move*, not a deletion. A two-rung ladder used
+   * to be the floor and reported nothing; now it eases the same way a
+   * three-rung ladder always has.
+   */
+  it('now eases a two-rung ladder to one rung and reports an adjustment — the old floor case, inverted', () => {
     const twoRung = ladder('bench-press', [
       { weightKg: 8, reps: 12 },
       { weightKg: 10, reps: 10 },
     ])
     const result = applyReadiness({ ...session, items: [twoRung] }, readiness('easier'))
     const item = result.session.items[0]
-    expect(item.setPlan).toHaveLength(2)
-    expect(item.sets).toBe(2)
+    expect(item.setPlan).toEqual([{ weightKg: 8, reps: 12 }])
+    expect(item.sets).toBe(1)
+    expect(result.adjustments).toHaveLength(1)
   })
 
   it('reports one adjustment line for a session with only ladder items', () => {
@@ -120,14 +146,11 @@ describe('applyReadiness', () => {
   })
 
   it('reports zero adjustments — honestly — when nothing in the session actually changes', () => {
-    // A ladder already at the 2-rung floor and no accessories: nothing left
-    // for readiness to ease off. The tier itself still displays elsewhere;
-    // this only governs the session-specific "Adjusted" badge.
-    const twoRung = ladder('bench-press', [
-      { weightKg: 8, reps: 12 },
-      { weightKg: 10, reps: 10 },
-    ])
-    const result = applyReadiness({ ...session, items: [twoRung] }, readiness('easier'))
+    // A ladder already at the new 1-rung floor and no accessories: nothing
+    // left for readiness to ease off. The tier itself still displays
+    // elsewhere; this only governs the session-specific "Adjusted" badge.
+    const oneRung = ladder('bench-press', [{ weightKg: 8, reps: 12 }])
+    const result = applyReadiness({ ...session, items: [oneRung] }, readiness('easier'))
     expect(result.adjustments).toEqual([])
   })
 
