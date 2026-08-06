@@ -442,3 +442,53 @@ maintains automatically. Never hand-edit them.
   data migrations, deploys, force pushes, published assets — before a
   teammate proceeds. Speed is never the reason to skip this.
 - A teammate that disagrees with a brief says so before acting.
+
+### A message cannot interrupt a batch, so reprioritising by message does not work
+
+Messages to a working teammate **queue**. They are read together, at
+the boundary, after it finishes what it was already doing. A teammate
+mid-batch is not ignoring the inbox — it is not reading the inbox yet.
+
+This is a mechanism, not a diligence problem, and mistaking one for the
+other is expensive. The tell is a small urgent task losing repeatedly
+to a large task with a later deadline: you send "do X first", the batch
+completes without X, and the natural response is to send it again more
+firmly. That is `verification.md`'s *run the same instrument harder*
+failure wearing project-management clothes — a firmer message reaches
+an agent that is not reading messages by exactly the same route as the
+first one, which is to say, not until the batch ends.
+
+So when something must happen before a teammate's current batch ends,
+there are only two moves that actually work:
+
+- **Dispatch it elsewhere** — a subagent, or another teammate — after
+  checking the two cannot collide in the shared tree, and *telling the
+  first teammate to stand off those files*. It cannot see the second
+  brief, so the sequencing is the lead's to enforce, not theirs to
+  infer.
+- **Accept batch granularity** and wait for the boundary, having said
+  so plainly rather than pretending the instruction was urgent.
+
+Two corollaries, both learned the same evening:
+
+- **State observed at dispatch time is stale by the time it is read.**
+  A message describing a teammate's working tree as it was when you ran
+  `git status` will very often arrive after that teammate has committed.
+  Quote a SHA, not a snapshot; ask what is open rather than asserting it.
+- **The handover itself is a collision risk, and a stand-down cannot
+  fix it — because a stand-down is also a message.** It queues with
+  everything else and arrives at the same batch boundary, by which time
+  the teammate has already done the work you reassigned. There is
+  therefore **no safe moment to reassign work away from a mid-batch
+  teammate at all.** Either wait for the boundary and reassign there, or
+  accept that both agents will do the work and decide in advance whose
+  result you will keep. "Send the stand-down first" is not a third
+  option; it was written in this file twenty minutes before it failed.
+
+(6 Aug: a seven-row seed-content correction, due the next morning, lost
+three times to a set-customization feature due two days later. Three of
+the lead's five messages went to firmness rather than to mechanism. The
+correction only moved once it was handed to a second pair of hands — and
+the teammate, reading all five at once, then announced it was starting
+the same correction, which would have put two agents in one file had the
+stop not arrived first.)
