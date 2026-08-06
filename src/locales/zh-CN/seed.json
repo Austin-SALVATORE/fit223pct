@@ -549,7 +549,7 @@
               "note": "Rest after both sides"
             },
             "standing-calf-raise": {
-              "note": "Hold this pyramid once every level is loaded and clean — a harder variation follows in a later update"
+              "note": "Hold this pyramid once every level is loaded and clean — a harder variation is next in your progression"
             },
             "dead-bug": {
               "note": "Rest 45-60 sec"
@@ -575,7 +575,7 @@
           "item": {
             "0": {
               "label": "Zone 2 ride",
-              "detail": "30 min, after lifting (optional 2-3 min easy spin cool-down)"
+              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
             }
           }
         },
@@ -597,7 +597,7 @@
           "item": {
             "0": {
               "label": "Zone 2 ride",
-              "detail": "30 min, after lifting (optional 2-3 min easy spin cool-down) — reduce to 20 min on a Yellow day or if leg quality is clearly deteriorating"
+              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
             }
           }
         },
@@ -619,7 +619,7 @@
           "item": {
             "0": {
               "label": "Zone 2 ride",
-              "detail": "30 min, after lifting (optional 2-3 min easy spin cool-down)"
+              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
             }
           }
         },

@@ -420,9 +420,42 @@ describe('mesocycle2Build — spec conformance (v2.7 §6-§8)', () => {
     }
   })
 
-  it("Wednesday's ride carries the coach's Yellow-day reduction as text (§12)", () => {
-    const items = mesocycle2Build.weekdayActivities?.[3]?.items ?? []
-    expect(items.some((i) => /reduce to 20 min/.test(i.detail ?? ''))).toBe(true)
+  /**
+   * Corrected against coach spec v2.11 §12, row 1 — the ride figure
+   * seeded here was originally v2.7's 30 min (Wednesday reducible to 20
+   * on a Yellow day); v2.11 collapsed the row to 20 min on all three
+   * training days with nothing to reduce (§15 keeps it at the prescribed
+   * 20 minutes regardless of readiness). Unlike "Zone 2", the actual
+   * number lives in the item's `detail`, not its `label` — checked there
+   * specifically, since a check against the wrong field would pass
+   * whether the number were right or stale.
+   */
+  it('every training day\'s ride is 20 min, never the retired 30 min figure (§12)', () => {
+    for (const weekday of mesocycle2Build.trainingWeekdays) {
+      const items = mesocycle2Build.weekdayActivities?.[weekday as 1 | 3 | 5]?.items ?? []
+      expect(
+        items.some((i) => /20 min/.test(i.detail ?? '')),
+        `training weekday ${weekday} ride is not 20 min`,
+      ).toBe(true)
+      expect(
+        items.some((i) => /30 min/.test(i.detail ?? '')),
+        `training weekday ${weekday} still carries the retired 30 min figure`,
+      ).toBe(false)
+    }
+  })
+
+  /**
+   * v2.10 removed the Yellow-day ride reduction — §15 now keeps the ride
+   * at the prescribed 20 minutes regardless of readiness, so there is
+   * nothing to branch on and the clause must not survive as dead text
+   * anywhere in the program.
+   */
+  it('no weekday activity carries a Yellow-day ride reduction — v2.10 retired it', () => {
+    for (const activity of Object.values(mesocycle2Build.weekdayActivities ?? {})) {
+      for (const item of activity.items) {
+        expect(item.detail ?? '').not.toMatch(/reduce to 20 min|Yellow day/)
+      }
+    }
   })
 
   it('Morning Activation is one round of six items (§13)', () => {

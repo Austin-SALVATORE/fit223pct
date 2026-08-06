@@ -509,7 +509,7 @@ export const mesocycle2Build: Program = {
           {
             restSeconds: 60,
             role: 'accessory',
-            note: 'Hold this pyramid once every level is loaded and clean — a harder variation follows in a later update',
+            note: 'Hold this pyramid once every level is loaded and clean — a harder variation is next in your progression',
           },
         ),
         ladder(
@@ -641,20 +641,32 @@ export const mesocycle2Build: Program = {
     training weekday as of docs/design/ActivityPrescriptionPhaseA.md §1
     (structural half already shipped, b460822) — a training-weekday entry
     renders as that day's post-strength cardio, display only, not a
-    replacement for the session. Monday and Friday both prescribe 30 min
-    Zone 2 after lifting; Wednesday carries the coach's own Yellow-day
-    reduction as text (§12: "reduce to 20 min if the session is Yellow or
-    leg quality is clearly deteriorating") — branching the actual ride
-    length on readiness would be behaviour, not display, and is
-    deliberately out of scope here (§5 "Nice, and explicitly not now").
+    replacement for the session.
 
-    Recovery-day stretching (§14) is deliberately plain text with no
-    `routineId`: the existing `recovery-stretch-v1` routine (phase-1-home's
-    own) does not match §14's six named stretches — it's missing a lat
-    stretch and thoracic rotation and includes three the coach doesn't
-    name here — so linking it would silently play the wrong sequence.
-    Authoring a new, accurate routine needs its own steps and art
-    (program-content.md), which is content work beyond this batch.
+    **Corrected 6 Aug against coach spec v2.11 §12, row 1** — the ride
+    figure originally seeded here (30 min, Wednesday reducible to 20 on a
+    Yellow day) was v2.7's; v2.11 collapsed that row to one prescription
+    for all three training days: 20 min Zone 2, a 0-2 min easy transition
+    before it and up to 3 min easy spin after, ~25 min total. §15 now
+    keeps the ride at the prescribed 20 minutes regardless of readiness —
+    there is nothing left to reduce, so Wednesday's Yellow-day clause is
+    deleted rather than kept as dead text. v2.11 also adds a fourth
+    element, a session-specific post-ride stretch (§14) — deliberately
+    not seeded here; the lead is scoping it separately since four of its
+    nine stretch positions have no step id yet, and a step id is both a
+    locale key and an art id.
+
+    Recovery-day stretching (§14, the *non-training-day* stretch — a
+    different one from the post-ride stretch above) is deliberately plain
+    text with no `routineId`: the existing `recovery-stretch-v1` routine
+    (phase-1-home's own) does not match §14's six named stretches — it's
+    missing a lat stretch and thoracic rotation, and includes four the
+    coach doesn't name here (wall-calf-stretch, standing-quadriceps-
+    stretch, seated-butterfly-stretch, childs-pose — a fifth,
+    wall-chest-stretch, depends on whether it counts as the coach's
+    "doorway chest stretch") — so linking it would silently play the
+    wrong sequence. Authoring a new, accurate routine needs its own steps
+    and art (program-content.md), which is content work beyond this batch.
   */
   weekdayActivities: {
     1: {
@@ -663,7 +675,8 @@ export const mesocycle2Build: Program = {
       items: [
         {
           label: 'Zone 2 ride',
-          detail: '30 min, after lifting (optional 2-3 min easy spin cool-down)',
+          detail:
+            '20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)',
         },
       ],
     },
@@ -686,7 +699,7 @@ export const mesocycle2Build: Program = {
         {
           label: 'Zone 2 ride',
           detail:
-            '30 min, after lifting (optional 2-3 min easy spin cool-down) — reduce to 20 min on a Yellow day or if leg quality is clearly deteriorating',
+            '20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)',
         },
       ],
     },
@@ -708,7 +721,8 @@ export const mesocycle2Build: Program = {
       items: [
         {
           label: 'Zone 2 ride',
-          detail: '30 min, after lifting (optional 2-3 min easy spin cool-down)',
+          detail:
+            '20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)',
         },
       ],
     },
