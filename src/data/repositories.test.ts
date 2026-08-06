@@ -1,14 +1,15 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { db } from './db'
-import { programRepo, settingsRepo, workoutRepo } from './repositories'
+import { activityRecordRepo, programRepo, settingsRepo, workoutRepo } from './repositories'
 import { resolveDayPlan } from '@/domain/schedule'
 import { parseDateKey } from '@/lib/dates'
-import type { Program, UserSettings, Workout } from '@/domain/types'
+import type { ActivityRecord, Program, UserSettings, Workout } from '@/domain/types'
 
 afterEach(async () => {
   await db.programs.clear()
   await db.workouts.clear()
   await db.settings.clear()
+  await db.activityRecords.clear()
 })
 
 function makeProgram(overrides: Partial<Program>): Program {
@@ -217,5 +218,101 @@ describe('settingsRepo.update', () => {
     await db.settings.put(makeSettings())
     await settingsRepo.markWeeklyReviewSeen('2026-07-20')
     expect((await settingsRepo.get())?.lastSeenWeeklyReviewWeekStart).toBe('2026-07-20')
+  })
+})
+
+describe('activityRecordRepo', () => {
+  /**
+   * docs/design/SessionSetCustomization.md §2 — the id is built by the
+   * repo (`${date}-${kind}`), never by the caller, so saving twice for the
+   * same day edits one row instead of creating a duplicate. Negative
+   * control: if `put` used a fresh id per call (a UUID, say) instead of
+   * this deterministic one, saving twice would leave two rows — proving
+   * the assertion below is actually checking the id scheme, not just that
+   * *a* write happened.
+   */
+  it('saving twice for the same date and kind edits one row, never creates two', async () => {
+    await activityRecordRepo.put({
+      date: '2026-08-10',
+      programId: 'mesocycle-2-build',
+      kind: 'ride',
+      completedAt: '2026-08-10T18:00:00.000Z',
+      actualMinutes: 18,
+      avgHeartRate: 128,
+    })
+    await activityRecordRepo.put({
+      date: '2026-08-10',
+      programId: 'mesocycle-2-build',
+      kind: 'ride',
+      completedAt: '2026-08-10T18:05:00.000Z',
+      actualMinutes: 20,
+      avgHeartRate: 132,
+    })
+
+    const records = await activityRecordRepo.getByDate('2026-08-10')
+    expect(records).toHaveLength(1)
+    const ride = records[0] as Extract<ActivityRecord, { kind: 'ride' }>
+    expect(ride.actualMinutes).toBe(20)
+    expect(ride.avgHeartRate).toBe(132)
+  })
+
+  it('a ride and an activation on the same date are independent rows, both retained', async () => {
+    await activityRecordRepo.put({
+      date: '2026-08-10',
+      programId: 'mesocycle-2-build',
+      kind: 'ride',
+      completedAt: '2026-08-10T18:00:00.000Z',
+      actualMinutes: 20,
+      avgHeartRate: 130,
+    })
+    await activityRecordRepo.put({
+      date: '2026-08-10',
+      programId: 'mesocycle-2-build',
+      kind: 'activation',
+      completedAt: '2026-08-10T07:00:00.000Z',
+    })
+
+    const records = await activityRecordRepo.getByDate('2026-08-10')
+    expect(records.map((r) => r.kind).sort()).toEqual(['activation', 'ride'])
+  })
+
+  /**
+   * §3's hardest requirement — recording one activity must never create,
+   * overwrite or complete another. Asserted here at the boundary the
+   * design names as the one that makes it structural: `activityRecords` is
+   * its own table, so a ride write literally cannot reach `Workout` or
+   * `CheckIn`. Control: if a future call site threaded activity state
+   * through `Workout` "because it was convenient" (the plan's own worry),
+   * this would go red the moment it did.
+   */
+  it('recording a ride touches no Workout and no CheckIn', async () => {
+    const workout: Workout = {
+      id: 'w1',
+      programId: 'mesocycle-2-build',
+      sessionTemplateId: 'mesocycle2-chest-back',
+      date: '2026-08-10',
+      startedAt: '2026-08-10T09:00:00.000Z',
+      completedAt: '2026-08-10T09:40:00.000Z',
+      exercises: [],
+    }
+    await db.workouts.put(workout)
+
+    await activityRecordRepo.put({
+      date: '2026-08-10',
+      programId: 'mesocycle-2-build',
+      kind: 'ride',
+      completedAt: '2026-08-10T18:00:00.000Z',
+      actualMinutes: 20,
+      avgHeartRate: 130,
+    })
+
+    const storedWorkout = await db.workouts.get('w1')
+    expect(storedWorkout).toEqual(workout)
+    const checkIn = await db.checkins.where('date').equals('2026-08-10').first()
+    expect(checkIn).toBeUndefined()
+  })
+
+  it('getByDate returns nothing for a date with no records', async () => {
+    expect(await activityRecordRepo.getByDate('2026-08-11')).toEqual([])
   })
 })

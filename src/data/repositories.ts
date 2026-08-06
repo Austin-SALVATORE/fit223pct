@@ -1,5 +1,13 @@
 import { db } from './db'
-import type { CheckIn, Exercise, Program, UserSettings, Workout } from '@/domain/types'
+import type {
+  ActivityRecord,
+  CheckIn,
+  DistributiveOmit,
+  Exercise,
+  Program,
+  UserSettings,
+  Workout,
+} from '@/domain/types'
 
 /**
  * All reads/writes go through here — components never touch Dexie tables
@@ -175,6 +183,32 @@ export const checkinRepo = {
       }
       await db.checkins.put({ ...base, ...patch })
     })
+  },
+}
+
+export const activityRecordRepo = {
+  /**
+   * Every recorded activity for a date — at most one per kind, since the
+   * id is deterministic. Independence from `Workout`/`CheckIn` is by
+   * construction (types.ts's `ActivityRecord` doc): nothing here can
+   * touch either of those tables.
+   */
+  getByDate: (dateKey: string): Promise<ActivityRecord[]> =>
+    db.activityRecords.where('date').equals(dateKey).toArray(),
+
+  /** Every activity record, unordered — the full-data-export source. */
+  getAll: (): Promise<ActivityRecord[]> => db.activityRecords.toArray(),
+
+  /**
+   * Upsert, keyed by `${date}-${kind}` — built here rather than by the
+   * caller, so the id format can't drift between call sites. Deterministic
+   * on purpose: saving twice for the same day edits the same row instead
+   * of creating a duplicate (spec §3: "remain editable for the same
+   * scheduled day"), and a duplicate for one day is unrepresentable.
+   */
+  put: (record: DistributiveOmit<ActivityRecord, 'id'>): Promise<string> => {
+    const withId = { ...record, id: `${record.date}-${record.kind}` } as ActivityRecord
+    return db.activityRecords.put(withId)
   },
 }
 

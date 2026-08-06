@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router'
-import { checkinRepo, programRepo, settingsRepo, workoutRepo } from '@/data/repositories'
+import { activityRecordRepo, checkinRepo, programRepo, settingsRepo, workoutRepo } from '@/data/repositories'
 import { buildFullDataExport, toFullDataExportJson, fullDataExportFilename } from '@/domain/dataExport'
 import { shareOrDownloadFile } from '@/lib/shareOrDownloadFile'
 import { toDateKey } from '@/lib/dates'
@@ -30,17 +30,19 @@ export function SettingsPage() {
   const backTarget = originTarget(origin)
 
   async function exportAllData() {
-    const [programs, workouts, checkins, settings] = await Promise.all([
+    const [programs, workouts, checkins, settings, activityRecords] = await Promise.all([
       programRepo.getAll(),
       workoutRepo.getAll(),
       checkinRepo.getAll(),
       settingsRepo.get(),
+      activityRecordRepo.getAll(),
     ])
     const data = buildFullDataExport({
       programs,
       workouts,
       checkins,
       settings,
+      activityRecords,
       exportedAt: new Date().toISOString(),
     })
     const outcome = await shareOrDownloadFile(

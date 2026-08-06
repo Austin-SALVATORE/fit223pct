@@ -5,7 +5,7 @@ import {
   fullDataExportFilename,
 } from './dataExport'
 import { seedProgram } from '@/data/seed/program'
-import type { CheckIn, UserSettings, Workout } from './types'
+import type { ActivityRecord, CheckIn, UserSettings, Workout } from './types'
 
 const workout: Workout = {
   id: 'w1',
@@ -37,17 +37,28 @@ const settings: UserSettings = {
   lastSeenWeeklyReviewWeekStart: null,
 }
 
+const rideRecord: ActivityRecord = {
+  id: '2026-07-22-ride',
+  date: '2026-07-22',
+  programId: seedProgram.id,
+  kind: 'ride',
+  completedAt: '2026-07-22T18:00:00.000Z',
+  actualMinutes: 20,
+  avgHeartRate: 132,
+}
+
 // origin is bookkeeping the app keeps about itself, never a portable
 // field — buildFullDataExport strips it, same as the single-program export.
 const { origin: _seedOrigin, ...seedProgramContent } = seedProgram
 
 describe('buildFullDataExport', () => {
-  it('bundles programs, workouts, checkins, and settings, but never the Library', () => {
+  it('bundles programs, workouts, checkins, settings, and activity records, but never the Library', () => {
     const data = buildFullDataExport({
       programs: [seedProgram],
       workouts: [workout],
       checkins: [checkIn],
       settings,
+      activityRecords: [rideRecord],
       exportedAt: '2026-07-19T12:00:00.000Z',
     })
     expect(data).toEqual({
@@ -56,6 +67,7 @@ describe('buildFullDataExport', () => {
       workouts: [workout],
       checkins: [checkIn],
       settings,
+      activityRecords: [rideRecord],
     })
     expect(data).not.toHaveProperty('exercises')
     expect(data).not.toHaveProperty('library')
@@ -68,6 +80,7 @@ describe('buildFullDataExport', () => {
       workouts: [],
       checkins: [],
       settings: undefined,
+      activityRecords: [],
       exportedAt: '2026-07-19T12:00:00.000Z',
     })
     expect(data.settings).toBeNull()
@@ -81,6 +94,7 @@ describe('toFullDataExportJson / fullDataExportFilename', () => {
       workouts: [workout],
       checkins: [checkIn],
       settings,
+      activityRecords: [rideRecord],
       exportedAt: '2026-07-19T12:00:00.000Z',
     })
     expect(JSON.parse(toFullDataExportJson(data))).toEqual(data)

@@ -1,5 +1,5 @@
 import { stripProgramOrigin } from './programExport'
-import type { CheckIn, Program, UserSettings, Workout } from './types'
+import type { ActivityRecord, CheckIn, Program, UserSettings, Workout } from './types'
 
 /**
  * The backup story for a local-first app — everything except the Library,
@@ -11,6 +11,7 @@ export interface FullDataExport {
   workouts: Workout[]
   checkins: CheckIn[]
   settings: UserSettings | null
+  activityRecords: ActivityRecord[]
 }
 
 export function buildFullDataExport(input: {
@@ -18,6 +19,7 @@ export function buildFullDataExport(input: {
   workouts: Workout[]
   checkins: CheckIn[]
   settings: UserSettings | undefined
+  activityRecords: ActivityRecord[]
   exportedAt: string
 }): FullDataExport {
   return {
@@ -26,6 +28,7 @@ export function buildFullDataExport(input: {
     workouts: input.workouts,
     checkins: input.checkins,
     settings: input.settings ?? null,
+    activityRecords: input.activityRecords,
   }
 }
 

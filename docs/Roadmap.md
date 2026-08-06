@@ -323,8 +323,12 @@ adding `routineId` silently deleted every recovery link on a program
 round-trip, caught only by the round-trip tests
 (`src/domain/programImport.ts:55-79`).
 
-Dexie versions are allocated M10 → v4, M11 → v5; if this lands between
-them it takes the next free version rather than colliding.
+Dexie versions are allocated M10 → v4, Phase 0 (abandoned-workout close)
+→ v5, activity records + session set customization → v6, **M11 → v7**
+(re-pointed from v6 on 6 Aug — see `db.ts`'s v6 comment for why a lower
+number cannot be reserved for later-shipping work). If new work lands
+between existing entries, read `db.ts` and take the next free version
+rather than trusting a number written in a doc, including this one.
 
 ## Later (architecture-ready, not scheduled)
 

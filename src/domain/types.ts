@@ -267,6 +267,59 @@ export interface Workout {
   notes?: string
 }
 
+/**
+ * A completed activity outside the strength workout — coach spec v2.11
+ * §3 "Monday recording release ruling" makes this platform behavior for
+ * any current or future program, not a Mesocycle 2 special case.
+ *
+ * Lives in its own table, entirely outside `Workout` and `CheckIn` — §3's
+ * hardest requirement, that recording one activity must never create,
+ * overwrite or complete another, is satisfied by this boundary rather
+ * than by discipline at every call site. A ride record cannot touch the
+ * day's `Workout`; there is no shared row for two writers to race on.
+ */
+/**
+ * Plain `Omit<T, K>` does not distribute over a union — `keyof (A | B)`
+ * only returns keys common to every member, so `Omit<ActivityRecord,
+ * 'id'>` collapses the discriminated union into one shape instead of
+ * "each variant, minus id". This forces the distribution explicitly, so
+ * `repositories.ts`'s `activityRecordRepo.put` can accept either variant
+ * without its `kind`-specific fields (`actualMinutes`, `avgHeartRate`)
+ * being rejected.
+ */
+export type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never
+
+export type ActivityRecordKind = 'ride' | 'activation'
+
+export type ActivityRecord =
+  | {
+      id: string
+      /** ISO date the activity belongs to. */
+      date: string
+      programId: string
+      kind: 'activation'
+      completedAt: string
+    }
+  | {
+      id: string
+      date: string
+      programId: string
+      kind: 'ride'
+      completedAt: string
+      /**
+       * Both fields are required by the type, not just by validation —
+       * spec §12: "a duration-only entry does not count as a completed
+       * ride until average heart rate is added." Making a half-filled
+       * ride record structurally unrepresentable means "both required
+       * before complete" cannot be bypassed by a future call site; a
+       * draft belongs in component state, never in a saved record.
+       * Zone is deliberately absent — §12 is explicit that zone is the
+       * prescription, never a result field.
+       */
+      actualMinutes: number
+      avgHeartRate: number
+    }
+
 export type Rating = 1 | 2 | 3 | 4 | 5
 
 export interface CheckIn {

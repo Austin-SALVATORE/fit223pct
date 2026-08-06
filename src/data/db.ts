@@ -1,5 +1,6 @@
 import Dexie, { type EntityTable } from 'dexie'
 import type {
+  ActivityRecord,
   CheckIn,
   Exercise,
   Program,
@@ -17,6 +18,7 @@ export class Fit223Database extends Dexie {
   workouts!: EntityTable<Workout, 'id'>
   checkins!: EntityTable<CheckIn, 'id'>
   settings!: EntityTable<UserSettings, 'id'>
+  activityRecords!: EntityTable<ActivityRecord, 'id'>
 
   /** Name defaults to the real app database — overridable so migration tests can target an isolated one. */
   constructor(name = 'fit223pct') {
@@ -96,8 +98,27 @@ export class Fit223Database extends Dexie {
     // shape `getActive` already uses rather than an index query — so this
     // is an empty stores() diff with no upgrade callback, mirroring v4.
     // Absent means "not abandoned"; nothing is backfilled onto existing
-    // rows. **M11 (nutrition) takes v6, the next free version after this.**
+    // rows.
     this.version(5).stores({})
+    // Activity records (coach spec v2.11 §3) + session set customization
+    // (§4, docs/design/SessionSetCustomization.md). The only index diff is
+    // the new table; LoggedSet.custom / WorkoutExercise.skippedLevels /
+    // WorkoutExercise.customSlots are non-indexed and ride along at zero
+    // extra migration cost rather than each taking their own empty-diff
+    // version — the precedent v4/v5 set (bump for the generation, even
+    // with no index change) is deliberately not repeated a third time when
+    // a real table already forces one.
+    //
+    // Nothing is backfilled: a pre-v6 record simply has no matching row in
+    // `activityRecords`, which is what makes "no synthetic records for
+    // past dates" (§3) structural rather than a rule to remember — there
+    // is no upgrade callback that could write one.
+    //
+    // **M11 (nutrition) takes v7** — re-pointed from v6 (see git history):
+    // Dexie applies upgrades in increasing version order, so reserving a
+    // *lower* number for work that ships *later* would mean nutrition's
+    // eventual v6 never runs on any install that has already passed v7.
+    this.version(6).stores({ activityRecords: 'id, date' })
   }
 }
 

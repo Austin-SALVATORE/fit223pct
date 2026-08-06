@@ -80,9 +80,14 @@ function renderPlayer() {
 
 describe('a routine writes nothing', () => {
   it('adds no storage at all — no table exists for routine data', () => {
-    // If someone later adds a `routineCompletions` table, this fails before
-    // any behavioural test has to notice.
-    expect(db.tables.length).toBe(5)
+    // Narrowed from 5 to 6 when `activityRecords` landed (coach spec v2.11
+    // §3 — persisted ride/activation records, docs/design/
+    // SessionSetCustomization.md §2.2) — a real table, deliberately not
+    // named after a routine or a completion, since §14 keeps the guided
+    // stretch routine itself non-persisted; that ruling is unaffected by
+    // this table's existence. If someone later adds a `routineCompletions`
+    // table, this still fails before any behavioural test has to notice.
+    expect(db.tables.length).toBe(6)
     for (const table of db.tables) {
       expect(table.name).not.toMatch(/routine|completion/i)
     }

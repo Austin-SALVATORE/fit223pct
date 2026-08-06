@@ -282,3 +282,61 @@ describe('Fit223Database version 4 → 5 migration', () => {
     upgraded.close()
   })
 })
+
+/**
+ * Activity records (coach spec v2.11 §3) + session set customization
+ * (docs/design/SessionSetCustomization.md). The only index diff is the new
+ * `activityRecords` table — LoggedSet.custom / WorkoutExercise.skippedLevels
+ * / WorkoutExercise.customSlots are non-indexed and carry no migration of
+ * their own. The point of this test, same as v3→v4 and v4→v5, is not that
+ * the upgrade runs — it's that it writes nothing: a pre-v6 install's
+ * existing workout is untouched, and `activityRecords` starts genuinely
+ * empty rather than backfilled, which is what makes "no synthetic records
+ * for past dates" (§3) structural rather than a rule to remember.
+ */
+describe('Fit223Database version 5 → 6 migration', () => {
+  it('preserves a v5 workout unchanged, and activityRecords starts empty — no synthetic past records', async () => {
+    // Simulate a real pre-this-batch install: version 5, a completed
+    // workout, no activityRecords table at all.
+    const v5 = new Dexie(TEST_DB_NAME)
+    v5.version(1).stores({
+      exercises: 'id, name',
+      programs: 'id, phase, startDate',
+      workouts: 'id, date, sessionTemplateId, completedAt',
+      checkins: 'id, date',
+      settings: 'id',
+    })
+    v5.version(2).stores({ exercises: 'id' })
+    v5.version(3).stores({})
+    v5.version(4).stores({})
+    v5.version(5).stores({})
+    await v5.open()
+    await v5.table('workouts').put({
+      id: 'w1',
+      programId: 'phase-1-home',
+      sessionTemplateId: 'A',
+      date: '2026-07-20',
+      startedAt: '2026-07-20T09:00:00.000Z',
+      completedAt: '2026-07-20T09:40:00.000Z',
+      exercises: [],
+    })
+    v5.close()
+
+    const upgraded = new Fit223Database(TEST_DB_NAME)
+    await upgraded.open()
+
+    expect(upgraded.verno).toBeGreaterThanOrEqual(6)
+    const workout = await upgraded.workouts.get('w1')
+    expect(workout).toBeDefined()
+    expect(workout?.completedAt).toBe('2026-07-20T09:40:00.000Z')
+
+    // The table exists (the index diff itself proves that — Dexie would
+    // throw resolving `.activityRecords` otherwise) and starts empty: no
+    // upgrade callback ran, so there is nothing that could have written a
+    // record for a date nobody recorded anything on.
+    const records = await upgraded.activityRecords.toArray()
+    expect(records).toEqual([])
+
+    upgraded.close()
+  })
+})
