@@ -63,5 +63,17 @@
     "readinessSteady": "状态平稳：{{count}}",
     "readinessEased": "有所调整：{{count}}",
     "readinessNone": "没有记录状态数据。"
+  },
+  "rideRecord": {
+    "heading": "骑行记录",
+    "prompt": "记录一下实际情况——时长和平均心率。",
+    "durationLabel": "时长",
+    "heartRateLabel": "平均心率",
+    "bpm": "次/分钟",
+    "save": "保存骑行记录"
+  },
+  "activationRecord": {
+    "done": "已完成激活",
+    "markDone": "标记完成"
   }
 }

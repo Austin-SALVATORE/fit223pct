@@ -22,6 +22,8 @@ export interface LocalizedActivityItem {
   detail?: string
   /** Carried through from ActivityItem — see useLocalizedActivity. */
   routineId?: string
+  /** Carried through from ActivityItem — see useLocalizedActivity. */
+  recordable?: 'ride'
 }
 
 export interface LocalizedActivity {
@@ -142,10 +144,12 @@ export function useLocalizedActivity(
         : {}),
       // Carried through explicitly. This rebuilds each item as a fresh
       // literal rather than spreading, so any field not named here is
-      // silently dropped — and the failure mode for routineId is invisible:
-      // no error, the affordance simply never appears. Hence its own test,
-      // in a non-English locale, since this branch is the localized one.
+      // silently dropped — and the failure mode for routineId (and now
+      // recordable) is invisible: no error, the affordance simply never
+      // appears. Hence its own test, in a non-English locale, since this
+      // branch is the localized one.
       ...(item.routineId !== undefined ? { routineId: item.routineId } : {}),
+      ...(item.recordable !== undefined ? { recordable: item.recordable } : {}),
     }
   })
   return { ...activity, title, items }
@@ -181,6 +185,7 @@ export function useLocalizedActivation(
         ? { detail: i18n.exists(`seed:${detailKey}`) ? t(detailKey) : item.detail }
         : {}),
       ...(item.routineId !== undefined ? { routineId: item.routineId } : {}),
+      ...(item.recordable !== undefined ? { recordable: item.recordable } : {}),
     }
   })
   return { ...activation, title, items }

@@ -60,6 +60,7 @@
   "labelValue": "{{label}}：{{value}}",
   "middotJoin": "{{a}}·{{b}}",
   "unitSeconds": " 秒",
+  "unitMinutes": " 分钟",
   "setVariant": {
     "normal": "标准",
     "slow": "放慢",

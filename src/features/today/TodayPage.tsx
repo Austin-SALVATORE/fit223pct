@@ -3,7 +3,14 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
-import { checkinRepo, exerciseRepo, programRepo, settingsRepo, workoutRepo } from '@/data/repositories'
+import {
+  activityRecordRepo,
+  checkinRepo,
+  exerciseRepo,
+  programRepo,
+  settingsRepo,
+  workoutRepo,
+} from '@/data/repositories'
 import { resolveDayPlan } from '@/domain/schedule'
 import { createWorkout, summarizeWorkout } from '@/domain/workout'
 import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readiness'
@@ -21,9 +28,19 @@ import {
   useSessionName,
 } from '@/i18n/seedProgram'
 import { ActivityItemList } from '@/features/recovery/ActivityItemList'
+import { RideRecordCard } from '@/features/activity/RideRecordCard'
+import { ActivationRecordControl } from '@/features/activity/ActivationRecordControl'
 import { ConfirmAction } from '@/ui/ConfirmAction'
 import { SettingsLink } from '@/ui/SettingsLink'
-import type { ActivityTemplate, CheckIn, Exercise, Program, SessionTemplate, Workout } from '@/domain/types'
+import type {
+  ActivityRecord,
+  ActivityTemplate,
+  CheckIn,
+  Exercise,
+  Program,
+  SessionTemplate,
+  Workout,
+} from '@/domain/types'
 import { CheckInCard } from '@/features/checkin/CheckInCard'
 import { MeasurementCard } from '@/features/checkin/MeasurementCard'
 import { SessionPreview } from './SessionPreview'
@@ -42,6 +59,8 @@ interface TodayData {
   completedCount: number
   weeklyReview: WeeklyReview | null
   lastSeenWeeklyReviewWeekStart: string | null
+  /** Today's ride/activation records, if any (coach spec v2.11 §3) — at most one per kind. */
+  todayActivityRecords: ActivityRecord[]
 }
 
 export function TodayPage() {
@@ -50,18 +69,27 @@ export function TodayPage() {
   const reducedMotion = useReducedMotion()
 
   const data = useLiveQuery(async (): Promise<TodayData> => {
-    const [program, exercises, activeWorkout, todayWorkout, todayCheckIn, recentCheckIns, settings] =
-      await Promise.all([
-        programRepo.getActive(todayKey),
-        exerciseRepo.getAll(),
-        workoutRepo.getActive(),
-        workoutRepo.getByDate(todayKey),
-        checkinRepo.getByDate(todayKey),
-        // readinessFrom's consecutive-day walk can run well past 14 days —
-        // the default window undercounts any streak longer than that.
-        checkinRepo.getRecent(60),
-        settingsRepo.get(),
-      ])
+    const [
+      program,
+      exercises,
+      activeWorkout,
+      todayWorkout,
+      todayCheckIn,
+      recentCheckIns,
+      settings,
+      todayActivityRecords,
+    ] = await Promise.all([
+      programRepo.getActive(todayKey),
+      exerciseRepo.getAll(),
+      workoutRepo.getActive(),
+      workoutRepo.getByDate(todayKey),
+      checkinRepo.getByDate(todayKey),
+      // readinessFrom's consecutive-day walk can run well past 14 days —
+      // the default window undercounts any streak longer than that.
+      checkinRepo.getRecent(60),
+      settingsRepo.get(),
+      activityRecordRepo.getByDate(todayKey),
+    ])
     const completedCount = program ? await workoutRepo.countCompleted(program.id) : 0
     // Not gated to Monday — a review the user hasn't seen yet stays
     // available on every open of the week it covers, never tied to
@@ -79,6 +107,7 @@ export function TodayPage() {
       completedCount,
       weeklyReview,
       lastSeenWeeklyReviewWeekStart: settings?.lastSeenWeeklyReviewWeekStart ?? null,
+      todayActivityRecords,
     }
   }, [todayKey])
 
@@ -116,6 +145,7 @@ function TodayBody({
     completedCount,
     weeklyReview,
     lastSeenWeeklyReviewWeekStart,
+    todayActivityRecords,
   } = data
   // Decided once, at this component instance's first render, and never
   // re-derived — marking the review "seen" writes to settings, which would
@@ -163,6 +193,7 @@ function TodayBody({
           todayCheckIn={todayCheckIn}
           readiness={readiness}
           checkInCard={checkInCard}
+          todayActivityRecords={todayActivityRecords}
         />
       ) : (
         <NoProgram checkInCard={checkInCard} />
@@ -190,6 +221,7 @@ function PlannedDay({
   todayCheckIn,
   readiness,
   checkInCard,
+  todayActivityRecords,
 }: {
   program: Program
   completedCount: number
@@ -199,11 +231,14 @@ function PlannedDay({
   todayCheckIn: CheckIn | undefined
   readiness: Readiness
   checkInCard: ReactNode
+  todayActivityRecords: ActivityRecord[]
 }) {
   const { t } = useTranslation('today')
   const programName = useProgramName(program)
   const plan = resolveDayPlan(program, today, completedCount)
   const eased = readiness.tier === 'easier'
+  const rideRecord = todayActivityRecords.find((r) => r.kind === 'ride')
+  const activationRecord = todayActivityRecords.find((r) => r.kind === 'activation')
 
   return (
     <>
@@ -236,6 +271,8 @@ function PlannedDay({
           todayKey={todayKey}
           today={today}
           readiness={readiness}
+          rideRecord={rideRecord}
+          activationRecord={activationRecord}
           checkInCard={checkInCard}
           activity={plan.activity}
           activation={plan.activation}
@@ -259,6 +296,8 @@ function PlannedDay({
                 programOrigin={program.origin}
                 weekday={isoWeekday(today)}
                 activity={plan.activity}
+                todayKey={todayKey}
+                rideRecord={rideRecord}
               />
             ) : (
               <Hero
@@ -300,6 +339,8 @@ function TrainingDay({
   checkInCard,
   activity,
   activation,
+  rideRecord,
+  activationRecord,
 }: {
   program: Program
   session: SessionTemplate
@@ -312,6 +353,10 @@ function TrainingDay({
   activity: ActivityTemplate | null
   /** The one preparation round, shown before the session on every training day (§2). */
   activation: ActivityTemplate | null
+  /** Today's ride record, if any (coach spec v2.11 §3) — undefined until logged. */
+  rideRecord: ActivityRecord | undefined
+  /** Today's activation record, if any. */
+  activationRecord: ActivityRecord | undefined
 }) {
   const { t } = useTranslation('today')
   const { t: tCommon } = useTranslation('common')
@@ -324,7 +369,13 @@ function TrainingDay({
   return (
     <>
       {activation && (
-        <ActivationSection program={program} activation={activation} heading={t('trainingDay.activationHeading')} />
+        <ActivationSection
+          program={program}
+          activation={activation}
+          heading={t('trainingDay.activationHeading')}
+          todayKey={todayKey}
+          existing={activationRecord}
+        />
       )}
       <Hero
         // Per-locale punctuation, not an ASCII join: zh-CN sets the middot
@@ -365,6 +416,8 @@ function TrainingDay({
           activity={activity}
           weekday={isoWeekday(today)}
           heading={t('trainingDay.rideHeading')}
+          todayKey={todayKey}
+          existing={rideRecord}
         />
       )}
     </>
@@ -382,16 +435,22 @@ function ActivationSection({
   program,
   activation,
   heading,
+  todayKey,
+  existing,
 }: {
   program: Program
   activation: ActivityTemplate
   heading: string
+  todayKey: string
+  /** Today's activation record, if any (coach spec v2.11 §3). */
+  existing: ActivityRecord | undefined
 }) {
   const localized = useLocalizedActivation(program.id, activation, program.origin)
   return (
     <div className="mt-8">
       <p className="text-sm font-medium text-ink-tertiary">{heading}</p>
       <ActivityItemList items={localized.items} />
+      <ActivationRecordControl dateKey={todayKey} programId={program.id} existing={existing} />
     </div>
   )
 }
@@ -406,17 +465,26 @@ function TrainingDayRide({
   activity,
   weekday,
   heading,
+  todayKey,
+  existing,
 }: {
   program: Program
   activity: ActivityTemplate
   weekday: IsoWeekday
   heading: string
+  todayKey: string
+  /** Today's ride record, if any (coach spec v2.11 §3). */
+  existing: ActivityRecord | undefined
 }) {
   const localized = useLocalizedActivity(program.id, weekday, activity, program.origin)
+  // `recordable` marks the one item, if any, that a ride record control
+  // belongs under — structural, not inferred from label text (types.ts).
+  const recordable = localized.items.some((item) => item.recordable === 'ride')
   return (
     <div className="mt-8">
       <p className="text-sm font-medium text-ink-tertiary">{heading}</p>
       <ActivityItemList items={localized.items} />
+      {recordable && <RideRecordCard dateKey={todayKey} programId={program.id} existing={existing} />}
     </div>
   )
 }
@@ -696,19 +764,28 @@ function ActivityHero({
   programOrigin,
   weekday,
   activity,
+  todayKey,
+  rideRecord,
 }: {
   programId: string
   programOrigin: Program['origin']
   weekday: IsoWeekday
   activity: ActivityTemplate
+  todayKey: string
+  /** Today's ride record, if any (coach spec v2.11 §3) — only meaningful when this activity carries a recordable item. */
+  rideRecord: ActivityRecord | undefined
 }) {
   const kindLabel = useActivityKindLabel(activity.kind)
   const localized = useLocalizedActivity(programId, weekday, activity, programOrigin)
+  // `recordable` marks the one item, if any, that a ride record control
+  // belongs under — structural, not inferred from label text (types.ts).
+  const recordable = localized.items.some((item) => item.recordable === 'ride')
   return (
     <div className="mt-8">
       <p className="text-sm font-medium text-amber">{kindLabel}</p>
       <h1 className="text-display mt-2 text-5xl text-ink">{localized.title}</h1>
       <ActivityItemList items={localized.items} />
+      {recordable && <RideRecordCard dateKey={todayKey} programId={programId} existing={rideRecord} />}
     </div>
   )
 }

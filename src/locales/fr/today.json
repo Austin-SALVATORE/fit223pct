@@ -69,5 +69,17 @@
     "readinessSteady": "Stable : {{count}}",
     "readinessEased": "Allégé : {{count}}",
     "readinessNone": "Aucun état enregistré."
+  },
+  "rideRecord": {
+    "heading": "Bilan de la sortie",
+    "prompt": "Note comment ça s'est vraiment passé — durée et fréquence cardiaque moyenne.",
+    "durationLabel": "Durée",
+    "heartRateLabel": "FC moyenne",
+    "bpm": "bpm",
+    "save": "Enregistrer la sortie"
+  },
+  "activationRecord": {
+    "done": "Activation faite",
+    "markDone": "Marquer comme fait"
   }
 }

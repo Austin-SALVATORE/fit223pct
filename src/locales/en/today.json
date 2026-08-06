@@ -69,5 +69,17 @@
     "readinessSteady": "{{count}} steady",
     "readinessEased": "{{count}} eased back",
     "readinessNone": "No readiness check-ins recorded."
+  },
+  "rideRecord": {
+    "heading": "Ride record",
+    "prompt": "Log how it actually went — duration and average heart rate.",
+    "durationLabel": "Duration",
+    "heartRateLabel": "Avg heart rate",
+    "bpm": "bpm",
+    "save": "Save ride"
+  },
+  "activationRecord": {
+    "done": "Activation done",
+    "markDone": "Mark done"
   }
 }

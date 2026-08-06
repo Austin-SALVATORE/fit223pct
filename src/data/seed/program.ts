@@ -677,6 +677,7 @@ export const mesocycle2Build: Program = {
           label: 'Zone 2 ride',
           detail:
             '20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)',
+          recordable: 'ride',
         },
       ],
     },
@@ -684,7 +685,11 @@ export const mesocycle2Build: Program = {
       kind: 'recovery',
       title: 'Recovery day',
       items: [
-        { label: 'Zone 2 ride', detail: '35 min (5 min easy warm-up, 5 min easy cool-down)' },
+        {
+          label: 'Zone 2 ride',
+          detail: '35 min (5 min easy warm-up, 5 min easy cool-down)',
+          recordable: 'ride',
+        },
         {
           label: 'Recovery-day stretching',
           detail:
@@ -700,6 +705,7 @@ export const mesocycle2Build: Program = {
           label: 'Zone 2 ride',
           detail:
             '20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)',
+          recordable: 'ride',
         },
       ],
     },
@@ -707,7 +713,11 @@ export const mesocycle2Build: Program = {
       kind: 'recovery',
       title: 'Recovery day',
       items: [
-        { label: 'Zone 2 ride', detail: '35 min (5 min easy warm-up, 5 min easy cool-down)' },
+        {
+          label: 'Zone 2 ride',
+          detail: '35 min (5 min easy warm-up, 5 min easy cool-down)',
+          recordable: 'ride',
+        },
         {
           label: 'Recovery-day stretching',
           detail:
@@ -723,6 +733,7 @@ export const mesocycle2Build: Program = {
           label: 'Zone 2 ride',
           detail:
             '20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)',
+          recordable: 'ride',
         },
       ],
     },
@@ -733,6 +744,7 @@ export const mesocycle2Build: Program = {
         {
           label: 'Zone 2 ride',
           detail: '45 min (5 min easy warm-up, 5 min easy cool-down) — only when recovery is Green',
+          recordable: 'ride',
         },
         { label: 'Complete rest is a fine choice too' },
       ],

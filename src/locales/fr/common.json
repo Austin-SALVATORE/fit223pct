@@ -60,6 +60,7 @@
   "labelValue": "{{label}} : {{value}}",
   "middotJoin": "{{a}} · {{b}}",
   "unitSeconds": " s",
+  "unitMinutes": " min",
   "setVariant": {
     "normal": "Normal",
     "slow": "Lent",

@@ -148,6 +148,15 @@ export interface ActivityItem {
    * admits guided playback and nothing else.
    */
   routineId?: string
+  /**
+   * Marks this item as the day's ride, so Today can attach a record
+   * control without guessing from label text — coach spec v2.11 §3 makes
+   * ride recording platform behavior for any current or future program,
+   * not a Mesocycle-2 special case, so the marker is structural rather
+   * than an inferred match on "Zone 2" or similar prose that could drift.
+   * At most one recordable item is expected per day.
+   */
+  recordable?: 'ride'
 }
 
 /** Free-text program content, not a Library reference — no weights, no logging, no prescription. */
