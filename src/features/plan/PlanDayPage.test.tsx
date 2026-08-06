@@ -210,6 +210,50 @@ describe('PlanDayPage states', () => {
     expect(screen.queryByText(/RIR/)).toBeNull()
   })
 
+  /**
+   * QA finding (7 Aug) on `b7123b7`: `CompletedDetail`'s activity render
+   * had no guard — every completed-workout fixture up to this point used
+   * the plain seedProgram, whose weekdayActivities live only on weekdays
+   * 2/4/6/7, never on its own training weekdays (1/3/5). No shipped test
+   * could ever reach a completed training day that also carries an
+   * activity, so nothing would have caught it disappearing again. Mirrors
+   * `ProjectedDetail`'s own regression test below, including the
+   * `compareDocumentPosition` check — presence alone would not catch a
+   * reorder.
+   */
+  it('a completed workout day whose weekday also carries an activity renders both — session first, activity second', async () => {
+    await programRepo.put({
+      ...seedProgram,
+      origin: 'imported',
+      weekdayActivities: {
+        3: {
+          kind: 'recovery',
+          title: 'Zone 2 ride',
+          items: [{ label: 'Zone 2 ride', detail: '30 min, after lifting' }],
+        },
+      },
+    })
+    await putCompletedWorkout('2026-07-22') // Wednesday — a training day
+    renderDay('2026-07-22')
+
+    expect(await screen.findByRole('heading', { name: /Wednesday 22 July/ })).toBeInTheDocument()
+
+    const sessionName = screen.getByText('Legs & Core')
+    expect(sessionName).toBeInTheDocument()
+
+    // The activity is present too — secondary to the session, never a
+    // replacement of it.
+    expect(screen.getByText('Recovery')).toBeInTheDocument()
+    const activityTitle = screen.getByText('Zone 2 ride')
+    expect(activityTitle).toBeInTheDocument()
+
+    // Session still wins the primary position: it precedes the activity
+    // in document order.
+    expect(
+      sessionName.compareDocumentPosition(activityTitle) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+  })
+
   it('future training day: SessionPreview, Projected label, the pinned-mode honesty line, no readiness applied', async () => {
     renderDay('2026-07-29') // Wednesday, future relative to 27 Jul "today"
     expect(await screen.findByRole('heading', { name: /Wednesday 29 July/ })).toBeInTheDocument()
