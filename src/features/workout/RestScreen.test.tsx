@@ -182,6 +182,31 @@ describe('next set, same exercise — the compact card', () => {
   })
 })
 
+describe('the counter is session-aware (coach spec §4)', () => {
+  function withExercise(workout: Workout, exerciseIndex: number, patch: Partial<Workout['exercises'][number]>): Workout {
+    return {
+      ...workout,
+      exercises: workout.exercises.map((e, i) => (i === exerciseIndex ? { ...e, ...patch } : e)),
+    }
+  }
+
+  it('a skipped level is never counted', () => {
+    // Level 0 skipped — the ladder's own 3-rung total (prescription.sets)
+    // would wrongly still say "of 3"; plannedSetIndices says "of 2".
+    const workout = withExercise(baseWorkout, 0, { skippedLevels: [0] })
+    renderRest({ workout, position: { exerciseIndex: 0, setIndex: 1 } })
+
+    expect(screen.getByText('Next set · 1 of 2')).toBeInTheDocument()
+  })
+
+  it('an opened custom slot is counted, and being on it can be the last set', () => {
+    const workout = withExercise(baseWorkout, 0, { customSlots: 1 })
+    renderRest({ workout, position: { exerciseIndex: 0, setIndex: 3 } })
+
+    expect(screen.getByText('Next set · 4 of 4')).toBeInTheDocument()
+  })
+})
+
 describe('next exercise — the full card', () => {
   it('renders identity, meta and the hero number, and no delta', async () => {
     renderRest({ exerciseChanged: true, position: { exerciseIndex: 1, setIndex: 0 } })
@@ -272,6 +297,20 @@ describe('the last-set state', () => {
 
     expect(await screen.findByText(/Last set/)).toBeInTheDocument()
     expect(screen.queryByText('Next up')).toBeNull()
+  })
+
+  it('recognises a custom slot on the last exercise as the true last set — prescription.sets alone would miss it', () => {
+    // dead-bug's prescription.sets is 2, so the old "setIndex === sets - 1"
+    // check would say index 2 (the opened custom slot) is NOT last. It is:
+    // planned = [0, 1, 2], and nothing follows it.
+    const workout: Workout = {
+      ...baseWorkout,
+      exercises: baseWorkout.exercises.map((e, i) => (i === 4 ? { ...e, customSlots: 1 } : e)),
+    }
+    renderRest({ workout, position: { exerciseIndex: 4, setIndex: 2 } })
+
+    expect(screen.getByText(/Last set/)).toBeInTheDocument()
+    expect(screen.getByText('Then the session is done.')).toBeInTheDocument()
   })
 })
 

@@ -9,7 +9,7 @@ import {
   useExerciseTeachingConcept,
 } from '@/i18n/seedExercise'
 import { nextSetTarget, type NextSetTarget } from '@/domain/nextSetTarget'
-import { previousSetsFor, type WorkoutPosition } from '@/domain/workout'
+import { plannedSetIndices, previousSetsFor, type WorkoutPosition } from '@/domain/workout'
 import { exerciseAsset, exerciseAssetThumbnailFrame } from '@/lib/exerciseAsset'
 import type { ReadinessTier } from '@/domain/readiness'
 import type { Exercise, ExercisePrescription, Workout } from '@/domain/types'
@@ -78,15 +78,26 @@ export function RestScreen({
     readinessTier,
   )
 
+  // Session-aware, coach spec §4 — a skipped level is never counted, an
+  // opened custom slot is, same plannedSetIndices SetScreen's own counter
+  // reads.
+  const planned = plannedSetIndices(nextWorkoutExercise)
+  const setPosition = planned.indexOf(position.setIndex) + 1
+  const totalPlannedSets = planned.length
+
   /*
     There is no rest screen after the final set — logging it routes straight
     to the summary (WorkoutPage.tsx's handleLog never enters the `resting`
     phase for it). So the state to design for is not "rest, then the session
     ends"; it is "the set being rested before is the final one".
+
+    "Final" now means the last *planned* slot, not the last *prescribed*
+    one — a skip can move it earlier, an opened custom slot can move it
+    later.
   */
   const isLastSet =
     position.exerciseIndex === workout.exercises.length - 1 &&
-    position.setIndex === nextWorkoutExercise.prescription.sets - 1
+    position.setIndex === planned.at(-1)
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center text-center">
@@ -123,7 +134,8 @@ export function RestScreen({
         exerciseName={exerciseName}
         prescription={nextWorkoutExercise.prescription}
         target={target}
-        setIndex={position.setIndex}
+        setPosition={setPosition}
+        totalPlannedSets={totalPlannedSets}
         isNewExercise={exerciseChanged}
         isLastSet={isLastSet}
       />
@@ -151,7 +163,9 @@ interface NextUpCardProps {
   exerciseName: string
   prescription: ExercisePrescription
   target: NextSetTarget
-  setIndex: number
+  /** 1-based position within plannedSetIndices — session-aware, coach spec §4. */
+  setPosition: number
+  totalPlannedSets: number
   isNewExercise: boolean
   isLastSet: boolean
 }
@@ -180,7 +194,8 @@ function NextUpCard({
   exerciseName,
   prescription,
   target,
-  setIndex,
+  setPosition,
+  totalPlannedSets,
   isNewExercise,
   isLastSet,
 }: NextUpCardProps) {
@@ -190,7 +205,7 @@ function NextUpCard({
     return (
       <div id={id} className="mt-8 w-full rounded-card border border-border bg-surface p-5 text-left">
         <p className="eyebrow text-amber">
-          {t('resting.lastSet.label', { setIndex: setIndex + 1, totalSets: prescription.sets })}
+          {t('resting.lastSet.label', { setIndex: setPosition, totalSets: totalPlannedSets })}
         </p>
         <p className="mt-1 text-sm text-ink-tertiary">{exerciseName}</p>
         <HeroNumbers prescription={prescription} target={target} className="mt-2" />
@@ -203,7 +218,7 @@ function NextUpCard({
     return (
       <div id={id} className="mt-8 w-full rounded-card border border-border bg-surface p-5 text-left">
         <p className="eyebrow">
-          {t('resting.nextSet.label', { setIndex: setIndex + 1, totalSets: prescription.sets })}
+          {t('resting.nextSet.label', { setIndex: setPosition, totalSets: totalPlannedSets })}
         </p>
         <p className="mt-1 text-sm text-ink-tertiary">{exerciseName}</p>
         <HeroNumbers prescription={prescription} target={target} className="mt-2" />
