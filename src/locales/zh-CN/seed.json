@@ -570,6 +570,15 @@
         }
       },
       "activity": {
+        "1": {
+          "title": "Zone 2 ride",
+          "item": {
+            "0": {
+              "label": "Zone 2 ride",
+              "detail": "30 min, after lifting (optional 2-3 min easy spin cool-down)"
+            }
+          }
+        },
         "2": {
           "title": "Recovery day",
           "item": {
@@ -583,6 +592,15 @@
             }
           }
         },
+        "3": {
+          "title": "Zone 2 ride",
+          "item": {
+            "0": {
+              "label": "Zone 2 ride",
+              "detail": "30 min, after lifting (optional 2-3 min easy spin cool-down) — reduce to 20 min on a Yellow day or if leg quality is clearly deteriorating"
+            }
+          }
+        },
         "4": {
           "title": "Recovery day",
           "item": {
@@ -593,6 +611,15 @@
             "1": {
               "label": "Recovery-day stretching",
               "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+            }
+          }
+        },
+        "5": {
+          "title": "Zone 2 ride",
+          "item": {
+            "0": {
+              "label": "Zone 2 ride",
+              "detail": "30 min, after lifting (optional 2-3 min easy spin cool-down)"
             }
           }
         },
@@ -623,6 +650,35 @@
               "label": "Prepare the coming week",
               "detail": "Confirm training times and any sport plans"
             }
+          }
+        }
+      },
+      "morningActivation": {
+        "title": "Morning Activation",
+        "item": {
+          "0": {
+            "label": "Cat-cow",
+            "detail": "6 controlled reps"
+          },
+          "1": {
+            "label": "Thoracic rotation",
+            "detail": "6 reps per side"
+          },
+          "2": {
+            "label": "Wall slide or shoulder circle",
+            "detail": "8 controlled reps"
+          },
+          "3": {
+            "label": "90/90 hip switch",
+            "detail": "6 reps per side"
+          },
+          "4": {
+            "label": "Bodyweight glute bridge",
+            "detail": "10 reps"
+          },
+          "5": {
+            "label": "Bodyweight squat",
+            "detail": "8 reps"
           }
         }
       }

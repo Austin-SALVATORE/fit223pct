@@ -393,23 +393,39 @@ describe('mesocycle2Build — spec conformance (v2.7 §6-§8)', () => {
   })
 
   /**
-   * Item 11 (display only) — spec §3/§12/§13/§14. weekdayActivities may
-   * never claim a training weekday (architecture.md), so Monday/
-   * Wednesday/Friday's own cardio and Morning Activation have no seed
-   * slot yet — a stated gap, not an oversight (see program.ts's comment).
-   * This asserts the boundary itself: exactly the four non-training
-   * weekdays carry an activity, and no training weekday does.
+   * Item 11 (display only) — spec §3/§12/§13/§14. The boundary moved with
+   * docs/design/ActivityPrescriptionPhaseA.md: weekdayActivities may now
+   * claim a training weekday (it renders as that day's post-strength
+   * cardio), so the question is no longer "which weekdays may carry an
+   * activity" but "does every prescribed day carry what the coach
+   * prescribed."
    */
-  it('weekdayActivities covers exactly the four non-training weekdays', () => {
+  it('weekdayActivities covers every day the coach prescribes work on', () => {
     const activityWeekdays = Object.keys(mesocycle2Build.weekdayActivities ?? {})
       .map(Number)
       .sort()
-    expect(activityWeekdays).toEqual([2, 4, 6, 7])
+    expect(activityWeekdays).toEqual([1, 2, 3, 4, 5, 6, 7])
+  })
+
+  it('every training day carries its own post-strength ride (§12)', () => {
     for (const weekday of mesocycle2Build.trainingWeekdays) {
+      const items = mesocycle2Build.weekdayActivities?.[weekday as 1 | 3 | 5]?.items ?? []
+      // "Zone 2" lives in the item's label, not its detail — matching the
+      // established convention every other weekday's ride item already
+      // uses (e.g. weekday 2/4/6's `{ label: 'Zone 2 ride', detail: … }`).
       expect(
-        mesocycle2Build.weekdayActivities?.[weekday as 1 | 2 | 3 | 4 | 5 | 6 | 7],
-        `training weekday ${weekday} must not also carry an activity`,
-      ).toBeUndefined()
+        items.some((i) => /Zone 2/.test(i.label) || /Zone 2/.test(i.detail ?? '')),
+        `training weekday ${weekday} has no Zone 2 ride item`,
+      ).toBe(true)
     }
+  })
+
+  it("Wednesday's ride carries the coach's Yellow-day reduction as text (§12)", () => {
+    const items = mesocycle2Build.weekdayActivities?.[3]?.items ?? []
+    expect(items.some((i) => /reduce to 20 min/.test(i.detail ?? ''))).toBe(true)
+  })
+
+  it('Morning Activation is one round of six items (§13)', () => {
+    expect(mesocycle2Build.morningActivation?.items).toHaveLength(6)
   })
 })

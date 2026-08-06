@@ -636,19 +636,17 @@ export const mesocycle2Build: Program = {
     },
   ],
   /*
-    Item 11 (display only) — spec §3, §12, §13, §14. Deliberately covers
-    only the non-training weekdays (2, 4, 6, 7): `weekdayActivities` may
-    never claim a training weekday (architecture.md, programImport.ts's
-    overlap guard), so Monday/Wednesday/Friday's own cardio (§12's table)
-    and Morning Activation (§13) — both of which are prescribed
-    *alongside* a training day — have no slot in the current schema.
-    That is a real, stated gap, not an oversight: making a training day
-    report a ride needs `DayPlan`/`ScheduleDay` structural changes
-    (docs/design/ActivityPrescription.md §6.2, "the one unavoidable
-    change") that document is still mid-review with several open
-    OWNER/LEAD questions (§3 HR/zone adherence, §8's guard-collision
-    sign-off, §10.1 import-vs-seed, §9.1's Dexie version) — out of scope
-    for a "display only" batch without that plan's sign-off.
+    Item 11 (display only) — spec §3, §12, §13, §14. Now covers every
+    weekday, including the training days: `weekdayActivities` may claim a
+    training weekday as of docs/design/ActivityPrescriptionPhaseA.md §1
+    (structural half already shipped, b460822) — a training-weekday entry
+    renders as that day's post-strength cardio, display only, not a
+    replacement for the session. Monday and Friday both prescribe 30 min
+    Zone 2 after lifting; Wednesday carries the coach's own Yellow-day
+    reduction as text (§12: "reduce to 20 min if the session is Yellow or
+    leg quality is clearly deteriorating") — branching the actual ride
+    length on readiness would be behaviour, not display, and is
+    deliberately out of scope here (§5 "Nice, and explicitly not now").
 
     Recovery-day stretching (§14) is deliberately plain text with no
     `routineId`: the existing `recovery-stretch-v1` routine (phase-1-home's
@@ -659,6 +657,16 @@ export const mesocycle2Build: Program = {
     (program-content.md), which is content work beyond this batch.
   */
   weekdayActivities: {
+    1: {
+      kind: 'recovery',
+      title: 'Zone 2 ride',
+      items: [
+        {
+          label: 'Zone 2 ride',
+          detail: '30 min, after lifting (optional 2-3 min easy spin cool-down)',
+        },
+      ],
+    },
     2: {
       kind: 'recovery',
       title: 'Recovery day',
@@ -671,6 +679,17 @@ export const mesocycle2Build: Program = {
         },
       ],
     },
+    3: {
+      kind: 'recovery',
+      title: 'Zone 2 ride',
+      items: [
+        {
+          label: 'Zone 2 ride',
+          detail:
+            '30 min, after lifting (optional 2-3 min easy spin cool-down) — reduce to 20 min on a Yellow day or if leg quality is clearly deteriorating',
+        },
+      ],
+    },
     4: {
       kind: 'recovery',
       title: 'Recovery day',
@@ -680,6 +699,16 @@ export const mesocycle2Build: Program = {
           label: 'Recovery-day stretching',
           detail:
             '10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation',
+        },
+      ],
+    },
+    5: {
+      kind: 'recovery',
+      title: 'Zone 2 ride',
+      items: [
+        {
+          label: 'Zone 2 ride',
+          detail: '30 min, after lifting (optional 2-3 min easy spin cool-down)',
         },
       ],
     },
@@ -703,5 +732,21 @@ export const mesocycle2Build: Program = {
         { label: 'Prepare the coming week', detail: 'Confirm training times and any sport plans' },
       ],
     },
+  },
+  // Spec §13 — the same six-item round every training day, ~8-12 min,
+  // preparation rather than a workout: no timing target, no score, no
+  // progression. One program-level field, not per-weekday
+  // (docs/design/ActivityPrescriptionPhaseA.md §2).
+  morningActivation: {
+    kind: 'mobility',
+    title: 'Morning Activation',
+    items: [
+      { label: 'Cat-cow', detail: '6 controlled reps' },
+      { label: 'Thoracic rotation', detail: '6 reps per side' },
+      { label: 'Wall slide or shoulder circle', detail: '8 controlled reps' },
+      { label: '90/90 hip switch', detail: '6 reps per side' },
+      { label: 'Bodyweight glute bridge', detail: '10 reps' },
+      { label: 'Bodyweight squat', detail: '8 reps' },
+    ],
   },
 }
