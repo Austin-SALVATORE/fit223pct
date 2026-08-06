@@ -340,3 +340,73 @@ describe('Fit223Database version 5 → 6 migration', () => {
     upgraded.close()
   })
 })
+
+/**
+ * docs/design/SessionSetCustomization.md §1/§3 — `LoggedSet.custom`,
+ * `WorkoutExercise.skippedLevels` and `.customSlots` are index-free
+ * additions to an already-versioned store, so they need no version of
+ * their own ("the version schema declares indexes, not fields",
+ * db.ts:117-121). Nothing writes them yet — the set-screen controls that
+ * produce them land separately — but the storage claim is checkable now:
+ * the current schema (no new version()) accepts and returns them
+ * unchanged.
+ */
+describe('Session set-customization storage fields (coach spec §4) — no version bump required', () => {
+  it('round-trips LoggedSet.custom, WorkoutExercise.skippedLevels and customSlots through the current schema', async () => {
+    const db = new Fit223Database(TEST_DB_NAME)
+    await db.open()
+    const vernoAtOpen = db.verno
+
+    await db.workouts.put({
+      id: 'w-custom',
+      programId: 'phase-1-home',
+      sessionTemplateId: 'A',
+      date: '2026-08-08',
+      startedAt: '2026-08-08T09:00:00.000Z',
+      completedAt: null,
+      exercises: [
+        {
+          exerciseId: 'goblet-squat',
+          prescription: {
+            exerciseId: 'goblet-squat',
+            sets: 2,
+            mode: 'reps',
+            range: { min: 8, max: 12 },
+            restSeconds: 90,
+            perSide: false,
+            startWeightKg: 14,
+            maxWeightKg: 20,
+            weightStepKg: 2,
+          },
+          sets: [
+            { setIndex: 0, weightKg: 14, reps: 10, seconds: null, completedAt: '2026-08-08T09:05:00.000Z' },
+            {
+              setIndex: 1,
+              weightKg: 14,
+              reps: 10,
+              seconds: null,
+              completedAt: '2026-08-08T09:07:00.000Z',
+              custom: true,
+            },
+          ],
+          skippedLevels: [0],
+          customSlots: 1,
+        },
+      ],
+    })
+
+    // No new version() call was needed to accept this write — the schema
+    // in force is exactly the one `db.open()` reached, unchanged by
+    // writing these fields.
+    expect(db.verno).toBe(vernoAtOpen)
+
+    const stored = await db.workouts.get('w-custom')
+    expect(stored?.exercises[0].sets[1].custom).toBe(true)
+    expect(stored?.exercises[0].skippedLevels).toEqual([0])
+    expect(stored?.exercises[0].customSlots).toBe(1)
+    // The plain set is unaffected — `custom` stays genuinely absent, not defaulted to false.
+    expect(stored?.exercises[0].sets[0].custom).toBeUndefined()
+
+    db.close()
+  })
+})

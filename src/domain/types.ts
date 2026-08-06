@@ -233,6 +233,13 @@ export interface LoggedSet {
   reps: number | null
   seconds: number | null
   completedAt: string
+  /**
+   * Session-only extra set opened by `Add Set` (coach spec §4). Never a
+   * Pyramid level — does not satisfy a rung, does not trigger load or
+   * variation progression. Storage only for now: nothing writes this yet,
+   * the set-screen controls that produce it land separately.
+   */
+  custom?: true
 }
 
 export interface WorkoutExercise {
@@ -241,6 +248,18 @@ export interface WorkoutExercise {
   prescription: ExercisePrescription
   sets: LoggedSet[]
   substitutedForId?: string
+  /**
+   * Prescribed level indices removed this session (coach spec §4, "Skipped
+   * this session"). Audit and display only — nothing in the progression
+   * engine reads it; the prescription itself is retained, not erased.
+   * Storage only for now: nothing writes this yet.
+   */
+  skippedLevels?: number[]
+  /**
+   * Extra set slots opened by `Add Set`, 0-2 (coach spec §4). Storage only
+   * for now: nothing writes this yet.
+   */
+  customSlots?: number
 }
 
 export interface Workout {
