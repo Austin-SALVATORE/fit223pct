@@ -12,20 +12,31 @@ against the repository, and report what does not match.
 
 ## Method
 
-1. **Commits**: `git log --oneline -N`, `git show <sha> --stat`. Do
-   the cited SHAs exist? Do they touch the files claimed, and only
-   those? Is the work pushed (`git log origin/main -1`)?
-2. **Tests**: run the suite yourself (`npx vitest run`). Compare the
-   count to the claim. If failures exist, list them by name.
-3. **Typecheck**: `npm run typecheck` — never plain `tsc --noEmit -p .`,
-   which exits 0 without checking anything in this repo.
-4. **Build**, when the claim touches assets, bundling, or caching:
-   `npm run build`, and read the reported output numbers.
+1. **Commits**: `git log --oneline -N`, `git show <sha> --stat`. Do the
+   cited SHAs exist? Do they touch the files claimed, and only those?
+   Is the work pushed?
+2. **Tests**: run the suite yourself. Compare the count to the claim.
+   If failures exist, list them by name.
+3. **The project's other gates** — typecheck, lint, build, whatever
+   `verification.md` lists — when the claim touches them. Not every
+   language has all of these; run what exists and say which ones do
+   not apply rather than silently skipping them. Read the reported
+   numbers, not just the exit code.
+4. **Assets and caching**, when the claim touches them: a manifest entry
+   is only complete with all five integrity fields (`referenceHash`,
+   `referenceSize`, `frameHashes`, `frameSizes`, `thumbnailHash`), and
+   `git status` cannot see `reference.png` at all — it is gitignored, so
+   use mtimes or hashes. A green suite does not cover either.
 5. **Specific claims**: for each concrete assertion ("only two files
-   read this field", "no RIR remains anywhere"), run the grep that
-   would falsify it. Absence claims need a sweep, not a spot-check.
-6. **Working tree**: `git status --short` — is anything uncommitted
+   read this field", "no references remain anywhere"), run the search
+   that would falsify it. Absence claims need a sweep, not a
+   spot-check.
+5. **Working tree**: `git status --short` — is anything uncommitted
    that the report implies shipped?
+
+Take the exact commands from `.claude/rules/verification.md`. If a
+command there is marked as known-broken, do not substitute the obvious
+alternative silently — report that the check could not be run.
 
 ## Output
 

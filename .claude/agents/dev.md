@@ -30,9 +30,10 @@ not a report — `68 files, 692 passed` is. State a skipped step as
 skipped. Never report "green except known failures" without naming
 them.
 
-`npm run typecheck` is the only typecheck. Plain `tsc --noEmit -p .`
-targets the root solution config (`files: []`) and **silently exits 0
-while checking nothing**.
+Use the commands recorded in `.claude/rules/verification.md`, and if
+one of them turns out to pass without checking anything, record that
+there — a silently-passing check costs the whole team until it is
+written down.
 
 Where you can, verify a claim rather than restate it — including the
 lead's. A brief asserting "this guard will fail when X lands" is worth
@@ -49,14 +50,17 @@ more once you have made X land and captured the failure.
 - **Batch mechanical reads go to `repo-inventory`** — inventory every
   id, count references repo-wide, diff two lists.
 - **Not every read.** A single grep in a file you are already editing
-  is not a delegation candidate; a spawn for it pays a cold start to
-  save a per-token rate on one command.
+  is not a delegation candidate.
 
 ## What is not yours
 
-Training content — exercise selection, loads, reps, progression —
-belongs to the owner's coach (`.claude/rules/program-content.md`).
 Product behaviour, scope and anything irreversible belong to the owner.
 Design belongs to the architect. When one of those shows up inside an
-implementation task, name it and route it; do not settle it because
-you were closest to it.
+implementation task, name it and route it; do not settle it because you
+were closest to it.
+
+**Training content belongs to the owner's coach** — exercise selection,
+loads, reps, ladders, progression (`.claude/rules/program-content.md`).
+Prescribed numbers are transcribed exactly as written, never rounded,
+adjusted or "corrected" to fit a schema. If a value cannot be
+represented as written, stop and say so rather than approximating.

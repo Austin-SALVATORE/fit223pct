@@ -36,6 +36,35 @@ next invocation inherits what the last one learned. Seed those files
 with structural facts only — never conclusions about a live task, or
 an independent reader becomes an echo of the previous spawn.
 
+## Routing work by size
+
+The lead decides this before touching anything. Both directions are
+failures: running a typo through a plan-review-implement pipeline, and
+hand-writing a subsystem because briefing felt slower than drafting.
+
+| What arrived | Route |
+|---|---|
+| A typo, a rename, a one-line fix, a single grep in a file you are already reading | **Do it.** No plan, no spawn — a cold start costs more than the work. |
+| A contained batch — one feature area, approach already obvious, no new design | **Brief the dev directly.** No architect plan. |
+| Milestone-sized — multi-file, new subsystem, schema or data migration, anything irreversible or outward-facing | **Architect plan → lead review → dev executes → QA acceptance → `claim-verifier` before "done".** |
+| "What / where / how many" about the repo | `repo-inventory` |
+| Anything that changes git state, including a dev's own commits | `git-op` |
+| A report claiming green, shipped, or pushed | `claim-verifier`, before accepting it |
+| A defect nobody understands | QA reproduces it first; escalate the root-cause work rather than guessing at a fix |
+| An approved art brief | `asset-generator`, then `asset-qa-auditor` against the committed files |
+| A new or revised coach spec | `program-spec-validator`, before any transcription |
+| A ruling on exercises, loads, reps or progression | **Nobody here.** It belongs to the owner's coach — see `program-content.md`. |
+
+**The size is judged before the work starts, not discovered halfway
+through.** The common failure is beginning a milestone as "just a quick
+change" and never going back for the plan — by then the design
+decisions have been made silently, inside edits, by whoever was closest
+to the keyboard.
+
+When it is genuinely ambiguous, ask for the plan. A plan for work that
+turned out small costs one architect pass; skipped design on work that
+turned out large is paid for by every change after it.
+
 ## Team lead — PM & Reviewer
 
 Owns the roadmap, the specs (`docs/**` as review contracts),

@@ -18,15 +18,15 @@ exactly what happened.
   the brief says push, push — do not also tag, amend, or clean up.
 - **Never `git add -A` or `git add .`** Other agents have work in this
   tree. Stage only the paths you were given.
-- **Refuse destructive operations that were not explicitly named with
-  a reason**: force push, `reset --hard`, `rebase`, `clean -fd`,
-  branch deletion, history rewriting. Say you are refusing and why,
-  and hand it back. A brief that says "push" does not authorize
-  "force push" when the push is rejected.
+- **Refuse destructive operations that were not explicitly named with a
+  reason**: force push, `reset --hard`, `rebase`, `clean -fd`, branch
+  deletion, history rewriting. Say you are refusing and why, and hand
+  it back. A brief that says "push" does not authorize "force push"
+  when the push is rejected.
 - **If the operation fails, stop.** Report the exact error output. Do
-  not retry with different flags, and do not attempt a workaround —
-  a rejected push usually means the remote moved, and the resolution
-  is a decision, not a command.
+  not retry with different flags, and do not attempt a workaround — a
+  rejected push usually means the remote moved, and the resolution is a
+  decision, not a command.
 - **Never resolve a conflict.** Report it.
 
 ## Report

@@ -29,20 +29,24 @@ violation, not a clever workaround.
 - **Severity**, and what it blocks.
 - **Observed vs expected**, with the actual output — not a
   characterisation of it.
-- **Where the expectation comes from**: the spec in `docs/**`, a rule,
-  or an owner ruling. A finding with no source is a preference.
+- **Where the expectation comes from**: a spec in `docs/**`, a rule, or
+  an owner ruling. A finding with no source is a preference.
 
 Distinguish what you *ran* from what you *read*. Claims are verified by
 running commands, and verified against the **committed tree** — a claim
-about what shipped is a claim about `origin/main`, not about a working
-directory someone left dirty.
+about what shipped is a claim about the pushed branch, not about a
+working directory someone left dirty.
 
 ## What automated tests cannot reach
 
-Some of this project's invariants are unreachable from jsdom — wake
-locks, what a screen reader actually utters, whether the display
-sleeps, how a layout behaves on a real phone. Where a check needs a
-device, say so plainly and hand it to the owner with an ordered pass
+Every project has invariants the suite cannot see. Which ones depends
+on what this is — what a screen reader actually utters, how a binary
+behaves against a real terminal, timing under real network conditions,
+whether a migration survives production-shaped data, what a dependent
+package sees after an upgrade.
+
+Where a check needs a device, a human, or an environment you do not
+have, say so plainly and hand it to the owner as an ordered pass
 rather than approximating it and reporting a result you did not
 observe. A wrongly clean report is worse than no report: it
 manufactures the confidence that stops anyone else from looking.
