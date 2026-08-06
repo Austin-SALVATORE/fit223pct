@@ -531,15 +531,42 @@
       "session": {
         "mesocycle2-chest-back": {
           "name": "Chest & Back",
-          "focus": "Chest and Back Emphasis"
+          "focus": "Chest and Back Emphasis",
+          "exercise": {
+            "single-arm-db-row": {
+              "note": "Rest after both sides"
+            },
+            "goblet-squat": {
+              "note": "Progress tempo first, then weight"
+            }
+          }
         },
         "mesocycle2-legs-core": {
           "name": "Legs & Core",
-          "focus": "Legs and Core Emphasis"
+          "focus": "Legs and Core Emphasis",
+          "exercise": {
+            "bulgarian-split-squat": {
+              "note": "Rest after both sides"
+            },
+            "standing-calf-raise": {
+              "note": "Hold this pyramid once every level is loaded and clean — a harder variation follows in a later update"
+            },
+            "dead-bug": {
+              "note": "Rest 45-60 sec"
+            },
+            "push-up": {
+              "note": "After both levels, progress to the separate harder-leverage variation"
+            }
+          }
         },
         "mesocycle2-shoulders-arms": {
           "name": "Shoulders & Arms",
-          "focus": "Shoulders and Arms Emphasis"
+          "focus": "Shoulders and Arms Emphasis",
+          "exercise": {
+            "side-plank": {
+              "note": "Rest 45-60 sec"
+            }
+          }
         }
       },
       "activity": {

@@ -122,7 +122,14 @@ export function suggestLadderProgression(
 
   const completed = setPlan.every((rung, index) => {
     const logged = lastSets.find((set) => set.setIndex === index)
-    return logged !== undefined && (logged.reps ?? 0) >= rung.reps
+    // A seconds-mode ladder (side plank) logs its effort into `seconds`,
+    // never `reps` — `SetScreen` writes `reps: null` for a timed hold.
+    // Reading `logged.reps` unconditionally made the gate `0 >= 40`
+    // forever, so a seconds-mode ladder could log a perfect session and
+    // still never complete. `effortOf` already exists for exactly this
+    // branch (suggestProgression's rep-range path above uses it) — the
+    // ladder path just never called it.
+    return logged !== undefined && effortOf(logged, prescription) >= rung.reps
   })
   if (!completed) {
     return { type: 'repeat', setPlan }

@@ -246,6 +246,61 @@ describe('suggestLadderProgression', () => {
   })
 
   /**
+   * A seconds-mode ladder (side plank, Mesocycle 2 Session C) logs its
+   * effort into `LoggedSet.seconds`, never `reps` — `SetScreen` writes
+   * `reps: null` for a timed hold. The completion gate above used to read
+   * `logged.reps` unconditionally, so the check was `0 >= 40` forever: a
+   * seconds-mode ladder could log a perfect session and never complete,
+   * silently deleting the signal spec §10's timed-hold progression needs
+   * to fire on. Both-directions, since the fix must not just always
+   * return `load-not-the-lever` regardless of what was logged.
+   */
+  it('completes a seconds-mode ladder from a perfect seconds log — the completion gate must read seconds, not reps', () => {
+    const timedHold: LadderPrescription = {
+      ...ladder,
+      mode: 'seconds',
+      setPlan: [
+        { weightKg: null, reps: 40 },
+        { weightKg: null, reps: 30 },
+      ],
+      maxWeightKg: null,
+      weightStepKg: null,
+    }
+    const perfectLog: LoggedSet[] = [
+      { setIndex: 0, weightKg: null, reps: null, seconds: 40, completedAt: '2026-07-22T18:00:00.000Z' },
+      { setIndex: 1, weightKg: null, reps: null, seconds: 30, completedAt: '2026-07-22T18:00:00.000Z' },
+    ]
+    const result = suggestLadderProgression(timedHold, perfectLog)
+    expect(result.type).toBe('load-not-the-lever')
+  })
+
+  it('does not complete a seconds-mode ladder from a reps log, or from a short seconds log', () => {
+    const timedHold: LadderPrescription = {
+      ...ladder,
+      mode: 'seconds',
+      setPlan: [
+        { weightKg: null, reps: 40 },
+        { weightKg: null, reps: 30 },
+      ],
+      maxWeightKg: null,
+      weightStepKg: null,
+    }
+    // The exact bug: an identical-looking log, but in `reps` instead of
+    // `seconds` — this must NOT be read as a completed hold.
+    const repsLog: LoggedSet[] = [
+      { setIndex: 0, weightKg: null, reps: 40, seconds: null, completedAt: '2026-07-22T18:00:00.000Z' },
+      { setIndex: 1, weightKg: null, reps: 30, seconds: null, completedAt: '2026-07-22T18:00:00.000Z' },
+    ]
+    expect(suggestLadderProgression(timedHold, repsLog).type).toBe('repeat')
+
+    const shortSecondsLog: LoggedSet[] = [
+      { setIndex: 0, weightKg: null, reps: null, seconds: 35, completedAt: '2026-07-22T18:00:00.000Z' },
+      { setIndex: 1, weightKg: null, reps: null, seconds: 30, completedAt: '2026-07-22T18:00:00.000Z' },
+    ]
+    expect(suggestLadderProgression(timedHold, shortSecondsLog).type).toBe('repeat')
+  })
+
+  /**
    * docs/design/Mesocycle2Implementation.md §2.1/§4 — the Yellow-day
    * defect. `applyReadiness` truncates a ladder's top rung *before*
    * `suggestLadderProgression` ever sees it, so the completion gate above

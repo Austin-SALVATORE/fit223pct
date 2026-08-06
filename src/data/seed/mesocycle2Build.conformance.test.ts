@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { mesocycle2Build } from './program'
 import { seedExercises } from './exercises'
-import type { LadderPrescription, SetVariant } from '@/domain/types'
+import { suggestLadderProgression } from '@/domain/progression'
+import type { LadderPrescription, LoggedSet, SetVariant } from '@/domain/types'
 
 /**
  * docs/design/Mesocycle2Implementation.md §12.2 — "Spec conformance,
@@ -346,6 +347,36 @@ describe('mesocycle2Build — spec conformance (v2.7 §6-§8)', () => {
       { weightKg: null, reps: 40, variantKey: 'normal' },
       { weightKg: null, reps: 30, variantKey: 'harder-leverage' },
     ])
+  })
+
+  /**
+   * Found by an independent numeric read-back of this program against the
+   * spec, outside what the assertions above check: the seeded prescription
+   * is a seconds-mode ladder, the repo's first, and
+   * `suggestLadderProgression`'s completion gate used to read
+   * `LoggedSet.reps` unconditionally — `SetScreen` logs a timed hold into
+   * `seconds`, never `reps`, so the check was `0 >= 40` forever. The
+   * digits were always right; the completion signal was silently deleted,
+   * so spec §10's "complete the 40-second hold before progressing the
+   * 30-second one" had nothing to fire on. Fixed in progression.ts to
+   * read through `effortOf`, which already existed for exactly this
+   * branch. This proves the fix against the real seeded data, not just a
+   * synthetic fixture.
+   */
+  it('the seeded side plank actually reaches load-not-the-lever from a perfect seconds log', () => {
+    const sessionC = mesocycle2Build.sessions.find((s) => s.id === 'mesocycle2-shoulders-arms')!
+    const plank = sessionC.items.find((i) => i.exerciseId === 'side-plank') as LadderPrescription
+
+    const perfectLog: LoggedSet[] = plank.setPlan.map((rung, setIndex) => ({
+      setIndex,
+      weightKg: null,
+      reps: null,
+      seconds: rung.reps,
+      completedAt: '2026-08-10T09:00:00.000Z',
+    }))
+
+    const result = suggestLadderProgression(plank, perfectLog)
+    expect(result.type).toBe('load-not-the-lever')
   })
 
   it('the five primary movements are role: main; everything else in Sessions A-C is role: accessory (spec §4)', () => {

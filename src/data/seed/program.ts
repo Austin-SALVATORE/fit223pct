@@ -342,14 +342,20 @@ export const seedProgram: Program = {
  *
  * Bodyweight movements with a coach-named per-level variation
  * (hamstring walkout, dead bug, push-up, single-leg hip thrust, side
- * plank) are seeded as null-weight ladders carrying `variantKey` per
- * rung — item 3/4's infrastructure exists specifically for this
- * pattern, not yet used by any prescription until now. A ladder whose
- * every rung is null-weight returns `load-not-the-lever` once complete
- * (never a false `at-equipment-max`), and does not report a load
- * increase — the interim the coach names for movements at a variation
- * ceiling (§10 "Load-ceiling progression") is therefore already the
- * shipped behaviour for these six, not something this commit adds.
+ * plank — five, not six) are seeded as null-weight ladders carrying
+ * `variantKey` per rung — item 3/4's infrastructure exists specifically
+ * for this pattern, not yet used by any prescription until now. A ladder
+ * whose every rung is null-weight returns `load-not-the-lever` once
+ * complete (never a false `at-equipment-max`), and does not report a
+ * load increase — the interim the coach names for movements at a
+ * variation ceiling (§10 "Load-ceiling progression") is therefore
+ * already the shipped behaviour for all five, not something this commit
+ * adds. Side plank is the exception that needed a real fix to make this
+ * true: it is the repo's first seconds-mode ladder, and
+ * `suggestLadderProgression`'s completion gate read `LoggedSet.reps`
+ * unconditionally, so a timed hold (logged into `seconds`, never `reps`)
+ * could never be seen as complete at all — fixed in progression.ts to
+ * read through the existing `effortOf` helper.
  *
  * Session durations (50-60 min / 50-60 min / 45-55 min) and Session A's
  * ~30° bench angle have no field on Program or SessionTemplate — noted
@@ -483,6 +489,14 @@ export const mesocycle2Build: Program = {
           null,
           { restSeconds: 75, role: 'accessory' },
         ),
+        // Spec §10's "load-ceiling progression" (switching to a harder
+        // variation once every level is loaded and clean) is not yet
+        // implemented in the engine — dated before Week 3's first session,
+        // 24 Aug, and out of scope for this batch. The note below is
+        // athlete-facing coaching copy only; it must not describe our own
+        // implementation status (docs/design/Mesocycle2Implementation.md
+        // review, 6 Aug — an earlier version of this note read "deferred —
+        // not yet implemented" and rendered mid-workout to the athlete).
         ladder(
           'standing-calf-raise',
           [
@@ -495,7 +509,7 @@ export const mesocycle2Build: Program = {
           {
             restSeconds: 60,
             role: 'accessory',
-            note: 'Use load-ceiling progression when blocked (deferred — not yet implemented)',
+            note: 'Hold this pyramid once every level is loaded and clean — a harder variation follows in a later update',
           },
         ),
         ladder(
