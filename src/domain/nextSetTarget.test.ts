@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { nextSetTarget } from './nextSetTarget'
-import type { LadderPrescription, LoggedSet, RepRangePrescription } from './types'
+import type { LadderPrescription, LoggedSet, RepRangePrescription, SetTarget } from './types'
 
 /**
  * **The correctness trap this function exists to close.** The set screen
@@ -292,5 +292,128 @@ describe('what prescribed still distinguishes, now that ladders never carry', ()
     expect(target.weightKg).toBe(18)
     expect(target.prescribed.weightKg).toBe(16)
     expect(target.prescribed.weightKg).not.toBe(target.weightKg)
+  })
+})
+
+/**
+ * The Yellow-day defect, docs/design/Mesocycle2Implementation.md §2.1/§4/
+ * §12.1. `applyReadiness` (adjustments.ts) truncates a ladder's top rung
+ * *before* `suggestLadderProgression` ever sees it, so the completion gate
+ * only checks the rungs that survived truncation — it cannot see that the
+ * removed rung is the one actually missed last week. The athlete who
+ * missed the top rung (the single most likely reason to be on an eased day
+ * this week) was being offered an *advance* on their worst day.
+ *
+ * **This has to be an end-to-end test through `nextSetTarget`, not just a
+ * unit test on `suggestLadderProgression`.** The actual defect was a
+ * missing argument at the call site (`nextSetTarget.ts:112` was not
+ * forwarding `readinessTier`) — a domain-only test that constructs its own
+ * call to `suggestLadderProgression` would stay green even if that call
+ * site regressed. Negative control: comment out the third argument at
+ * `nextSetTarget.ts:112` and both tests below must go red.
+ */
+describe('the Yellow-day fix — an eased day defers, never inflates, an offered ladder', () => {
+  it("matches the plan's own cited example — Shoulder Press 6/8/10, rungs 1-2 complete, rung 3 missed last week: an eased day offers [6, 8], never [8, 10]", () => {
+    // The eased prescription itself, as applyReadiness would have produced
+    // it — top rung already dropped before nextSetTarget ever runs.
+    const shoulderPress: LadderPrescription = {
+      exerciseId: 'dumbbell-shoulder-press',
+      sets: 2,
+      mode: 'reps',
+      setPlan: [
+        { weightKg: 6, reps: 12 },
+        { weightKg: 8, reps: 10 },
+      ],
+      restSeconds: 90,
+      perSide: false,
+      maxWeightKg: 15,
+      weightStepKg: 2,
+    }
+    // Last week's full, untruncated 3-rung ladder: rungs 1-2 met their reps,
+    // rung 3 (10kg x 8) fell short.
+    const previousSets: LoggedSet[] = [
+      set({ setIndex: 0, weightKg: 6, reps: 12 }),
+      set({ setIndex: 1, weightKg: 8, reps: 10 }),
+      set({ setIndex: 2, weightKg: 10, reps: 6 }),
+    ]
+
+    const rung1 = nextSetTarget(shoulderPress, [], previousSets, 0, 'easier')
+    const rung2 = nextSetTarget(shoulderPress, [], previousSets, 1, 'easier')
+
+    expect([rung1.weightKg, rung2.weightKg]).toEqual([6, 8])
+    expect([rung1.weightKg, rung2.weightKg]).not.toEqual([8, 10])
+    expect([rung1.reps, rung2.reps]).toEqual([12, 10])
+  })
+
+  /**
+   * Table-drives the fix over every weighted pyramid named in the plan's
+   * §2.1 sweep — the same measurement that found 7 of 14 inflating,
+   * converted from a scratchpad script into a standing guard.
+   *
+   * **Weights are cited from §2.1's own published table; reps are not** —
+   * the plan's table records weights only, and the Mesocycle 2 Build
+   * program itself is not seeded yet (item 8/9 of the same plan, a
+   * separate, later batch). Inventing real coach-authored rep counts here
+   * would be asserting training content nobody has verified; a fixed
+   * descending pattern is scaffolding to drive the mechanism, not a claim
+   * about the coach's actual prescription. The real per-exercise
+   * conformance test (§12.2) belongs with the seed that supplies real reps.
+   *
+   * `maxWeightKg: 999` is deliberate, not an oversight: production's real
+   * 15kg ceiling happens to mask 3 of the four 4-rung pyramids here (§2.1),
+   * which is what makes the defect dangerous rather than reassuring. This
+   * sweep exists to prove the mechanism itself, independent of whichever
+   * pyramids the ceiling happens to protect this tier.
+   */
+  it('table-drives the fix over every weighted pyramid in §2.1, for every rung count present (2, 3 and 4)', () => {
+    const pyramids: { name: string; weights: number[] }[] = [
+      { name: 'A1 Incline DB Bench Press', weights: [10, 12, 14, 15] },
+      { name: 'A2 Single-arm DB Row', weights: [10, 12, 14, 15] },
+      { name: 'A3 Dumbbell Fly', weights: [4, 6] },
+      { name: 'A4 Chest-supported Row', weights: [10, 12] },
+      { name: 'A6 DB Lateral Raise (Mon)', weights: [6, 8] },
+      { name: 'B1 Bulgarian Split Squat', weights: [8, 10, 12] },
+      { name: 'B2 DB Romanian Deadlift', weights: [10, 12, 14, 15] },
+      { name: 'B4 Standing Calf Raise', weights: [8, 10, 12] },
+      { name: 'B6 Dumbbell Pullover', weights: [8, 10] },
+      { name: 'C1 DB Shoulder Press', weights: [6, 8, 10] },
+      { name: 'C2 DB Lateral Raise (Fri)', weights: [4, 6, 8] },
+      { name: 'C3 Rear Delt Fly', weights: [4, 6, 8] },
+      { name: 'C4 Dumbbell Curl', weights: [8, 10, 12] },
+      { name: 'C5 OH Triceps Extension', weights: [10, 12, 14] },
+    ]
+    const illustrativeReps = [12, 10, 8, 6] // descending, scaffolding only — see note above
+
+    for (const { name, weights } of pyramids) {
+      const authoredReps = illustrativeReps.slice(0, weights.length)
+      const authored: SetTarget[] = weights.map((weightKg, i) => ({ weightKg, reps: authoredReps[i] }))
+      const truncated = authored.slice(0, -1)
+      const prescription: LadderPrescription = {
+        exerciseId: name,
+        sets: truncated.length,
+        mode: 'reps',
+        setPlan: truncated,
+        restSeconds: 90,
+        perSide: false,
+        maxWeightKg: 999,
+        weightStepKg: 2,
+      }
+      // Last week's full, untruncated ladder: every rung but the top met
+      // its reps; the top rung — the one truncation just removed — fell
+      // short by 2.
+      const previousSets: LoggedSet[] = authored.map((rung, i) =>
+        set({
+          setIndex: i,
+          weightKg: rung.weightKg,
+          reps: i === authored.length - 1 ? rung.reps - 2 : rung.reps,
+        }),
+      )
+
+      for (let setIndex = 0; setIndex < truncated.length; setIndex++) {
+        const target = nextSetTarget(prescription, [], previousSets, setIndex, 'easier')
+        expect(target.weightKg, `${name} rung ${setIndex + 1}`).toBe(truncated[setIndex].weightKg)
+        expect(target.reps, `${name} rung ${setIndex + 1}`).toBe(truncated[setIndex].reps)
+      }
+    }
   })
 })

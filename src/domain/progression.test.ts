@@ -168,4 +168,76 @@ describe('suggestLadderProgression', () => {
     ])
     expect(result.type).toBe('at-equipment-max')
   })
+
+  /**
+   * docs/design/Mesocycle2Implementation.md §2.1/§4 — the Yellow-day
+   * defect. `applyReadiness` truncates a ladder's top rung *before*
+   * `suggestLadderProgression` ever sees it, so the completion gate above
+   * only checks the rungs that survived — it never learns the removed rung
+   * is the one that was actually missed. Without forwarding `readinessTier`
+   * here, every rung that DID survive truncation reads as "completed" and
+   * the ceiling/advance branch below fires, offering a heavier ladder on
+   * the athlete's worst day.
+   */
+  it('defers an earned advance on an easier day, even when every surviving rung was completed', () => {
+    const result = suggestLadderProgression(
+      ladder,
+      [ladderSet(0, 12, 8), ladderSet(1, 10, 10), ladderSet(2, 8, 12)],
+      'easier',
+    )
+    expect(result).toEqual({ type: 'repeat', setPlan: ladder.setPlan })
+  })
+
+  it('still repeats on an easier day when a surviving rung was NOT completed — both paths land on repeat, not just the happy one', () => {
+    const result = suggestLadderProgression(
+      ladder,
+      [ladderSet(0, 12, 8), ladderSet(1, 9, 10), ladderSet(2, 8, 12)], // short of 10
+      'easier',
+    )
+    expect(result).toEqual({ type: 'repeat', setPlan: ladder.setPlan })
+  })
+
+  it('still advances on a steady day — the fix only changes the easier-tier branch', () => {
+    const result = suggestLadderProgression(
+      ladder,
+      [ladderSet(0, 12, 8), ladderSet(1, 10, 10), ladderSet(2, 8, 12)],
+      'steady',
+    )
+    expect(result.type).toBe('advance')
+  })
+
+  it('still advances with no readinessTier argument at all — the default stays backward-compatible', () => {
+    const result = suggestLadderProgression(ladder, [
+      ladderSet(0, 12, 8),
+      ladderSet(1, 10, 10),
+      ladderSet(2, 8, 12),
+    ])
+    expect(result.type).toBe('advance')
+  })
+
+  /**
+   * §4.1's claim, verified rather than trusted: "the earned increase is
+   * deferred, not lost." Composed from the plain shipped mechanics, not a
+   * new branch — a Yellow week's workout snapshot carries only the
+   * *truncated* ladder, so the athlete only ever logs sets for the rungs
+   * that were offered. The following week's prescription is the full,
+   * untruncated ladder again (each session snapshots its own prescription
+   * independently), so its completion gate finds no logged set at the
+   * restored top-rung index and returns 'repeat' — same as any other
+   * incomplete ladder. No stored "deferred" flag, no special case.
+   */
+  it('resumes the deferred increase once a full ladder is logged again — never lost, never invented', () => {
+    // Yellow week: only the two surviving rungs were ever offered, so only
+    // two sets exist in history — there is nothing logged at index 2.
+    const lastWeeksTruncatedHistory = [ladderSet(0, 12, 8), ladderSet(1, 10, 10)]
+
+    // This week's prescription is the full, untruncated 3-rung ladder
+    // (today isn't eased, or applyReadiness would truncate it again before
+    // this ever runs) — checked against last week's incomplete history.
+    const result = suggestLadderProgression(ladder, lastWeeksTruncatedHistory)
+
+    // Not lost: still the same full 3-rung ladder, not silently dropped to
+    // two rungs forever.
+    expect(result).toEqual({ type: 'repeat', setPlan: ladder.setPlan })
+  })
 })

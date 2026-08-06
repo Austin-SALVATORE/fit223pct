@@ -111,6 +111,7 @@ export type LadderProgressionResult =
 export function suggestLadderProgression(
   prescription: LadderPrescription,
   lastSets: readonly LoggedSet[],
+  readinessTier?: ReadinessTier,
 ): LadderProgressionResult {
   const { setPlan, maxWeightKg, weightStepKg } = prescription
 
@@ -123,6 +124,24 @@ export function suggestLadderProgression(
     return logged !== undefined && (logged.reps ?? 0) >= rung.reps
   })
   if (!completed) {
+    return { type: 'repeat', setPlan }
+  }
+
+  /*
+    An easier day defers an earned increase rather than losing it —
+    symmetric with suggestProgression's 'easier' -> 'consolidate' branch
+    above. This has to run here and not be left to the ceiling check below:
+    `applyReadiness` (adjustments.ts) truncates the ladder's top rung
+    *before* this function ever sees it, so `completed` above only checks
+    the rungs that survived truncation — it cannot see that the rung it
+    removed is the one the athlete actually missed last week. Without this,
+    the completion gate happily advances the surviving rungs, offering a
+    heavier ladder on the athlete's worst day. Next non-eased exposure logs
+    a full ladder again; `completed` then finds no logged set at the
+    restored top-rung index and returns 'repeat' on its own, so the
+    increase resumes rather than being lost — no extra state needed.
+  */
+  if (readinessTier === 'easier') {
     return { type: 'repeat', setPlan }
   }
 

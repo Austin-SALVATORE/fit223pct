@@ -109,7 +109,7 @@ export function nextSetTarget(
   const carried = setsThisSession.at(-1) ?? null
 
   const ladder = prescription.setPlan
-    ? suggestLadderProgression(prescription, previousSets)
+    ? suggestLadderProgression(prescription, previousSets, readinessTier)
     : null
   const rung = ladder?.setPlan[setIndex] ?? null
   const suggestion = prescription.setPlan
