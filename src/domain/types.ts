@@ -52,7 +52,14 @@ export interface RepRange {
  * locale-specific text (architecture.md: storage is locale-free, the
  * `RoutineStep.id` precedent). Shared across every exercise via
  * common:setVariant rather than a key per level per exercise.
- * docs/design/Mesocycle2Implementation.md §6.1.
+ *
+ * This exact eight-token list is now spec-mandated, not just our design
+ * choice: Mesocycle-2-Home-Progressive-Coach-Spec-v2.7.md §4 "Stored
+ * variation vocabulary" names these eight and states a prescription must
+ * select one label per level — it must not store an either/or choice
+ * (the earlier draft's `harder-leverage-or-pause` was that either/or,
+ * and the coach resolved it rather than approved it). Widening this enum
+ * is a coach decision, not an engineering one.
  */
 export type SetVariant =
   | 'normal'
@@ -62,7 +69,6 @@ export type SetVariant =
   | 'longer-reach'
   | 'reach-pause'
   | 'harder-leverage'
-  | 'harder-leverage-or-pause'
   | 'hands-elevated'
 
 /** One rung of a pyramid ladder — weight climbs, reps descend, in prescription order. */
