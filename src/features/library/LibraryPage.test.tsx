@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { seedDatabase } from '@/data/seed'
+import { seedExercises } from '@/data/seed/exercises'
 import { SettingsPage } from '@/features/settings/SettingsPage'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
@@ -37,6 +38,49 @@ describe('Settings entry', () => {
 // §18) have no art yet; remove an id here in the same commit that removes
 // it from KNOWN_MISSING.
 const KNOWN_MISSING_IDS = new Set(['hamstring-walkout', 'dumbbell-pullover'])
+
+describe('Every seeded exercise actually reaches the page', () => {
+  /**
+   * The gap this closes: `LibraryPage` sorts a row into one of four fixed
+   * groups by `e.muscles[0]` alone (LibraryPage.tsx's `groupOrder`), and
+   * an exercise whose primary muscle matches no group's list is silently
+   * dropped from the whole render — no error, no console warning, no
+   * empty-tile row, just absent. It happened once already: `calves` had
+   * no bucket when `standing-calf-raise` was added, and every existing
+   * test in this file stayed green throughout, because they all iterate
+   * over what *rendered*, which by construction cannot see a row that
+   * never rendered at all. Reverting only the bucket fix (leaving the
+   * exercise and its Library entry in place) reproduces this exactly:
+   * the "every rendered row has a thumbnail" test above still passes 3/3,
+   * because there is one fewer row to check and nothing counts the total.
+   *
+   * This test counts instead of iterating: every id in `seedExercises`
+   * must correspond to a rendered `/library/<id>` row, and the counts
+   * must match exactly. A silently dropped exercise is a missing id, and
+   * a duplicate-rendered one (a different failure mode) is a numeric
+   * mismatch — both directions are covered by one set-equality check.
+   */
+  it('every id in seedExercises renders as a Library row — none silently dropped by a bucket with no muscle group match', async () => {
+    renderApp()
+    await screen.findByRole('link', { name: /Goblet squat/ })
+
+    const allLinks = await screen.findAllByRole('link')
+    const renderedIds = new Set(
+      allLinks
+        .map((link) => link.getAttribute('href'))
+        .filter((href): href is string => href !== null && href.startsWith('/library/'))
+        .map((href) => href.replace('/library/', '')),
+    )
+    const seededIds = new Set(seedExercises.map((e) => e.id))
+
+    const missing = [...seededIds].filter((id) => !renderedIds.has(id))
+    const unexpected = [...renderedIds].filter((id) => !seededIds.has(id))
+
+    expect(missing, 'seeded exercises with no rendered Library row').toEqual([])
+    expect(unexpected, 'rendered rows with no matching seeded exercise').toEqual([])
+    expect(renderedIds.size).toBe(seededIds.size)
+  })
+})
 
 describe('Exercise thumbnails', () => {
   it('every real Library row has a thumbnail, except the known art gaps', async () => {
