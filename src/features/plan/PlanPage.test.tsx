@@ -215,6 +215,70 @@ describe('PlanPage activity days', () => {
     expect(screen.queryByText(/30 Jul/)).toBeNull()
   })
 
+  /**
+   * Owner finding (mobile, real Mesocycle 2 plan) — a training day's own
+   * activity (the post-strength ride) never appeared on this list, on any
+   * of the three reachable training-day branches: isToday, a completed
+   * workout, or a projected/scheduled session. Session always won outright
+   * instead of being joined by the activity, quieter, the same treatment
+   * this file already gives an activity-only day (see the row above).
+   */
+  describe('a training day shows its own activity alongside the session', () => {
+    const trainingDayActivity = {
+      kind: 'recovery' as const,
+      title: 'Zone 2 ride',
+      items: [{ label: 'Zone 2 ride', detail: '20 min, after lifting' }],
+    }
+
+    afterEach(async () => {
+      await programRepo.put(seedProgram)
+    })
+
+    it('isToday: shows the activity alongside the session on today\'s own row', async () => {
+      // "Today" in this file is frozen to Mon 27 Jul — chest-back, weekday 1.
+      await programRepo.put({
+        ...seedProgram,
+        origin: 'imported',
+        weekdayActivities: { 1: trainingDayActivity },
+      })
+      renderApp()
+
+      const todayRow = await screen.findByRole('link', { name: /Mon 27 Jul.*Today.*Chest & Back.*Zone 2 ride/s })
+      expect(todayRow).toBeInTheDocument()
+    })
+
+    it('a completed workout: shows the activity alongside the session and the sets/volume summary', async () => {
+      await programRepo.put({
+        ...seedProgram,
+        origin: 'imported',
+        weekdayActivities: { 3: trainingDayActivity }, // Wed = Legs & Core
+      })
+      await putCompletedWorkout('2026-07-22', seedProgram.sessions[1])
+      renderApp()
+
+      const row = (await screen.findByText('Wed 22 Jul')).closest('li')
+      expect(row).not.toBeNull()
+      expect(row).toHaveTextContent('Legs & Core')
+      expect(row).toHaveTextContent('1 set')
+      expect(row).toHaveTextContent('Zone 2 ride')
+    })
+
+    it('a projected/scheduled session: shows the activity alongside the session and the Projected badge', async () => {
+      await programRepo.put({
+        ...seedProgram,
+        origin: 'imported',
+        weekdayActivities: { 5: trainingDayActivity }, // Fri = Shoulders & Arms
+      })
+      renderApp()
+
+      const row = (await screen.findByText('Fri 31 Jul')).closest('li')
+      expect(row).not.toBeNull()
+      expect(row).toHaveTextContent('Shoulders & Arms')
+      expect(row).toHaveTextContent('Projected')
+      expect(row).toHaveTextContent('Zone 2 ride')
+    })
+  })
+
   it('still states a skipped scheduled day as a plain em-dash when the weekday genuinely has no activity', async () => {
     // The real seed's every weekday now carries some activity (6 Aug
     // content batch), so the bare "No session" fallback (PlanPage.tsx's

@@ -159,14 +159,26 @@ function DayRow({
     programOrigin,
   )
 
+  // A training day's own activity (post-strength cardio, display only)
+  // is not mutually exclusive with its session (docs/design/
+  // ActivityPrescriptionPhaseA.md §1) — the owner found it missing from
+  // every session-carrying row on this page (isToday, a completed
+  // workout, a projected session) while activity-only days showed it
+  // fine. Shown secondarily, in the same quiet treatment an activity-only
+  // day already gets below, never replacing the session.
+  const activitySuffix = day.session && day.activity ? (
+    <span className="block text-ink-tertiary">{localizedActivity.title}</span>
+  ) : null
+
   if (day.isToday) {
     return (
       <GroupedRow to="/">
         <span className="font-medium text-ink">
           {label} <span className="text-ink-tertiary">· {tCommon('nav.today')}</span>
         </span>
-        <span className="shrink-0 text-sm text-ink-secondary">
+        <span className="shrink-0 text-right text-sm text-ink-secondary">
           {day.session ? resolvedSessionName : (day.activity ? localizedActivity.title : t('restFallback'))}
+          {activitySuffix}
         </span>
       </GroupedRow>
     )
@@ -182,6 +194,7 @@ function DayRow({
           <span className="block text-ink-tertiary">
             {t('setsVolume', { count: summary.totalSets, volume: Math.round(summary.volumeKg) })}
           </span>
+          {activitySuffix}
         </span>
       </GroupedRow>
     )
@@ -191,9 +204,10 @@ function DayRow({
     return (
       <GroupedRow to={`/plan/${day.date}`}>
         <span className="font-medium text-ink">{label}</span>
-        <span className="shrink-0 text-sm text-ink-secondary">
+        <span className="shrink-0 text-right text-sm text-ink-secondary">
           {resolvedSessionName}
           {day.projected && <span className="text-ink-tertiary"> · {t('projectedBadge')}</span>}
+          {activitySuffix}
         </span>
       </GroupedRow>
     )
