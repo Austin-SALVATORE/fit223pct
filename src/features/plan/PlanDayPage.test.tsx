@@ -242,17 +242,21 @@ describe('PlanDayPage states', () => {
   })
 
   /**
-   * docs/design/ActivityPrescriptionPhaseA.md §4.1 — the one genuine
-   * regression this delta introduces if left unguarded. `weekdayActivities`
-   * may now claim a training weekday (it renders as that day's
-   * post-strength cardio), which was previously unrepresentable — no test
-   * ever constructed it, and `day.activity` was checked before
-   * `day.session` on the assumption the two were mutually exclusive. Once
-   * a training day carries an activity, that branch order makes Monday's
-   * detail render the ride instead of the session. Write this first,
-   * watch it fail against the current order, then reorder.
+   * docs/design/ActivityPrescriptionPhaseA.md §4.1 originally pinned this
+   * order — session before activity — as *exclusion*: the activity must
+   * not appear at all on a training day, because `weekdayActivities` newly
+   * claiming a training weekday was previously unrepresentable and
+   * `day.activity` was checked before `day.session` on the assumption the
+   * two were mutually exclusive.
+   *
+   * That exclusion is superseded (6 Aug) — the owner reported the ride
+   * missing from Mesocycle 2's day detail (it already showed on the Plan
+   * *list*, `PlanPage.tsx`, `e793e80`), and the ruling was "the day detail
+   * shows both — session first, activity secondary." Session still wins
+   * the primary position; what changed is that the activity is no longer
+   * hidden. See PlanDayPage.tsx:102-113's updated comment.
    */
-  it('a training day whose weekday carries an activity renders the session detail, not the activity detail', async () => {
+  it('a training day whose weekday carries an activity renders the session detail first, the activity second — never a replacement', async () => {
     await programRepo.put({
       ...seedProgram,
       origin: 'imported',
@@ -266,8 +270,21 @@ describe('PlanDayPage states', () => {
     })
     renderDay('2026-08-03') // Monday, future relative to 27 Jul "today" — a training day
     expect(await screen.findByRole('heading', { name: /Monday 3 August/ })).toBeInTheDocument()
-    expect(screen.getByText('Chest & Back')).toBeInTheDocument()
-    expect(screen.queryByText('Zone 2 ride')).toBeNull()
+
+    const sessionHeading = screen.getByRole('heading', { level: 2, name: 'Chest & Back' })
+    expect(sessionHeading).toBeInTheDocument()
+
+    // The activity is present too — secondary to the session, not the
+    // replacement this test used to assert.
+    expect(screen.getByText('Recovery')).toBeInTheDocument()
+    const activityTitle = screen.getByText('Zone 2 ride')
+    expect(activityTitle).toBeInTheDocument()
+
+    // Session still wins the primary position: it precedes the activity
+    // in document order.
+    expect(
+      sessionHeading.compareDocumentPosition(activityTitle) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
   })
 
   it('past scheduled day, nothing logged: shows the day\'s own ride/stretch activity, never a fabricated session', async () => {

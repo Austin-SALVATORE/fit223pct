@@ -86,13 +86,17 @@ function DayDetailBody({
 }) {
   const { t } = useTranslation('plan')
 
+  const weekday = isoWeekday(parseDateKey(date))
+
   if (day.workout && day.workout.completedAt !== null) {
     return (
       <CompletedDetail
         workout={day.workout}
         session={day.session ?? undefined}
+        activity={day.activity}
         programId={programId}
         programOrigin={programOrigin}
+        weekday={weekday}
         exerciseById={exerciseById}
         date={date}
       />
@@ -101,20 +105,30 @@ function DayDetailBody({
 
   {
     /*
-      Session before activity, deliberately — no longer mutually exclusive
-      (docs/design/ActivityPrescriptionPhaseA.md §1: weekdayActivities may
-      now claim a training weekday, rendering as that day's post-strength
-      cardio). A training day's own session detail must win; the ride
-      belongs on Today's grouped view, not here in place of the session.
-      §4.1's regression test pins this order.
+      Session before activity, in that order and both present (7 Aug,
+      superseding the 6 Aug exclusion below this comment used to state).
+      `weekdayActivities` may claim a training weekday
+      (docs/design/ActivityPrescriptionPhaseA.md §1: it renders as that
+      day's post-strength cardio) and the two are not mutually exclusive.
+      The session detail must still win the *primary* position — that
+      part of the original ruling stands — but hiding the activity
+      entirely reproduced the same bug on the day detail that
+      `PlanPage.tsx` (`e793e80`) had already fixed on the Plan list: the
+      owner tapped into the day and still couldn't find the ride. The
+      current ruling is "the day detail shows both — session first,
+      activity secondary." `PlanDayPage.test.tsx`'s regression test was
+      rewritten, not deleted, to pin the new order instead of the old
+      exclusion.
     */
   }
   if (day.session) {
     return (
       <ProjectedDetail
         session={day.session}
+        activity={day.activity}
         programId={programId}
         programOrigin={programOrigin}
+        weekday={weekday}
         exerciseById={exerciseById}
         date={date}
         schedulingMode={schedulingMode}
@@ -127,7 +141,7 @@ function DayDetailBody({
       <ActivityDetail
         programId={programId}
         programOrigin={programOrigin}
-        weekday={isoWeekday(parseDateKey(date))}
+        weekday={weekday}
         activity={day.activity}
       />
     )
@@ -143,15 +157,19 @@ function DayDetailBody({
 function CompletedDetail({
   workout,
   session,
+  activity,
   programId,
   programOrigin,
+  weekday,
   exerciseById,
   date,
 }: {
   workout: Workout
   session: SessionTemplate | undefined
+  activity: ActivityTemplate | null
   programId: string
   programOrigin: Program['origin']
+  weekday: IsoWeekday
   exerciseById: Map<string, Exercise>
   date: string
 }) {
@@ -203,6 +221,9 @@ function CompletedDetail({
           />
         ))}
       </ul>
+      {activity && (
+        <ActivitySecondary programId={programId} programOrigin={programOrigin} weekday={weekday} activity={activity} />
+      )}
     </>
   )
 }
@@ -295,15 +316,19 @@ function LoggedExerciseRow({
 
 function ProjectedDetail({
   session,
+  activity,
   programId,
   programOrigin,
+  weekday,
   exerciseById,
   date,
   schedulingMode,
 }: {
   session: SessionTemplate
+  activity: ActivityTemplate | null
   programId: string
   programOrigin: Program['origin']
+  weekday: IsoWeekday
   exerciseById: Map<string, Exercise>
   date: string
   schedulingMode: Program['schedulingMode']
@@ -324,7 +349,40 @@ function ProjectedDetail({
         heading={sessionName}
         origin={{ from: 'plan-day', date }}
       />
+      {activity && (
+        <ActivitySecondary programId={programId} programOrigin={programOrigin} weekday={weekday} activity={activity} />
+      )}
     </>
+  )
+}
+
+/**
+ * A training day's own activity, rendered secondary to the session that
+ * owns the primary position above it (7 Aug — see DayDetailBody's
+ * comment). Quieter than `ActivityDetail`'s own full presentation
+ * (kind label demoted from amber to tertiary, title without the
+ * `text-display` treatment, no item list) — this is a supporting fact
+ * about the day, not the day's main content, the same distinction
+ * `PlanPage.tsx`'s `activitySuffix` already draws at list scale.
+ */
+function ActivitySecondary({
+  programId,
+  programOrigin,
+  weekday,
+  activity,
+}: {
+  programId: string
+  programOrigin: Program['origin']
+  weekday: IsoWeekday
+  activity: ActivityTemplate
+}) {
+  const kindLabel = useActivityKindLabel(activity.kind)
+  const localized = useLocalizedActivity(programId, weekday, activity, programOrigin)
+  return (
+    <div className="mt-8 border-t border-border pt-6">
+      <p className="text-sm font-medium text-ink-tertiary">{kindLabel}</p>
+      <p className="mt-1 text-ink-secondary">{localized.title}</p>
+    </div>
   )
 }
 
