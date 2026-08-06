@@ -330,6 +330,41 @@ number cannot be reserved for later-shipping work). If new work lands
 between existing entries, read `db.ts` and take the next free version
 rather than trusting a number written in a doc, including this one.
 
+## Future (owner ruling 6 Aug) — Private progress photos
+
+The coach's Mesocycle 2 spec asks for progress photos in weeks 1, 3
+and 6. Fit223 cannot store an image at all, and the owner ruled on
+6 Aug that it should not start now:
+
+> "Progress photos are optional coaching context and are not required
+> for Mesocycle 2. For now, I will use my phone's camera roll. Fit223
+> should not store images, paths, metadata, or completion status in
+> the current release." — *and, on when to build it:* "This is not
+> urgent and must not affect the current release. Privacy, deletion,
+> backup, and local-first storage should be designed properly before
+> implementation."
+
+Two halves, and the second is the one that decays if it is only
+remembered:
+
+- **Roadmap item.** Design privacy, deletion, backup and local-first
+  storage *before* any implementation. Photos are the one data class
+  in this app where getting deletion or export wrong is not a bug but
+  a harm.
+- **A constraint on the current release, today.** No image bytes, no
+  file paths, no EXIF or capture metadata, and **no completion status
+  either** — not a "photo taken" checkbox, not a streak, not a week-N
+  marker. The last clause is the one most likely to be violated by
+  accident, because a boolean feels like nothing.
+
+That constraint is the same shape as the stretch-routine no-tracking
+rule, which is enforced by a byte-identical write snapshot rather than
+by intent (`routineNoTracking.write.test.tsx`). Photos have no
+equivalent guard yet. Until they do, this paragraph is the only thing
+standing between the ruling and a well-meaning "just a small flag" —
+which is exactly how the stretching rule would have been lost had
+nobody written a test for it.
+
 ## Later (architecture-ready, not scheduled)
 
 Cloud sync · Apple Watch app (Smart Connector Phase 6) · workout
