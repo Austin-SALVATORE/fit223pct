@@ -349,6 +349,37 @@ until two agents touch the same files, and the failure is not a merge
 conflict — it is one agent reading another's **uncommitted, half-done**
 work as if it were the truth.
 
+**A verifier is a writer.** This is the case the section did not cover,
+and it was authored by the lead. Proving a guard exists means *breaking
+the thing it guards* — adding the token, deleting the key, reverting the
+argument — and every one of those is an edit to the shared tree. The
+role reads as read-only, its definition grants no `Edit` or `Write`, and
+`Bash` writes files anyway. So a negative control is indistinguishable
+from a defect to anyone else looking at that tree at that moment.
+
+(6 Aug: a `claim-verifier` was asked to prove a ninth enum token would
+ship silently. It added `extra-pause` to the type and to all three
+locales, measured, and restored — correctly, and it said so. But a dev
+was editing the same files throughout, saw the token appear, and
+correctly stopped to report a spec violation that no longer existed by
+the time anyone looked. Nothing was damaged and both agents behaved
+exactly as instructed. The cost was a stopped teammate, a false alarm
+escalated to the lead, and a verification report whose own suite runs
+were contaminated by the dev's half-finished work in the other
+direction.)
+
+Both directions of that contamination are the point: the verifier
+polluted the dev's view, and the dev polluted the verifier's
+measurements. Neither could see the other's brief.
+
+So: **a mutating negative control needs the tree to itself**, and it is
+the lead's job to say so — sequence it against in-flight work, or scope
+it to files nobody else is touching, or send it to a scratch worktree
+(`git worktree add`), which is what a verifier measuring committed SHAs
+should have been doing anyway. It is *committed* state a claim is about;
+running the control against a dirty shared checkout is measuring the
+wrong tree even when nobody collides.
+
 It is the lead's job to notice before dispatching, because neither
 agent can see the other's brief.
 
