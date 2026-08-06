@@ -621,4 +621,73 @@ export const mesocycle2Build: Program = {
       ],
     },
   ],
+  /*
+    Item 11 (display only) — spec §3, §12, §13, §14. Deliberately covers
+    only the non-training weekdays (2, 4, 6, 7): `weekdayActivities` may
+    never claim a training weekday (architecture.md, programImport.ts's
+    overlap guard), so Monday/Wednesday/Friday's own cardio (§12's table)
+    and Morning Activation (§13) — both of which are prescribed
+    *alongside* a training day — have no slot in the current schema.
+    That is a real, stated gap, not an oversight: making a training day
+    report a ride needs `DayPlan`/`ScheduleDay` structural changes
+    (docs/design/ActivityPrescription.md §6.2, "the one unavoidable
+    change") that document is still mid-review with several open
+    OWNER/LEAD questions (§3 HR/zone adherence, §8's guard-collision
+    sign-off, §10.1 import-vs-seed, §9.1's Dexie version) — out of scope
+    for a "display only" batch without that plan's sign-off.
+
+    Recovery-day stretching (§14) is deliberately plain text with no
+    `routineId`: the existing `recovery-stretch-v1` routine (phase-1-home's
+    own) does not match §14's six named stretches — it's missing a lat
+    stretch and thoracic rotation and includes three the coach doesn't
+    name here — so linking it would silently play the wrong sequence.
+    Authoring a new, accurate routine needs its own steps and art
+    (program-content.md), which is content work beyond this batch.
+  */
+  weekdayActivities: {
+    2: {
+      kind: 'recovery',
+      title: 'Recovery day',
+      items: [
+        { label: 'Zone 2 ride', detail: '35 min (5 min easy warm-up, 5 min easy cool-down)' },
+        {
+          label: 'Recovery-day stretching',
+          detail:
+            '10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation',
+        },
+      ],
+    },
+    4: {
+      kind: 'recovery',
+      title: 'Recovery day',
+      items: [
+        { label: 'Zone 2 ride', detail: '35 min (5 min easy warm-up, 5 min easy cool-down)' },
+        {
+          label: 'Recovery-day stretching',
+          detail:
+            '10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation',
+        },
+      ],
+    },
+    6: {
+      kind: 'optional',
+      title: 'Optional recovery ride',
+      items: [
+        {
+          label: 'Zone 2 ride',
+          detail: '45 min (5 min easy warm-up, 5 min easy cool-down) — only when recovery is Green',
+        },
+        { label: 'Complete rest is a fine choice too' },
+      ],
+    },
+    7: {
+      kind: 'checkpoint',
+      title: 'Weekly checkpoint',
+      items: [
+        { label: 'Weigh in', detail: 'Same conditions each week — morning, before eating' },
+        { label: 'Measure your waist', detail: 'Same spot, same conditions as last week' },
+        { label: 'Prepare the coming week', detail: 'Confirm training times and any sport plans' },
+      ],
+    },
+  },
 }

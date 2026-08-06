@@ -541,6 +541,63 @@
           "name": "Shoulders & Arms",
           "focus": "Shoulders and Arms Emphasis"
         }
+      },
+      "activity": {
+        "2": {
+          "title": "Recovery day",
+          "item": {
+            "0": {
+              "label": "Zone 2 ride",
+              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
+            },
+            "1": {
+              "label": "Recovery-day stretching",
+              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+            }
+          }
+        },
+        "4": {
+          "title": "Recovery day",
+          "item": {
+            "0": {
+              "label": "Zone 2 ride",
+              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
+            },
+            "1": {
+              "label": "Recovery-day stretching",
+              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+            }
+          }
+        },
+        "6": {
+          "title": "Optional recovery ride",
+          "item": {
+            "0": {
+              "label": "Zone 2 ride",
+              "detail": "45 min (5 min easy warm-up, 5 min easy cool-down) — only when recovery is Green"
+            },
+            "1": {
+              "label": "Complete rest is a fine choice too"
+            }
+          }
+        },
+        "7": {
+          "title": "Weekly checkpoint",
+          "item": {
+            "0": {
+              "label": "Weigh in",
+              "detail": "Same conditions each week — morning, before eating"
+            },
+            "1": {
+              "label": "Measure your waist",
+              "detail": "Same spot, same conditions as last week"
+            },
+            "2": {
+              "label": "Prepare the coming week",
+              "detail": "Confirm training times and any sport plans"
+            }
+          }
+        }
       }
     }
   },

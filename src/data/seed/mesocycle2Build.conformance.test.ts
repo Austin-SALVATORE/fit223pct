@@ -360,4 +360,25 @@ describe('mesocycle2Build — spec conformance (v2.7 §6-§8)', () => {
     }
     expect(misclassified).toEqual([])
   })
+
+  /**
+   * Item 11 (display only) — spec §3/§12/§13/§14. weekdayActivities may
+   * never claim a training weekday (architecture.md), so Monday/
+   * Wednesday/Friday's own cardio and Morning Activation have no seed
+   * slot yet — a stated gap, not an oversight (see program.ts's comment).
+   * This asserts the boundary itself: exactly the four non-training
+   * weekdays carry an activity, and no training weekday does.
+   */
+  it('weekdayActivities covers exactly the four non-training weekdays', () => {
+    const activityWeekdays = Object.keys(mesocycle2Build.weekdayActivities ?? {})
+      .map(Number)
+      .sort()
+    expect(activityWeekdays).toEqual([2, 4, 6, 7])
+    for (const weekday of mesocycle2Build.trainingWeekdays) {
+      expect(
+        mesocycle2Build.weekdayActivities?.[weekday as 1 | 2 | 3 | 4 | 5 | 6 | 7],
+        `training weekday ${weekday} must not also carry an activity`,
+      ).toBeUndefined()
+    }
+  })
 })
