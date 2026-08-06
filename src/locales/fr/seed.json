@@ -327,6 +327,78 @@
         "title": "L'étirement avant la force",
         "body": "Le chef long du triceps travaille le plus quand le bras reste au-dessus de la tête et que le coude se plie complètement, avec contrôle. Ne précipite pas la phase de descente et ne laisse pas les coudes s'écarter. Une amplitude fluide et contrôlée crée une tension plus efficace que le simple fait de soulever un haltère plus lourd."
       }
+    },
+    "push-up": {
+      "name": "Push-up",
+      "cues": [
+        "Keep head, trunk, and hips in one line",
+        "Place the hands slightly wider than the shoulders",
+        "Lower the chest and hips together with the elbows approximately 30-45 degrees from the torso"
+      ],
+      "teachingConcept": {
+        "title": "Elevate to regress",
+        "body": "Raise the hands on the bench to make the same body line easier, then lower the hand position as strength improves."
+      }
+    },
+    "dumbbell-fly": {
+      "name": "Dumbbell fly",
+      "cues": [
+        "Keep the shoulder blades gently set against the bench",
+        "Maintain a small, fixed elbow bend",
+        "Stop lowering before the shoulders roll forward"
+      ],
+      "teachingConcept": {
+        "title": "The arc, not a press",
+        "body": "Learn the arc with a light load and bring the upper arms toward one another without turning the movement into a press."
+      }
+    },
+    "dumbbell-pullover": {
+      "name": "Dumbbell pullover",
+      "cues": [
+        "Hold one dumbbell securely with both hands",
+        "Keep a small fixed elbow bend and the ribs down",
+        "Stop when the shoulders reach a controlled stretch"
+      ],
+      "teachingConcept": {
+        "title": "An arc from the shoulders",
+        "body": "Move the dumbbell in an arc from the shoulders rather than bending and straightening the elbows."
+      }
+    },
+    "chest-supported-row": {
+      "name": "Chest-supported dumbbell row",
+      "cues": [
+        "Keep the chest in contact with the bench",
+        "Pull the elbows back without shrugging",
+        "Pause briefly before lowering under control"
+      ],
+      "teachingConcept": {
+        "title": "No momentum to borrow",
+        "body": "The bench removes torso momentum, so reduce the load until the elbows can drive the movement cleanly."
+      }
+    },
+    "hamstring-walkout": {
+      "name": "Hamstring walkout",
+      "cues": [
+        "Begin in a firm glute bridge",
+        "Take short heel steps",
+        "Keep the hips lifted and ribs controlled throughout the return"
+      ],
+      "teachingConcept": {
+        "title": "Hips stay level",
+        "body": "Walk only as far as the hips can stay level, then extend the distance one small step at a time."
+      }
+    },
+    "standing-calf-raise": {
+      "name": "Standing dumbbell calf raise",
+      "cues": [
+        "Hold one dumbbell at each side",
+        "Rise through the balls of the feet without rocking forward",
+        "Pause at the top and lower to a controlled stretch"
+      ],
+      "teachingConcept": {
+        "title": "Full range first",
+        "body": "Use full vertical range before adding load; a shorter heavy rep does not count."
+      }
     }
   },
   "program": {

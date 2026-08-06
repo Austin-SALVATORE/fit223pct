@@ -1,6 +1,17 @@
 import { useTranslation } from 'react-i18next'
 import type { TeachingConcept } from '@/domain/types'
 
+/**
+ * Six ids resolved here currently return **English text in every
+ * locale**: 'push-up', 'dumbbell-fly', 'dumbbell-pullover',
+ * 'chest-supported-row', 'hamstring-walkout', 'standing-calf-raise'
+ * (Mesocycle 2, spec v2.7 §18). Deliberate, dated, owner-ruled — see
+ * docs/I18n.md "Mesocycle 2 English placeholders — 6 Aug 2026". French
+ * and Chinese content is due no later than Sunday 16 Aug 2026; this
+ * comment can go once fr/seed.json and zh-CN/seed.json carry real
+ * translations for those six ids.
+ */
+
 export function useExerciseName(exerciseId: string): string {
   const { t } = useTranslation('seed')
   // Guards against the pre-load placeholder callers pass ('') so the empty

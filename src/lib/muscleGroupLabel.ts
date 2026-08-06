@@ -5,6 +5,7 @@ const MUSCLE_MESSAGE_KEY: Record<MuscleGroup, string> = {
   quads: 'common:muscle.quads',
   hamstrings: 'common:muscle.hamstrings',
   glutes: 'common:muscle.glutes',
+  calves: 'common:muscle.calves',
   chest: 'common:muscle.chest',
   back: 'common:muscle.back',
   shoulders: 'common:muscle.shoulders',

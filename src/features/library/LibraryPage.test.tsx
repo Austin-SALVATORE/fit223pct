@@ -32,15 +32,15 @@ describe('Settings entry', () => {
   })
 })
 
+// Kept in sync by hand with exerciseAsset.coverage.test.ts's KNOWN_MISSING —
+// not imported from a .test.ts file. Two Mesocycle 2 additions (spec v2.7
+// §18) have no art yet; remove an id here in the same commit that removes
+// it from KNOWN_MISSING.
+const KNOWN_MISSING_IDS = new Set(['hamstring-walkout', 'dumbbell-pullover'])
+
 describe('Exercise thumbnails', () => {
-  it('every real Library row now has a thumbnail — full asset coverage as of 7d764c1', async () => {
+  it('every real Library row has a thumbnail, except the known art gaps', async () => {
     renderApp()
-    // No real Library exercise is asset-less anymore (111/111 covered,
-    // see exerciseAsset.coverage.test.ts's empty KNOWN_MISSING) — this
-    // used to pair a real covered exercise against a real gap
-    // (band-pull-apart); the gap closed, so this now asserts the
-    // positive: every rendered row has an image, none fell back to the
-    // empty tile.
     const goblet = await screen.findByRole('link', { name: /Goblet squat/ })
     expect(goblet.querySelector('img')).not.toBeNull()
 
@@ -49,8 +49,19 @@ describe('Exercise thumbnails', () => {
     // back link and the Settings gear, neither of which carry a thumbnail.
     const exerciseRows = allLinks.filter((link) => link.getAttribute('href')?.startsWith('/library/'))
     expect(exerciseRows.length).toBeGreaterThan(0)
+
+    // Both directions: a row not in KNOWN_MISSING_IDS must have a
+    // thumbnail, and a row that is must not — proving the empty-tile
+    // fallback actually renders for the two current gaps rather than the
+    // loop silently skipping past a broken resolution.
     for (const row of exerciseRows) {
-      expect(row.querySelector('img'), `${row.textContent} has no thumbnail`).not.toBeNull()
+      const id = row.getAttribute('href')?.replace('/library/', '')
+      const hasThumbnail = row.querySelector('img') !== null
+      if (id !== undefined && KNOWN_MISSING_IDS.has(id)) {
+        expect(hasThumbnail, `${row.textContent} is in KNOWN_MISSING_IDS but has a thumbnail — remove it from the list`).toBe(false)
+      } else {
+        expect(hasThumbnail, `${row.textContent} has no thumbnail`).toBe(true)
+      }
     }
   })
 

@@ -69,7 +69,10 @@ export const seedExercises: Exercise[] = [
     id: 'single-arm-db-row',
     muscles: ['back', 'biceps'],
     equipment: ['dumbbell', 'bench'],
-    substitutionIds: ['bent-over-row', 'band-row'],
+    // 'chest-supported-row' added per spec v2.7 §17's reverse row
+    // ("Single-arm Dumbbell Row | Chest-supported Dumbbell Row | Torso
+    // support is needed"), now resolvable now that it exists.
+    substitutionIds: ['bent-over-row', 'band-row', 'chest-supported-row'],
     isUnilateral: true,
   },
   {
@@ -190,6 +193,64 @@ export const seedExercises: Exercise[] = [
     equipment: ['bodyweight'],
     substitutionIds: ['dead-bug'],
     isUnilateral: true,
+  },
+  // Mesocycle 2 additions — Mesocycle-2-Home-Progressive-Coach-Spec-v2.7.md
+  // §18. Ids are the art-directory names, not the spec's prose headings,
+  // per docs/design/Mesocycle2Implementation.md §8 — the coach's
+  // "Standing Dumbbell Calf Raise" resolves to `standing-calf-raise`, and
+  // this `push-up` is a distinct id from the existing `deficit-push-up`
+  // (a harder variant), never a rename of it. substitutionIds below are
+  // §17's Approved Substitutions table exactly, resolved only where the
+  // named substitute is itself a Library id — nothing invented beyond
+  // that, matching overhead-triceps-extension's existing precedent.
+  {
+    id: 'push-up',
+    muscles: ['chest', 'triceps', 'shoulders', 'core'],
+    equipment: ['bodyweight'],
+    substitutionIds: [],
+    isUnilateral: false,
+  },
+  {
+    id: 'dumbbell-fly',
+    muscles: ['chest', 'shoulders'],
+    equipment: ['dumbbell', 'bench'],
+    // §17: "Dumbbell Fly | Dumbbell squeeze press or push-up" — squeeze
+    // press has no Library id, so only the resolvable half is kept.
+    substitutionIds: ['push-up'],
+    isUnilateral: false,
+  },
+  {
+    id: 'dumbbell-pullover',
+    muscles: ['back', 'chest'],
+    equipment: ['dumbbell', 'bench'],
+    // §17: "Dumbbell Pullover | Single-arm Dumbbell Row with the elbow
+    // close to the torso" — a coaching modifier on the same Library id,
+    // not a separate exercise.
+    substitutionIds: ['single-arm-db-row'],
+    isUnilateral: false,
+  },
+  {
+    id: 'chest-supported-row',
+    muscles: ['back', 'biceps'],
+    equipment: ['dumbbell', 'bench'],
+    substitutionIds: ['single-arm-db-row'],
+    isUnilateral: false,
+  },
+  {
+    id: 'hamstring-walkout',
+    muscles: ['hamstrings', 'glutes', 'core'],
+    equipment: ['bodyweight'],
+    // §17's substitute, Sliding Leg Curl, has no Library id.
+    substitutionIds: [],
+    isUnilateral: false,
+  },
+  {
+    id: 'standing-calf-raise',
+    muscles: ['calves'],
+    equipment: ['dumbbell'],
+    // No §17 row names a substitute for this exercise.
+    substitutionIds: [],
+    isUnilateral: false,
   },
   // Gym-equipment additions, from the retired Fitness Park plan (see
   // docs/design/Mesocycle2Implementation.md §9) — a rack for real barbell

@@ -11,7 +11,7 @@ import { SettingsLink } from '@/ui/SettingsLink'
 import type { Exercise, MuscleGroup } from '@/domain/types'
 
 const groupOrder: { key: string; labelKey: string; muscles: MuscleGroup[] }[] = [
-  { key: 'lower', labelKey: 'group.lower', muscles: ['quads', 'hamstrings', 'glutes'] },
+  { key: 'lower', labelKey: 'group.lower', muscles: ['quads', 'hamstrings', 'glutes', 'calves'] },
   { key: 'push', labelKey: 'group.push', muscles: ['chest', 'shoulders', 'triceps'] },
   { key: 'pull', labelKey: 'group.pull', muscles: ['back', 'biceps'] },
   { key: 'core', labelKey: 'group.core', muscles: ['core'] },
