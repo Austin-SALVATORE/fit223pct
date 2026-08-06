@@ -29,8 +29,12 @@ interface ActivityTemplate {
 ```
 
 - Strength weekdays stay exactly as they are (`trainingWeekdays` +
-  rotation). `weekdayActivities` may not claim a training weekday —
-  import validation rejects the overlap.
+  rotation). **Reversed, 6 Aug** (docs/design/ActivityPrescriptionPhaseA.md
+  §1): `weekdayActivities` may now claim a training weekday — it renders as
+  that day's post-strength cardio rather than replacing the session.
+  Modelling the same ride two different ways depending on the weekday
+  would have been worse than allowing both. Import validation no longer
+  rejects the overlap.
 - Activity items are **free-text program content**, not Library
   references — authoring a mobility-drill Library is a separate content
   project and must not gate this model. No weights, no logging, no

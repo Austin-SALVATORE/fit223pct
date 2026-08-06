@@ -99,17 +99,16 @@ function DayDetailBody({
     )
   }
 
-  if (day.activity) {
-    return (
-      <ActivityDetail
-        programId={programId}
-        programOrigin={programOrigin}
-        weekday={isoWeekday(parseDateKey(date))}
-        activity={day.activity}
-      />
-    )
+  {
+    /*
+      Session before activity, deliberately — no longer mutually exclusive
+      (docs/design/ActivityPrescriptionPhaseA.md §1: weekdayActivities may
+      now claim a training weekday, rendering as that day's post-strength
+      cardio). A training day's own session detail must win; the ride
+      belongs on Today's grouped view, not here in place of the session.
+      §4.1's regression test pins this order.
+    */
   }
-
   if (day.session) {
     return (
       <ProjectedDetail
@@ -119,6 +118,17 @@ function DayDetailBody({
         exerciseById={exerciseById}
         date={date}
         schedulingMode={schedulingMode}
+      />
+    )
+  }
+
+  if (day.activity) {
+    return (
+      <ActivityDetail
+        programId={programId}
+        programOrigin={programOrigin}
+        weekday={isoWeekday(parseDateKey(date))}
+        activity={day.activity}
       />
     )
   }

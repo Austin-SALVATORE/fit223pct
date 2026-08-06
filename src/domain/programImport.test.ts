@@ -468,18 +468,31 @@ describe('validateProgramImport', () => {
     }
   })
 
-  it('rejects an activity claiming a training weekday, naming it', () => {
-    const bad = validProgram({
+  /**
+   * docs/design/ActivityPrescriptionPhaseA.md §3.1 — an activity claiming a
+   * training weekday used to be rejected (plan:import.weekdayIsTrainingDay).
+   * That guard is gone: a training-weekday entry now renders as that day's
+   * post-strength cardio (display only), and the dev already ships this
+   * exact content shape for non-training weekdays — rejecting it only for
+   * a training weekday would model the same ride two different ways.
+   */
+  it('accepts an activity claiming a training weekday, and round-trips it', () => {
+    const withTrainingDayActivity = validProgram({
       weekdayActivities: {
-        1: { kind: 'recovery', title: 'Recovery walk', items: [{ label: '20-minute walk' }] },
+        1: {
+          kind: 'recovery',
+          title: 'Recovery walk',
+          items: [{ label: 'Zone 2 ride', detail: '30 min, after lifting' }],
+        },
       },
     })
-    const result = validateProgramImport(bad, libraryIds)
-    expect(result.ok).toBe(false)
-    if (!result.ok) {
-      expect(result.error).toEqual({
-        key: 'plan:import.weekdayIsTrainingDay',
-        params: { weekdayKey: 'plan:import.weekdayName.1' },
+    const result = validateProgramImport(withTrainingDayActivity, libraryIds)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.program.weekdayActivities?.[1]).toEqual({
+        kind: 'recovery',
+        title: 'Recovery walk',
+        items: [{ label: 'Zone 2 ride', detail: '30 min, after lifting' }],
       })
     }
   })

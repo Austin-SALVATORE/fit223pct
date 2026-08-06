@@ -150,3 +150,38 @@ export function useLocalizedActivity(
   })
   return { ...activity, title, items }
 }
+
+/**
+ * `morningActivation` is one program-level field — the same round every
+ * training day (docs/design/ActivityPrescriptionPhaseA.md §2), not a
+ * weekday-keyed one — so it needs its own key path
+ * (`program.<id>.morningActivation.*`) rather than `useLocalizedActivity`'s
+ * `program.<id>.activity.<weekday>.*`, which would key three identical
+ * copies under three different weekdays. Same origin guard, same index-
+ * keyed items, same reasoning as above — duplicated rather than
+ * parameterised over "does this have a weekday" because the two call
+ * sites read differently: an imported program's activation must render
+ * exactly as authored, same as its weekday activities.
+ */
+export function useLocalizedActivation(
+  programId: string,
+  activation: ActivityTemplate,
+  programOrigin?: Program['origin'],
+): LocalizedActivity {
+  const { t, i18n } = useTranslation('seed')
+  if (programId === '' || programOrigin === 'imported') return activation
+  const base = `program.${programId}.morningActivation`
+  const title = t(`${base}.title`, { defaultValue: activation.title })
+  const items = activation.items.map((item, index) => {
+    const labelKey = `${base}.item.${index}.label`
+    const detailKey = `${base}.item.${index}.detail`
+    return {
+      label: i18n.exists(`seed:${labelKey}`) ? t(labelKey) : item.label,
+      ...(item.detail !== undefined
+        ? { detail: i18n.exists(`seed:${detailKey}`) ? t(detailKey) : item.detail }
+        : {}),
+      ...(item.routineId !== undefined ? { routineId: item.routineId } : {}),
+    }
+  })
+  return { ...activation, title, items }
+}

@@ -3,7 +3,14 @@ import type { ActivityTemplate, Program, SessionTemplate, Workout } from './type
 
 export type DayPlan =
   | { kind: 'upcoming'; daysUntilStart: number; firstSession: SessionTemplate }
-  | { kind: 'training'; session: SessionTemplate }
+  | {
+      kind: 'training'
+      session: SessionTemplate
+      /** Post-strength cardio for this weekday, display only (docs/design/ActivityPrescriptionPhaseA.md §1). */
+      activity: ActivityTemplate | null
+      /** The one preparation round, shown before the session on every training day (§2). */
+      activation: ActivityTemplate | null
+    }
   | { kind: 'rest'; nextSession: SessionTemplate; nextDate: string; activity: ActivityTemplate | null }
   | { kind: 'ended' }
 
@@ -38,7 +45,12 @@ export function resolveDayPlan(
   }
 
   if (program.trainingWeekdays.includes(isoWeekday(date))) {
-    return { kind: 'training', session: sessionForDay(program, date, completedCount) }
+    return {
+      kind: 'training',
+      session: sessionForDay(program, date, completedCount),
+      activity: program.weekdayActivities?.[isoWeekday(date)] ?? null,
+      activation: program.morningActivation ?? null,
+    }
   }
 
   const nextDateKey = nextTrainingDateOnOrAfter(program, addDays(date, 1))
@@ -133,9 +145,11 @@ export function projectSchedule(
     const isToday = date === todayKey
     const weekday = isoWeekday(parseDateKey(date))
     const isTrainingDay = program.trainingWeekdays.includes(weekday)
-    // Mutually exclusive with isTrainingDay by construction (import
-    // validation rejects a weekday claimed by both).
-    const activity = isTrainingDay ? null : (program.weekdayActivities?.[weekday] ?? null)
+    // No longer mutually exclusive with isTrainingDay (docs/design/
+    // ActivityPrescriptionPhaseA.md §1) — a training day's entry is its
+    // post-strength cardio, display only; import validation used to
+    // reject a weekday claimed by both, but that guard is gone.
+    const activity = program.weekdayActivities?.[weekday] ?? null
 
     if (workout && workout.completedAt !== null) {
       const session = program.sessions.find((s) => s.id === workout.sessionTemplateId) ?? null

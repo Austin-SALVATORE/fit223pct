@@ -13,7 +13,13 @@ import { formatLongDate, isoWeekday, toDateKey, type IsoWeekday } from '@/lib/da
 import { useActivityKindLabel } from '@/lib/activityKindLabel'
 import { useFocusOnChange } from '@/lib/useFocusOnChange'
 import { useLocale } from '@/i18n/useLocale'
-import { useLocalizedActivity, useProgramName, useSessionFocus, useSessionName } from '@/i18n/seedProgram'
+import {
+  useLocalizedActivation,
+  useLocalizedActivity,
+  useProgramName,
+  useSessionFocus,
+  useSessionName,
+} from '@/i18n/seedProgram'
 import { ActivityItemList } from '@/features/recovery/ActivityItemList'
 import { ConfirmAction } from '@/ui/ConfirmAction'
 import { SettingsLink } from '@/ui/SettingsLink'
@@ -228,8 +234,11 @@ function PlannedDay({
           session={plan.session}
           exerciseById={exerciseById}
           todayKey={todayKey}
+          today={today}
           readiness={readiness}
           checkInCard={checkInCard}
+          activity={plan.activity}
+          activation={plan.activation}
         />
       )}
 
@@ -286,15 +295,23 @@ function TrainingDay({
   session,
   exerciseById,
   todayKey,
+  today,
   readiness,
   checkInCard,
+  activity,
+  activation,
 }: {
   program: Program
   session: SessionTemplate
   exerciseById: Map<string, Exercise>
   todayKey: string
+  today: Date
   readiness: Readiness
   checkInCard: ReactNode
+  /** Post-strength cardio for this weekday, display only (docs/design/ActivityPrescriptionPhaseA.md §1). */
+  activity: ActivityTemplate | null
+  /** The one preparation round, shown before the session on every training day (§2). */
+  activation: ActivityTemplate | null
 }) {
   const { t } = useTranslation('today')
   const { t: tCommon } = useTranslation('common')
@@ -306,6 +323,9 @@ function TrainingDay({
 
   return (
     <>
+      {activation && (
+        <ActivationSection program={program} activation={activation} heading={t('trainingDay.activationHeading')} />
+      )}
       <Hero
         // Per-locale punctuation, not an ASCII join: zh-CN sets the middot
         // without surrounding spaces (docs/review-backlog.md I7). Visible on
@@ -339,7 +359,65 @@ function TrainingDay({
         badge={eased ? t('trainingDay.adjustedBadge') : undefined}
         reasons={eased ? adjusted.adjustments.map((a) => t(a.reason.key, a.reason.params)) : undefined}
       />
+      {activity && (
+        <TrainingDayRide
+          program={program}
+          activity={activity}
+          weekday={isoWeekday(today)}
+          heading={t('trainingDay.rideHeading')}
+        />
+      )}
     </>
+  )
+}
+
+/**
+ * The one preparation round, shown above the session hero on every
+ * training day (docs/design/ActivityPrescriptionPhaseA.md §2) — not a
+ * weekday-keyed `ActivityHero`, since it's the same six items regardless
+ * of which training day this is. Compact by design: this sits above the
+ * actual hero, so it must not compete with it for attention.
+ */
+function ActivationSection({
+  program,
+  activation,
+  heading,
+}: {
+  program: Program
+  activation: ActivityTemplate
+  heading: string
+}) {
+  const localized = useLocalizedActivation(program.id, activation, program.origin)
+  return (
+    <div className="mt-8">
+      <p className="text-sm font-medium text-ink-tertiary">{heading}</p>
+      <ActivityItemList items={localized.items} />
+    </div>
+  )
+}
+
+/**
+ * Post-strength cardio for this weekday, shown below the session preview
+ * — display only, free text (§1). Weekday-keyed like a rest day's
+ * activity, reusing `useLocalizedActivity` rather than a parallel hook.
+ */
+function TrainingDayRide({
+  program,
+  activity,
+  weekday,
+  heading,
+}: {
+  program: Program
+  activity: ActivityTemplate
+  weekday: IsoWeekday
+  heading: string
+}) {
+  const localized = useLocalizedActivity(program.id, weekday, activity, program.origin)
+  return (
+    <div className="mt-8">
+      <p className="text-sm font-medium text-ink-tertiary">{heading}</p>
+      <ActivityItemList items={localized.items} />
+    </div>
   )
 }
 

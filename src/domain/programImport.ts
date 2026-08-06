@@ -253,20 +253,12 @@ export function validateProgramImport(
     }
   }
 
-  if (program.weekdayActivities) {
-    for (const key of Object.keys(program.weekdayActivities)) {
-      const weekday = Number(key)
-      if (program.trainingWeekdays.includes(weekday)) {
-        return {
-          ok: false,
-          error: {
-            key: 'plan:import.weekdayIsTrainingDay',
-            params: { weekdayKey: `plan:import.weekdayName.${weekday}` },
-          },
-        }
-      }
-    }
-  }
+  // A weekdayActivities entry may claim a training weekday — it renders as
+  // that day's post-strength cardio rather than replacing the session
+  // (docs/design/ActivityPrescriptionPhaseA.md §1). This used to be
+  // rejected (plan:import.weekdayIsTrainingDay); modelling the same ride
+  // two different ways depending on the weekday would have been worse
+  // than allowing both.
 
   // Unconditional, not a merge default: an imported file's content must
   // never resolve through the seed's locale keys, even if it reuses the

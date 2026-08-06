@@ -102,7 +102,13 @@ Title: Recovery walk & stretch
     })
   })
 
-  it('an activity claiming a training weekday is rejected end to end, same as JSON', () => {
+  /**
+   * docs/design/ActivityPrescriptionPhaseA.md §3.1 — mirrors
+   * programImport.test.ts's JSON-path rewrite: an activity claiming a
+   * training weekday is now accepted end to end through Markdown too,
+   * same as JSON.
+   */
+  it('an activity claiming a training weekday is accepted end to end, same as JSON', () => {
     const markdown = `---
 id: phase-2-gym
 name: Phase 2 — Gym
@@ -125,17 +131,18 @@ Focus: Squat & pull
 Kind: recovery
 Title: Recovery walk
 
-- 20-minute walk
+- Zone 2 ride — 30 min, after lifting
 `
     const parsed = parseProgramMarkdown(markdown)
     expect(parsed.ok).toBe(true)
     if (!parsed.ok) return
     const result = validateProgramImport(parsed.data, libraryIds)
-    expect(result.ok).toBe(false)
-    if (!result.ok) {
-      expect(result.error).toEqual({
-        key: 'plan:import.weekdayIsTrainingDay',
-        params: { weekdayKey: 'plan:import.weekdayName.1' },
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.program.weekdayActivities?.[1]).toEqual({
+        kind: 'recovery',
+        title: 'Recovery walk',
+        items: [{ label: 'Zone 2 ride', detail: '30 min, after lifting' }],
       })
     }
   })

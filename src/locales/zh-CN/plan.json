@@ -45,7 +45,6 @@
     "substitutionListsSelf": "训练课「{{sessionId}}」中的动作「{{exerciseId}}」把自己列为替代动作。",
     "duplicateSubstitution": "训练课「{{sessionId}}」中的动作「{{exerciseId}}」把替代动作「{{substitutionId}}」列了两次。",
     "substitutionNotInLibrary": "训练课「{{sessionId}}」中动作「{{exerciseId}}」的替代动作「{{substitutionId}}」在动作库中不存在。",
-    "weekdayIsTrainingDay": "$t({{weekdayKey}})是训练日——不能同时安排活动。",
     "weekdayName": {
       "1": "星期一",
       "2": "星期二",

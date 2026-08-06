@@ -145,6 +145,35 @@ describe('PlanDayPage states', () => {
     expect(screen.getByText(/conversational pace/)).toBeInTheDocument()
   })
 
+  /**
+   * docs/design/ActivityPrescriptionPhaseA.md §4.1 — the one genuine
+   * regression this delta introduces if left unguarded. `weekdayActivities`
+   * may now claim a training weekday (it renders as that day's
+   * post-strength cardio), which was previously unrepresentable — no test
+   * ever constructed it, and `day.activity` was checked before
+   * `day.session` on the assumption the two were mutually exclusive. Once
+   * a training day carries an activity, that branch order makes Monday's
+   * detail render the ride instead of the session. Write this first,
+   * watch it fail against the current order, then reorder.
+   */
+  it('a training day whose weekday carries an activity renders the session detail, not the activity detail', async () => {
+    await programRepo.put({
+      ...seedProgram,
+      origin: 'imported',
+      weekdayActivities: {
+        1: {
+          kind: 'recovery',
+          title: 'Zone 2 ride',
+          items: [{ label: 'Zone 2 ride', detail: '30 min, after lifting' }],
+        },
+      },
+    })
+    renderDay('2026-08-03') // Monday, future relative to 27 Jul "today" — a training day
+    expect(await screen.findByRole('heading', { name: /Monday 3 August/ })).toBeInTheDocument()
+    expect(screen.getByText('Chest & Back')).toBeInTheDocument()
+    expect(screen.queryByText('Zone 2 ride')).toBeNull()
+  })
+
   it('past scheduled day, nothing logged: honest empty state, never a fabricated session', async () => {
     renderDay('2026-07-24') // Friday, scheduled, nothing logged
     expect(await screen.findByRole('heading', { name: /Friday 24 July/ })).toBeInTheDocument()

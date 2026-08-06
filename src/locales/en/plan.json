@@ -48,7 +48,6 @@
     "substitutionListsSelf": "Exercise \"{{exerciseId}}\" in session \"{{sessionId}}\" lists itself as a substitution.",
     "duplicateSubstitution": "Exercise \"{{exerciseId}}\" in session \"{{sessionId}}\" lists substitution \"{{substitutionId}}\" twice.",
     "substitutionNotInLibrary": "Substitution \"{{substitutionId}}\" for exercise \"{{exerciseId}}\" in session \"{{sessionId}}\" doesn't exist in the Library.",
-    "weekdayIsTrainingDay": "$t({{weekdayKey}}) is a training day — it can't also carry an activity.",
     "weekdayName": {
       "1": "Monday",
       "2": "Tuesday",

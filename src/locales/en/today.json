@@ -8,7 +8,9 @@
     "adjustedBadge": "Adjusted for readiness",
     "heading": "Today",
     "lowStreak_one": "{{count}} low day in a row now — making this a rest day is a completely fine choice. Your session will wait for you.",
-    "lowStreak_other": "{{count}} low days in a row now — making this a rest day is a completely fine choice. Your session will wait for you."
+    "lowStreak_other": "{{count}} low days in a row now — making this a rest day is a completely fine choice. Your session will wait for you.",
+    "activationHeading": "Before you start",
+    "rideHeading": "Also today"
   },
   "noProgram": "No training program is set up yet. Your next phase will appear here.",
   "plannedDay": {

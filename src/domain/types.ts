@@ -186,11 +186,28 @@ export interface Program {
    */
   weekdaySessions?: Partial<Record<IsoWeekday, string>>
   /**
-   * Authored content for non-training weekdays — may never claim a weekday
-   * that's also in trainingWeekdays (import validation rejects the
-   * overlap). Absent = today's behavior, a bare rest day.
+   * Authored content for any weekday, training or not — a training day's
+   * entry renders as its post-strength cardio (docs/design/
+   * ActivityPrescriptionPhaseA.md §1); a non-training day's entry
+   * replaces the bare rest hero, as before. Before Phase A this could
+   * never claim a training weekday (import validation rejected the
+   * overlap); that restriction is gone — modelling the same ride two
+   * different ways depending on the weekday would have been worse than
+   * allowing both. Absent on a non-training day = today's behavior, a
+   * bare rest day.
    */
   weekdayActivities?: Partial<Record<IsoWeekday, ActivityTemplate>>
+  /**
+   * One preparation round, shown above the session on training days only
+   * — the same six-item routine every training day per the coach
+   * (docs/design/ActivityPrescriptionPhaseA.md §2), so one program-level
+   * field rather than a per-weekday map that would triplicate it. Folding
+   * this into `weekdayActivities` instead was rejected: one
+   * `ActivityTemplate` has one title and one flat item list, so the
+   * renderer could not place activation above the session and a ride
+   * below it, and preparation belongs before training starts, not after.
+   */
+  morningActivation?: ActivityTemplate
   /**
    * Where this record came from — decides whether name/focus/note fields
    * resolve through a locale key or always render the stored literal.

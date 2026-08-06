@@ -103,6 +103,47 @@ describe('resolveDayPlan', () => {
     expect(plan.kind).toBe('rest')
     if (plan.kind === 'rest') expect(plan.activity).toBeNull()
   })
+
+  /**
+   * docs/design/ActivityPrescriptionPhaseA.md §1/§3.2 — a training day now
+   * reports its own weekday activity (post-strength cardio, display only)
+   * rather than always returning null. Control: revert the training
+   * branch to `{ kind: 'training', session }` with no activity/activation
+   * fields → red.
+   */
+  it('a training day returns its own weekday activity', () => {
+    const programWithTrainingDayRide: Program = {
+      ...program,
+      weekdayActivities: { 3: recoveryActivity }, // Wed 22 Jul is a training day
+    }
+    const plan = resolveDayPlan(programWithTrainingDayRide, new Date(2026, 6, 22), 0)
+    expect(plan.kind).toBe('training')
+    if (plan.kind === 'training') expect(plan.activity).toEqual(recoveryActivity)
+  })
+
+  it('leaves activity null on a training day with nothing authored for its weekday', () => {
+    const plan = resolveDayPlan(programWithActivity, new Date(2026, 6, 22), 0) // Wed — programWithActivity only authors Tue
+    expect(plan.kind).toBe('training')
+    if (plan.kind === 'training') expect(plan.activity).toBeNull()
+  })
+
+  it('a training day returns the program-level morning activation, unkeyed by weekday', () => {
+    const activation: ActivityTemplate = {
+      kind: 'mobility',
+      title: 'Morning Activation',
+      items: [{ label: 'Cat-cow', detail: '6 controlled reps' }],
+    }
+    const programWithActivation: Program = { ...program, morningActivation: activation }
+    const plan = resolveDayPlan(programWithActivation, new Date(2026, 6, 22), 0)
+    expect(plan.kind).toBe('training')
+    if (plan.kind === 'training') expect(plan.activation).toEqual(activation)
+  })
+
+  it('leaves activation null on a program with none set — unchanged behavior', () => {
+    const plan = resolveDayPlan(program, new Date(2026, 6, 22), 0)
+    expect(plan.kind).toBe('training')
+    if (plan.kind === 'training') expect(plan.activation).toBeNull()
+  })
 })
 
 const pinnedProgram: Program = {
@@ -272,11 +313,31 @@ describe('projectSchedule', () => {
     expect(days.some((d) => d.date === '2026-07-23')).toBe(false)
   })
 
-  it('never attaches an activity to a training day, even a same-weekday coincidence', () => {
+  it('leaves activity null on a training day with nothing authored for its weekday — unchanged behavior', () => {
     const days = projectSchedule(program, [], new Date(2026, 6, 25))
     const monday = byDate(days, '2026-07-27')
     expect(monday.isTrainingDay).toBe(true)
     expect(monday.activity).toBeNull()
+  })
+
+  /**
+   * docs/design/ActivityPrescriptionPhaseA.md §1/§3.2 — reverses the old
+   * "never attaches an activity to a training day" rule this test used to
+   * assert. A training day's weekday activity is now its own post-strength
+   * cardio, display only, not a rejected overlap. Control: restore the
+   * `isTrainingDay ? null :` guard in projectSchedule's activity line →
+   * red.
+   */
+  it('a training day surfaces its own weekday activity, same as a rest day does', () => {
+    const programWithTrainingDayRide: Program = {
+      ...program,
+      weekdayActivities: { 1: recoveryActivity }, // Monday is a training weekday
+    }
+    const days = projectSchedule(programWithTrainingDayRide, [], new Date(2026, 6, 25))
+    const monday = byDate(days, '2026-07-27')
+    expect(monday.isTrainingDay).toBe(true)
+    expect(monday.session).not.toBeNull()
+    expect(monday.activity).toEqual(recoveryActivity)
   })
 
   it('carries the activity on a past date the same as a future one — nothing here is projected', () => {
