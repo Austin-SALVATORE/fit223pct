@@ -18,6 +18,7 @@
     "startsIn_other": "Commence dans {{count}} jours",
     "upcomingSubtitle": "Ta première séance est prête — commence dès le premier jour, ou lance-toi plus tôt si tu ne peux pas attendre.",
     "upcomingHeading": "À venir",
+    "nextPhaseHeading": "À venir dans {{program}}",
     "restEyebrow": "Jour de repos",
     "restTitle": "Le repos, c'est du progrès",
     "restSubtitleEased": "Un vrai jour de repos, parfaitement placé. Recharge les batteries — ta prochaine séance t'attendra.",

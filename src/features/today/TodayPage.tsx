@@ -49,6 +49,23 @@ import { WeeklyReviewCard } from './WeeklyReviewCard'
 /** Never rendered — see InProgress's Rules-of-Hooks comment. */
 const EMPTY_SESSION: SessionTemplate = { id: '', name: '', focus: '', items: [] }
 
+/**
+ * Never rendered — same Rules-of-Hooks reasoning as EMPTY_SESSION.
+ * useProgramName already guards `id === ''` (i18n/seedProgram.ts), so
+ * calling it unconditionally with this placeholder when there is no
+ * successor program is safe (final-rest-day-lookahead.md §4 Phase 1b).
+ */
+const EMPTY_PROGRAM: Program = {
+  id: '',
+  name: '',
+  phase: 0,
+  startDate: '',
+  endDate: null,
+  trainingWeekdays: [],
+  rotation: [],
+  sessions: [],
+}
+
 interface TodayData {
   program: Program | undefined
   exercises: Exercise[]
@@ -61,6 +78,9 @@ interface TodayData {
   lastSeenWeeklyReviewWeekStart: string | null
   /** Today's ride/activation records, if any (coach spec v2.11 §3) — at most one per kind. */
   todayActivityRecords: ActivityRecord[]
+  /** The successor program, if the current one has already ended or is about to (final-rest-day-lookahead.md §4 Phase 1b). */
+  nextProgram: Program | undefined
+  nextProgramCompletedCount: number
 }
 
 export function TodayPage() {
@@ -78,6 +98,7 @@ export function TodayPage() {
       recentCheckIns,
       settings,
       todayActivityRecords,
+      nextProgram,
     ] = await Promise.all([
       programRepo.getActive(todayKey),
       exerciseRepo.getAll(),
@@ -89,8 +110,10 @@ export function TodayPage() {
       checkinRepo.getRecent(60),
       settingsRepo.get(),
       activityRecordRepo.getByDate(todayKey),
+      programRepo.getNext(todayKey),
     ])
     const completedCount = program ? await workoutRepo.countCompleted(program.id) : 0
+    const nextProgramCompletedCount = nextProgram ? await workoutRepo.countCompleted(nextProgram.id) : 0
     // Not gated to Monday — a review the user hasn't seen yet stays
     // available on every open of the week it covers, never tied to
     // whether they happened to open the app on any one particular day.
@@ -108,6 +131,8 @@ export function TodayPage() {
       weeklyReview,
       lastSeenWeeklyReviewWeekStart: settings?.lastSeenWeeklyReviewWeekStart ?? null,
       todayActivityRecords,
+      nextProgram,
+      nextProgramCompletedCount,
     }
   }, [todayKey])
 
@@ -146,6 +171,8 @@ function TodayBody({
     weeklyReview,
     lastSeenWeeklyReviewWeekStart,
     todayActivityRecords,
+    nextProgram,
+    nextProgramCompletedCount,
   } = data
   // Decided once, at this component instance's first render, and never
   // re-derived — marking the review "seen" writes to settings, which would
@@ -194,6 +221,8 @@ function TodayBody({
           readiness={readiness}
           checkInCard={checkInCard}
           todayActivityRecords={todayActivityRecords}
+          nextProgram={nextProgram}
+          nextProgramCompletedCount={nextProgramCompletedCount}
         />
       ) : (
         <NoProgram checkInCard={checkInCard} />
@@ -222,6 +251,8 @@ function PlannedDay({
   readiness,
   checkInCard,
   todayActivityRecords,
+  nextProgram,
+  nextProgramCompletedCount,
 }: {
   program: Program
   completedCount: number
@@ -232,13 +263,40 @@ function PlannedDay({
   readiness: Readiness
   checkInCard: ReactNode
   todayActivityRecords: ActivityRecord[]
+  nextProgram: Program | undefined
+  nextProgramCompletedCount: number
 }) {
   const { t } = useTranslation('today')
   const programName = useProgramName(program)
+  // Unconditional (Rules of Hooks) — useProgramName already guards `id
+  // === ''`, so EMPTY_PROGRAM is safe when there is no successor.
+  const nextProgramName = useProgramName(nextProgram ?? EMPTY_PROGRAM)
   const plan = resolveDayPlan(program, today, completedCount)
   const eased = readiness.tier === 'easier'
   const rideRecord = todayActivityRecords.find((r) => r.kind === 'ride')
   const activationRecord = todayActivityRecords.find((r) => r.kind === 'activation')
+  /*
+    The successor program's own `upcoming` state, asked directly rather
+    than built as new cross-program scheduling logic (final-rest-day-
+    lookahead.md §2) — `nextProgram.startDate > todayKey` by construction
+    (programRepo.getNext), so `resolveDayPlan` on it always returns
+    `upcoming` when the precondition below holds. A malformed successor
+    (no training weekdays, or weekday-pinned with no session for the
+    weekday `nextTrainingDateOnOrAfter` lands on) would throw inside
+    `resolveDayPlan` — there is no error boundary anywhere in `src/` — so
+    this precondition is what keeps a bad future program from blanking
+    today's screen; residual risk on the second throw site is unchanged
+    from what the `upcoming` branch already accepts for the current
+    program.
+  */
+  const nextPhaseUsable =
+    nextProgram !== undefined &&
+    nextProgram.trainingWeekdays.length > 0 &&
+    nextProgram.sessions.length > 0
+  const nextPhasePlan =
+    nextPhaseUsable && nextProgram
+      ? resolveDayPlan(nextProgram, today, nextProgramCompletedCount)
+      : null
 
   return (
     <>
@@ -319,35 +377,80 @@ function PlannedDay({
 
       {/*
         This program has no training day left on or before its own
-        endDate (final-rest-day-lookahead.md §4 Phase 1a) — the bare
-        fallback. The day's own authored activity (if any) still renders;
-        there is simply nothing to preview as "next" from this program.
-        No SessionPreview, no StartButton — there is no session to start.
+        endDate (final-rest-day-lookahead.md §4). Two sub-cases:
+        - A successor program exists and is usable (Phase 1b) — preview
+          its opening session, no start button (owner ruling, amendment
+          A1: a workout must not be creatable across a phase boundary).
+        - No usable successor (Phase 1a's bare fallback) — the day's own
+          authored activity (if any) still renders; there is simply
+          nothing to preview as "next" from any program.
       */}
-      {plan.kind === 'rest' && plan.nextSession === null && (
-        <>
-          {plan.activity ? (
-            <ActivityHero
-              programId={program.id}
-              programOrigin={program.origin}
-              weekday={isoWeekday(today)}
-              activity={plan.activity}
-              todayKey={todayKey}
-              rideRecord={rideRecord}
-            />
-          ) : (
-            <Hero
-              eyebrow={t('plannedDay.restEyebrow')}
-              title={t('plannedDay.restTitle')}
-              subtitle={t('plannedDay.phaseEndingSubtitle')}
-            />
-          )}
-          {plan.activity?.kind === 'checkpoint' && (
-            <MeasurementCard dateKey={todayKey} checkIn={todayCheckIn} />
-          )}
-          {checkInCard}
-        </>
-      )}
+      {plan.kind === 'rest' &&
+        plan.nextSession === null &&
+        (nextPhasePlan && nextPhasePlan.kind === 'upcoming' && nextProgram ? (
+          <UnscheduledDay
+            program={nextProgram}
+            session={nextPhasePlan.firstSession}
+            exerciseById={exerciseById}
+            todayKey={todayKey}
+            todayCheckIn={todayCheckIn}
+            readiness={readiness}
+            checkInCard={checkInCard}
+            activity={plan.activity}
+            showStartButton={false}
+            // Reuses plannedDay.startsIn rather than new phrasing
+            // (amendment A3) — the heading names the successor program
+            // but says nothing about when, same gap the `upcoming` hero
+            // already fills with this exact key.
+            subtitle={t('plannedDay.startsIn', { count: nextPhasePlan.daysUntilStart })}
+            hero={
+              plan.activity ? (
+                <ActivityHero
+                  programId={program.id}
+                  programOrigin={program.origin}
+                  weekday={isoWeekday(today)}
+                  activity={plan.activity}
+                  todayKey={todayKey}
+                  rideRecord={rideRecord}
+                />
+              ) : (
+                <Hero
+                  eyebrow={t('plannedDay.restEyebrow')}
+                  title={t('plannedDay.restTitle')}
+                  subtitle={
+                    eased
+                      ? t('plannedDay.restSubtitleEased')
+                      : t('plannedDay.restSubtitleReady')
+                  }
+                />
+              )
+            }
+            heading={t('plannedDay.nextPhaseHeading', { program: nextProgramName })}
+          />
+        ) : (
+          <>
+            {plan.activity ? (
+              <ActivityHero
+                programId={program.id}
+                programOrigin={program.origin}
+                weekday={isoWeekday(today)}
+                activity={plan.activity}
+                todayKey={todayKey}
+                rideRecord={rideRecord}
+              />
+            ) : (
+              <Hero
+                eyebrow={t('plannedDay.restEyebrow')}
+                title={t('plannedDay.restTitle')}
+                subtitle={t('plannedDay.phaseEndingSubtitle')}
+              />
+            )}
+            {plan.activity?.kind === 'checkpoint' && (
+              <MeasurementCard dateKey={todayKey} checkIn={todayCheckIn} />
+            )}
+            {checkInCard}
+          </>
+        ))}
 
       {plan.kind === 'ended' && (
         <>

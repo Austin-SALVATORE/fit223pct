@@ -16,6 +16,7 @@
     "startsIn_other": "{{count}} 天后开始",
     "upcomingSubtitle": "你的第一次训练已经准备好——从第一天开始，或者提前开始也可以。",
     "upcomingHeading": "即将开始",
+    "nextPhaseHeading": "{{program}}即将开始",
     "restEyebrow": "休息日",
     "restTitle": "休息也是进步",
     "restSubtitleEased": "真正的休息日，时机刚好。好好充电——下一次训练会等着你。",

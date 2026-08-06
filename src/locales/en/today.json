@@ -18,6 +18,7 @@
     "startsIn_other": "Starts in {{count}} days",
     "upcomingSubtitle": "Your first session is ready — begin on day one, or jump in early if you can't wait.",
     "upcomingHeading": "First up",
+    "nextPhaseHeading": "First up in {{program}}",
     "restEyebrow": "Rest day",
     "restTitle": "Recovery is progress",
     "restSubtitleEased": "A genuine rest day, perfectly timed. Recharge — your next session will wait.",

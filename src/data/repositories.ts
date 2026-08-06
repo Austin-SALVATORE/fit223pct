@@ -43,6 +43,18 @@ export const programRepo = {
   /** Every program, chronological — phase navigation on the Plan page. */
   getAll: (): Promise<Program[]> => db.programs.orderBy('startDate').toArray(),
 
+  /**
+   * The program that starts after the given date, if any — the
+   * successor phase, for previewing "what's next" once the current
+   * program has no training day left on or before its own `endDate`
+   * (final-rest-day-lookahead.md §4 Phase 1b). Mirrors `getActive`'s own
+   * `upcoming` clause rather than introducing a new predicate.
+   */
+  async getNext(dateKey: string): Promise<Program | undefined> {
+    const programs = await db.programs.orderBy('startDate').toArray()
+    return programs.find((p) => p.startDate > dateKey)
+  },
+
   getById: (id: string): Promise<Program | undefined> => db.programs.get(id),
 
   /** Upsert — import's write path. Never touches workouts. */
