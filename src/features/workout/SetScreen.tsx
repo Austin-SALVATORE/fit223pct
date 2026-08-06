@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
 import { Stepper } from '@/ui/Stepper'
+import { ConfirmAction } from '@/ui/ConfirmAction'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { nextSetTarget } from '@/domain/nextSetTarget'
+import { plannedSetIndices } from '@/domain/workout'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { usePrescriptionNote } from '@/i18n/seedProgram'
 import type { ReadinessTier } from '@/domain/readiness'
@@ -28,6 +30,18 @@ interface SetScreenProps {
   sessionId: string
   onLog: (set: Omit<LoggedSet, 'setIndex'>) => void
   onSwap: (exerciseId: string) => void
+  /**
+   * Opens one extra set slot (coach spec §4), gated by the caller
+   * (Green Build only, max 2, disabled Yellow/Deload — WorkoutPage.tsx).
+   */
+  onAddSet: () => void
+  canAddSet: boolean
+  /**
+   * Removes the set in front of you — a prescribed level (this screen
+   * confirms first) or an unfilled custom slot (removed immediately, no
+   * confirmation — only a prescribed level's removal needs one, §4).
+   */
+  onRemoveSet: () => void
 }
 
 export function SetScreen({
@@ -42,11 +56,18 @@ export function SetScreen({
   sessionId,
   onLog,
   onSwap,
+  onAddSet,
+  canAddSet,
+  onRemoveSet,
 }: SetScreenProps) {
   const { t } = useTranslation('workout')
   const exerciseName = useExerciseName(exercise.id)
   const { prescription } = workoutExercise
   const note = usePrescriptionNote(programId, sessionId, prescription, programOrigin)
+  // A custom slot (Add Set) is never a prescribed level — index at or past
+  // prescription.sets, matching workout.ts's plannedSetIndices exactly.
+  const isCustomSlot = setIndex >= prescription.sets
+  const [confirmingSkip, setConfirmingSkip] = useState(false)
   /*
     The progression *reason* is no longer read here — it moves to the rest
     screen, where education belongs ("education only during rest"), and its
@@ -90,11 +111,17 @@ export function SetScreen({
     })
   }
 
+  // Session-aware: a skipped level is never counted, an opened custom slot
+  // is (coach spec §4, "Set 2 of 4 ... after a skip it must say of 3").
+  const planned = plannedSetIndices(workoutExercise)
+  const setPosition = planned.indexOf(setIndex) + 1
+  const totalPlannedSets = planned.length
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="mt-4">
         <p id={setProgressId} className="eyebrow">
-          {t('setScreen.setProgress', { setIndex: setIndex + 1, totalSets: prescription.sets })}
+          {t('setScreen.setProgress', { setIndex: setPosition, totalSets: totalPlannedSets })}
         </p>
         {/*
           Described by the set-progress line above, so landing here — on
@@ -135,6 +162,14 @@ export function SetScreen({
           delta chip in the caption below.
         */}
         {note && setIndex === 0 && <p className="mt-1 text-sm text-ink-tertiary">{note}</p>}
+        {/*
+          A custom set is never a Pyramid level (coach spec §4) — this says
+          so up front, rather than leaving the athlete to infer it from the
+          target caption reading "Target · 8–12 reps" with no rung number.
+        */}
+        {isCustomSlot && (
+          <p className="mt-1 text-sm font-medium text-amber">{t('setScreen.customSet')}</p>
+        )}
       </div>
 
       <IllustrationBand exerciseId={exercise.id} />
@@ -191,34 +226,76 @@ export function SetScreen({
           prescription={prescription}
           target={target}
           setIndex={setIndex}
+          isCustomSlot={isCustomSlot}
         />
 
-        <motion.button
-          type="button"
-          onClick={handleLog}
-          whileTap={reducedMotion ? undefined : { scale: 0.94 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-          className="mt-8 w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg"
-        >
-          {isSeconds ? t('setScreen.logHold') : t('setScreen.logSet')}
-        </motion.button>
+        {confirmingSkip ? (
+          // Replaces the log action in place — same pattern as SwapSheet's
+          // ConfirmClear (ConfirmAction's own doc): the control the user
+          // just acted on is what claims focus for the confirm step.
+          <div className="mt-8">
+            <ConfirmAction
+              heading={t('setScreen.skipConfirmHeading')}
+              warning={t('setScreen.skipConfirmWarning')}
+              confirmLabel={t('setScreen.skipConfirmAction')}
+              cancelLabel={t('setScreen.skipConfirmCancel')}
+              onConfirm={() => {
+                setConfirmingSkip(false)
+                onRemoveSet()
+              }}
+              onCancel={() => setConfirmingSkip(false)}
+            />
+          </div>
+        ) : (
+          <>
+            <motion.button
+              type="button"
+              onClick={handleLog}
+              whileTap={reducedMotion ? undefined : { scale: 0.94 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+              className="mt-8 w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg"
+            >
+              {isSeconds ? t('setScreen.logHold') : t('setScreen.logSet')}
+            </motion.button>
 
-        <div className="mt-4 flex items-center justify-center gap-2">
-          <Link
-            to={`/library/${exercise.id}`}
-            state={{ from: 'workout' }}
-            className="inline-flex min-h-11 items-center px-3 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
-          >
-            {t('setScreen.technique')}
-          </Link>
-          <button
-            type="button"
-            onClick={() => setSwapOpen(true)}
-            className="inline-flex min-h-11 items-center px-3 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
-          >
-            {t('setScreen.swapExercise')}
-          </button>
-        </div>
+            {/* Below the log action, coach spec §4 — Add Set and Remove this set. */}
+            <div className="mt-3 flex items-center justify-center gap-2">
+              {!isCustomSlot && canAddSet && (
+                <button
+                  type="button"
+                  onClick={onAddSet}
+                  className="inline-flex min-h-11 items-center rounded-full border border-border px-4 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
+                >
+                  {t('setScreen.addSet')}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => (isCustomSlot ? onRemoveSet() : setConfirmingSkip(true))}
+                className="inline-flex min-h-11 items-center rounded-full px-4 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
+              >
+                {t('setScreen.removeSet')}
+              </button>
+            </div>
+
+            <div className="mt-2 flex items-center justify-center gap-2">
+              <Link
+                to={`/library/${exercise.id}`}
+                state={{ from: 'workout' }}
+                className="inline-flex min-h-11 items-center px-3 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
+              >
+                {t('setScreen.technique')}
+              </Link>
+              <button
+                type="button"
+                onClick={() => setSwapOpen(true)}
+                className="inline-flex min-h-11 items-center px-3 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
+              >
+                {t('setScreen.swapExercise')}
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       <SwapSheet
@@ -343,30 +420,35 @@ function TargetCaption({
   prescription,
   target,
   setIndex,
+  isCustomSlot,
 }: {
   id: string
   prescription: ExercisePrescription
   target: NextSetTarget
   setIndex: number
+  /** A custom slot (Add Set) is never "Rung N of M" — it has no rung. */
+  isCustomSlot: boolean
 }) {
   const { t } = useTranslation('workout')
   const { t: tCommon } = useTranslation('common')
   const isSeconds = prescription.mode === 'seconds'
 
-  const targetText = prescription.setPlan
-    ? t('setScreen.targetRung', {
-        rung: setIndex + 1,
-        total: prescription.setPlan.length,
-        // The *advanced* rung, from the same resolution the card used. Reading
-        // `prescription.setPlan[setIndex]` here would show the authored ladder
-        // and caption "8 kg" under a card offering 10.
-        weight: target.prescribed.weightKg ?? '–',
-        reps: target.prescribed.reps ?? '–',
-      })
-    : t(isSeconds ? 'setScreen.targetSecondsRange' : 'setScreen.targetRepRange', {
-        min: prescription.range.min,
-        max: prescription.range.max,
-      })
+  const targetText = isCustomSlot
+    ? t('setScreen.targetCustom')
+    : prescription.setPlan
+      ? t('setScreen.targetRung', {
+          rung: setIndex + 1,
+          total: prescription.setPlan.length,
+          // The *advanced* rung, from the same resolution the card used. Reading
+          // `prescription.setPlan[setIndex]` here would show the authored ladder
+          // and caption "8 kg" under a card offering 10.
+          weight: target.prescribed.weightKg ?? '–',
+          reps: target.prescribed.reps ?? '–',
+        })
+      : t(isSeconds ? 'setScreen.targetSecondsRange' : 'setScreen.targetRepRange', {
+          min: prescription.range.min,
+          max: prescription.range.max,
+        })
 
   return (
     <p id={id} className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-ink-tertiary">

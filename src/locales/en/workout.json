@@ -22,7 +22,9 @@
   },
   "undo": {
     "label": "Undo",
-    "ariaLabel": "Undo last set — {{exerciseName}}, set {{setIndex}} of {{totalSets}}"
+    "ariaLabel": "Undo last set — {{exerciseName}}, set {{setIndex}} of {{totalSets}}",
+    "removalSkipAriaLabel": "Undo skip — {{exerciseName}}",
+    "removalCustomSlotAriaLabel": "Undo remove — {{exerciseName}}"
   },
   "resting": {
     "heading": "Rest",
@@ -69,7 +71,15 @@
     "targetSecondsRange": "Target · {{min}}–{{max}} s",
     "deltaHeavier": "↑ +{{delta}} kg",
     "atMax": "MAX",
-    "loadNotTheLever": "TECHNIQUE"
+    "loadNotTheLever": "TECHNIQUE",
+    "addSet": "Add set",
+    "removeSet": "Remove this set",
+    "customSet": "Custom set — doesn't count toward the pyramid",
+    "targetCustom": "Custom set",
+    "skipConfirmHeading": "Skip this set?",
+    "skipConfirmWarning": "This level stays unfinished for today. It's still in tomorrow's plan.",
+    "skipConfirmAction": "Skip this set",
+    "skipConfirmCancel": "Keep it"
   },
   "swapSheet": {
     "closeAriaLabel": "Close",

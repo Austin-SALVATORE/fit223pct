@@ -22,7 +22,9 @@
   },
   "undo": {
     "label": "Annuler",
-    "ariaLabel": "Annuler la dernière série — {{exerciseName}}, série {{setIndex}} sur {{totalSets}}"
+    "ariaLabel": "Annuler la dernière série — {{exerciseName}}, série {{setIndex}} sur {{totalSets}}",
+    "removalSkipAriaLabel": "Annuler le passage — {{exerciseName}}",
+    "removalCustomSlotAriaLabel": "Annuler le retrait — {{exerciseName}}"
   },
   "resting": {
     "heading": "Repos",
@@ -69,7 +71,15 @@
     "targetSecondsRange": "Objectif · {{min}} à {{max}} s",
     "deltaHeavier": "↑ +{{delta}} kg",
     "atMax": "MAX",
-    "loadNotTheLever": "TECHNIQUE"
+    "loadNotTheLever": "TECHNIQUE",
+    "addSet": "Ajouter une série",
+    "removeSet": "Retirer cette série",
+    "customSet": "Série ajoutée — ne compte pas dans la pyramide",
+    "targetCustom": "Série ajoutée",
+    "skipConfirmHeading": "Passer cette série ?",
+    "skipConfirmWarning": "Ce palier reste inachevé pour aujourd'hui. Il revient dans le programme de demain.",
+    "skipConfirmAction": "Passer cette série",
+    "skipConfirmCancel": "La garder"
   },
   "swapSheet": {
     "closeAriaLabel": "Fermer",

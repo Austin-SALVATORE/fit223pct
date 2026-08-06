@@ -21,7 +21,9 @@
   },
   "undo": {
     "label": "撤销",
-    "ariaLabel": "撤销上一组——{{exerciseName}}，第 {{setIndex}} 组 / 共 {{totalSets}} 组"
+    "ariaLabel": "撤销上一组——{{exerciseName}}，第 {{setIndex}} 组 / 共 {{totalSets}} 组",
+    "removalSkipAriaLabel": "撤销跳过——{{exerciseName}}",
+    "removalCustomSlotAriaLabel": "撤销移除——{{exerciseName}}"
   },
   "resting": {
     "heading": "休息",
@@ -67,7 +69,15 @@
     "targetSecondsRange": "目标 · {{min}}–{{max}} 秒",
     "deltaHeavier": "↑ +{{delta}} 公斤",
     "atMax": "上限",
-    "loadNotTheLever": "靠技术"
+    "loadNotTheLever": "靠技术",
+    "addSet": "加一组",
+    "removeSet": "移除这组",
+    "customSet": "加练的一组——不计入金字塔",
+    "targetCustom": "加练的一组",
+    "skipConfirmHeading": "跳过这组？",
+    "skipConfirmWarning": "这一级今天先不做。明天的计划里还会有它。",
+    "skipConfirmAction": "跳过这组",
+    "skipConfirmCancel": "保留"
   },
   "swapSheet": {
     "closeAriaLabel": "关闭",

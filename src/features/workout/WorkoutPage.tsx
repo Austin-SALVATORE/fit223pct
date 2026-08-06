@@ -5,11 +5,16 @@ import { Link, useNavigate } from 'react-router'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
 import {
+  addCustomSlot,
   completeWorkout,
   logSet,
+  plannedSetIndices,
   previousSetsFor,
+  skipPrescribedLevel,
   swapExercise,
+  undoCustomSlot,
   undoLastSet,
+  undoSkip,
   workoutPosition,
 } from '@/domain/workout'
 import { PRODUCT_NAME } from '@/lib/brand'
@@ -17,6 +22,7 @@ import type { LoggedSet, Workout } from '@/domain/types'
 import { SessionSheet } from './SessionSheet'
 import { SetScreen } from './SetScreen'
 import { UndoLastSetButton } from './UndoLastSetButton'
+import { UndoRemovalButton } from './UndoRemovalButton'
 import { RestScreen } from './RestScreen'
 import { SessionSummary } from './SessionSummary'
 
@@ -25,12 +31,27 @@ type Phase =
   | { kind: 'resting'; endsAt: number; totalSeconds: number; exerciseChanged: boolean }
   | { kind: 'summary' }
 
+/**
+ * The one removal ("Remove this set") a caller could still undo — a
+ * prescribed level skipped, or an unfilled custom slot removed. Unlike
+ * `undoTarget` below (derived fresh from `undoLastSet(workout).removed`),
+ * there is no persisted "most recent removal" to derive this from —
+ * `skippedLevels` is an unordered set of levels, not a history — so this is
+ * local, ephemeral UI state: cleared by performing the undo, or by any
+ * other action that isn't undoing it (coach spec §4: "provide immediate
+ * Undo after any removal" — immediate, not permanent).
+ */
+type LastRemoval =
+  | { kind: 'skip'; exerciseIndex: number; level: number }
+  | { kind: 'customSlot'; exerciseIndex: number }
+
 export function WorkoutPage() {
   const { t } = useTranslation('workout')
   const { t: tCommon, i18n } = useTranslation('common')
   const reducedMotion = useReducedMotion()
   const [phase, setPhase] = useState<Phase>({ kind: 'logging' })
   const [sessionSheetOpen, setSessionSheetOpen] = useState(false)
+  const [lastRemoval, setLastRemoval] = useState<LastRemoval | null>(null)
   const navigate = useNavigate()
 
   // Workout mode is a full-screen takeover outside AppShell's route-title
@@ -95,6 +116,7 @@ export function WorkoutPage() {
 
   async function handleLog(set: Omit<LoggedSet, 'setIndex'>) {
     if (!workout || position === 'complete') return
+    setLastRemoval(null) // a real log supersedes any pending "undo the removal" offer
     const updated = logSet(workout, position.exerciseIndex, set, position.setIndex)
     const nextPosition = workoutPosition(updated)
 
@@ -124,10 +146,12 @@ export function WorkoutPage() {
 
   async function handleSwap(newExerciseId: string) {
     if (!workout || position === 'complete') return
+    setLastRemoval(null)
     await workoutRepo.put(swapExercise(workout, position.exerciseIndex, newExerciseId))
   }
 
   async function handleUndo() {
+    setLastRemoval(null)
     // Transactional read-modify-write, not read-then-put: two taps inside
     // one liveQuery frame would otherwise both read the same workout and
     // one undo would be silently lost (see workoutRepo.mutateActive).
@@ -140,6 +164,51 @@ export function WorkoutPage() {
     setPhase({ kind: 'logging' })
   }
 
+  /**
+   * Opens one extra set slot (coach spec §4). Gated by the caller
+   * (`canAddSet` below) — Green Build only, max 2 per exercise, disabled
+   * on Yellow. The Deload half of §4.1's gate table needs a coach-authored
+   * program flag that does not exist yet (no Deload program is built) —
+   * SessionSetCustomization.md §4.1 names this explicitly; nothing here
+   * can gate on a flag that isn't defined.
+   */
+  async function handleAddSet() {
+    if (!workout || position === 'complete') return
+    setLastRemoval(null)
+    await workoutRepo.put(addCustomSlot(workout, position.exerciseIndex))
+  }
+
+  /**
+   * Removes the set in front of you. A prescribed level goes to
+   * `skippedLevels` (SetScreen has already confirmed this — never called
+   * for one without it); an unfilled custom slot decrements `customSlots`
+   * outright, no confirmation needed. Either way, exercise.sets is
+   * untouched, so this can never lose logged work.
+   */
+  async function handleRemoveSet() {
+    if (!workout || position === 'complete') return
+    const isCustomSlot = position.setIndex >= workoutExercise.prescription.sets
+    const updated = isCustomSlot
+      ? undoCustomSlot(workout, position.exerciseIndex)
+      : skipPrescribedLevel(workout, position.exerciseIndex, position.setIndex)
+    await workoutRepo.put(updated)
+    setLastRemoval(
+      isCustomSlot
+        ? { kind: 'customSlot', exerciseIndex: position.exerciseIndex }
+        : { kind: 'skip', exerciseIndex: position.exerciseIndex, level: position.setIndex },
+    )
+  }
+
+  async function handleUndoRemoval() {
+    if (!workout || !lastRemoval) return
+    const updated =
+      lastRemoval.kind === 'customSlot'
+        ? addCustomSlot(workout, lastRemoval.exerciseIndex)
+        : undoSkip(workout, lastRemoval.exerciseIndex, lastRemoval.level)
+    await workoutRepo.put(updated)
+    setLastRemoval(null)
+  }
+
   async function handleReset() {
     if (!workout) return
     // Same end state as the Today page's discard — deleted, not archived,
@@ -150,10 +219,16 @@ export function WorkoutPage() {
   }
 
   const loggedSetCount = workout.exercises.reduce((n, e) => n + e.sets.length, 0)
-  const totalSetCount = workout.exercises.reduce((n, e) => n + e.prescription.sets, 0)
+  // Session-aware, coach spec §4: a skipped level doesn't count, an opened
+  // custom slot does — same plannedSetIndices SetScreen's own counter reads.
+  const totalSetCount = workout.exercises.reduce((n, e) => n + plannedSetIndices(e).length, 0)
   // What an undo would take, computed for the control's accessible name so
   // it can state its target before the tap rather than after.
   const undoTarget = undoLastSet(workout).removed
+  // Green Build only, max 2 custom slots per exercise (§4.1) — the Deload
+  // half of the gate needs a flag no program declares yet, see handleAddSet.
+  const canAddSet =
+    workout.readiness?.tier !== 'easier' && (workoutExercise.customSlots ?? 0) < 2
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-8 pt-[max(1rem,env(safe-area-inset-top))]">
@@ -216,8 +291,15 @@ export function WorkoutPage() {
           <UndoLastSetButton
             exerciseId={workout.exercises[undoTarget.exerciseIndex].exerciseId}
             setIndex={undoTarget.set.setIndex + 1}
-            totalSets={workout.exercises[undoTarget.exerciseIndex].prescription.sets}
+            totalSets={plannedSetIndices(workout.exercises[undoTarget.exerciseIndex]).length}
             onUndo={() => void handleUndo()}
+          />
+        )}
+        {lastRemoval && (
+          <UndoRemovalButton
+            exerciseId={workout.exercises[lastRemoval.exerciseIndex].exerciseId}
+            kind={lastRemoval.kind}
+            onUndo={() => void handleUndoRemoval()}
           />
         )}
         <button
@@ -275,6 +357,9 @@ export function WorkoutPage() {
               sessionId={workout.sessionTemplateId}
               onLog={handleLog}
               onSwap={handleSwap}
+              onAddSet={() => void handleAddSet()}
+              canAddSet={canAddSet}
+              onRemoveSet={() => void handleRemoveSet()}
             />
           )}
         </motion.div>
