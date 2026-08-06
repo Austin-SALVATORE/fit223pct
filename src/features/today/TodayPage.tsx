@@ -252,6 +252,7 @@ function PlannedDay({
           readiness={readiness}
           checkInCard={checkInCard}
           activity={null}
+          showStartButton
           hero={
             <Hero
               eyebrow={t('plannedDay.startsIn', { count: plan.daysUntilStart })}
@@ -279,7 +280,7 @@ function PlannedDay({
         />
       )}
 
-      {plan.kind === 'rest' && (
+      {plan.kind === 'rest' && plan.nextSession !== null && (
         <UnscheduledDay
           program={program}
           session={plan.nextSession}
@@ -289,6 +290,7 @@ function PlannedDay({
           readiness={readiness}
           checkInCard={checkInCard}
           activity={plan.activity}
+          showStartButton
           hero={
             plan.activity ? (
               <ActivityHero
@@ -313,6 +315,38 @@ function PlannedDay({
           }
           heading={t('plannedDay.restHeading')}
         />
+      )}
+
+      {/*
+        This program has no training day left on or before its own
+        endDate (final-rest-day-lookahead.md §4 Phase 1a) — the bare
+        fallback. The day's own authored activity (if any) still renders;
+        there is simply nothing to preview as "next" from this program.
+        No SessionPreview, no StartButton — there is no session to start.
+      */}
+      {plan.kind === 'rest' && plan.nextSession === null && (
+        <>
+          {plan.activity ? (
+            <ActivityHero
+              programId={program.id}
+              programOrigin={program.origin}
+              weekday={isoWeekday(today)}
+              activity={plan.activity}
+              todayKey={todayKey}
+              rideRecord={rideRecord}
+            />
+          ) : (
+            <Hero
+              eyebrow={t('plannedDay.restEyebrow')}
+              title={t('plannedDay.restTitle')}
+              subtitle={t('plannedDay.phaseEndingSubtitle')}
+            />
+          )}
+          {plan.activity?.kind === 'checkpoint' && (
+            <MeasurementCard dateKey={todayKey} checkIn={todayCheckIn} />
+          )}
+          {checkInCard}
+        </>
       )}
 
       {plan.kind === 'ended' && (
@@ -508,6 +542,8 @@ function UnscheduledDay({
   activity,
   hero,
   heading,
+  subtitle,
+  showStartButton,
 }: {
   program: Program
   session: SessionTemplate
@@ -519,6 +555,21 @@ function UnscheduledDay({
   activity: ActivityTemplate | null
   hero: ReactNode
   heading: string
+  /**
+   * Timing context shown under the preview heading — e.g. "Starts in 2
+   * days", reusing plannedDay.startsIn rather than inventing new copy
+   * (final-rest-day-lookahead.md §9 Q2 amendment). Absent for the
+   * ordinary "next scheduled session" case, where the next session is
+   * always imminent enough that stating a day count adds nothing.
+   */
+  subtitle?: string
+  /**
+   * False for the cross-phase preview: the owner ruled no start button
+   * across a phase boundary (final-rest-day-lookahead.md amendment A1) —
+   * `program`/`session` here would belong to a program that has not
+   * started yet, and `createWorkout` must not be reachable from it.
+   */
+  showStartButton: boolean
 }) {
   const { t } = useTranslation('today')
   const adjusted = applyReadiness(session, readiness)
@@ -537,16 +588,19 @@ function UnscheduledDay({
         programOrigin={program.origin}
         exerciseById={exerciseById}
         heading={heading}
+        subtitle={subtitle}
         badge={eased ? t('trainingDay.adjustedBadge') : undefined}
         reasons={eased ? adjusted.adjustments.map((a) => t(a.reason.key, a.reason.params)) : undefined}
       />
-      <StartButton
-        program={program}
-        session={adjusted.session}
-        readiness={readiness}
-        todayKey={todayKey}
-        variant="quiet"
-      />
+      {showStartButton && (
+        <StartButton
+          program={program}
+          session={adjusted.session}
+          readiness={readiness}
+          todayKey={todayKey}
+          variant="quiet"
+        />
+      )}
     </>
   )
 }

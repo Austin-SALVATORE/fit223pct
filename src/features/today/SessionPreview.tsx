@@ -15,6 +15,14 @@ interface SessionPreviewProps {
   programOrigin?: Program['origin']
   exerciseById: Map<string, Exercise>
   heading: string
+  /**
+   * Timing context under the heading — e.g. "Starts in 2 days"
+   * (plannedDay.startsIn). Absent for the ordinary "next scheduled
+   * session" case; used by the cross-phase preview, where the heading
+   * names a program but says nothing about when (final-rest-day-
+   * lookahead.md §9 Q2 amendment).
+   */
+  subtitle?: string
   /** Short canonical label shown beside the numbers when they've been modulated */
   badge?: string
   /** One line per applied adjustment, shown under the heading */
@@ -29,6 +37,7 @@ export function SessionPreview({
   programOrigin,
   exerciseById,
   heading,
+  subtitle,
   badge,
   reasons,
   origin = { from: 'today' },
@@ -43,6 +52,7 @@ export function SessionPreview({
         <h2 className="eyebrow">{heading}</h2>
         {badge && <p className="text-xs font-medium text-amber">{badge}</p>}
       </div>
+      {subtitle && <p className="mt-0.5 text-sm text-ink-tertiary">{subtitle}</p>}
       {reasons && reasons.length > 0 && (
         <ul className="mt-1.5 space-y-0.5">
           {reasons.map((reason) => (

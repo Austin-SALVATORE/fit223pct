@@ -74,7 +74,7 @@ describe('resolveDayPlan', () => {
     const plan = resolveDayPlan(program, new Date(2026, 6, 23), 1)
     expect(plan.kind).toBe('rest')
     if (plan.kind === 'rest') {
-      expect(plan.nextSession.id).toBe('B')
+      expect(plan.nextSession?.id).toBe('B')
       expect(plan.nextDate).toBe('2026-07-24')
     }
   })
@@ -146,6 +146,68 @@ describe('resolveDayPlan', () => {
   })
 })
 
+/**
+ * A phase's own final rest days — plan `final-rest-day-lookahead.md` §1/§4.
+ * `nextTrainingDateOnOrAfter` used to search up to 6 days forward with no
+ * regard to `program.endDate`, so a rest day inside the last week of a
+ * program could "find" a training weekday that belongs to whatever
+ * program starts next — a different roster entirely. Bounded by
+ * `program.endDate`: no more training days left in *this* program means
+ * `nextSession`/`nextDate` are null, not a borrowed answer.
+ */
+const finalWeekProgram: Program = {
+  ...program,
+  schedulingMode: 'weekday-pinned',
+  weekdaySessions: { 1: 'A', 3: 'B', 5: 'A' },
+  endDate: '2026-08-09', // Sunday — Friday 7 Aug is the last training day
+}
+
+describe('resolveDayPlan — bounded by program.endDate on a rest day', () => {
+  it('G1: a final rest day has no next session inside its own program', () => {
+    for (const date of [new Date(2026, 7, 8), new Date(2026, 7, 9)]) {
+      // Sat 8 / Sun 9 Aug — no training weekday remains on or before endDate.
+      const plan = resolveDayPlan(finalWeekProgram, date, 0)
+      expect(plan.kind).toBe('rest')
+      if (plan.kind === 'rest') {
+        expect(plan.nextDate).toBeNull()
+        expect(plan.nextSession).toBeNull()
+      }
+    }
+  })
+
+  it('G2: a mid-program rest day still resolves the next session (anti-over-clamp)', () => {
+    // Thu 6 Aug — Fri 7 Aug is still inside the program's own range.
+    const plan = resolveDayPlan(finalWeekProgram, new Date(2026, 7, 6), 0)
+    expect(plan.kind).toBe('rest')
+    if (plan.kind === 'rest') {
+      expect(plan.nextDate).toBe('2026-08-07')
+      expect(plan.nextSession?.id).toBe('A')
+    }
+  })
+
+  it('G2b: the last training day itself is not eaten by the bound', () => {
+    const plan = resolveDayPlan(finalWeekProgram, new Date(2026, 7, 7), 0) // Fri 7 Aug
+    expect(plan.kind).toBe('training')
+  })
+
+  it('G2c: the rule, not the instance — a second, unrelated program\'s own final rest days bound the same way', () => {
+    const secondProgram: Program = {
+      ...program,
+      id: 'phase-2',
+      schedulingMode: 'weekday-pinned',
+      weekdaySessions: { 1: 'A', 3: 'B', 5: 'A' },
+      startDate: '2026-09-01', // Tuesday
+      endDate: '2026-09-06', // Sunday — Friday 4 Sep is the last training day
+    }
+    for (const date of [new Date(2026, 8, 5), new Date(2026, 8, 6)]) {
+      // Sat 5 / Sun 6 Sep
+      const plan = resolveDayPlan(secondProgram, date, 0)
+      expect(plan.kind).toBe('rest')
+      if (plan.kind === 'rest') expect(plan.nextSession).toBeNull()
+    }
+  })
+})
+
 const pinnedProgram: Program = {
   ...program,
   schedulingMode: 'weekday-pinned',
@@ -178,7 +240,7 @@ describe('resolveDayPlan — weekday-pinned scheduling', () => {
     const plan = resolveDayPlan(pinnedProgram, new Date(2026, 6, 21), 0)
     expect(plan.kind).toBe('rest')
     if (plan.kind === 'rest') {
-      expect(plan.nextSession.id).toBe('B')
+      expect(plan.nextSession?.id).toBe('B')
       expect(plan.nextDate).toBe('2026-07-22')
     }
   })

@@ -11,7 +11,20 @@ export type DayPlan =
       /** The one preparation round, shown before the session on every training day (§2). */
       activation: ActivityTemplate | null
     }
-  | { kind: 'rest'; nextSession: SessionTemplate; nextDate: string; activity: ActivityTemplate | null }
+  | {
+      kind: 'rest'
+      /**
+       * Null when this program has no training day left on or before its
+       * own `endDate` — a rest day inside the phase's own final week has
+       * nothing honest to preview from *this* program (final-rest-day-
+       * lookahead.md §1: the unbounded lookahead used to borrow whatever
+       * training weekday came next, which could belong to a different
+       * program with a different roster entirely).
+       */
+      nextSession: SessionTemplate | null
+      nextDate: string | null
+      activity: ActivityTemplate | null
+    }
   | { kind: 'ended' }
 
 /**
@@ -53,10 +66,11 @@ export function resolveDayPlan(
     }
   }
 
-  const nextDateKey = nextTrainingDateOnOrAfter(program, addDays(date, 1))
+  const nextDateKey = nextTrainingDateInRange(program, addDays(date, 1), program.endDate)
   return {
     kind: 'rest',
-    nextSession: sessionForDay(program, parseDateKey(nextDateKey), completedCount),
+    nextSession:
+      nextDateKey === null ? null : sessionForDay(program, parseDateKey(nextDateKey), completedCount),
     nextDate: nextDateKey,
     activity: program.weekdayActivities?.[isoWeekday(date)] ?? null,
   }
@@ -221,15 +235,30 @@ export function sessionForDay(
   return session
 }
 
-/** First date on or after `from` (inclusive) whose weekday is a training weekday. */
-function nextTrainingDateOnOrAfter(program: Program, from: Date): string {
+/**
+ * First date on or after `from` (inclusive) whose weekday is a training
+ * weekday, never later than `until` (inclusive) — null when none exists
+ * in range. `until: null` means unbounded, which is what keeps the
+ * `upcoming` branch's own lookahead byte-for-byte unaffected by this
+ * split (final-rest-day-lookahead.md §4 Phase 1a).
+ */
+function nextTrainingDateInRange(program: Program, from: Date, until: string | null): string | null {
   for (let offset = 0; offset <= 6; offset += 1) {
     const candidate = addDays(from, offset)
+    const candidateKey = toDateKey(candidate)
+    if (until !== null && candidateKey > until) return null
     if (program.trainingWeekdays.includes(isoWeekday(candidate))) {
-      return toDateKey(candidate)
+      return candidateKey
     }
   }
-  throw new Error(`Program "${program.id}" has no training weekdays`)
+  return null
+}
+
+/** First date on or after `from` (inclusive) whose weekday is a training weekday, unbounded. */
+function nextTrainingDateOnOrAfter(program: Program, from: Date): string {
+  const found = nextTrainingDateInRange(program, from, null)
+  if (found === null) throw new Error(`Program "${program.id}" has no training weekdays`)
+  return found
 }
 
 function daysBetween(fromKey: string, toKey: string): number {
