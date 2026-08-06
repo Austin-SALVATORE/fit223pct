@@ -84,6 +84,11 @@ describe('Today on a training day carrying its own weekday activity', () => {
   })
 
   it('shows nothing extra when the program has no activity for the weekday — unchanged behavior', async () => {
+    // The real seed's every weekday now carries some activity (6 Aug
+    // content batch — seed/program.ts's weekdayActivities comment), so
+    // this needs a program that genuinely has none for the weekday,
+    // same reasoning as TodayPage.activity.test.tsx's bare-rest fixture.
+    await programRepo.put({ ...seedProgram, weekdayActivities: undefined })
     renderApp()
     expect(await screen.findByRole('heading', { name: 'Squat, hinge & core' })).toBeInTheDocument()
     expect(screen.queryByText('Zone 2 ride')).toBeNull()

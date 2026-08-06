@@ -267,7 +267,55 @@ export const seedProgram: Program = {
       ],
     },
   ],
+  /*
+    Rides and post-ride/recovery-day stretching added 6 Aug per the coach's
+    §12/§14 cardio and stretching tables — an owner ruling that the
+    coach's cycling/stretching model applies to the program running now,
+    not only from Mesocycle 2's 10 Aug launch. Days 1/3/5 (Mon/Wed/Fri)
+    are new entries; days 2/4/6's ride item is **appended**, never
+    prepended, to the existing list — useLocalizedActivity keys items by
+    array index (i18n/seedProgram.ts), so inserting at the front would
+    silently shift every already-translated fr/zh-CN item at that weekday
+    onto the wrong index.
+
+    Stated assumption, the coach has not written a Phase 1 cardio table:
+    durations are the coach's Mesocycle 2 Build figures, applied by day
+    type (train Mon/Wed/Fri, recover Tue/Thu, optional Sat) since Phase 1
+    and Build share that weekly shape. If the coach intended different
+    volumes for Phase 1's last four days, that's theirs to correct.
+
+    Post-ride stretch (Mon/Wed/Fri only) is plain text, not a routineId —
+    four of the coach's nine named positions have no existing step id, and
+    a step id is both a locale key and an art id (not tonight's scope, see
+    the recovery-day stretching comment below for the same reasoning).
+    Session-specific per §14's table, keyed off weekdaySessions above:
+    chest-back → doorway chest/bench lat/thoracic rotation/hip-flexor;
+    legs-core → hip-flexor/hamstring/figure-four/calf; shoulders-arms →
+    doorway chest/posterior-shoulder/triceps/bench lat.
+
+    English fallback text only, in en/fr/zh-CN alike (seed.json) — the
+    coach spec's "Localization release ruling": ship with the approved
+    English coaching text under every required locale key rather than
+    hold for translation, reviewed fr/zh-CN to follow in Week 1.
+  */
   weekdayActivities: {
+    1: {
+      kind: 'recovery',
+      title: 'Zone 2 ride',
+      items: [
+        {
+          label: 'Zone 2 ride',
+          detail:
+            '20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)',
+          recordable: 'ride',
+        },
+        {
+          label: 'Post-ride stretch',
+          detail:
+            'Doorway chest stretch, bench lat stretch, gentle thoracic rotation, half-kneeling hip-flexor stretch — about 30-45 sec per position',
+        },
+      ],
+    },
     2: {
       kind: 'recovery',
       title: 'Recovery day',
@@ -280,6 +328,28 @@ export const seedProgram: Program = {
         { label: 'Hydration', detail: 'Meet your daily goal' },
         { label: 'Protein', detail: 'Meet your daily target' },
         { label: 'Sleep', detail: 'At least 7.5 hours' },
+        {
+          label: 'Zone 2 ride',
+          detail: '35 min (5 min easy warm-up, 5 min easy cool-down)',
+          recordable: 'ride',
+        },
+      ],
+    },
+    3: {
+      kind: 'recovery',
+      title: 'Zone 2 ride',
+      items: [
+        {
+          label: 'Zone 2 ride',
+          detail:
+            '20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)',
+          recordable: 'ride',
+        },
+        {
+          label: 'Post-ride stretch',
+          detail:
+            'Half-kneeling hip-flexor stretch, hamstring stretch, figure-four glute stretch, standing calf stretch — about 30-45 sec per position',
+        },
       ],
     },
     4: {
@@ -290,6 +360,28 @@ export const seedProgram: Program = {
         { label: 'Stretching', routineId: 'recovery-stretch-v1' },
         { label: 'Foam rolling' },
         { label: 'Easy walking' },
+        {
+          label: 'Zone 2 ride',
+          detail: '35 min (5 min easy warm-up, 5 min easy cool-down)',
+          recordable: 'ride',
+        },
+      ],
+    },
+    5: {
+      kind: 'recovery',
+      title: 'Zone 2 ride',
+      items: [
+        {
+          label: 'Zone 2 ride',
+          detail:
+            '20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)',
+          recordable: 'ride',
+        },
+        {
+          label: 'Post-ride stretch',
+          detail:
+            'Doorway chest stretch, cross-body posterior-shoulder stretch, overhead triceps stretch, bench lat stretch — about 30-45 sec per position',
+        },
       ],
     },
     6: {
@@ -298,6 +390,11 @@ export const seedProgram: Program = {
       items: [
         { label: 'Choose one', detail: 'Walking, cycling, swimming, tennis, or mobility work' },
         { label: 'Complete rest is a fine choice too' },
+        {
+          label: 'Zone 2 ride',
+          detail: '45 min (5 min easy warm-up, 5 min easy cool-down) — only when recovery is Green',
+          recordable: 'ride',
+        },
       ],
     },
     7: {

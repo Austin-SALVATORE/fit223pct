@@ -81,13 +81,19 @@ describe('PlanPage', () => {
     ).toBeInTheDocument()
   })
 
-  it('states a skipped scheduled day as a plain em-dash, never "missed"', async () => {
+  it('shows a skipped scheduled day\'s own ride/stretch activity, never "missed"', async () => {
+    // Friday now carries its own display-only activity (6 Aug content
+    // batch — coach §12/§14 rides now apply to the current program, see
+    // seed/program.ts's weekdayActivities comment), independent of the
+    // strength session that was skipped. Showing it is not fabricating a
+    // session: it's the same prescriptive, display-only content every
+    // other activity day already renders, never a completion claim.
     await putCompletedWorkout('2026-07-22', seedProgram.sessions[1]) // Wed = Legs & Core
     renderApp()
     expect(await screen.findByText('Wed 22 Jul')).toBeInTheDocument()
     const skippedRow = (await screen.findByText('Fri 24 Jul')).closest('li')
     expect(skippedRow).not.toBeNull()
-    expect(within(skippedRow!).getByLabelText('No session')).toHaveTextContent('—')
+    expect(skippedRow).toHaveTextContent('Zone 2 ride')
     // The row itself carries no guilt copy — the page-level honesty-rule
     // note (a different, neutral sentence) is allowed to use the word.
     expect(skippedRow).not.toHaveTextContent(/missed/i)
@@ -200,5 +206,20 @@ describe('PlanPage activity days', () => {
     await screen.findByText('Tue 28 Jul') // wait for the list to render
     // Thursday has no activity declared for it and isn't a training day.
     expect(screen.queryByText(/30 Jul/)).toBeNull()
+  })
+
+  it('still states a skipped scheduled day as a plain em-dash when the weekday genuinely has no activity', async () => {
+    // The real seed's every weekday now carries some activity (6 Aug
+    // content batch), so the bare "No session" fallback (PlanPage.tsx's
+    // last branch) needs a program that genuinely has none for the
+    // skipped weekday, to keep that code path covered.
+    await programRepo.put({ ...seedProgram, origin: 'imported', weekdayActivities: undefined })
+    await putCompletedWorkout('2026-07-22', seedProgram.sessions[1]) // Wed = Legs & Core
+    renderApp()
+    expect(await screen.findByText('Wed 22 Jul')).toBeInTheDocument()
+    const skippedRow = (await screen.findByText('Fri 24 Jul')).closest('li')
+    expect(skippedRow).not.toBeNull()
+    expect(within(skippedRow!).getByLabelText('No session')).toHaveTextContent('—')
+    expect(skippedRow).not.toHaveTextContent(/missed/i)
   })
 })

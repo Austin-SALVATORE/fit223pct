@@ -120,6 +120,13 @@ const activityItemSchema = z.object({
   // build doesn't have renders as plain text (ActivityItemList), so an
   // older app importing a newer program degrades instead of refusing it.
   routineId: z.string().min(1).optional(),
+  // Same reasoning as routineId above, same bug class: this schema is not
+  // .strict(), so omitting recordable would silently strip it on
+  // export/import, losing the ride-record attachment point for whichever
+  // item carried it — with the round-trip as the only symptom. The literal
+  // is the closed vocabulary from types.ts (ActivityItem.recordable),
+  // widened there only if a future record kind is added.
+  recordable: z.literal('ride').optional(),
 })
 
 const activityTemplateSchema = z.object({

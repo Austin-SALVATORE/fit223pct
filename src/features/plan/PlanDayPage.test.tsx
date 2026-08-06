@@ -174,7 +174,29 @@ describe('PlanDayPage states', () => {
     expect(screen.queryByText('Zone 2 ride')).toBeNull()
   })
 
-  it('past scheduled day, nothing logged: honest empty state, never a fabricated session', async () => {
+  it('past scheduled day, nothing logged: shows the day\'s own ride/stretch activity, never a fabricated session', async () => {
+    // Friday now carries its own display-only activity (6 Aug content
+    // batch — seed/program.ts's weekdayActivities comment), independent
+    // of the strength session that went unlogged. This is not a
+    // fabricated session: no session name ever appears, only the same
+    // prescriptive, display-only ride/stretch content every other
+    // activity day already renders regardless of completion.
+    renderDay('2026-07-24') // Friday, scheduled, nothing logged
+    expect(await screen.findByRole('heading', { name: /Friday 24 July/ })).toBeInTheDocument()
+    // "Zone 2 ride" appears twice — the activity heading and the item
+    // label within it — so assert the heading specifically.
+    expect(screen.getByRole('heading', { name: 'Zone 2 ride' })).toBeInTheDocument()
+    expect(screen.queryByText('Chest & Back')).toBeNull()
+    expect(screen.queryByText('Legs & Core')).toBeNull()
+    expect(screen.queryByText('Shoulders & Arms')).toBeNull()
+  })
+
+  it('past scheduled day, nothing logged, weekday genuinely has no activity: honest empty state, never a fabricated session', async () => {
+    // The real seed's every weekday now carries some activity (6 Aug
+    // content batch), so the bare "nothing logged" fallback
+    // (PlanDayPage.tsx's last branch) needs a program that genuinely has
+    // none for the day, to keep that code path covered.
+    await programRepo.put({ ...seedProgram, origin: 'imported', weekdayActivities: undefined })
     renderDay('2026-07-24') // Friday, scheduled, nothing logged
     expect(await screen.findByRole('heading', { name: /Friday 24 July/ })).toBeInTheDocument()
     expect(
@@ -183,6 +205,7 @@ describe('PlanDayPage states', () => {
     expect(screen.queryByText('Chest & Back')).toBeNull()
     expect(screen.queryByText('Legs & Core')).toBeNull()
     expect(screen.queryByText('Shoulders & Arms')).toBeNull()
+    expect(screen.queryByText('Zone 2 ride')).toBeNull()
   })
 
   it('unknown/out-of-phase date: quiet message and a back link, never a crash', async () => {

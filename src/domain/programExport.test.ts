@@ -44,6 +44,28 @@ describe('toCanonicalProgramJson', () => {
     }
   })
 
+  // Regression: same bug class as routineId above — activityItemSchema
+  // omitted recordable, so it silently stripped on export/import (found via
+  // the seed round-trip test above once phase-1-home carried a recordable
+  // item, 6 Aug).
+  it("round-trips an activity item's recordable marker", () => {
+    const withRide = {
+      ...seedProgram,
+      weekdayActivities: {
+        1: {
+          kind: 'recovery' as const,
+          title: 'Zone 2 ride',
+          items: [{ label: 'Zone 2 ride', detail: '20 min', recordable: 'ride' as const }],
+        },
+      },
+    }
+    const result = validateProgramImport(JSON.parse(toCanonicalProgramJson(withRide)), libraryIds)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.program.weekdayActivities?.[1]?.items[0].recordable).toBe('ride')
+    }
+  })
+
   it('round-trips a program-defined substitutionIds field', () => {
     const withSubs = {
       ...seedProgram,

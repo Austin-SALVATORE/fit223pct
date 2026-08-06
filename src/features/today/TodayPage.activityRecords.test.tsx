@@ -155,6 +155,52 @@ describe('Activation record on a training day', () => {
   })
 })
 
+describe('Ride record against the real phase-1-home program (no synthetic fixture)', () => {
+  // The acceptance criterion this batch was built for (coach spec §12,
+  // team-lead 6 Aug): recording must work against phase-1-home's own
+  // content, not only a synthetic imported fixture — so this deliberately
+  // renders the unmodified `seedProgram` seeded by seedDatabase(), no
+  // programRepo.put override at all.
+
+  it('shows a ride record on a real training day (Friday, Shoulders & Arms)', async () => {
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 7, 7, 9, 0, 0) }) // Fri 7 Aug 2026
+    try {
+      renderApp()
+      expect(await screen.findByRole('heading', { name: 'Shoulders & arm strength' })).toBeInTheDocument()
+      expect(screen.getByText('Ride record')).toBeInTheDocument()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Increase Duration' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Increase Avg heart rate' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Save ride' }))
+
+      const records = await activityRecordRepo.getByDate('2026-08-07')
+      expect(records).toHaveLength(1)
+      expect(records[0]).toMatchObject({ kind: 'ride', actualMinutes: 20, avgHeartRate: 130 })
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('shows a ride record on a real rest day (Tuesday)', async () => {
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 7, 4, 9, 0, 0) }) // Tue 4 Aug 2026
+    try {
+      renderApp()
+      expect(await screen.findByRole('heading', { name: 'Recovery day' })).toBeInTheDocument()
+      expect(screen.getByText('Ride record')).toBeInTheDocument()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Increase Duration' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Increase Avg heart rate' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Save ride' }))
+
+      const records = await activityRecordRepo.getByDate('2026-08-04')
+      expect(records).toHaveLength(1)
+      expect(records[0]).toMatchObject({ kind: 'ride', actualMinutes: 20, avgHeartRate: 130 })
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})
+
 describe('Ride record on a rest day', () => {
   beforeAll(() => {
     vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 6, 21, 9, 0, 0) }) // Tue 21 Jul, seedProgram's startDate
