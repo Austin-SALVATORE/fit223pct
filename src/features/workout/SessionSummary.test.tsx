@@ -90,6 +90,28 @@ describe('SessionSummary — custom sets and skipped levels', () => {
     expect(screen.getByText('1 custom set · 1 level skipped')).toBeInTheDocument()
   })
 
+  /**
+   * QA finding (blocking) — a fully-skipped exercise (every prescribed
+   * level in skippedLevels, zero logged sets, no custom slots) vanished
+   * from this list entirely: the exercise filter was `sets.length > 0`,
+   * and plannedSetIndices correctly returns [] here, so sets never grows
+   * past 0. Coach spec §4: "retain it in the audit history" — the worst
+   * case (nothing done at all), not an edge one.
+   */
+  it('shows a fully-skipped exercise — every prescribed level skipped, zero logged sets', () => {
+    const workout = {
+      ...baseWorkout(),
+      exercises: [
+        { ...baseWorkout().exercises[0], skippedLevels: [0, 1, 2] }, // goblet-squat, 3-rung ladder, all skipped
+        ...baseWorkout().exercises.slice(1),
+      ],
+    }
+    renderSummary(workout)
+
+    expect(screen.getByText('Goblet squat')).toBeInTheDocument()
+    expect(screen.getByText('3 levels skipped')).toBeInTheDocument()
+  })
+
   it('shows neither line for an exercise with no custom sets or skips — unchanged behavior', () => {
     let workout = baseWorkout()
     workout = logSet(

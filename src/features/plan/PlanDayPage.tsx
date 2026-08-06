@@ -164,7 +164,13 @@ function CompletedDetail({
   const resolvedSessionName = useSessionName(programId, session ?? EMPTY_SESSION, programOrigin)
   const sessionName = session ? resolvedSessionName : t('sessionFallback')
   const summary = summarizeWorkout(workout)
-  const loggedExercises = workout.exercises.filter((e) => e.sets.length > 0)
+  // A fully-skipped exercise (every prescribed level in skippedLevels,
+  // zero logged sets, no custom slots) must still appear — coach spec §4:
+  // "retain it in the audit history." sets.length alone can be 0 for
+  // real, non-empty work.
+  const loggedExercises = workout.exercises.filter(
+    (e) => e.sets.length > 0 || (e.skippedLevels?.length ?? 0) > 0,
+  )
   const setsPhrase = t('dayDetail.sets', { count: summary.totalSets })
   const minutesPhrase =
     summary.durationMinutes !== null
@@ -254,19 +260,24 @@ function LoggedExerciseRow({
         </div>
       )}
       {/* pl-[3.75rem] (60px) lines the numbers up under the name, not the
-          thumbnail — thumbnail (3rem/48px) + the row's own gap-3 (12px). */}
-      <p className="mt-1 pl-[3.75rem] text-sm text-ink-secondary" data-numeric>
-        {workoutExercise.sets
-          .map((set) => {
-            const formatted = formatLoggedSet(set, workoutExercise.prescription.mode)
-            // Coach spec §4 — a custom set never reads as a Pyramid level in
-            // history either. Marked inline, not a separate line: it's one
-            // set among several logged, the same granularity the line
-            // already reads at.
-            return set.custom ? tPlan('dayDetail.customSuffix', { set: formatted }) : formatted
-          })
-          .join(' · ')}
-      </p>
+          thumbnail — thumbnail (3rem/48px) + the row's own gap-3 (12px).
+          Absent entirely for a fully-skipped exercise — zero logged sets
+          means nothing to join, and an empty line would sit above the
+          "levels skipped" line for no reason. */}
+      {workoutExercise.sets.length > 0 && (
+        <p className="mt-1 pl-[3.75rem] text-sm text-ink-secondary" data-numeric>
+          {workoutExercise.sets
+            .map((set) => {
+              const formatted = formatLoggedSet(set, workoutExercise.prescription.mode)
+              // Coach spec §4 — a custom set never reads as a Pyramid level in
+              // history either. Marked inline, not a separate line: it's one
+              // set among several logged, the same granularity the line
+              // already reads at.
+              return set.custom ? tPlan('dayDetail.customSuffix', { set: formatted }) : formatted
+            })
+            .join(' · ')}
+        </p>
+      )}
       {/*
         A skipped level has no LoggedSet to append to the line above — it's
         never entered `sets` at all (workout.ts's plannedSetIndices/§3.3:

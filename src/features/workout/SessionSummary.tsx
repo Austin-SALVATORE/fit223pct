@@ -48,7 +48,11 @@ export function SessionSummary({ workout, exerciseById, history }: SessionSummar
 
       <ul className="mt-10 space-y-4">
         {workout.exercises
-          .filter((e) => e.sets.length > 0)
+          // A fully-skipped exercise (every prescribed level in
+          // skippedLevels, zero logged sets, no custom slots) must still
+          // appear — coach spec §4: "retain it in the audit history."
+          // sets.length alone can be 0 for real, non-empty work.
+          .filter((e) => e.sets.length > 0 || (e.skippedLevels?.length ?? 0) > 0)
           .map((workoutExercise) => (
             <ExerciseLine
               key={workoutExercise.exerciseId}
@@ -99,9 +103,11 @@ function ExerciseLine({
     <li className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
       <div className="min-w-0">
         <p className="text-ink">{exercise ? exerciseName : workoutExercise.exerciseId}</p>
-        <p className="mt-0.5 text-sm text-ink-tertiary" data-numeric>
-          {topSet}
-        </p>
+        {topSet !== null && (
+          <p className="mt-0.5 text-sm text-ink-tertiary" data-numeric>
+            {topSet}
+          </p>
+        )}
         {/*
           Coach spec §4, "surfaces in four places" — this is the summary's.
           Both can be true at once (a skipped level and an added set on the
@@ -131,9 +137,11 @@ function ExerciseLine({
   )
 }
 
-function useTopSetLabel(workoutExercise: WorkoutExercise): string {
+/** Null for a fully-skipped exercise — zero logged sets means no "top set" to report. */
+function useTopSetLabel(workoutExercise: WorkoutExercise): string | null {
   const { t } = useTranslation('workout')
   const sets = workoutExercise.sets
+  if (sets.length === 0) return null
   const best = sets.reduce((top, set) => {
     const effort = (set.weightKg ?? 0) * (set.reps ?? 0)
     const topEffort = (top.weightKg ?? 0) * (top.reps ?? 0)

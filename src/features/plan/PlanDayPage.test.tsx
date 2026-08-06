@@ -164,6 +164,36 @@ describe('PlanDayPage: custom sets and skipped levels in history', () => {
     expect(screen.queryByText(/\(Custom\)/)).toBeNull()
     expect(screen.queryByText(/level skipped/)).toBeNull()
   })
+
+  /**
+   * QA finding (blocking) — a fully-skipped exercise (every prescribed
+   * level in skippedLevels, zero logged sets) vanished from history
+   * entirely: the row filter was `sets.length > 0`, and plannedSetIndices
+   * correctly returns [] here, so sets never grows past 0. Coach spec §4:
+   * "retain it in the audit history" — the worst case, not an edge one.
+   */
+  it('shows a fully-skipped exercise — every prescribed level skipped, zero logged sets', async () => {
+    let workout = createWorkout({
+      id: 'w-fully-skipped',
+      programId: seedProgram.id,
+      session: seedProgram.sessions[1], // Legs & Core, item 0 = goblet-squat (3-rung ladder)
+      date: '2026-07-22',
+      startedAt: '2026-07-22T09:00:00.000Z',
+    })
+    workout = {
+      ...completeWorkout(workout, '2026-07-22T09:05:00.000Z'),
+      exercises: [
+        { ...workout.exercises[0], skippedLevels: [0, 1, 2] },
+        ...workout.exercises.slice(1),
+      ],
+    }
+    await db.workouts.put(workout)
+    renderDay('2026-07-22')
+
+    expect(await screen.findByRole('heading', { name: /Wednesday 22 July/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Goblet squat' })).toBeInTheDocument()
+    expect(screen.getByText('3 levels skipped')).toBeInTheDocument()
+  })
 })
 
 describe('PlanDayPage states', () => {
