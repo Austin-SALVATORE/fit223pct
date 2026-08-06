@@ -89,9 +89,12 @@ function ExerciseLine({
   exercise: Exercise | undefined
   highlight: Highlight | undefined
 }) {
+  const { t } = useTranslation('workout')
   const label = useTranslatedMessage(highlight?.label ?? { key: 'domain:highlight.steady' })
   const topSet = useTopSetLabel(workoutExercise)
   const exerciseName = useExerciseName(exercise?.id ?? workoutExercise.exerciseId)
+  const customCount = workoutExercise.sets.filter((s) => s.custom).length
+  const skippedCount = workoutExercise.skippedLevels?.length ?? 0
   return (
     <li className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
       <div className="min-w-0">
@@ -99,6 +102,18 @@ function ExerciseLine({
         <p className="mt-0.5 text-sm text-ink-tertiary" data-numeric>
           {topSet}
         </p>
+        {/*
+          Coach spec §4, "surfaces in four places" — this is the summary's.
+          Both can be true at once (a skipped level and an added set on the
+          same exercise), so both render rather than picking one.
+        */}
+        {(customCount > 0 || skippedCount > 0) && (
+          <p className="mt-0.5 text-sm text-ink-tertiary">
+            {customCount > 0 && t('sessionSummary.customCount', { count: customCount })}
+            {customCount > 0 && skippedCount > 0 && ' · '}
+            {skippedCount > 0 && t('sessionSummary.skippedCount', { count: skippedCount })}
+          </p>
+        )}
       </div>
       {highlight && (
         <span

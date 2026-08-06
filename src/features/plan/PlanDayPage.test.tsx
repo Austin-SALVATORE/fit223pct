@@ -115,6 +115,57 @@ function renderDay(date: string) {
   )
 }
 
+/**
+ * docs/design/SessionSetCustomization.md §4, "Skipped this session
+ * surfaces in four places" — this is history's ("In history").
+ */
+describe('PlanDayPage: custom sets and skipped levels in history', () => {
+  it('marks a custom set inline, and shows a separate line for a skipped level', async () => {
+    let workout = createWorkout({
+      id: 'w-custom-skip',
+      programId: seedProgram.id,
+      session: seedProgram.sessions[1], // Legs & Core, item 0 = goblet-squat
+      date: '2026-07-22',
+      startedAt: '2026-07-22T09:00:00.000Z',
+    })
+    // Level 0 skipped; level 1 done; a custom set logged after it.
+    workout = logSet(
+      workout,
+      0,
+      { weightKg: 12, reps: 10, seconds: null, completedAt: '2026-07-22T09:10:00.000Z' },
+      1,
+    )
+    workout = logSet(
+      workout,
+      0,
+      { weightKg: 10, reps: 12, seconds: null, completedAt: '2026-07-22T09:15:00.000Z', custom: true },
+      3,
+    )
+    workout = {
+      ...completeWorkout(workout, '2026-07-22T09:40:00.000Z'),
+      exercises: [
+        { ...workout.exercises[0], skippedLevels: [0], customSlots: 1 },
+        ...workout.exercises.slice(1),
+      ],
+    }
+    await db.workouts.put(workout)
+    renderDay('2026-07-22')
+
+    expect(await screen.findByRole('heading', { name: /Wednesday 22 July/ })).toBeInTheDocument()
+    expect(screen.getByText(/12 × 10 kg \(Custom\)/)).toBeInTheDocument()
+    expect(screen.getByText('1 level skipped')).toBeInTheDocument()
+  })
+
+  it('shows neither marker for a plain logged exercise — unchanged behavior', async () => {
+    await putCompletedWorkout('2026-07-22')
+    renderDay('2026-07-22')
+
+    await screen.findByRole('heading', { name: /Wednesday 22 July/ })
+    expect(screen.queryByText(/\(Custom\)/)).toBeNull()
+    expect(screen.queryByText(/level skipped/)).toBeNull()
+  })
+})
+
 describe('PlanDayPage states', () => {
   it('completed workout day: facts only — session name, per-exercise logged sets, summary, no RIR anywhere', async () => {
     await putCompletedWorkout('2026-07-22')

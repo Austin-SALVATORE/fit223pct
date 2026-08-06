@@ -100,6 +100,8 @@
     "topWeightReps": "{{reps}} × {{weight}} kg",
     "topSeconds": "{{seconds}}秒保持",
     "topReps": "{{reps}} 次",
-    "topSetLine": "{{countPhrase}} · 最佳 {{detail}}"
+    "topSetLine": "{{countPhrase}} · 最佳 {{detail}}",
+    "customCount_other": "{{count}} 组加练",
+    "skippedCount_other": "跳过了 {{count}} 级"
   }
 }

@@ -21,7 +21,9 @@
     "projectedLabel": "预计",
     "notPartOfPhase": "这个日期不属于这个阶段。",
     "secondsEffort": "{{seconds}} 秒",
-    "weightSuffix": " × {{weight}} kg"
+    "weightSuffix": " × {{weight}} kg",
+    "customSuffix": "{{set}}（加练）",
+    "skippedLevels_other": "跳过了 {{count}} 级"
   },
   "export": {
     "done": "已导出「{{name}}」。"

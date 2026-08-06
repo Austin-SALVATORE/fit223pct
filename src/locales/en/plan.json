@@ -24,7 +24,10 @@
     "projectedLabel": "Projected",
     "notPartOfPhase": "This date isn't part of this phase.",
     "secondsEffort": "{{seconds}}s",
-    "weightSuffix": " × {{weight}} kg"
+    "weightSuffix": " × {{weight}} kg",
+    "customSuffix": "{{set}} (Custom)",
+    "skippedLevels_one": "{{count}} level skipped",
+    "skippedLevels_other": "{{count}} levels skipped"
   },
   "export": {
     "done": "Exported \"{{name}}\"."

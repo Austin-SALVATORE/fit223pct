@@ -104,6 +104,10 @@
     "topWeightReps": "{{reps}} × {{weight}} kg",
     "topSeconds": "{{seconds}}s hold",
     "topReps": "{{reps}} reps",
-    "topSetLine": "{{countPhrase}} · top {{detail}}"
+    "topSetLine": "{{countPhrase}} · top {{detail}}",
+    "customCount_one": "{{count}} custom set",
+    "customCount_other": "{{count}} custom sets",
+    "skippedCount_one": "{{count}} level skipped",
+    "skippedCount_other": "{{count}} levels skipped"
   }
 }

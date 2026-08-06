@@ -212,6 +212,7 @@ function LoggedExerciseRow({
   date: string
   formatLoggedSet: (set: LoggedSet, mode: 'reps' | 'seconds') => string
 }) {
+  const { t: tPlan } = useTranslation('plan')
   const exerciseName = useExerciseName(exercise?.id ?? '')
   return (
     <li className="px-4 py-3.5">
@@ -255,8 +256,28 @@ function LoggedExerciseRow({
       {/* pl-[3.75rem] (60px) lines the numbers up under the name, not the
           thumbnail — thumbnail (3rem/48px) + the row's own gap-3 (12px). */}
       <p className="mt-1 pl-[3.75rem] text-sm text-ink-secondary" data-numeric>
-        {workoutExercise.sets.map((set) => formatLoggedSet(set, workoutExercise.prescription.mode)).join(' · ')}
+        {workoutExercise.sets
+          .map((set) => {
+            const formatted = formatLoggedSet(set, workoutExercise.prescription.mode)
+            // Coach spec §4 — a custom set never reads as a Pyramid level in
+            // history either. Marked inline, not a separate line: it's one
+            // set among several logged, the same granularity the line
+            // already reads at.
+            return set.custom ? tPlan('dayDetail.customSuffix', { set: formatted }) : formatted
+          })
+          .join(' · ')}
       </p>
+      {/*
+        A skipped level has no LoggedSet to append to the line above — it's
+        never entered `sets` at all (workout.ts's plannedSetIndices/§3.3:
+        "skippedLevels is audit and display only"). Its own line, since
+        nothing else on this row can carry it.
+      */}
+      {(workoutExercise.skippedLevels?.length ?? 0) > 0 && (
+        <p className="mt-1 pl-[3.75rem] text-sm text-ink-tertiary">
+          {tPlan('dayDetail.skippedLevels', { count: workoutExercise.skippedLevels?.length ?? 0 })}
+        </p>
+      )}
     </li>
   )
 }
