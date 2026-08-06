@@ -2,6 +2,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
 import { seedDatabase } from './data/seed'
+import { workoutRepo } from './data/repositories'
+import { toDateKey } from './lib/dates'
 import App from './app/App'
 import './i18n/i18next'
 import './ui/index.css'
@@ -9,6 +11,13 @@ import './ui/index.css'
 // Fire-and-forget: live queries pick the content up reactively once seeded.
 seedDatabase().catch((error: unknown) => {
   console.error('Database seeding failed', error)
+})
+
+// Same shape as seedDatabase above: idempotent, runs every boot, live
+// queries pick the closure up reactively — a workout abandoned days ago
+// must stop presenting as "in progress" (docs/design/MissedDayDeferral.md).
+workoutRepo.closeStaleWorkouts(toDateKey(new Date())).catch((error: unknown) => {
+  console.error('Closing stale workouts failed', error)
 })
 
 // Training history lives only in IndexedDB, with no server backup — ask the

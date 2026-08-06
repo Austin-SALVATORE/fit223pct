@@ -192,6 +192,17 @@ export interface Workout {
   date: string
   startedAt: string
   completedAt: string | null
+  /**
+   * Set when `closeStaleWorkouts` (repositories.ts) closes an in-progress
+   * workout dated before today — history is calendar-accurate the moment
+   * it's abandoned, without pretending it finished. `completedAt` is
+   * deliberately left `null`: closing must never advance the Scheduled
+   * Session (docs/design/MissedDayDeferral.md ruling 2), and `completedAt`
+   * is what every completion count reads. Absent means not abandoned —
+   * optional rather than defaulted, so a pre-Phase-0 record needs no
+   * migration to read correctly.
+   */
+  abandonedAt?: string | null
   exercises: WorkoutExercise[]
   /**
    * Readiness applied at start, kept for future intelligence (additive,

@@ -50,9 +50,15 @@ export const workoutRepo = {
       .filter((w) => w.programId === programId && w.completedAt !== null)
       .count(),
 
-  /** The in-progress workout, if any — at most one exists by design. */
+  /**
+   * The in-progress workout, if any — at most one exists by design.
+   * Excludes anything `closeStaleWorkouts` has closed: an abandoned
+   * workout keeps `completedAt === null` (closing it must never look like
+   * finishing it — see `abandonedAt`'s doc on `Workout`), so this filter
+   * is what actually stops a days-old session from hijacking Today.
+   */
   getActive: async (): Promise<Workout | undefined> => {
-    const open = await db.workouts.filter((w) => w.completedAt === null).toArray()
+    const open = await db.workouts.filter((w) => w.completedAt === null && !w.abandonedAt).toArray()
     return open.sort((a, b) => b.startedAt.localeCompare(a.startedAt))[0]
   },
 
@@ -89,6 +95,37 @@ export const workoutRepo = {
   },
 
   remove: (id: string): Promise<void> => db.workouts.delete(id),
+
+  /**
+   * Closes every in-progress workout dated strictly before today —
+   * calendar-accurate history, per the coach's ruling that an abandoned
+   * session must stop hijacking Today without consuming the Scheduled
+   * Session it was for (docs/design/MissedDayDeferral.md).
+   *
+   * Sets `abandonedAt` only; `completedAt` stays `null` on purpose. Every
+   * completion count in the app reads `completedAt`, and closing a session
+   * is not finishing it — setting `completedAt` here would silently
+   * advance the plan pointer, which is exactly what the ruling forbids.
+   *
+   * **Same-day in-progress workouts are never touched** — `date < todayKey`
+   * is strict, so resuming a session across a lunch break still works.
+   *
+   * Idempotent and safe to call on every boot, the same shape as
+   * `seedDatabase` (architecture.md) — a workout already closed has
+   * `abandonedAt` set and is excluded from the next call's own filter.
+   */
+  async closeStaleWorkouts(todayKey: string): Promise<void> {
+    const stale = await db.workouts
+      .filter((w) => w.completedAt === null && !w.abandonedAt && w.date < todayKey)
+      .toArray()
+    if (stale.length === 0) return
+    const abandonedAt = new Date().toISOString()
+    await db.transaction('rw', db.workouts, async () => {
+      for (const workout of stale) {
+        await db.workouts.put({ ...workout, abandonedAt })
+      }
+    })
+  },
 }
 
 export const checkinRepo = {

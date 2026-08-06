@@ -84,11 +84,20 @@ export class Fit223Database extends Dexie {
     // second place would make it harder to remove, not easier.
     //
     // Version allocation is tracked across plans because it has moved
-    // several times: **M10 is v4, M11 (nutrition) is v5**, and day-plan
-    // rescheduling is deferred and takes the next free version whenever it
-    // is scheduled. A stale version number lands as a broken migration
-    // rather than a typo, which is why it is written down here too.
+    // several times: **M10 is v4**. A stale version number lands as a
+    // broken migration rather than a typo, which is why it is written down
+    // here too.
     this.version(4).stores({})
+    // Day-plan rescheduling (docs/design/MissedDayDeferral.md, Phase 0):
+    // an abandoned Workout Instance must close automatically without
+    // consuming the Scheduled Session, which needs a third state beyond
+    // completed/in-progress. `abandonedAt` is additive and non-indexed —
+    // `closeStaleWorkouts` filters client-side (repositories.ts), the same
+    // shape `getActive` already uses rather than an index query — so this
+    // is an empty stores() diff with no upgrade callback, mirroring v4.
+    // Absent means "not abandoned"; nothing is backfilled onto existing
+    // rows. **M11 (nutrition) takes v6, the next free version after this.**
+    this.version(5).stores({})
   }
 }
 

@@ -166,10 +166,14 @@ describe('Fit223Database version 3 → 4 migration', () => {
     return upgraded
   }
 
-  it('preserves every v3 record, and reaches version 4', async () => {
+  it('preserves every v3 record, and reaches the current version', async () => {
     const db4 = await openV3AndUpgrade()
 
-    expect(db4.verno).toBe(4)
+    // Deliberately not hardcoded past the version this describe block
+    // exercises — later empty-diff versions (v5's abandonedAt, Phase 0)
+    // still carry a v3 record forward through this same path, and pinning
+    // an exact number here just breaks this test every time one lands.
+    expect(db4.verno).toBeGreaterThanOrEqual(4)
     const checkins = await db4.checkins.toArray()
     expect(checkins).toHaveLength(2)
     expect(checkins.find((c) => c.id === 'c-1')?.weightKg).toBe(82)
@@ -227,5 +231,54 @@ describe('Fit223Database version 3 → 4 migration', () => {
     expect(resolved.currentWeightKg).toBe(81)
     // No trusted inputs, so no baseline — not a partial one.
     expect(restingEnergyExpenditure(resolved)).toBeNull()
+  })
+})
+
+/**
+ * docs/design/MissedDayDeferral.md Phase 0. Additive and defaultless, same
+ * shape as v3→v4: the point is not that the upgrade runs, it's that it
+ * writes nothing — an existing workout must not be silently marked
+ * abandoned just because the schema now has room to.
+ */
+describe('Fit223Database version 4 → 5 migration', () => {
+  it('preserves a v4 workout with abandonedAt absent, and it reads as not-abandoned', async () => {
+    // Simulate a real pre-Phase-0 install: version 4, a workout in
+    // progress, no abandonedAt field at all.
+    const v4 = new Dexie(TEST_DB_NAME)
+    v4.version(1).stores({
+      exercises: 'id, name',
+      programs: 'id, phase, startDate',
+      workouts: 'id, date, sessionTemplateId, completedAt',
+      checkins: 'id, date',
+      settings: 'id',
+    })
+    v4.version(2).stores({ exercises: 'id' })
+    v4.version(3).stores({})
+    v4.version(4).stores({})
+    await v4.open()
+    await v4.table('workouts').put({
+      id: 'w1',
+      programId: 'phase-1-home',
+      sessionTemplateId: 'A',
+      date: '2026-07-20',
+      startedAt: '2026-07-20T09:00:00.000Z',
+      completedAt: null,
+      exercises: [],
+    })
+    v4.close()
+
+    const upgraded = new Fit223Database(TEST_DB_NAME)
+    await upgraded.open()
+
+    expect(upgraded.verno).toBeGreaterThanOrEqual(5)
+    const workout = await upgraded.workouts.get('w1')
+    expect(workout).toBeDefined()
+    // Absent, not defaulted to null or false — closeStaleWorkouts' own
+    // filter (`!w.abandonedAt`) treats absence and null identically, so
+    // this is a genuine choice, not an oversight worth "fixing" later.
+    expect('abandonedAt' in workout!).toBe(false)
+    expect(workout?.completedAt).toBeNull()
+
+    upgraded.close()
   })
 })

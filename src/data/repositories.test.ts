@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { db } from './db'
 import { programRepo, settingsRepo, workoutRepo } from './repositories'
+import { resolveDayPlan } from '@/domain/schedule'
+import { parseDateKey } from '@/lib/dates'
 import type { Program, UserSettings, Workout } from '@/domain/types'
 
 afterEach(async () => {
@@ -101,6 +103,82 @@ describe('workoutRepo.getAll', () => {
     await db.workouts.put(makeWorkout({ id: 'open', date: '2026-07-24' }))
     const all = await workoutRepo.getAll()
     expect(all.map((w) => w.id).sort()).toEqual(['done', 'open'])
+  })
+})
+
+/**
+ * docs/design/MissedDayDeferral.md Phase 0 — an abandoned workout must stop
+ * presenting as "in progress" without ever looking like it finished.
+ */
+describe('workoutRepo.getActive excludes abandoned workouts', () => {
+  it('returns undefined for a workout with abandonedAt set, even though completedAt is still null', async () => {
+    await db.workouts.put(
+      makeWorkout({ id: 'stale', date: '2026-07-20', abandonedAt: '2026-07-22T00:00:00.000Z' }),
+    )
+    expect(await workoutRepo.getActive()).toBeUndefined()
+  })
+
+  it('still returns a workout that was never abandoned', async () => {
+    await db.workouts.put(makeWorkout({ id: 'open', date: '2026-07-22' }))
+    expect((await workoutRepo.getActive())?.id).toBe('open')
+  })
+})
+
+describe('workoutRepo.closeStaleWorkouts', () => {
+  it('closes a workout dated before today, without marking it complete', async () => {
+    await db.workouts.put(makeWorkout({ id: 'stale', date: '2026-07-20' }))
+
+    await workoutRepo.closeStaleWorkouts('2026-07-22')
+
+    const stored = await db.workouts.get('stale')
+    expect(stored?.abandonedAt).toBeTruthy()
+    // completedAt stays null — closing is not finishing (ruling 2).
+    expect(stored?.completedAt).toBeNull()
+    expect(await workoutRepo.getActive()).toBeUndefined()
+  })
+
+  it('does not touch a same-day in-progress workout — resuming across a lunch break still works', async () => {
+    await db.workouts.put(makeWorkout({ id: 'today', date: '2026-07-22' }))
+
+    await workoutRepo.closeStaleWorkouts('2026-07-22')
+
+    const stored = await db.workouts.get('today')
+    expect(stored?.abandonedAt).toBeFalsy()
+    expect((await workoutRepo.getActive())?.id).toBe('today')
+  })
+
+  it('is idempotent — a second call finds nothing left to close', async () => {
+    await db.workouts.put(makeWorkout({ id: 'stale', date: '2026-07-20' }))
+    await workoutRepo.closeStaleWorkouts('2026-07-22')
+    const firstPass = await db.workouts.get('stale')
+
+    await workoutRepo.closeStaleWorkouts('2026-07-22')
+    const secondPass = await db.workouts.get('stale')
+
+    expect(secondPass?.abandonedAt).toBe(firstPass?.abandonedAt)
+  })
+
+  it("never advances the plan pointer — countCompleted and resolveDayPlan's session are unchanged by closing", async () => {
+    const program = makeProgram({
+      id: 'p',
+      rotation: ['A', 'B'],
+      sessions: [
+        { id: 'A', name: 'Session A', focus: 'Full body', items: [] },
+        { id: 'B', name: 'Session B', focus: 'Full body', items: [] },
+      ],
+    })
+    await db.workouts.put(makeWorkout({ id: 'stale', programId: 'p', date: '2026-07-20' }))
+
+    const countBefore = await workoutRepo.countCompleted('p')
+    const planBefore = resolveDayPlan(program, parseDateKey('2026-07-22'), countBefore)
+
+    await workoutRepo.closeStaleWorkouts('2026-07-22')
+
+    const countAfter = await workoutRepo.countCompleted('p')
+    const planAfter = resolveDayPlan(program, parseDateKey('2026-07-22'), countAfter)
+
+    expect(countAfter).toBe(countBefore)
+    expect(planAfter).toEqual(planBefore)
   })
 })
 
