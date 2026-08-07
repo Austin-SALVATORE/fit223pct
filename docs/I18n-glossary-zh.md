@@ -94,4 +94,32 @@ an inconsistency: a recovery *day* is a real category, a recovery
 | mobility | **活动度** ("range/quality of movement") | **Ruled 2026-07-19**: 灵活性 (líng huó xìng, "flexibility") moved to rejected — reads specifically as flexibility (a narrower, static-stretch-adjacent concept), where 活动度 is the term the Chinese fitness community currently uses for mobility work generally. *拉伸* ("stretching") remains rejected too — too narrow either way; mobility work covers more than static stretching. |
 | cardio | **有氧** (short for 有氧运动, "aerobic exercise") | — (the standard fitness-community term) |
 | optional | **可选** | — (plain, neutral) |
-| checkpoint | **小结** ("stage summary") | *检查点* ("checkpoint," literal) — reads like a software/game checkpoint, wrong register for a training milestone |
+| checkpoint | **小结** ("stage summary") | *检查点* ("checkpoint," literal) — reads like a software/game checkpoint, wrong register for a training milestone. **Corpus note, 2026-08-07:** the weekly-checkpoint *activity title* shipped as **每周复盘** ("weekly review") in phase-1-home before this glossary row existed, and mesocycle-2-build deliberately reuses 每周复盘 for consistency between the two programs (caught at translation time — the glossary mapping alone would have produced 每周小结 and an inconsistency). 小结 remains the term for the activity-*kind* label; 每周复盘 is the shipped precedent for the weekly activity's *title*. If these should converge, that is an owner/native-review call — recorded, not re-ruled. |
+
+## Cue vocabulary (anatomical / coaching terms)
+
+**Status: recorded 2026-08-07 from the shipped corpus (commits
+a43f35a–2295417). Chinese shipped at moderate-high confidence and is
+pending the coach's native review — corrections from that review update
+this table.** This section did not exist when those batches were
+translated; every term was resolved by corpus precedent or stated
+judgment at translation time. Recorded so the next batch gets lookups
+instead of judgment calls. Register: plain spoken fitness-community
+Chinese, per this glossary's header.
+
+| English | Chinese | Notes |
+|---|---|---|
+| shoulder blades | **肩胛骨** | |
+| ribs down / rib control | **肋骨下沉** | |
+| with control / controlled | **有控制地** | |
+| shrugging (the shoulders) | **耸肩** | |
+| glute bridge (position) | **臀桥** | 臀桥 is the established *exercise name* (hip thrust); its reuse as a *position* description (臀桥姿势, and the walkout's name 臀桥行走) is standard usage but is the first line flagged for the coach's native review |
+| balls of the feet | **前脚掌** | |
+| controlled stretch | **有控制的拉伸感 / 牵拉感** | Both variants shipped (拉伸感 calf raise, 牵拉感 pullover) — variance flagged for native review; converge if the coach prefers one |
+| hips level | **髋部保持水平** | |
+| body line | **一条直线** (呈一条直线) | |
+| momentum (to borrow) | **惯性（可借）** | |
+| press (movement class) | **推举** | Used in contrast cues: 不是推举 |
+| fly (movement class) | **飞鸟** | Strongest precedent in the corpus |
+| row (movement class) | **划船** | |
+| tempo | **节奏** | Prescription notes were already translated this way pre-batch (unlike French, which keeps "Tempo N-N-N" untranslated by deliberate exception) |

@@ -105,3 +105,34 @@ isn't an inconsistency; a recovery *day* is a real category, a recovery
 | cardio | **Cardio** | — (universal loanword) |
 | optional | **Optionnel** | — (direct cognate) |
 | checkpoint | **Bilan** | *Point de contrôle* — evokes a security/border checkpoint, wrong register for a training milestone |
+
+## Cue vocabulary (anatomical / coaching terms)
+
+**Status: recorded 2026-08-07 from the shipped corpus (commits
+a43f35a–2295417), French approved as written by Austin the same day.**
+This section did not exist when those batches were translated — every
+term below was resolved by corpus precedent or stated judgment at
+translation time. Recorded here so the next batch gets lookups instead
+of judgment calls. These are shipped precedents to reuse, not new
+rulings; register is the same `tu`-form coach's voice as the rest of
+this glossary.
+
+| English | French | Notes |
+|---|---|---|
+| shoulder blades | **omoplates** | |
+| ribs down / rib control | **côtes basses** | |
+| with control / controlled | **avec contrôle / contrôlé(e)** | |
+| shrugging (the shoulders) | **hausser les épaules** | |
+| glute bridge (position) | **pont fessier** | Also the basis of the walkout's name, « Marche en pont fessier » — a descriptive coinage, no established French name exists |
+| balls of the feet | **l'avant des pieds** | |
+| controlled stretch | **étirement contrôlé** | |
+| hips level | **hanches de niveau** | |
+| small fixed elbow bend | **légère flexion des coudes, fixe** | |
+| body line (head-trunk-hips) | **ligne de corps** | |
+| momentum (to borrow) | **élan (à emprunter)** | |
+| press (movement class) | **développé** | Used in contrast cues: « pas un développé » |
+| fly (movement class) | **écarté** | Strongest precedent in the corpus (rear-delt fly) |
+| row — dumbbell/barbell | **rowing** | The corpus splits row vocabulary by equipment |
+| row — cable/machine | **tirage** | Same split, other side |
+| shoulders roll forward | **les épaules s'enroulent vers l'avant** | Judgment call, not corpus-attested — flagged at review, approved as written |
+| tempo notation (« Tempo 3-1-1 ») | **keep as written, untranslated** | Established French gym usage; forcing « Rythme 3-1-1 » would be worse French to satisfy a byte-comparison script. Deliberate exception to the zero-byte-identical rule. |
