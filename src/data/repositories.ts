@@ -222,6 +222,9 @@ export const activityRecordRepo = {
     const withId = { ...record, id: `${record.date}-${record.kind}` } as ActivityRecord
     return db.activityRecords.put(withId)
   },
+
+  /** Same shape as workoutRepo.remove — delete by the deterministic id `put` built. */
+  remove: (id: string): Promise<void> => db.activityRecords.delete(id),
 }
 
 export const settingsRepo = {

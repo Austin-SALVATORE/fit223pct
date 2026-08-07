@@ -246,6 +246,9 @@ describe('PlanDayPage states', () => {
     expect(screen.getByText('Recovery')).toBeInTheDocument()
     const activityTitle = screen.getByText('Zone 2 ride')
     expect(activityTitle).toBeInTheDocument()
+    // D3 (7 Aug device pass): the block used to show a title and nothing
+    // else — no duration, so two different rides read identically here.
+    expect(screen.getByText('30 min, after lifting')).toBeInTheDocument()
 
     // Session still wins the primary position: it precedes the activity
     // in document order.
@@ -323,6 +326,9 @@ describe('PlanDayPage states', () => {
     expect(screen.getByText('Recovery')).toBeInTheDocument()
     const activityTitle = screen.getByText('Zone 2 ride')
     expect(activityTitle).toBeInTheDocument()
+    // D3 (7 Aug device pass): the block used to show a title and nothing
+    // else — no duration, so two different rides read identically here.
+    expect(screen.getByText('30 min, after lifting')).toBeInTheDocument()
 
     // Session still wins the primary position: it precedes the activity
     // in document order.

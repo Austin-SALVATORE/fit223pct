@@ -2,6 +2,7 @@ import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { activityRecordRepo } from '@/data/repositories'
 import { CARD_SECTION } from '@/ui/cardSection'
+import { ConfirmAction } from '@/ui/ConfirmAction'
 import { Stepper } from '@/ui/Stepper'
 import type { ActivityRecord } from '@/domain/types'
 
@@ -34,6 +35,7 @@ export function RideRecordCard({ dateKey, programId, existing }: RideRecordCardP
   const { t: tCommon } = useTranslation('common')
   const ride = existing?.kind === 'ride' ? existing : undefined
   const [editing, setEditing] = useState(false)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [minutesDraft, setMinutesDraft] = useState<number | null>(ride?.actualMinutes ?? null)
   const [heartRateDraft, setHeartRateDraft] = useState<number | null>(ride?.avgHeartRate ?? null)
   const headingId = useId()
@@ -49,6 +51,23 @@ export function RideRecordCard({ dateKey, programId, existing }: RideRecordCardP
       actualMinutes: minutesDraft,
       avgHeartRate: heartRateDraft,
     })
+    setEditing(false)
+  }
+
+  /**
+   * Device pass finding D2 (7 Aug) — the edit view had no way to remove a
+   * ride record; a ride logged on the wrong day was permanent as far as
+   * the owner could tell. `dateKey` is always `todayKey` at both of this
+   * component's call sites (TodayPage.tsx), so "editable/deletable for
+   * the same day only" (coach spec §3) is already structural here — this
+   * adds the missing half of that window, not a new scope.
+   */
+  async function remove() {
+    if (!ride) return
+    await activityRecordRepo.remove(ride.id)
+    setMinutesDraft(null)
+    setHeartRateDraft(null)
+    setConfirmingDelete(false)
     setEditing(false)
   }
 
@@ -102,14 +121,43 @@ export function RideRecordCard({ dateKey, programId, existing }: RideRecordCardP
           onChange={setHeartRateDraft}
         />
       </div>
-      <button
-        type="button"
-        disabled={minutesDraft === null || heartRateDraft === null}
-        onClick={() => void save()}
-        className="mt-5 w-full rounded-card bg-amber py-3 text-center text-sm font-semibold text-bg transition-opacity disabled:opacity-40"
-      >
-        {t('rideRecord.save')}
-      </button>
+      {confirmingDelete ? (
+        // Replaces the save/delete row in place — same pattern as
+        // SetScreen's skip confirm (ConfirmAction's own doc): the control
+        // the user just acted on is what claims focus for the confirm step.
+        <div className="mt-5">
+          <ConfirmAction
+            heading={t('rideRecord.deleteConfirmHeading')}
+            warning={t('rideRecord.deleteConfirmWarning')}
+            confirmLabel={t('rideRecord.deleteConfirmAction')}
+            cancelLabel={t('rideRecord.deleteConfirmCancel')}
+            onConfirm={() => void remove()}
+            onCancel={() => setConfirmingDelete(false)}
+          />
+        </div>
+      ) : (
+        <>
+          <button
+            type="button"
+            disabled={minutesDraft === null || heartRateDraft === null}
+            onClick={() => void save()}
+            className="mt-5 w-full rounded-card bg-amber py-3 text-center text-sm font-semibold text-bg transition-opacity disabled:opacity-40"
+          >
+            {t('rideRecord.save')}
+          </button>
+          {/* Only a previously-saved ride has anything to delete — the
+              first-ever entry (ride undefined) never shows this. */}
+          {ride && (
+            <button
+              type="button"
+              onClick={() => setConfirmingDelete(true)}
+              className="mt-3 w-full rounded-card border border-border py-3 text-center text-sm font-medium text-ink-tertiary transition-colors hover:text-ink-secondary"
+            >
+              {t('rideRecord.delete')}
+            </button>
+          )}
+        </>
+      )}
     </section>
   )
 }

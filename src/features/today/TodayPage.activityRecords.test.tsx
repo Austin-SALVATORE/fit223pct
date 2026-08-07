@@ -125,6 +125,51 @@ describe('Ride record on a training day', () => {
     expect(await screen.findByText('Hip flexor stretch')).toBeInTheDocument()
     expect(screen.queryByText('Ride record')).toBeNull()
   })
+
+  /**
+   * Device pass finding D2 (7 Aug) — a saved ride had no way to be
+   * deleted. Reopening the collapsed card only offered "Save ride"; a
+   * ride logged on the wrong day was permanent as far as the owner could
+   * tell (coach spec §3: records "stay editable for the same day" — a
+   * delete is the natural completion of that). `RideRecordCard` is only
+   * ever rendered with `dateKey={todayKey}` (TodayPage's own two call
+   * sites), so "same-day only" is structural here, not something this
+   * change adds separately.
+   */
+  it('a saved ride can be deleted, with a confirm step matching the skip-confirmation pattern', async () => {
+    await programRepo.put(trainingDayRideProgram)
+    renderApp()
+
+    expect(await screen.findByRole('heading', { name: 'Squat, hinge & core' })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Duration' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Avg heart rate' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save ride' }))
+    expect(await activityRecordRepo.getByDate('2026-07-22')).toHaveLength(1)
+
+    // Reopen the saved card — same affordance as editing. Collapses only
+    // once the live query re-fetches after the write, so wait for it
+    // rather than querying synchronously.
+    const savedCard = await screen.findByRole('button', { name: /Ride record.*Edit/s })
+    await userEvent.click(savedCard)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    expect(screen.getByText('Delete this ride record?')).toBeInTheDocument()
+    // Cancelling leaves the record untouched.
+    await userEvent.click(screen.getByRole('button', { name: 'Keep it' }))
+    expect(await activityRecordRepo.getByDate('2026-07-22')).toHaveLength(1)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Delete ride record' }))
+
+    expect(await activityRecordRepo.getByDate('2026-07-22')).toHaveLength(0)
+    // The form goes back to its empty, un-saved state — not a stale
+    // pre-filled draft of what was just deleted. A longer timeout than
+    // the default 1000ms — this is the third live-query round trip in
+    // one test (save, then two delete-confirm cycles), on top of the
+    // rest of Today's own tree (readiness sliders, session list).
+    expect(await screen.findByText('Save ride', {}, { timeout: 5000 })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Delete' })).toBeNull()
+  })
 })
 
 describe('Activation record on a training day', () => {

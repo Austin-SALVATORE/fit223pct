@@ -147,6 +147,37 @@ describe('PlanPage', () => {
   })
 })
 
+/**
+ * Device pass finding D1 (7 Aug) — 12 phantom `[i18n] missing key` errors
+ * per `/plan` visit. `DayRow` calls `useLocalizedActivity` unconditionally
+ * (`day.activity ?? EMPTY_ACTIVITY`) for hook-order stability; on a
+ * training day with no `weekdayActivities` entry (phase-1-home's own
+ * Mon/Wed/Fri), that placeholder round-trips through `t()` under a real
+ * program id, exactly the "phantom missing key no translator could ever
+ * fix" case `seedProgram.ts`'s own docblock (useProgramName) already
+ * warns about for the empty-*program*-id guard. This is the same failure
+ * one level down: an empty-*activity* placeholder under a real program id.
+ */
+describe('PlanPage — no phantom i18n missing-key noise', () => {
+  afterEach(async () => {
+    await programRepo.put(seedProgram) // restore the plain program
+  })
+
+  it('logs zero [i18n] missing key errors for a week of real seed content', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+    try {
+      renderApp()
+      await screen.findByRole('heading', { name: 'Phase 1 — Home' })
+      const i18nMissingKeyCalls = consoleError.mock.calls.filter((call) =>
+        String(call[0]).includes('[i18n] missing key'),
+      )
+      expect(i18nMissingKeyCalls).toEqual([])
+    } finally {
+      consoleError.mockRestore()
+    }
+  })
+})
+
 describe('PlanPage rotation-mode rendering (an explicit opt-out from pinned scheduling)', () => {
   afterEach(async () => {
     await programRepo.put(seedProgram)

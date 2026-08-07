@@ -78,7 +78,12 @@
     "durationLabel": "Duration",
     "heartRateLabel": "Avg heart rate",
     "bpm": "bpm",
-    "save": "Save ride"
+    "save": "Save ride",
+    "delete": "Delete",
+    "deleteConfirmHeading": "Delete this ride record?",
+    "deleteConfirmWarning": "This removes today's saved duration and heart rate. You can log it again if you change your mind.",
+    "deleteConfirmAction": "Delete ride record",
+    "deleteConfirmCancel": "Keep it"
   },
   "activationRecord": {
     "done": "Activation done",

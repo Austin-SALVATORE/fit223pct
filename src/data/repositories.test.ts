@@ -315,4 +315,32 @@ describe('activityRecordRepo', () => {
   it('getByDate returns nothing for a date with no records', async () => {
     expect(await activityRecordRepo.getByDate('2026-08-11')).toEqual([])
   })
+
+  /**
+   * Device pass finding D2 (7 Aug) — a saved ride had no way to be
+   * deleted. `remove` by the deterministic id `put` builds, mirroring
+   * `workoutRepo.remove`'s own shape — one row gone, the other untouched.
+   */
+  it('remove deletes one record by id, leaving a same-date sibling of a different kind untouched', async () => {
+    const rideId = await activityRecordRepo.put({
+      date: '2026-08-10',
+      programId: 'mesocycle-2-build',
+      kind: 'ride',
+      completedAt: '2026-08-10T18:00:00.000Z',
+      actualMinutes: 20,
+      avgHeartRate: 130,
+    })
+    await activityRecordRepo.put({
+      date: '2026-08-10',
+      programId: 'mesocycle-2-build',
+      kind: 'activation',
+      completedAt: '2026-08-10T07:00:00.000Z',
+    })
+
+    await activityRecordRepo.remove(rideId)
+
+    const remaining = await activityRecordRepo.getByDate('2026-08-10')
+    expect(remaining).toHaveLength(1)
+    expect(remaining[0].kind).toBe('activation')
+  })
 })

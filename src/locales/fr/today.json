@@ -78,7 +78,12 @@
     "durationLabel": "Durée",
     "heartRateLabel": "FC moyenne",
     "bpm": "bpm",
-    "save": "Enregistrer la sortie"
+    "save": "Enregistrer la sortie",
+    "delete": "Supprimer",
+    "deleteConfirmHeading": "Supprimer ce bilan de sortie ?",
+    "deleteConfirmWarning": "Cela supprime la durée et la fréquence cardiaque enregistrées aujourd'hui. Tu peux les ressaisir si tu changes d'avis.",
+    "deleteConfirmAction": "Supprimer le bilan",
+    "deleteConfirmCancel": "Le garder"
   },
   "activationRecord": {
     "done": "Activation faite",

@@ -359,11 +359,21 @@ function ProjectedDetail({
 /**
  * A training day's own activity, rendered secondary to the session that
  * owns the primary position above it (7 Aug — see DayDetailBody's
- * comment). Quieter than `ActivityDetail`'s own full presentation
- * (kind label demoted from amber to tertiary, title without the
- * `text-display` treatment, no item list) — this is a supporting fact
- * about the day, not the day's main content, the same distinction
- * `PlanPage.tsx`'s `activitySuffix` already draws at list scale.
+ * comment). Quieter than `ActivityDetail`'s own full presentation (kind
+ * label demoted from amber to tertiary, title without the `text-display`
+ * treatment) — this is a supporting fact about the day, not the day's
+ * main content, the same distinction `PlanPage.tsx`'s `activitySuffix`
+ * already draws at list scale.
+ *
+ * Still no full item list (device pass D3, 7 Aug) — every seeded
+ * training-day activity is a single item whose `label` duplicates the
+ * title exactly (`useLocalizedActivity`'s own map preserves that), so a
+ * full `ActivityItemList` would repeat the title verbatim. What was
+ * genuinely missing was the *duration*: the title alone read as "Zone 2
+ * ride" on every training day regardless of whether it prescribed 20
+ * minutes or 40, so the leading item's `detail` — where the seed
+ * actually carries duration — renders under the title, same tertiary
+ * treatment `ActivityItemList` gives it elsewhere.
  */
 function ActivitySecondary({
   programId,
@@ -378,10 +388,12 @@ function ActivitySecondary({
 }) {
   const kindLabel = useActivityKindLabel(activity.kind)
   const localized = useLocalizedActivity(programId, weekday, activity, programOrigin)
+  const detail = localized.items[0]?.detail
   return (
     <div className="mt-8 border-t border-border pt-6">
       <p className="text-sm font-medium text-ink-tertiary">{kindLabel}</p>
       <p className="mt-1 text-ink-secondary">{localized.title}</p>
+      {detail && <p className="mt-0.5 text-sm text-ink-tertiary">{detail}</p>}
     </div>
   )
 }

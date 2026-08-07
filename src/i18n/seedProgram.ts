@@ -123,6 +123,17 @@ export function usePrescriptionNote(
  * than a natural id, since ActivityItem has none. Returns a whole resolved
  * ActivityTemplate so call sites (TodayPage's ActivityHero, PlanDayPage's
  * ActivityDetail) can destructure title/items exactly as before.
+ *
+ * Also guards on an empty *activity* title (7 Aug) — `PlanPage.tsx`'s
+ * `DayRow` calls this unconditionally, `day.activity ?? EMPTY_ACTIVITY`,
+ * for the same hook-order reason `useProgramName`/`resolveSessionName`
+ * guard on an empty id above. A training day with no `weekdayActivities`
+ * entry for its weekday still round-tripped that placeholder through
+ * `t()` under a real program id, logging a phantom "missing key" — the
+ * empty-id guard covers a placeholder *program*, not a placeholder
+ * *activity* under a real one. `title: ''` is the same sentinel
+ * `EMPTY_ACTIVITY` already uses and no real seeded activity can have
+ * (`activityMissingTitle` makes it a schema error).
  */
 export function useLocalizedActivity(
   programId: string,
@@ -131,7 +142,7 @@ export function useLocalizedActivity(
   programOrigin?: Program['origin'],
 ): LocalizedActivity {
   const { t, i18n } = useTranslation('seed')
-  if (programId === '' || programOrigin === 'imported') return activity
+  if (programId === '' || activity.title === '' || programOrigin === 'imported') return activity
   const base = `program.${programId}.activity.${weekday}`
   const title = t(`${base}.title`, { defaultValue: activity.title })
   const items = activity.items.map((item, index) => {
