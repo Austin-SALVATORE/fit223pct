@@ -380,6 +380,24 @@ export const SUPPORTED_LOCALES = ['en', 'fr', 'zh-CN'] as const
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number]
 
 /**
+ * One physically distinct plate bore — plates in this set never load a
+ * handle alongside plates from a different set (coach measurement, 7 Aug
+ * 2026: the owner's two dumbbell sets do not share a bore).
+ *
+ * A fully-mixable inventory (any plate loads any handle) is represented
+ * as a single-element `EquipmentProfile.plateSets` array holding every
+ * plate; a non-mixing inventory like the owner's is one element per
+ * bore. This is what replaces the earlier flat `plates` + `mixable`
+ * shape — see `EquipmentProfile`'s own doc for why that shape changed.
+ */
+export interface PlateSet {
+  /** Plate inventory for this bore, as {weightKg, count} pairs, e.g. "4×1.0, 4×1.25, 4×2.5". */
+  plates: { weightKg: number; count: number }[]
+  /** How many handles draw from this set's plates. Fewer than 2 means no bilateral pair can be built from this set alone (only single-implement, or a cross-set pair). */
+  handleCount: number
+}
+
+/**
  * The athlete's actual dumbbell hardware — coach spec v2.16 §4: "An
  * available weight step means the next entry in the dumbbell's verified
  * hardware-setting list. It never means an assumed arithmetic increase."
@@ -393,21 +411,21 @@ export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number]
  * computation must consult before trusting this over the coach's own
  * prescription.
  *
- * Field shapes here are provisional. Phase 2 (the achievable-load
- * enumerator over plates/handle/mixing) is what actually consumes this
- * data and is not part of the change that introduced this type — nothing
- * reads `plates`/`mixable`/`maxPlatesPerSide` yet. The only field
- * `hasVerifiedLoadList` reads today is `confirmedAt`.
+ * **`plates`/`mixable` (Phase 1's provisional shape) are replaced by
+ * `plateSets` (Phase 2).** Phase 1's own doc comment on this type flagged
+ * the shape as provisional — nothing consumed `plates`/`mixable`/
+ * `handleCount` before Phase 2, so this is the first and intended point
+ * of correction, not a breaking change to a shipped contract. A single
+ * flat `plates` array plus a `mixable` boolean could not represent the
+ * owner's real, measured hardware: two dumbbell sets that do **not**
+ * share a bore, which is two independent inventories, not one inventory
+ * with a yes/no mixing flag on it.
  */
 export interface EquipmentProfile {
   /** kg per bare handle, no plates. */
   handleKg?: number | null
-  /** How many handles the athlete owns — 1 means single-implement lifts only. */
-  handleCount?: number | null
-  /** Plate inventory as {weightKg, count} pairs, e.g. the coach's own "4×1.0, 4×1.25, 4×2.5". */
-  plates?: { weightKg: number; count: number }[]
-  /** Whether plates from different sets can share a bore and load one handle together. */
-  mixable?: boolean | null
+  /** One entry per non-mixing plate bore — see `PlateSet`'s own doc. */
+  plateSets?: PlateSet[] | null
   /** Physical ceiling on plates per side, if any — absent means unconstrained. */
   maxPlatesPerSide?: number | null
   /**
