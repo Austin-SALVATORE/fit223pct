@@ -9,7 +9,7 @@
   "projectedBadge": "预计",
   "noSessionAriaLabel": "没有训练",
   "ongoing": "进行中",
-  "rotationLine": "{{rotationList}}交替，{{weekdays}}",
+  "rotationLine": "{{rotationList}}按完成顺序交替。",
   "dayDetail": {
     "nothingLogged": "这天没有记录任何内容——训练顺延，没有丢失任何进度。",
     "nothingLoggedPinned": "这天没有记录任何内容——没有丢失任何进度。下次到这个星期几时，还是同一个训练课。",

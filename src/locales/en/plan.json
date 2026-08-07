@@ -10,7 +10,7 @@
   "projectedBadge": "Projected",
   "noSessionAriaLabel": "No session",
   "ongoing": "ongoing",
-  "rotationLine": "{{rotationList}} alternate, {{weekdays}}",
+  "rotationLine": "{{rotationList}} alternate in the order you complete them.",
   "dayDetail": {
     "nothingLogged": "Nothing was logged this day — the session shifted forward, nothing was lost.",
     "nothingLoggedPinned": "Nothing was logged this day — nothing was lost. This weekday still offers the same session next time.",

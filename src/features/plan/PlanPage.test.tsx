@@ -197,18 +197,19 @@ describe('PlanPage rotation-mode rendering (an explicit opt-out from pinned sche
     renderApp()
     expect(await screen.findByRole('heading', { name: 'Phase 1 — Home' })).toBeInTheDocument()
     expect(screen.queryByText(/each weekday's session is fixed/)).toBeNull()
-    // rotationLine now resolves rotation ids to session names (owner
-    // finding, zh-CN, 7 Aug — fixed; see the dedicated describe block
-    // below for the full-locale regression coverage against the real
-    // M2 program). This fixture's ids happen to be seedProgram's own
-    // ('chest-back', 'legs-core'), so the resolved names read "Chest &
-    // Back" / "Legs & Core" here.
-    // weekdaysLabel comes straight off trainingWeekdays, which the 7 Aug
-    // ruling moved from Mon/Wed/Fri to Mon/Wed/Sat (seed/program.ts's
-    // dated comment) — this test doesn't override trainingWeekdays, so
-    // it inherits the new value.
+    // rotationLine resolves rotation ids to session names (owner finding,
+    // zh-CN, 7 Aug — fixed; see the dedicated describe block below for
+    // the full-locale regression coverage against the real M2 program).
+    // This fixture's ids happen to be seedProgram's own ('chest-back',
+    // 'legs-core'), so the resolved names read "Chest & Back" / "Legs &
+    // Core" here.
+    //
+    // No weekday clause (owner/coach ruling, 7 Aug — see PlanPage.tsx's
+    // own comment on the rotationLine paragraph): rotation identity
+    // follows completion order, never calendar day, and naming specific
+    // weekdays here read as a binding rotation mode doesn't make.
     expect(
-      await screen.findByText(/Chest & Back and Legs & Core alternate, Mon \/ Wed \/ Sat/),
+      await screen.findByText('Chest & Back and Legs & Core alternate in the order you complete them.'),
     ).toBeInTheDocument()
   })
 })
@@ -225,13 +226,28 @@ describe('PlanPage rotation-mode rendering (an explicit opt-out from pinned sche
  * locales are covered here, not just the one the owner happened to meet
  * it in.
  *
- * Red-first, run 7 Aug 2026: before the `PhaseHeader` fix, the zh-CN
- * assertion below failed —
+ * Red-first (id leak), run 7 Aug 2026: before the `PhaseHeader` fix, the
+ * zh-CN assertion failed —
  * `expected "…mesocycle2-chest-back、mesocycle2-legs-core和mesocycle2-shoulders-arms交替…"
  * not to match /mesocycle2-/` — reproducing the owner's exact paste.
- * After the fix, re-run green.
+ *
+ * Same finding also surfaced a second, separate issue in the same
+ * sentence — the owner/coach ruling that the weekday clause claimed a
+ * calendar binding rotation mode doesn't have (rotation identity follows
+ * completion order, "first completed strength day -> Session A", never
+ * calendar day — the coach's own description of the model, verbatim).
+ * `rotationLine` dropped `{{weekdays}}` entirely; the true weekday
+ * rhythm stays visible where it's actually authoritative — the calendar
+ * grid below this header, not this summary sentence.
+ *
+ * Red-first (weekday clause), run 7 Aug 2026: before the wording change,
+ * the en assertion below (asserting the *new* sentence) failed —
+ * `Unable to find an element with the text: Chest & Back, Legs & Core,
+ * and Shoulders & Arms alternate in the order you complete them.` — the
+ * old code still produced "…alternate, Mon / Wed / Fri". Both fixes
+ * verified together; re-run green after both landed.
  */
-describe('PlanPage rotation-mode: the rotation sentence resolves session ids to localized names (owner finding, zh-CN, 7 Aug)', () => {
+describe('PlanPage rotation-mode: the rotation sentence resolves session ids to localized names and drops the weekday clause (owner findings, 7 Aug)', () => {
   function renderMesocycle2() {
     return render(
       <MemoryRouter initialEntries={['/plan?program=mesocycle-2-build']}>
@@ -254,29 +270,38 @@ describe('PlanPage rotation-mode: the rotation sentence resolves session ids to 
     await i18n.changeLanguage('en')
   })
 
-  it('renders localized session names in en, never a raw mesocycle2- id anywhere on the page', async () => {
+  it('renders localized session names in en, never a raw mesocycle2- id or a weekday token', async () => {
     renderMesocycle2()
     expect(await screen.findByRole('heading', { name: 'Mesocycle 2 — Build' })).toBeInTheDocument()
-    expect(
-      await screen.findByText('Chest & Back, Legs & Core, and Shoulders & Arms alternate, Mon / Wed / Fri'),
-    ).toBeInTheDocument()
+    const rotationSentence = await screen.findByText(
+      'Chest & Back, Legs & Core, and Shoulders & Arms alternate in the order you complete them.',
+    )
+    expect(rotationSentence).toBeInTheDocument()
+    // Scoped to the sentence itself, not the whole page — the day list
+    // below legitimately renders weekday abbreviations ("Mon 10 Aug"),
+    // which is the calendar grid this ruling deliberately left alone.
+    expect(rotationSentence.textContent).not.toMatch(/\bMon\b|\bWed\b|\bFri\b/)
     expect(document.body.textContent).not.toMatch(/mesocycle2-/)
   })
 
-  it('renders localized session names in zh-CN, never a raw mesocycle2- id anywhere on the page', async () => {
+  it('renders localized session names in zh-CN, never a raw mesocycle2- id or a weekday token', async () => {
     await i18n.changeLanguage('zh-CN')
     renderMesocycle2()
     expect(await screen.findByRole('heading', { name: '第二中周期——强化期' })).toBeInTheDocument()
-    expect(await screen.findByText('胸背训练、腿部与核心和肩臂训练交替，周一/周三/周五')).toBeInTheDocument()
+    const rotationSentence = await screen.findByText('胸背训练、腿部与核心和肩臂训练按完成顺序交替。')
+    expect(rotationSentence).toBeInTheDocument()
+    expect(rotationSentence.textContent).not.toMatch(/周一|周三|周五/)
     expect(document.body.textContent).not.toMatch(/mesocycle2-/)
   })
 
-  it('renders localized session names in fr, never a raw mesocycle2- id anywhere on the page', async () => {
+  it('renders localized session names in fr, never a raw mesocycle2- id or a weekday token', async () => {
     await i18n.changeLanguage('fr')
     renderMesocycle2()
-    expect(
-      await screen.findByText('Poitrine et dos, Jambes et gainage et Épaules et bras alternent, lun. / mer. / ven.'),
-    ).toBeInTheDocument()
+    const rotationSentence = await screen.findByText(
+      "Poitrine et dos, Jambes et gainage et Épaules et bras alternent dans l'ordre où tu les termines.",
+    )
+    expect(rotationSentence).toBeInTheDocument()
+    expect(rotationSentence.textContent).not.toMatch(/\blun\.|\bmer\.|\bven\./)
     expect(document.body.textContent).not.toMatch(/mesocycle2-/)
   })
 })

@@ -291,15 +291,6 @@ function PhaseHeader({ program, locale }: { program: Program; locale: string }) 
     style: 'long',
     type: 'conjunction',
   }).format(uniqueRotationNames)
-  // Chinese doesn't use inter-word spacing — 'zh-CN' renders as
-  // "周一/周三/周五", not "周一 / 周三 / 周五" (that ASCII spacing reads as
-  // visibly foreign, the same class of bug as the joins above).
-  const weekdaySeparator = locale.startsWith('zh') ? '/' : ' / '
-  const weekdaysLabel = program.trainingWeekdays
-    .slice()
-    .sort((a, b) => a - b)
-    .map((d) => weekdayAbbr(d, locale))
-    .join(weekdaySeparator)
 
   const sessionsLine = program.sessions
     .map((s) => `${sessionName(s)} — ${resolveSessionFocus(tSeed, program.id, s, program.origin)}`)
@@ -326,10 +317,23 @@ function PhaseHeader({ program, locale }: { program: Program; locale: string }) 
         {program.endDate ? formatShortDate(program.endDate, locale) : t('ongoing')}
       </p>
       <p className="mt-3 text-sm leading-relaxed text-ink-secondary">{sessionsLine}</p>
+      {/*
+        Rotation mode's own copy dropped the weekday clause (owner/coach
+        ruling, 7 Aug): the coach's model is "first completed strength
+        day -> Session A", completion order, never calendar day — the
+        same reason weekday-pinned mode gets its own sentence just above
+        rather than reusing this one (Question A consequence #2). Naming
+        specific weekdays in the same breath as "alternate" read as a
+        binding rotation mode doesn't make; the true weekday rhythm
+        still shows where it's actually authoritative, the calendar
+        grid below. `rotationLine`'s own locale-file value (en/fr/zh-CN
+        plan.json) carries the wording, JSON can't carry the "why" — it
+        lives here instead.
+      */}
       <p className="mt-1 text-sm text-ink-tertiary">
         {program.schedulingMode === 'weekday-pinned'
           ? weekdaySessionsLine
-          : t('rotationLine', { rotationList, weekdays: weekdaysLabel })}
+          : t('rotationLine', { rotationList })}
       </p>
     </section>
   )
