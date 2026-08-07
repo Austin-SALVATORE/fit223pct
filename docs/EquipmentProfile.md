@@ -67,6 +67,44 @@ dumbbells — there is no fixed weight ladder.
   knowingly wrong pending the equipment-aware progression design
   (`~/.claude/plans/equipment-aware-progression.md`).
 
+## Coach rulings — 7 Aug 2026 (board answer, all eight questions)
+
+- **① 5 kg rear-delt fly:** map to the nearest achievable **lower** load.
+  Isolation work never progresses by exceeding the technical standard to
+  hit a number.
+- **②/⑦ Bilateral loading:** the two dumbbells **always carry identical
+  loads**. Asymmetric loading is never prescribed for bilateral
+  movements; if a target cannot be built as a matching pair, use the
+  next lower achievable matching pair. Single-dumbbell exercises are
+  exempt by nature. *(Residual nuance, not extrapolated: the coach
+  ruled on equal **weight**; whether two equal-weight handles may differ
+  in plate **composition** — the only way to reach 14 kg — was the
+  question's edge and reads as permitted, but is flagged for explicit
+  confirmation in the revalidation report.)*
+- **③ Global tie-break: always round down.** Long-term progression over
+  arbitrary numbers; technique over load. Applies everywhere, not just
+  the Deload.
+- **④ Load-ceiling variation ladder:** confirmed, and **per-pyramid
+  independently** — each exercise progresses against its own ceiling
+  without waiting for the session.
+- **⑤ Revalidation pass:** confirmed as specified. Three classes, no
+  silent rounding.
+- **⑥ Single-dumbbell movements may use the single-implement list** —
+  any load physically achievable on one handle, unconstrained by what
+  can be built as a pair. (The bilateral and single-implement lists are
+  officially two lists.)
+- **⑧ Max plates per side:** a hardware fact — wait for the athlete's
+  measurement, implement no assumption.
+- **Spec correction accepted:** the "imports cannot preserve fixed
+  weekdays" sentence will be removed (untrue since M8).
+
+**One discrepancy surfaced by ②'s own examples, needs coach
+confirmation:** the coach's single-dumbbell list includes **Bulgarian
+Split Squat**, but spec v2.16 §4 writes it as *"12 kg in each hand"*
+(two dumbbells). One of the two is stale. `implementCount` for that
+exercise is blocked on the answer; do not seed it from either source
+alone.
+
 ## Change discipline
 
 Update this file when a measurement lands or the coach revises the
