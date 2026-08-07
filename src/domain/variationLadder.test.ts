@@ -158,6 +158,28 @@ describe('completeCeilingExposures — an eased exposure does not advance the la
   })
 })
 
+// N1 (QA's control; this is the permanent guard it breaks)
+describe('completeCeilingExposures — program-scoped, never credits a different program\'s pyramid', () => {
+  it("incline-dumbbell-press's real cross-program case: phase-1-home history does not inflate mesocycle-2-build's count", () => {
+    // Both programs' incline-dumbbell-press end at 15 kg (measured,
+    // ~/.claude/plans/variation-ladder.md §2 P4) — the real-world
+    // collision, not a synthetic one. Two complete exposures under each
+    // program; an unscoped counter would read 4, not 2.
+    const workouts: Workout[] = [
+      completedWorkout('m2-wk1', '2026-08-10', { programId: PROGRAM_ID }),
+      completedWorkout('m2-wk2', '2026-08-17', { programId: PROGRAM_ID }),
+      completedWorkout('p1-wk1', '2026-07-20', { programId: 'phase-1-home' }),
+      completedWorkout('p1-wk2', '2026-07-27', { programId: 'phase-1-home' }),
+    ]
+
+    const exposures = completeCeilingExposures(workouts, PROGRAM_ID, ceilingLadder)
+    expect(exposures).toBe(2)
+    // Value, not just the count — a discriminant-only check would pass
+    // even if the wrong two workouts were the ones being counted.
+    expect(ceilingVariationFor(exposures)).toBe('slow')
+  })
+})
+
 describe('completeCeilingExposures — other exercises and other workouts never count', () => {
   it('ignores a completed workout for a different exercise entirely', () => {
     const other = completedWorkout('other', '2026-08-10', {
@@ -224,6 +246,38 @@ describe('withCeilingVariation', () => {
     const workouts = [completedWorkout('wk1', '2026-08-10', { setPlan: headroom.setPlan })]
     const result = withCeilingVariation(headroom, workouts, PROGRAM_ID)
     expect(result).toBe(headroom)
+  })
+
+  /**
+   * N3 (QA's control; this is the permanent guard it breaks). Real seed
+   * shape — goblet-squat, `mesocycle2Build.conformance.test.ts:79-83` —
+   * top rung 12 kg, `maxWeightKg` 15: genuine headroom (12 + 2 = 14 ≤
+   * 15), never at ceiling, so `withCeilingVariation` must never touch
+   * its already-authored per-rung tempo. Asserted by value, not just
+   * `toBe` identity — a future bug that rebuilt an equal-looking but
+   * wrong copy would pass an identity-only check.
+   */
+  it("never overwrites a headroom pyramid's real authored per-rung variants (goblet-squat's own seed shape)", () => {
+    const goblet: LadderPrescription = {
+      exerciseId: 'goblet-squat',
+      sets: 3,
+      mode: 'reps',
+      restSeconds: 90,
+      perSide: false,
+      setPlan: [
+        { weightKg: 8, reps: 20, variantKey: 'normal' },
+        { weightKg: 10, reps: 15, variantKey: 'slow' },
+        { weightKg: 12, reps: 12, variantKey: 'slow-pause' },
+      ],
+      maxWeightKg: 15,
+      weightStepKg: 2,
+    }
+    // Headroom means never at ceiling regardless of history — no fixture
+    // workout is needed to prove pass-through, and building one under
+    // the wrong exerciseId would only obscure that.
+    const result = withCeilingVariation(goblet, [], PROGRAM_ID) as LadderPrescription
+
+    expect(result.setPlan.map((rung) => rung.variantKey)).toEqual(['normal', 'slow', 'slow-pause'])
   })
 
   it('writes the derived tempo onto every rung once the pyramid is at ceiling', () => {
