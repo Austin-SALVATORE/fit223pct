@@ -261,14 +261,36 @@ function PhaseHeader({ program, locale }: { program: Program; locale: string }) 
   const { t } = useTranslation('plan')
   const { t: tSeed } = useTranslation('seed')
   const programName = useProgramName(program)
-  const uniqueRotation = [...new Set(program.rotation)]
+
+  // Mapped below (rotation, sessions, weekday-pinned lines all use this),
+  // so this can't call the useSessionName/useSessionFocus hooks (Rules of
+  // Hooks) — hence the non-hook resolver, which carries the same origin
+  // guard: an imported program's own session names/foci must never
+  // resolve through the seed's locale keys, even reusing the seed's
+  // session ids. Inlining that guard here instead is what §4 of
+  // docs/review-backlog.md calls the duplication seam.
+  function sessionName(session: SessionTemplate): string {
+    return resolveSessionName(tSeed, program.id, session, program.origin)
+  }
+
+  // `program.rotation` is session IDS (mesocycle2-chest-back, …) — never
+  // rendered raw (owner finding, zh-CN, 7 Aug: the ids leaked straight
+  // into the rendered sentence). Resolved through `sessionName` with the
+  // same defensive fallback to the bare id `weekdaySessionsLine` below
+  // uses, for a rotation entry that somehow doesn't resolve, rather than
+  // crashing on a malformed program.
+  const uniqueRotationIds = [...new Set(program.rotation)]
+  const uniqueRotationNames = uniqueRotationIds.map((id) => {
+    const session = program.sessions.find((s) => s.id === id)
+    return session ? sessionName(session) : id
+  })
   // Intl.ListFormat, not a hardcoded ' and ' join — the same latent i18n
   // bug the driver-phrase composition caught in Phase 2, here too: joining
   // words are locale grammar, not punctuation.
   const rotationList = new Intl.ListFormat(locale, {
     style: 'long',
     type: 'conjunction',
-  }).format(uniqueRotation)
+  }).format(uniqueRotationNames)
   // Chinese doesn't use inter-word spacing — 'zh-CN' renders as
   // "周一/周三/周五", not "周一 / 周三 / 周五" (that ASCII spacing reads as
   // visibly foreign, the same class of bug as the joins above).
@@ -279,15 +301,6 @@ function PhaseHeader({ program, locale }: { program: Program; locale: string }) 
     .map((d) => weekdayAbbr(d, locale))
     .join(weekdaySeparator)
 
-  // Mapped, so this can't call the useSessionName/useSessionFocus hooks
-  // (Rules of Hooks) — hence the non-hook resolvers, which carry the same
-  // origin guard: an imported program's own session names/foci must never
-  // resolve through the seed's locale keys, even reusing the seed's
-  // session ids. Inlining that guard here instead is what §4 of
-  // docs/review-backlog.md calls the duplication seam.
-  function sessionName(session: SessionTemplate): string {
-    return resolveSessionName(tSeed, program.id, session, program.origin)
-  }
   const sessionsLine = program.sessions
     .map((s) => `${sessionName(s)} — ${resolveSessionFocus(tSeed, program.id, s, program.origin)}`)
     .join(' · ')

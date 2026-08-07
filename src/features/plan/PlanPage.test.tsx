@@ -5,8 +5,9 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
-import { seedProgram } from '@/data/seed/program'
+import { seedProgram, mesocycle2Build } from '@/data/seed/program'
 import { programRepo } from '@/data/repositories'
+import i18n from '@/i18n/i18next'
 import { createWorkout, logSet, completeWorkout } from '@/domain/workout'
 import { SettingsPage } from '@/features/settings/SettingsPage'
 import { PlanPage } from './PlanPage'
@@ -196,13 +197,87 @@ describe('PlanPage rotation-mode rendering (an explicit opt-out from pinned sche
     renderApp()
     expect(await screen.findByRole('heading', { name: 'Phase 1 — Home' })).toBeInTheDocument()
     expect(screen.queryByText(/each weekday's session is fixed/)).toBeNull()
-    // rotationLine composes from raw rotation ids, not resolved session
-    // names (a pre-existing PhaseHeader quirk, unrelated to this test).
+    // rotationLine now resolves rotation ids to session names (owner
+    // finding, zh-CN, 7 Aug — fixed; see the dedicated describe block
+    // below for the full-locale regression coverage against the real
+    // M2 program). This fixture's ids happen to be seedProgram's own
+    // ('chest-back', 'legs-core'), so the resolved names read "Chest &
+    // Back" / "Legs & Core" here.
     // weekdaysLabel comes straight off trainingWeekdays, which the 7 Aug
     // ruling moved from Mon/Wed/Fri to Mon/Wed/Sat (seed/program.ts's
     // dated comment) — this test doesn't override trainingWeekdays, so
     // it inherits the new value.
-    expect(await screen.findByText(/alternate, Mon \/ Wed \/ Sat/)).toBeInTheDocument()
+    expect(
+      await screen.findByText(/Chest & Back and Legs & Core alternate, Mon \/ Wed \/ Sat/),
+    ).toBeInTheDocument()
+  })
+})
+
+/**
+ * Owner device finding, zh-CN, Mesocycle 2, 7 Aug: the program header's
+ * scheduling-description sentence rendered raw session ids —
+ * "mesocycle2-chest-back、mesocycle2-legs-core和mesocycle2-shoulders-arms
+ * 交替，周一/周三/周五" — instead of localized session names. Root cause:
+ * `PhaseHeader`'s `rotationList` fed `program.rotation` (session ids)
+ * straight into `Intl.ListFormat`, never resolving them through
+ * `sessionName` the way `weekdaySessionsLine` already did a few lines
+ * below. Locale-independent (ids don't change per locale), so all three
+ * locales are covered here, not just the one the owner happened to meet
+ * it in.
+ *
+ * Red-first, run 7 Aug 2026: before the `PhaseHeader` fix, the zh-CN
+ * assertion below failed —
+ * `expected "…mesocycle2-chest-back、mesocycle2-legs-core和mesocycle2-shoulders-arms交替…"
+ * not to match /mesocycle2-/` — reproducing the owner's exact paste.
+ * After the fix, re-run green.
+ */
+describe('PlanPage rotation-mode: the rotation sentence resolves session ids to localized names (owner finding, zh-CN, 7 Aug)', () => {
+  function renderMesocycle2() {
+    return render(
+      <MemoryRouter initialEntries={['/plan?program=mesocycle-2-build']}>
+        <Routes>
+          <Route path="/plan" element={<PlanPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+  }
+
+  beforeAll(async () => {
+    await programRepo.put(mesocycle2Build)
+  })
+
+  afterAll(async () => {
+    await db.programs.delete(mesocycle2Build.id)
+  })
+
+  afterEach(async () => {
+    await i18n.changeLanguage('en')
+  })
+
+  it('renders localized session names in en, never a raw mesocycle2- id anywhere on the page', async () => {
+    renderMesocycle2()
+    expect(await screen.findByRole('heading', { name: 'Mesocycle 2 — Build' })).toBeInTheDocument()
+    expect(
+      await screen.findByText('Chest & Back, Legs & Core, and Shoulders & Arms alternate, Mon / Wed / Fri'),
+    ).toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/mesocycle2-/)
+  })
+
+  it('renders localized session names in zh-CN, never a raw mesocycle2- id anywhere on the page', async () => {
+    await i18n.changeLanguage('zh-CN')
+    renderMesocycle2()
+    expect(await screen.findByRole('heading', { name: '第二中周期——强化期' })).toBeInTheDocument()
+    expect(await screen.findByText('胸背训练、腿部与核心和肩臂训练交替，周一/周三/周五')).toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/mesocycle2-/)
+  })
+
+  it('renders localized session names in fr, never a raw mesocycle2- id anywhere on the page', async () => {
+    await i18n.changeLanguage('fr')
+    renderMesocycle2()
+    expect(
+      await screen.findByText('Poitrine et dos, Jambes et gainage et Épaules et bras alternent, lun. / mer. / ven.'),
+    ).toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/mesocycle2-/)
   })
 })
 
