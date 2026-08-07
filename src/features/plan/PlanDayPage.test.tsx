@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
-import { seedProgram } from '@/data/seed/program'
+import { seedProgram, mesocycle2Build } from '@/data/seed/program'
 import { programRepo } from '@/data/repositories'
 import { createWorkout, logSet, completeWorkout } from '@/domain/workout'
 import manifest from '@/data/generated/asset-manifest.json'
@@ -360,9 +360,19 @@ describe('PlanDayPage states', () => {
     // content batch), so the bare "nothing logged" fallback
     // (PlanDayPage.tsx's last branch) needs a program that genuinely has
     // none for the day, to keep that code path covered.
+    //
+    // Re-anchored from Friday to Monday 20 Jul (7 Aug ruling, Option A):
+    // Friday dropped both its weekdaySessions pin and its trainingWeekdays
+    // membership, so with weekdayActivities also cleared here it is no
+    // longer "scheduled" by either test (projectSchedule.ts's dates loop:
+    // `trainingWeekdays.includes(weekday) || weekdayActivities?.[weekday]`)
+    // — the day stops existing in the schedule at all and the page falls
+    // back to "This date isn't part of this phase.", not the bare-fallback
+    // copy this test exists to cover. Monday is untouched by the amendment
+    // and still exercises the same code path.
     await programRepo.put({ ...seedProgram, origin: 'imported', weekdayActivities: undefined })
-    renderDay('2026-07-24') // Friday, scheduled, nothing logged
-    expect(await screen.findByRole('heading', { name: /Friday 24 July/ })).toBeInTheDocument()
+    renderDay('2026-07-20') // Monday, scheduled, nothing logged
+    expect(await screen.findByRole('heading', { name: /Monday 20 July/ })).toBeInTheDocument()
     expect(
       screen.getByText('Nothing was logged this day — nothing was lost. This weekday still offers the same session next time.'),
     ).toBeInTheDocument()
@@ -484,5 +494,62 @@ describe('PlanDayPage navigation round-trip', () => {
 
     await userEvent.click(screen.getByRole('link', { name: /Plan/ }))
     expect(await screen.findByRole('heading', { name: 'Phase 1 — Home' })).toBeInTheDocument()
+  })
+})
+
+/**
+ * Owner-reported (iPhone, production PWA), QA-reproduced and root-caused
+ * 7 Aug: navigate to Mesocycle 2 via PhaseNav, open a day, press back —
+ * back landed on Phase 1 (the default phase), not Mesocycle 2. Root
+ * cause: `/plan` and `/plan/:date` are sibling routes, and the viewed
+ * phase lived in `PlanPage`'s own component state — a day-detail visit
+ * remounts `PlanPage`, resetting it. Fix: the viewed phase moves into the
+ * URL (`?program=<id>`), which survives back, forward, and a hard
+ * refresh by construction (PlanPage.tsx's `dayHref`, PlanDayPage.tsx's
+ * `BackToPlan`).
+ */
+describe('PlanDayPage navigation round-trip preserves the viewed phase (owner report, 7 Aug)', () => {
+  beforeAll(async () => {
+    await programRepo.put(mesocycle2Build)
+  })
+
+  afterAll(async () => {
+    await db.programs.delete(mesocycle2Build.id)
+  })
+
+  it('Plan (Mesocycle 2) → day → back returns to Mesocycle 2, not the default phase', async () => {
+    render(
+      <MemoryRouter initialEntries={['/plan']}>
+        <Routes>
+          <Route path="/" element={<p>TODAY PROBE</p>} />
+          <Route path="/plan" element={<PlanPage />} />
+          <Route path="/plan/:date" element={<PlanDayPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    // Starts on the default (active) phase — Phase 1, "today" is 27 Jul.
+    expect(await screen.findByRole('heading', { name: 'Phase 1 — Home' })).toBeInTheDocument()
+
+    await userEvent.click(await screen.findByRole('button', { name: /Mesocycle 2 — Build/ }))
+    expect(await screen.findByRole('heading', { name: 'Mesocycle 2 — Build' })).toBeInTheDocument()
+
+    // Mesocycle 2's own first training day (its startDate, a Monday).
+    await userEvent.click(await screen.findByRole('link', { name: /Mon 10 Aug/ }))
+    expect(await screen.findByRole('heading', { name: /Monday 10 August/ })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('link', { name: /Plan/ }))
+    expect(await screen.findByRole('heading', { name: 'Mesocycle 2 — Build' })).toBeInTheDocument()
+  })
+
+  it('a direct visit to /plan?program=mesocycle-2-build (the refresh-shaped case) renders Mesocycle 2 directly', async () => {
+    render(
+      <MemoryRouter initialEntries={['/plan?program=mesocycle-2-build']}>
+        <Routes>
+          <Route path="/plan" element={<PlanPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    expect(await screen.findByRole('heading', { name: 'Mesocycle 2 — Build' })).toBeInTheDocument()
   })
 })

@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useTranslation } from 'react-i18next'
-import { Link, Navigate, useParams } from 'react-router'
+import { Link, Navigate, useParams, useSearchParams } from 'react-router'
 import { exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
 import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
@@ -432,9 +432,17 @@ function NotPartOfPhase() {
 
 function BackToPlan() {
   const { t } = useTranslation('common')
+  // Carries the `program` param this page itself arrived with straight
+  // through — PlanPage put it there (see PlanPage.tsx's dayHref) so a day
+  // opened from Mesocycle 2 returns to Mesocycle 2, not the default phase.
+  // Absent (a bare /plan/:date visit) falls back to the bare link, same
+  // as before this fix existed.
+  const [searchParams] = useSearchParams()
+  const programId = searchParams.get('program')
+  const to = programId ? `/plan?program=${encodeURIComponent(programId)}` : '/plan'
   return (
     <Link
-      to="/plan"
+      to={to}
       className="inline-flex items-center gap-1.5 text-sm text-ink-tertiary transition-colors hover:text-ink-secondary"
     >
       <span aria-hidden="true">←</span> {t('nav.plan')}

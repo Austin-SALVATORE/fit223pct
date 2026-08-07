@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { programRepo, workoutRepo } from '@/data/repositories'
 import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
@@ -52,7 +51,13 @@ export function PlanPage() {
   const locale = useLocale()
   const today = new Date()
   const todayKey = toDateKey(today)
-  const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null)
+  // The viewed phase lives in the URL, not component state — /plan and
+  // /plan/:date are sibling routes, so opening a day and pressing back
+  // remounts this page. Component state would reset to the default phase
+  // on every such round trip (the bug this fixes); a query param survives
+  // back, forward, and a hard refresh by construction.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const selectedProgramId = searchParams.get('program')
 
   const data = useLiveQuery(async () => {
     const [programs, activeProgram, workouts] = await Promise.all([
@@ -84,10 +89,21 @@ export function PlanPage() {
   }
 
   const defaultProgram = activeProgram ?? programs[0]
+  // A stale/unknown id in the URL (a manually-edited link, or a program
+  // since removed) falls back the same way an unset param always has —
+  // never a crash, never stuck on a phase that no longer exists.
   const program = programs.find((p) => p.id === selectedProgramId) ?? defaultProgram
   const index = programs.findIndex((p) => p.id === program.id)
   const previousProgram = index > 0 ? programs[index - 1] : null
   const nextProgram = index < programs.length - 1 ? programs[index + 1] : null
+
+  function selectProgram(id: string): void {
+    setSearchParams((previous) => {
+      const next = new URLSearchParams(previous)
+      next.set('program', id)
+      return next
+    })
+  }
 
   const days = projectSchedule(program, workouts, today)
   const hasProjectedDays = days.some((d) => d.projected)
@@ -101,7 +117,7 @@ export function PlanPage() {
       <PhaseNav
         previous={previousProgram}
         next={nextProgram}
-        onSelect={setSelectedProgramId}
+        onSelect={selectProgram}
       />
 
       <ProgramDataActions program={program} />
@@ -170,6 +186,12 @@ function DayRow({
     <span className="block text-ink-tertiary">{localizedActivity.title}</span>
   ) : null
 
+  // Carries the currently-viewed phase through to the day detail so its
+  // own back link can return here, not to whatever phase is the default —
+  // the fix for the back-navigation bug this component's own PhaseNav can
+  // put you into (routed through the URL, not component state).
+  const dayHref = `/plan/${day.date}?program=${encodeURIComponent(programId)}`
+
   if (day.isToday) {
     return (
       <GroupedRow to="/">
@@ -187,7 +209,7 @@ function DayRow({
   if (day.workout) {
     const summary = summarizeWorkout(day.workout)
     return (
-      <GroupedRow to={`/plan/${day.date}`}>
+      <GroupedRow to={dayHref}>
         <span className="font-medium text-ink">{label}</span>
         <span className="shrink-0 text-right text-sm text-ink-secondary">
           {sessionName}
@@ -202,7 +224,7 @@ function DayRow({
 
   if (day.session) {
     return (
-      <GroupedRow to={`/plan/${day.date}`}>
+      <GroupedRow to={dayHref}>
         <span className="font-medium text-ink">{label}</span>
         <span className="shrink-0 text-right text-sm text-ink-secondary">
           {resolvedSessionName}
@@ -218,7 +240,7 @@ function DayRow({
   // because there's none to show: activities have no workout to complete.
   if (day.activity) {
     return (
-      <GroupedRow to={`/plan/${day.date}`}>
+      <GroupedRow to={dayHref}>
         <span className="text-ink-secondary">{label}</span>
         <span className="shrink-0 text-sm text-ink-tertiary">{localizedActivity.title}</span>
       </GroupedRow>
@@ -226,7 +248,7 @@ function DayRow({
   }
 
   return (
-    <GroupedRow to={`/plan/${day.date}`}>
+    <GroupedRow to={dayHref}>
       <span className="text-ink-secondary">{label}</span>
       <span className="shrink-0 text-sm text-ink-tertiary" aria-label={t('noSessionAriaLabel')}>
         —
