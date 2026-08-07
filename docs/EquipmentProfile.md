@@ -1,8 +1,10 @@
 # Verified Equipment Profile
 
-**Status: partially verified — plate inventory coach-confirmed 7 Aug 2026;
-handle weight measured 7 Aug 2026; plate interchangeability and handle
-count still unmeasured.**
+**Status: measurement-complete 7 Aug 2026 — every physical fact is now
+owner-measured or coach-confirmed. "Verified" in the app's sense still
+requires the owner confirming the profile in the app once the settings
+flow exists (equipment plan Phase 3); the progression gate stays closed
+until then.**
 
 This document is the durable home for the athlete's real equipment. It
 exists because the inventory below arrived in a coach *message*, appears
@@ -31,6 +33,17 @@ dumbbells — there is no fixed weight ladder.
 | Fact | Value | Source |
 |---|---|---|
 | Empty handle weight, **collars on** | **1.2 kg** | Owner, kitchen scale, reported in chat 7 Aug 2026 ~16:00 |
+| Set A ↔ Set B plate interchangeability | **No — different bore, the sets do not mix** | Owner, physical test, board answer 7 Aug 2026 ~16:35 (confirmed choice) |
+
+**Consequence of the no-mix answer (preliminary, pending Phase 2):** each
+handle draws from one set's inventory only. Set A carries 19 kg of
+plates total, Set B 16 kg — so a *matching bilateral pair* is capped by
+what one set can put on two handles symmetrically, far below the pooled
+inventory. The prescribed **12 / 14 / 15 kg bilateral tops are likely
+unreachable as matching pairs** — exactly the executability risk this
+file flagged when the question was posed. The Phase 2 enumerator
+computes the true per-set and cross-set-matched lists; the resulting
+ceiling finding goes to the coach for program correction, per ruling ⑤.
 
 **Immediate consequence (preliminary, pending Phase 2's proper
 enumeration):** every buildable load is `1.2 + 2 × (side sum)`, and side
@@ -44,13 +57,18 @@ revalidation report's expected classification for essentially the whole
 program: *intentionally approximate (mapped)* — for the coach to confirm,
 never silently rounded by the app.
 
-## Unmeasured — still blocks the achievable-load list
+## Measured — 7 Aug 2026 (continued, board answers ~16:35)
 
-| Fact | How it gets measured | Why it matters |
+| Fact | Value | Notes |
 |---|---|---|
-| Set A ↔ Set B plate interchangeability (bore) | Owner tries one Set B plate on a Set A handle | Decides program executability: without mixing, the bilateral ceiling is ~11.5 kg + handle and the prescribed 12/14/15 kg tops are unreachable. |
-| Handle count | Owner counts | Bilateral lifts load two handles from one shared inventory. |
-| Max plates per side | Owner checks how many plates physically fit one side (ruling ⑧: wait for the measurement, assume nothing) | Caps the top of the achievable list. |
+| Handle count | **4** | With non-matching bores this is presumed **2 Set A + 2 Set B** — the one assumption in this file; owner can correct it in one line. |
+| Max plates per side | **“4 or more”** | Sleeve is not the binding constraint at the loads that matter; enumeration uses a **conservative cap of 4/side** and flags any load that would need a 5th plate (affects only the single-dumbbell list's extreme top). Consistent with ruling ③'s round-down philosophy. |
+
+Nothing physical remains unmeasured. Open items are now *decisions and
+computation*: the Phase 2 enumerator (two per-set lists + the
+cross-set-matched bilateral list), the Phase 3 in-app confirmation flow,
+and the Phase 5 revalidation report that sends the mapped/unreachable
+findings to the coach.
 
 ## Standing rules (coach, 7 Aug amendment — do not weaken)
 
