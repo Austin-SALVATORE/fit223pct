@@ -143,6 +143,38 @@ Split Squat**, but spec v2.16 §4 writes it as *"12 kg in each hand"*
 exercise is blocked on the answer; do not seed it from either source
 alone.
 
+## Coach rulings on the verified report — 7 Aug 2026 ~15:55 (board answer, verbatim decisions)
+
+The hardware report was **accepted**, with seven rulings that supersede
+the mapping-centric reading of the amendment:
+
+1. **Verified achievable loads become the only valid working loads.**
+   Future coach specifications are authored directly in achievable
+   loads — no more idealised 5/6/8/10/12/14/15 values, and therefore no
+   mapping in future programs.
+2. **Duplicate pyramid rungs are unacceptable.** Where two written
+   rungs collapse onto one achievable load (14 and 15 → 13.2), the
+   pyramid is rewritten, not left duplicated — if 15.2 is safe, 15.2
+   becomes the top rung. Progression must stay meaningful.
+3. **Current mesocycle: temporary mapping is acceptable.** No seed
+   rewrite is required before Monday; the app's written loads stand as
+   the coach's authored values for M2, mapped in practice. Future
+   mesocycles: direct achievable loads.
+4. **Rear delt fly opens at 3.7 kg** (confirmed; isolation quality over
+   absolute load). Folded into the next authored spec rather than a
+   pre-launch seed edit, per ruling 3.
+5. **Single-dumbbell exercises use the single-implement list freely** —
+   never limited by the matched-pair table.
+6. **Bilateral matching stands** unchanged.
+7. The coach revises all future prescriptions from this profile.
+
+**Consequences for tooling:** the spec validator gains two structural
+checks for every future spec — every prescribed load must be a member
+of the verified achievable list for its exercise's implement count, and
+no pyramid may contain duplicate consecutive loads. The Phase 5
+"classification report" as originally designed is superseded: there is
+nothing left to classify when specs are authored from the lists.
+
 ## Change discipline
 
 Update this file when a measurement lands or the coach revises the
