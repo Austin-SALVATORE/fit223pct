@@ -496,15 +496,15 @@
           }
         },
         "5": {
-          "title": "Recovery day",
+          "title": "恢复日",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "40 min (5 min easy warm-up, 5 min easy cool-down)"
+              "label": "Zone 2骑行",
+              "detail": "40 分钟（5 分钟轻松热身，5 分钟轻松放松）"
             },
             "1": {
-              "label": "Recovery-day stretching",
-              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+              "label": "恢复日拉伸",
+              "detail": "10-15 分钟——髋屈肌、腘绳肌、臀部或四字拉伸、门框胸部拉伸、背阔肌（借助训练凳）、轻柔胸椎旋转"
             }
           }
         },
@@ -519,12 +519,12 @@
               "label": "完全休息也是不错的选择"
             },
             "2": {
-              "label": "Zone 2 ride",
-              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+              "label": "Zone 2骑行",
+              "detail": "20 分钟，力量训练之后——之前 0-2 分钟轻松过渡，之后最多 3 分钟轻松骑行（总共约 25 分钟）"
             },
             "3": {
-              "label": "Post-ride stretch",
-              "detail": "Half-kneeling hip-flexor stretch, hamstring stretch, figure-four glute stretch, standing calf stretch — about 30-45 sec per position"
+              "label": "骑行后拉伸",
+              "detail": "半跪姿髋屈肌拉伸、腘绳肌拉伸、四字臀部拉伸、站姿小腿拉伸——每个姿势约 30-45 秒"
             }
           }
         },
@@ -544,170 +544,170 @@
               "detail": "确认训练时间和任何运动安排"
             },
             "3": {
-              "label": "Zone 2 ride",
-              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
+              "label": "Zone 2骑行",
+              "detail": "35 分钟（5 分钟轻松热身，5 分钟轻松放松）"
             },
             "4": {
-              "label": "Recovery-day stretching",
-              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+              "label": "恢复日拉伸",
+              "detail": "10-15 分钟——髋屈肌、腘绳肌、臀部或四字拉伸、门框胸部拉伸、背阔肌（借助训练凳）、轻柔胸椎旋转"
             }
           }
         }
       }
     },
     "mesocycle-2-build": {
-      "name": "Mesocycle 2 — Build",
+      "name": "第二中周期——强化期",
       "session": {
         "mesocycle2-chest-back": {
-          "name": "Chest & Back",
-          "focus": "Chest and Back Emphasis",
+          "name": "胸背训练",
+          "focus": "胸背强化",
           "exercise": {
             "single-arm-db-row": {
-              "note": "Rest after both sides"
+              "note": "两侧完成后休息"
             },
             "goblet-squat": {
-              "note": "Progress tempo first, then weight"
+              "note": "先在节奏上进阶，再增加重量"
             }
           }
         },
         "mesocycle2-legs-core": {
-          "name": "Legs & Core",
-          "focus": "Legs and Core Emphasis",
+          "name": "腿部与核心",
+          "focus": "腿部与核心强化",
           "exercise": {
             "bulgarian-split-squat": {
-              "note": "Rest after both sides"
+              "note": "两侧完成后休息"
             },
             "standing-calf-raise": {
-              "note": "Hold this pyramid once every level is loaded and clean — a harder variation is next in your progression"
+              "note": "当每个级别都能干净地完成负重后，保持这个金字塔不变——更难的变式是你进阶的下一步"
             },
             "dead-bug": {
-              "note": "Rest 45-60 sec"
+              "note": "休息 45-60 秒"
             },
             "push-up": {
-              "note": "After both levels, progress to the separate harder-leverage variation"
+              "note": "两个级别都完成后，进阶到另一个杠杆更难的独立变式"
             }
           }
         },
         "mesocycle2-shoulders-arms": {
-          "name": "Shoulders & Arms",
-          "focus": "Shoulders and Arms Emphasis",
+          "name": "肩臂训练",
+          "focus": "肩臂强化",
           "exercise": {
             "side-plank": {
-              "note": "Rest 45-60 sec"
+              "note": "休息 45-60 秒"
             }
           }
         }
       },
       "activity": {
         "1": {
-          "title": "Zone 2 ride",
+          "title": "Zone 2骑行",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+              "label": "Zone 2骑行",
+              "detail": "20 分钟，力量训练之后——之前 0-2 分钟轻松过渡，之后最多 3 分钟轻松骑行（总共约 25 分钟）"
             }
           }
         },
         "2": {
-          "title": "Recovery day",
+          "title": "恢复日",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
+              "label": "Zone 2骑行",
+              "detail": "35 分钟（5 分钟轻松热身，5 分钟轻松放松）"
             },
             "1": {
-              "label": "Recovery-day stretching",
-              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+              "label": "恢复日拉伸",
+              "detail": "10-15 分钟——髋屈肌、腘绳肌、臀部或四字拉伸、门框胸部拉伸、背阔肌（借助训练凳）、轻柔胸椎旋转"
             }
           }
         },
         "3": {
-          "title": "Zone 2 ride",
+          "title": "Zone 2骑行",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+              "label": "Zone 2骑行",
+              "detail": "20 分钟，力量训练之后——之前 0-2 分钟轻松过渡，之后最多 3 分钟轻松骑行（总共约 25 分钟）"
             }
           }
         },
         "4": {
-          "title": "Recovery day",
+          "title": "恢复日",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
+              "label": "Zone 2骑行",
+              "detail": "35 分钟（5 分钟轻松热身，5 分钟轻松放松）"
             },
             "1": {
-              "label": "Recovery-day stretching",
-              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+              "label": "恢复日拉伸",
+              "detail": "10-15 分钟——髋屈肌、腘绳肌、臀部或四字拉伸、门框胸部拉伸、背阔肌（借助训练凳）、轻柔胸椎旋转"
             }
           }
         },
         "5": {
-          "title": "Zone 2 ride",
+          "title": "Zone 2骑行",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+              "label": "Zone 2骑行",
+              "detail": "20 分钟，力量训练之后——之前 0-2 分钟轻松过渡，之后最多 3 分钟轻松骑行（总共约 25 分钟）"
             }
           }
         },
         "6": {
-          "title": "Optional recovery ride",
+          "title": "自选恢复骑行",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "45 min (5 min easy warm-up, 5 min easy cool-down) — only when recovery is Green"
+              "label": "Zone 2骑行",
+              "detail": "45 分钟（5 分钟轻松热身，5 分钟轻松放松）——仅在状态为绿色时进行"
             },
             "1": {
-              "label": "Complete rest is a fine choice too"
+              "label": "完全休息也是不错的选择"
             }
           }
         },
         "7": {
-          "title": "Weekly checkpoint",
+          "title": "每周复盘",
           "item": {
             "0": {
-              "label": "Weigh in",
-              "detail": "Same conditions each week — morning, before eating"
+              "label": "称重",
+              "detail": "每周条件一致——早上，进食前"
             },
             "1": {
-              "label": "Measure your waist",
-              "detail": "Same spot, same conditions as last week"
+              "label": "测量腰围",
+              "detail": "同一位置，同样的条件，和上周一致"
             },
             "2": {
-              "label": "Prepare the coming week",
-              "detail": "Confirm training times and any sport plans"
+              "label": "准备下一周",
+              "detail": "确认训练时间和任何运动安排"
             }
           }
         }
       },
       "morningActivation": {
-        "title": "Morning Activation",
+        "title": "晨间激活",
         "item": {
           "0": {
-            "label": "Cat-cow",
-            "detail": "6 controlled reps"
+            "label": "猫牛式",
+            "detail": "6次可控重复"
           },
           "1": {
-            "label": "Thoracic rotation",
-            "detail": "6 reps per side"
+            "label": "胸椎旋转",
+            "detail": "每侧6次"
           },
           "2": {
-            "label": "Wall slide or shoulder circle",
-            "detail": "8 controlled reps"
+            "label": "靠墙滑臂或肩部环绕",
+            "detail": "8次可控重复"
           },
           "3": {
-            "label": "90/90 hip switch",
-            "detail": "6 reps per side"
+            "label": "90/90髋关节转换",
+            "detail": "每侧6次"
           },
           "4": {
-            "label": "Bodyweight glute bridge",
-            "detail": "10 reps"
+            "label": "自重臀桥",
+            "detail": "10次"
           },
           "5": {
-            "label": "Bodyweight squat",
-            "detail": "8 reps"
+            "label": "自重深蹲",
+            "detail": "8次"
           }
         }
       }

@@ -496,15 +496,15 @@
           }
         },
         "5": {
-          "title": "Recovery day",
+          "title": "Jour de récupération",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "40 min (5 min easy warm-up, 5 min easy cool-down)"
+              "label": "Sortie Zone 2",
+              "detail": "40 min (5 min d'échauffement facile, 5 min de retour au calme facile)"
             },
             "1": {
-              "label": "Recovery-day stretching",
-              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+              "label": "Étirements du jour de récupération",
+              "detail": "10-15 min — fléchisseurs de hanche, ischio-jambiers, fessiers ou chiffre quatre, pectoraux dans l'embrasure de porte, grand dorsal (avec le banc), rotation thoracique douce"
             }
           }
         },
@@ -519,12 +519,12 @@
               "label": "Le repos complet est aussi un bon choix"
             },
             "2": {
-              "label": "Zone 2 ride",
-              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+              "label": "Sortie Zone 2",
+              "detail": "20 min, après la musculation — 0-2 min de transition facile avant, jusqu'à 3 min de pédalage facile après (environ 25 min au total)"
             },
             "3": {
-              "label": "Post-ride stretch",
-              "detail": "Half-kneeling hip-flexor stretch, hamstring stretch, figure-four glute stretch, standing calf stretch — about 30-45 sec per position"
+              "label": "Étirement après la sortie",
+              "detail": "Étirement des fléchisseurs de hanche en demi-agenouillé, étirement des ischio-jambiers, étirement des fessiers en chiffre quatre, étirement des mollets debout — environ 30-45 sec par position"
             }
           }
         },
@@ -544,170 +544,170 @@
               "detail": "Confirme tes créneaux d'entraînement et tes activités sportives"
             },
             "3": {
-              "label": "Zone 2 ride",
-              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
+              "label": "Sortie Zone 2",
+              "detail": "35 min (5 min d'échauffement facile, 5 min de retour au calme facile)"
             },
             "4": {
-              "label": "Recovery-day stretching",
-              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+              "label": "Étirements du jour de récupération",
+              "detail": "10-15 min — fléchisseurs de hanche, ischio-jambiers, fessiers ou chiffre quatre, pectoraux dans l'embrasure de porte, grand dorsal (avec le banc), rotation thoracique douce"
             }
           }
         }
       }
     },
     "mesocycle-2-build": {
-      "name": "Mesocycle 2 — Build",
+      "name": "Mésocycle 2 — Construction",
       "session": {
         "mesocycle2-chest-back": {
-          "name": "Chest & Back",
-          "focus": "Chest and Back Emphasis",
+          "name": "Poitrine et dos",
+          "focus": "Accent poitrine et dos",
           "exercise": {
             "single-arm-db-row": {
-              "note": "Rest after both sides"
+              "note": "Repos après les deux côtés"
             },
             "goblet-squat": {
-              "note": "Progress tempo first, then weight"
+              "note": "Progresse d'abord le tempo, puis la charge"
             }
           }
         },
         "mesocycle2-legs-core": {
-          "name": "Legs & Core",
-          "focus": "Legs and Core Emphasis",
+          "name": "Jambes et gainage",
+          "focus": "Accent jambes et gainage",
           "exercise": {
             "bulgarian-split-squat": {
-              "note": "Rest after both sides"
+              "note": "Repos après les deux côtés"
             },
             "standing-calf-raise": {
-              "note": "Hold this pyramid once every level is loaded and clean — a harder variation is next in your progression"
+              "note": "Maintiens cette pyramide une fois que chaque niveau est chargé et propre — une variante plus difficile est la suite de ta progression"
             },
             "dead-bug": {
-              "note": "Rest 45-60 sec"
+              "note": "Repos 45-60 sec"
             },
             "push-up": {
-              "note": "After both levels, progress to the separate harder-leverage variation"
+              "note": "Une fois les deux niveaux maîtrisés, passe à la variante distincte à levier plus difficile"
             }
           }
         },
         "mesocycle2-shoulders-arms": {
-          "name": "Shoulders & Arms",
-          "focus": "Shoulders and Arms Emphasis",
+          "name": "Épaules et bras",
+          "focus": "Accent épaules et bras",
           "exercise": {
             "side-plank": {
-              "note": "Rest 45-60 sec"
+              "note": "Repos 45-60 sec"
             }
           }
         }
       },
       "activity": {
         "1": {
-          "title": "Zone 2 ride",
+          "title": "Sortie Zone 2",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+              "label": "Sortie Zone 2",
+              "detail": "20 min, après la musculation — 0-2 min de transition facile avant, jusqu'à 3 min de pédalage facile après (environ 25 min au total)"
             }
           }
         },
         "2": {
-          "title": "Recovery day",
+          "title": "Jour de récupération",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
+              "label": "Sortie Zone 2",
+              "detail": "35 min (5 min d'échauffement facile, 5 min de retour au calme facile)"
             },
             "1": {
-              "label": "Recovery-day stretching",
-              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+              "label": "Étirements du jour de récupération",
+              "detail": "10-15 min — fléchisseurs de hanche, ischio-jambiers, fessiers ou chiffre quatre, pectoraux dans l'embrasure de porte, grand dorsal (avec le banc), rotation thoracique douce"
             }
           }
         },
         "3": {
-          "title": "Zone 2 ride",
+          "title": "Sortie Zone 2",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+              "label": "Sortie Zone 2",
+              "detail": "20 min, après la musculation — 0-2 min de transition facile avant, jusqu'à 3 min de pédalage facile après (environ 25 min au total)"
             }
           }
         },
         "4": {
-          "title": "Recovery day",
+          "title": "Jour de récupération",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
+              "label": "Sortie Zone 2",
+              "detail": "35 min (5 min d'échauffement facile, 5 min de retour au calme facile)"
             },
             "1": {
-              "label": "Recovery-day stretching",
-              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+              "label": "Étirements du jour de récupération",
+              "detail": "10-15 min — fléchisseurs de hanche, ischio-jambiers, fessiers ou chiffre quatre, pectoraux dans l'embrasure de porte, grand dorsal (avec le banc), rotation thoracique douce"
             }
           }
         },
         "5": {
-          "title": "Zone 2 ride",
+          "title": "Sortie Zone 2",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+              "label": "Sortie Zone 2",
+              "detail": "20 min, après la musculation — 0-2 min de transition facile avant, jusqu'à 3 min de pédalage facile après (environ 25 min au total)"
             }
           }
         },
         "6": {
-          "title": "Optional recovery ride",
+          "title": "Sortie de récupération optionnelle",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "45 min (5 min easy warm-up, 5 min easy cool-down) — only when recovery is Green"
+              "label": "Sortie Zone 2",
+              "detail": "45 min (5 min d'échauffement facile, 5 min de retour au calme facile) — seulement si ton état est Vert"
             },
             "1": {
-              "label": "Complete rest is a fine choice too"
+              "label": "Le repos complet est aussi un bon choix"
             }
           }
         },
         "7": {
-          "title": "Weekly checkpoint",
+          "title": "Bilan hebdomadaire",
           "item": {
             "0": {
-              "label": "Weigh in",
-              "detail": "Same conditions each week — morning, before eating"
+              "label": "Pesée",
+              "detail": "Mêmes conditions chaque semaine — le matin, avant de manger"
             },
             "1": {
-              "label": "Measure your waist",
-              "detail": "Same spot, same conditions as last week"
+              "label": "Mesure ton tour de taille",
+              "detail": "Même endroit, mêmes conditions que la semaine dernière"
             },
             "2": {
-              "label": "Prepare the coming week",
-              "detail": "Confirm training times and any sport plans"
+              "label": "Prépare la semaine à venir",
+              "detail": "Confirme tes créneaux d'entraînement et tes activités sportives"
             }
           }
         }
       },
       "morningActivation": {
-        "title": "Morning Activation",
+        "title": "Activation matinale",
         "item": {
           "0": {
-            "label": "Cat-cow",
-            "detail": "6 controlled reps"
+            "label": "Chat-vache",
+            "detail": "6 répétitions contrôlées"
           },
           "1": {
-            "label": "Thoracic rotation",
-            "detail": "6 reps per side"
+            "label": "Rotation thoracique",
+            "detail": "6 répétitions par côté"
           },
           "2": {
-            "label": "Wall slide or shoulder circle",
-            "detail": "8 controlled reps"
+            "label": "Glissé au mur ou rotation d'épaule",
+            "detail": "8 répétitions contrôlées"
           },
           "3": {
-            "label": "90/90 hip switch",
-            "detail": "6 reps per side"
+            "label": "Changement de hanches 90/90",
+            "detail": "6 répétitions par côté"
           },
           "4": {
-            "label": "Bodyweight glute bridge",
-            "detail": "10 reps"
+            "label": "Pont fessier au poids du corps",
+            "detail": "10 répétitions"
           },
           "5": {
-            "label": "Bodyweight squat",
-            "detail": "8 reps"
+            "label": "Squat au poids du corps",
+            "detail": "8 répétitions"
           }
         }
       }
