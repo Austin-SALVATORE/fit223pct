@@ -461,4 +461,46 @@ describe('mesocycle2Build — spec conformance (v2.7 §6-§8)', () => {
   it('Morning Activation is one round of six items (§13)', () => {
     expect(mesocycle2Build.morningActivation?.items).toHaveLength(6)
   })
+
+  /**
+   * §10 "Load-ceiling progression", `~/.claude/plans/variation-ladder.md`
+   * D6 — the variation ladder writes its derived tempo label onto every
+   * rung of a ceiling pyramid at runtime (`withCeilingVariation`). Today
+   * none of the four ceiling lifts carries an authored per-rung variant
+   * (P0), but a future coach edit could add one silently, and the
+   * failure would be the app *erasing a coach-authored label* in favour
+   * of a derived one. This is the guard: if a ceiling pyramid ever gains
+   * an authored variant, the suite goes red and the question routes to
+   * the coach — reconciling two variation systems on one pyramid is a
+   * coaching decision, not an engineering one (D6's own rejected
+   * alternatives: merging silently, or silently skipping, both hide the
+   * conflict instead of surfacing it).
+   *
+   * "At ceiling" is asked of the same engine the load path uses
+   * (`suggestLadderProgression`, D5) against a synthetic perfect log —
+   * same construction as the side-plank conformance test above — rather
+   * than re-deriving the ceiling condition by hand, so this test cannot
+   * silently drift from what the engine actually decides.
+   */
+  it('no at-ceiling pyramid carries an authored per-rung variant (D6)', () => {
+    const conflicts: string[] = []
+    for (const session of mesocycle2Build.sessions) {
+      for (const item of session.items) {
+        if (item.setPlan === undefined) continue
+        const ladder = item as LadderPrescription
+        const perfectLog: LoggedSet[] = ladder.setPlan.map((rung, setIndex) => ({
+          setIndex,
+          weightKg: rung.weightKg,
+          reps: ladder.mode === 'seconds' ? null : rung.reps,
+          seconds: ladder.mode === 'seconds' ? rung.reps : null,
+          completedAt: '2026-08-10T09:00:00.000Z',
+        }))
+        const atCeiling = suggestLadderProgression(ladder, perfectLog).type === 'at-equipment-max'
+        if (!atCeiling) continue
+        const authored = ladder.setPlan.some((rung) => rung.variantKey !== undefined)
+        if (authored) conflicts.push(`${session.id}/${ladder.exerciseId}`)
+      }
+    }
+    expect(conflicts).toEqual([])
+  })
 })

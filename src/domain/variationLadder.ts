@@ -1,4 +1,7 @@
-import type { LadderPrescription, LoggedSet, SetVariant, Workout } from './types'
+import { suggestLadderProgression } from './progression'
+import { previousSetsFor } from './workout'
+import type { ReadinessTier } from './readiness'
+import type { ExercisePrescription, LadderPrescription, LoggedSet, SetVariant, Workout } from './types'
 
 /**
  * §10 "Load-ceiling progression" (coach spec v2.16) — the tempo states a
@@ -92,4 +95,50 @@ export function completeCeilingExposures(
 export function ceilingVariationFor(exposures: number): SetVariant {
   const index = Math.min(Math.max(exposures - 1, 0), CEILING_VARIATION_LADDER.length - 1)
   return CEILING_VARIATION_LADDER[index]
+}
+
+/**
+ * Returns `prescription` unchanged unless it is a load-ceiling pyramid
+ * right now — in which case every rung comes back carrying the derived
+ * tempo label (D6, a whole-pyramid write, never per-rung).
+ *
+ * **"At the ceiling" is asked of the existing load engine, not
+ * re-derived (D5).** `suggestLadderProgression`'s own `at-equipment-max`
+ * classification is exactly §10:412's named set (measured,
+ * `~/.claude/plans/variation-ladder.md` §2 P7) — reusing it means this
+ * module needs no new data, and it means the tempo ladder self-corrects
+ * the day a wider hardware list makes a lift reachable again, the same
+ * moment the load engine stops calling it a ceiling.
+ *
+ * **`readinessTier` is passed straight through to that same call**, so
+ * the tempo classification and the load classification can never
+ * disagree about whether today counts as "at ceiling" — the identical
+ * property `nextSetTarget`'s own docblock protects for the load path.
+ *
+ * A rep-range prescription (`setPlan` absent) always passes through
+ * unchanged — §10 is a pyramid rule, and there is no ceiling state for
+ * a prescription that was never a pyramid.
+ *
+ * **No conflict check against an authored per-rung variant.** That
+ * invariant is enforced upstream, at the seed, by the D6 conformance
+ * test — by the time this runs, a ceiling pyramid is guaranteed to carry
+ * no authored variant, so there is nothing to reconcile at runtime.
+ */
+export function withCeilingVariation(
+  prescription: ExercisePrescription,
+  workouts: readonly Workout[],
+  programId: string,
+  readinessTier?: ReadinessTier,
+): ExercisePrescription {
+  if (prescription.setPlan === undefined) return prescription
+
+  const lastSets = previousSetsFor(workouts, prescription.exerciseId)
+  const atCeiling = suggestLadderProgression(prescription, lastSets, readinessTier).type === 'at-equipment-max'
+  if (!atCeiling) return prescription
+
+  const variant = ceilingVariationFor(completeCeilingExposures(workouts, programId, prescription))
+  return {
+    ...prescription,
+    setPlan: prescription.setPlan.map((rung) => ({ ...rung, variantKey: variant })),
+  }
 }

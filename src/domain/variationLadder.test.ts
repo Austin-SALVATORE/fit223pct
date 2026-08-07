@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { CEILING_VARIATION_LADDER, ceilingVariationFor, completeCeilingExposures } from './variationLadder'
+import {
+  CEILING_VARIATION_LADDER,
+  ceilingVariationFor,
+  completeCeilingExposures,
+  withCeilingVariation,
+} from './variationLadder'
 import { createWorkout, completeWorkout, logSet } from './workout'
-import type { LadderPrescription, SessionTemplate, SetTarget, Workout } from './types'
+import type { LadderPrescription, RepRangePrescription, SessionTemplate, SetTarget, Workout } from './types'
 import type { ReadinessTier } from './readiness'
 
 /**
@@ -188,5 +193,63 @@ describe('completeCeilingExposures — other exercises and other workouts never 
     })
     // Never completeWorkout()'d.
     expect(completeCeilingExposures([workout], PROGRAM_ID, ceilingLadder)).toBe(0)
+  })
+})
+
+describe('withCeilingVariation', () => {
+  const repRange: RepRangePrescription = {
+    exerciseId: 'goblet-squat',
+    sets: 3,
+    mode: 'reps',
+    range: { min: 8, max: 12 },
+    restSeconds: 90,
+    perSide: false,
+    startWeightKg: 16,
+    maxWeightKg: 20,
+    weightStepKg: 2,
+  }
+
+  it('passes a rep-range prescription through unchanged — §10 is a pyramid rule, no ceiling state to compute', () => {
+    const result = withCeilingVariation(repRange, [], PROGRAM_ID)
+    expect(result).toBe(repRange)
+  })
+
+  it('passes a ladder through unchanged with no history — not yet at ceiling', () => {
+    const result = withCeilingVariation(ceilingLadder, [], PROGRAM_ID)
+    expect(result).toBe(ceilingLadder)
+  })
+
+  it('passes a ladder through unchanged when it has headroom, even if fully completed', () => {
+    const headroom: LadderPrescription = { ...ceilingLadder, maxWeightKg: 25 }
+    const workouts = [completedWorkout('wk1', '2026-08-10', { setPlan: headroom.setPlan })]
+    const result = withCeilingVariation(headroom, workouts, PROGRAM_ID)
+    expect(result).toBe(headroom)
+  })
+
+  it('writes the derived tempo onto every rung once the pyramid is at ceiling', () => {
+    const workouts = [completedWorkout('wk1', '2026-08-10')]
+    const result = withCeilingVariation(ceilingLadder, workouts, PROGRAM_ID) as LadderPrescription
+
+    // One complete exposure earns 'normal' still (ceilingVariationFor(1)).
+    expect(result.setPlan.every((rung) => rung.variantKey === 'normal')).toBe(true)
+    // A new object — the authored prescription is never mutated.
+    expect(result).not.toBe(ceilingLadder)
+    expect(ceilingLadder.setPlan.every((rung) => rung.variantKey === undefined)).toBe(true)
+  })
+
+  it('advances the written tempo as more complete exposures accumulate', () => {
+    const workouts = [completedWorkout('wk1', '2026-08-10'), completedWorkout('wk2', '2026-08-17')]
+    const result = withCeilingVariation(ceilingLadder, workouts, PROGRAM_ID) as LadderPrescription
+
+    expect(result.setPlan.every((rung) => rung.variantKey === 'slow')).toBe(true)
+  })
+
+  it("passes readinessTier straight through to the load engine's own classification, so the two can never disagree", () => {
+    // Perfect history, but today is being asked about as an easier day —
+    // suggestLadderProgression's own easier-day defer fires before the
+    // ceiling check, so this must NOT read as at-ceiling here either.
+    const workouts = [completedWorkout('wk1', '2026-08-10')]
+    const result = withCeilingVariation(ceilingLadder, workouts, PROGRAM_ID, 'easier')
+    expect(result).toBe(ceilingLadder)
   })
 })
