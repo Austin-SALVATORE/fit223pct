@@ -207,11 +207,16 @@ describe('Ride record against the real phase-1-home program (no synthetic fixtur
   // renders the unmodified `seedProgram` seeded by seedDatabase(), no
   // programRepo.put override at all.
 
-  it('shows a ride record on a real training day (Friday, Shoulders & Arms)', async () => {
+  it('shows a ride record on a real recovery day (Friday, no longer a training day since the 7 Aug ruling)', async () => {
+    // Friday dropped its weekdaySessions pin and its trainingWeekdays
+    // membership (7 Aug ruling, Option A; seed/program.ts's dated comment)
+    // — it now resolves as `kind: 'rest'` with its own activity (Recovery
+    // day, 40-min Zone 2 ride), not the old Shoulders & Arms training day.
+    // The ride's recordable control is unaffected either way.
     vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 7, 7, 9, 0, 0) }) // Fri 7 Aug 2026
     try {
       renderApp()
-      expect(await screen.findByRole('heading', { name: 'Shoulders & arm strength' })).toBeInTheDocument()
+      expect(await screen.findByRole('heading', { name: 'Recovery day' })).toBeInTheDocument()
       expect(screen.getByText('Ride record')).toBeInTheDocument()
 
       await userEvent.click(screen.getByRole('button', { name: 'Increase Duration' }))

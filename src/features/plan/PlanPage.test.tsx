@@ -81,8 +81,12 @@ describe('PlanPage', () => {
     renderApp()
     expect(await screen.findByRole('heading', { name: 'Phase 1 — Home' })).toBeInTheDocument()
     expect(await screen.findByText('20 Jul – 9 Aug')).toBeInTheDocument()
+    // 7 Aug ruling (Option A): Friday dropped its pin, Saturday newly
+    // pins Legs & Core (seed/program.ts's dated comment) — the summary
+    // line is built straight off weekdaySessions, so it now shows the
+    // same session twice, for Wed and Sat.
     expect(
-      await screen.findByText('Mon Chest & Back · Wed Legs & Core · Fri Shoulders & Arms'),
+      await screen.findByText('Mon Chest & Back · Wed Legs & Core · Sat Legs & Core'),
     ).toBeInTheDocument()
   })
 
@@ -194,7 +198,11 @@ describe('PlanPage rotation-mode rendering (an explicit opt-out from pinned sche
     expect(screen.queryByText(/each weekday's session is fixed/)).toBeNull()
     // rotationLine composes from raw rotation ids, not resolved session
     // names (a pre-existing PhaseHeader quirk, unrelated to this test).
-    expect(await screen.findByText(/alternate, Mon \/ Wed \/ Fri/)).toBeInTheDocument()
+    // weekdaysLabel comes straight off trainingWeekdays, which the 7 Aug
+    // ruling moved from Mon/Wed/Fri to Mon/Wed/Sat (seed/program.ts's
+    // dated comment) — this test doesn't override trainingWeekdays, so
+    // it inherits the new value.
+    expect(await screen.findByText(/alternate, Mon \/ Wed \/ Sat/)).toBeInTheDocument()
   })
 })
 
@@ -295,16 +303,19 @@ describe('PlanPage activity days', () => {
     })
 
     it('a projected/scheduled session: shows the activity alongside the session and the Projected badge', async () => {
+      // Re-anchored from Friday to Saturday (7 Aug ruling, Option A):
+      // Friday is no longer a training day, so it can no longer carry a
+      // projected session at all. Saturday newly pins Legs & Core.
       await programRepo.put({
         ...seedProgram,
         origin: 'imported',
-        weekdayActivities: { 5: trainingDayActivity }, // Fri = Shoulders & Arms
+        weekdayActivities: { 6: trainingDayActivity }, // Sat = Legs & Core
       })
       renderApp()
 
-      const row = (await screen.findByText('Fri 31 Jul')).closest('li')
+      const row = (await screen.findByText('Sat 1 Aug')).closest('li')
       expect(row).not.toBeNull()
-      expect(row).toHaveTextContent('Shoulders & Arms')
+      expect(row).toHaveTextContent('Legs & Core')
       expect(row).toHaveTextContent('Projected')
       expect(row).toHaveTextContent('Zone 2 ride')
     })
@@ -315,11 +326,19 @@ describe('PlanPage activity days', () => {
     // content batch), so the bare "No session" fallback (PlanPage.tsx's
     // last branch) needs a program that genuinely has none for the
     // skipped weekday, to keep that code path covered.
+    //
+    // Re-anchored from Friday to Monday 20 Jul (7 Aug ruling, Option A):
+    // Friday dropped both its weekdaySessions pin and its trainingWeekdays
+    // membership, so with weekdayActivities also cleared here it is no
+    // longer scheduled by either test (projectSchedule's dates loop:
+    // `trainingWeekdays.includes(weekday) || weekdayActivities?.[weekday]`)
+    // and the row would never render at all. Monday is untouched by the
+    // amendment and still exercises the same code path.
     await programRepo.put({ ...seedProgram, origin: 'imported', weekdayActivities: undefined })
     await putCompletedWorkout('2026-07-22', seedProgram.sessions[1]) // Wed = Legs & Core
     renderApp()
     expect(await screen.findByText('Wed 22 Jul')).toBeInTheDocument()
-    const skippedRow = (await screen.findByText('Fri 24 Jul')).closest('li')
+    const skippedRow = (await screen.findByText('Mon 20 Jul')).closest('li')
     expect(skippedRow).not.toBeNull()
     expect(within(skippedRow!).getByLabelText('No session')).toHaveTextContent('—')
     expect(skippedRow).not.toHaveTextContent(/missed/i)

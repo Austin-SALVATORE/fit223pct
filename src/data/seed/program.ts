@@ -65,10 +65,17 @@ const DUMBBELL_MAX_KG = 15
  * Phase 1 — Home, 20 Jul to 9 Aug 2026 (docs/Training.md,
  * docs/programs/phase-1-home-v3-coach-spec.md — the coach's own program,
  * transcribed directly, not a laddered conversion of the earlier A/B
- * seed). Weekday-pinned: Mon Chest & Back, Wed Legs & Core, Fri Shoulders
- * & Arms — every weekday always offers the same session identity. Dumbbell-
- * only equipment tier, 15 kg/hand ceiling; every compound is a three-set
+ * seed). Weekday-pinned: Mon Chest & Back, Wed Legs & Core — every
+ * weekday always offers the same session identity. Dumbbell-only
+ * equipment tier, 15 kg/hand ceiling; every compound is a three-set
  * ascending ladder, every isolation accessory a two-set rep-range.
+ *
+ * Final-weekend amendment (owner ruling, 7 Aug ~17:45, lead go-ahead
+ * "Option A"): Friday no longer pins Shoulders & Arms — see the dated
+ * comment beside `weekdaySessions` below for why, and for why this does
+ * not reopen the 6 Aug "amendment A1" ruling (no Mesocycle 2 workout
+ * before Monday 10 Aug): A1 protects M2 specifically, and Saturday's new
+ * pin is phase-1-home's own Legs & Core, never an M2 session.
  */
 export const seedProgram: Program = {
   id: 'phase-1-home',
@@ -77,9 +84,43 @@ export const seedProgram: Program = {
   phase: 1,
   startDate: '2026-07-20',
   endDate: '2026-08-09',
-  trainingWeekdays: [1, 3, 5],
+  /*
+    Final-weekend amendment (owner ruling, 7 Aug ~17:45; lead ruling
+    "Option A", same day): the program's last two training days move from
+    Mon/Wed/Fri to Mon/Wed/Sat.
+      - Friday (5) drops its pin and its trainingWeekdays membership —
+        it becomes recovery-only. Its existing weekdayActivities[5]
+        content (40-min Zone 2 ride, recovery-day stretching) is
+        untouched; only the session pin is removed. `sessionForDay`
+        (src/domain/schedule.ts:220-236) throws if a training weekday has
+        no pinned session, so the trainingWeekdays edit below and this
+        one are one atomic change, never split across commits — proved by
+        running resolveDayPlan against a pin-removed-only variant, which
+        throws for 2026-08-07.
+      - Saturday (6) newly pins Legs & Core — the same session already
+        pinned on Wednesday. Verified against sessionForDay that the
+        weekday-pinned resolution path has no per-session uniqueness
+        assumption: it looks up weekdaySessions by weekday key alone, so
+        one session id pinned to two weekdays is safe. Saturday's
+        existing weekdayActivities[6] ride content is untouched; the pin
+        is what turns it into a real training day with a start button,
+        not a cosmetic label.
+      - This makes Saturday resolve as `kind: 'training'` in
+        resolveDayPlan/projectSchedule — before the successor-preview
+        lookahead (`~/.claude/plans/final-rest-day-lookahead.md`) that
+        the 6 Aug "amendment A1" ruling put in place. That ruling's own
+        invariant — no Mesocycle 2 workout can be started or stored
+        before Monday 10 Aug — is untouched, because Saturday's start
+        button starts phase-1-home's own legs-core session, never an M2
+        one; A1 and this change govern different programs. The one
+        actual loss is Saturday's Mesocycle-2 preview card (Sunday keeps
+        it) — a stated, accepted consequence, not a silent one
+        (src/features/today/TodayPage.phaseBoundary.test.tsx re-anchors
+        both days to match).
+  */
+  trainingWeekdays: [1, 3, 6],
   schedulingMode: 'weekday-pinned',
-  weekdaySessions: { 1: 'chest-back', 3: 'legs-core', 5: 'shoulders-arms' },
+  weekdaySessions: { 1: 'chest-back', 3: 'legs-core', 6: 'legs-core' },
   // Inert in weekday-pinned mode (sessionForDay never consults it) — kept
   // populated and internally consistent (every id resolves) rather than
   // an empty/placeholder array, since `rotation` is still a required field.

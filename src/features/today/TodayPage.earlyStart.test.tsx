@@ -57,9 +57,13 @@ describe('Early start on unscheduled days', () => {
     const workouts = await db.workouts.toArray()
     expect(workouts).toHaveLength(1)
     expect(workouts[0].date).toBe('2026-07-23')
-    // Weekday-pinned: the next training day from Thursday is Friday —
-    // Shoulders & Arms, always, regardless of completed count.
-    expect(workouts[0].sessionTemplateId).toBe('shoulders-arms')
+    // Weekday-pinned: the next training day from Thursday is now Saturday
+    // — Friday dropped its pin and its trainingWeekdays membership (7 Aug
+    // ruling, Option A; seed/program.ts's dated comment beside
+    // `weekdaySessions`), so the search lands on Saturday's own pin,
+    // Legs & Core (the same session already pinned on Wednesday) —
+    // always, regardless of completed count.
+    expect(workouts[0].sessionTemplateId).toBe('legs-core')
   })
 
   it('offers the same quiet start before the program has begun', async () => {
@@ -99,54 +103,46 @@ describe('Early start on unscheduled days', () => {
     expect(workout.readiness?.tier).toBe('easier')
     expect(workout.readiness?.drivers).toContain('sleep')
     /*
-      Shoulders & Arms is now a ladder-only session (coach recalibration,
-      31 Jul — docs/programs/phase-1-home-v3-shoulders-arms-revision.md), so
-      the mechanism that produces "Adjusted for readiness" here is every
-      ladder losing its top rung, not an accessory's `sets` being trimmed
-      by one — `applyReadiness` (adjustments.ts) branches on `item.setPlan`
-      before it ever looks at `role`.
+      Re-anchored 7 Aug (Option A): Thursday's early start now reaches
+      Legs & Core, not Shoulders & Arms — Friday dropped its pin, and
+      shoulders-arms is no longer pinned to any weekday at all for the
+      rest of this phase (seed/program.ts's dated comment). The mechanism
+      under test — early start applies readiness exactly as a training
+      day would, easing a ladder by dropping its top rung, via
+      `applyReadiness` branching on `item.setPlan` before it looks at
+      `role` — is unchanged; only the session supplying the ladders is.
 
-      The rung floor moved from two to one (owner ruling,
-      docs/design/Mesocycle2Implementation.md §5), so **every** ladder in
-      this session now eases on a low-readiness day — including the
-      2-rung accessories, which used to sit exactly at the old floor and
-      were the one thing an easier day left untouched here. That the
-      old floor case now also eases is the whole point of the ruling, so
-      each assertion below is checked against the *authored* ladder's own
-      top rung sliced off, not a literal length — `toHaveLength(N)` alone
-      can't tell "eased from N+1" apart from "was already N and untouched",
-      and a mutation test proved exactly that for the 3-rung case below:
-      shrinking the seed's own ladder to match the expected post-ease
-      length left the assertion green for the wrong reason.
+      Legs & Core has no 2-rung ladder, so the "floor moved from two to
+      one" edge case shoulders-arms used to demonstrate here
+      (docs/design/Mesocycle2Implementation.md §5) is no longer reachable
+      through this early-start path — shoulders-arms itself is
+      unreachable from any weekday now. That mechanism is still covered
+      generically at the domain level (src/domain/adjustments.test.ts),
+      independent of which seeded session happens to carry a 2-rung
+      ladder; this test keeps proving the *integration* path (early start
+      → readiness → a real ladder loses its top rung) against whichever
+      session that path now resolves to. Each assertion is checked
+      against the *authored* ladder's own top rung sliced off, not a
+      literal length — `toHaveLength(N)` alone can't tell "eased from
+      N+1" apart from "was already N and untouched".
     */
     function authoredSetPlan(exerciseId: string) {
       return seedProgram.sessions
-        .find((s) => s.id === 'shoulders-arms')
+        .find((s) => s.id === 'legs-core')
         ?.items.find((i) => i.exerciseId === exerciseId)?.setPlan
     }
 
-    const authoredMainLift = authoredSetPlan('dumbbell-shoulder-press')
+    const authoredMainLift = authoredSetPlan('goblet-squat')
     expect(authoredMainLift).toHaveLength(3)
-    const mainLift = workout.exercises.find((e) => e.exerciseId === 'dumbbell-shoulder-press')
+    const mainLift = workout.exercises.find((e) => e.exerciseId === 'goblet-squat')
     expect(mainLift?.prescription.setPlan).toEqual(authoredMainLift?.slice(0, -1))
 
-    // The one-time floor case: dumbbell-lateral-raise is a 2-rung ladder,
-    // and until this ruling that meant "already at the floor, untouched."
-    // Now it eases down to its single surviving rung, same mechanism as
-    // every other ladder in the session.
-    const authoredAccessory = authoredSetPlan('dumbbell-lateral-raise')
-    expect(authoredAccessory).toHaveLength(2)
-    const accessory = workout.exercises.find((e) => e.exerciseId === 'dumbbell-lateral-raise')
-    expect(accessory?.prescription.setPlan).toEqual(authoredAccessory?.slice(0, -1))
-    expect(accessory?.prescription.sets).toBe(1)
-
-    // overhead-triceps-extension is the coach's one *three*-rung accessory
-    // — unaffected by the floor moving (it was never at either floor), so
-    // it drops its top rung exactly as it did before this ruling.
-    const authoredTriceps = authoredSetPlan('overhead-triceps-extension')
-    expect(authoredTriceps).toHaveLength(3)
-    const triceps = workout.exercises.find((e) => e.exerciseId === 'overhead-triceps-extension')
-    expect(triceps?.prescription.setPlan).toEqual(authoredTriceps?.slice(0, -1))
+    // bulgarian-split-squat — legs-core's other three-rung ladder, same
+    // mechanism, proving this isn't specific to one exercise.
+    const authoredSecondLift = authoredSetPlan('bulgarian-split-squat')
+    expect(authoredSecondLift).toHaveLength(3)
+    const secondLift = workout.exercises.find((e) => e.exerciseId === 'bulgarian-split-squat')
+    expect(secondLift?.prescription.setPlan).toEqual(authoredSecondLift?.slice(0, -1))
 
     await db.checkins.clear()
   })
