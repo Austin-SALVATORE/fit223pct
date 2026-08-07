@@ -1,7 +1,8 @@
 # Verified Equipment Profile
 
 **Status: partially verified — plate inventory coach-confirmed 7 Aug 2026;
-handle weight and plate interchangeability unmeasured.**
+handle weight measured 7 Aug 2026; plate interchangeability and handle
+count still unmeasured.**
 
 This document is the durable home for the athlete's real equipment. It
 exists because the inventory below arrived in a coach *message*, appears
@@ -25,13 +26,31 @@ dumbbells — there is no fixed weight ladder.
 | A | 4 × 1.0 kg · 4 × 1.25 kg · 4 × 2.5 kg |
 | B | 8 × 1.0 kg · 4 × 2.0 kg |
 
-## Unmeasured — blocks the achievable-load list
+## Measured — 7 Aug 2026
+
+| Fact | Value | Source |
+|---|---|---|
+| Empty handle weight, **collars on** | **1.2 kg** | Owner, kitchen scale, reported in chat 7 Aug 2026 ~16:00 |
+
+**Immediate consequence (preliminary, pending Phase 2's proper
+enumeration):** every buildable load is `1.2 + 2 × (side sum)`, and side
+sums step in 0.25 kg — so achievable loads all end in **.2 or .7**.
+**None of the coach's written targets (5 / 6 / 8 / 10 / 12 / 14 / 15 kg)
+is exactly buildable.** Under ruling ③ (round down, globally) every
+prescription maps to its nearest lower achievable neighbour (10 → 9.7,
+15 → 14.7, …). This is the outcome the 7 Aug amendment's sensitivity
+finding predicted for a near-1.25 kg handle, and it makes the Phase 5
+revalidation report's expected classification for essentially the whole
+program: *intentionally approximate (mapped)* — for the coach to confirm,
+never silently rounded by the app.
+
+## Unmeasured — still blocks the achievable-load list
 
 | Fact | How it gets measured | Why it matters |
 |---|---|---|
-| Empty handle weight, **collars on** | Owner weighs one on a scale (committed to, 7 Aug board tap) | Translates the entire load grid. Measured prototype result: at a 2.0 kg handle, 7 of 8 currently-prescribed weights are exactly buildable; at 1.25 / 1.75 / 2.27 / 2.75 kg, **zero of eight** are. |
 | Set A ↔ Set B plate interchangeability (bore) | Owner tries one Set B plate on a Set A handle | Decides program executability: without mixing, the bilateral ceiling is ~11.5 kg + handle and the prescribed 12/14/15 kg tops are unreachable. |
 | Handle count | Owner counts | Bilateral lifts load two handles from one shared inventory. |
+| Max plates per side | Owner checks how many plates physically fit one side (ruling ⑧: wait for the measurement, assume nothing) | Caps the top of the achievable list. |
 
 ## Standing rules (coach, 7 Aug amendment — do not weaken)
 
