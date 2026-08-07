@@ -329,75 +329,75 @@
       }
     },
     "push-up": {
-      "name": "Push-up",
+      "name": "俯卧撑",
       "cues": [
         "保持头部、躯干和髋部呈一条直线",
         "双手略宽于肩",
         "胸部和髋部同时下降，手肘与躯干约成30-45度角"
       ],
       "teachingConcept": {
-        "title": "Elevate to regress",
-        "body": "Raise the hands on the bench to make the same body line easier, then lower the hand position as strength improves."
+        "title": "垫高，降低难度",
+        "body": "把手垫高放在训练凳上，让同样的身体姿势变得更轻松，随着力量提升再逐渐降低手的高度。"
       }
     },
     "dumbbell-fly": {
-      "name": "Dumbbell fly",
+      "name": "哑铃飞鸟",
       "cues": [
         "肩胛骨轻轻贴住训练凳",
         "手肘保持微屈，全程不变",
         "在肩膀向前卷起之前停止下放"
       ],
       "teachingConcept": {
-        "title": "The arc, not a press",
-        "body": "Learn the arc with a light load and bring the upper arms toward one another without turning the movement into a press."
+        "title": "是弧线，不是推举",
+        "body": "用轻重量学习这个弧线动作，让上臂彼此靠拢，不要把动作变成推举。"
       }
     },
     "dumbbell-pullover": {
-      "name": "Dumbbell pullover",
+      "name": "哑铃直臂上拉",
       "cues": [
         "双手稳稳握住一个哑铃",
         "保持手肘微屈固定，肋骨下沉",
         "肩膀感到有控制的牵拉感时停止"
       ],
       "teachingConcept": {
-        "title": "An arc from the shoulders",
-        "body": "Move the dumbbell in an arc from the shoulders rather than bending and straightening the elbows."
+        "title": "从肩膀发起的弧线",
+        "body": "让哑铃沿弧线从肩膀发力移动，而不是靠弯曲和伸直手肘。"
       }
     },
     "chest-supported-row": {
-      "name": "Chest-supported dumbbell row",
+      "name": "俯卧哑铃划船",
       "cues": [
         "胸部始终贴住训练凳",
         "手肘向后拉，不要耸肩",
         "稍作停顿，再有控制地下放"
       ],
       "teachingConcept": {
-        "title": "No momentum to borrow",
-        "body": "The bench removes torso momentum, so reduce the load until the elbows can drive the movement cleanly."
+        "title": "没有惯性可借",
+        "body": "训练凳消除了躯干的惯性，所以要减轻重量，直到手肘能够干净利落地主导动作。"
       }
     },
     "hamstring-walkout": {
-      "name": "Hamstring walkout",
+      "name": "臀桥行走",
       "cues": [
         "从稳定的臀桥姿势开始",
         "用脚跟迈小步",
         "整个还原过程中保持髋部抬高、肋骨下沉"
       ],
       "teachingConcept": {
-        "title": "Hips stay level",
-        "body": "Walk only as far as the hips can stay level, then extend the distance one small step at a time."
+        "title": "髋部保持水平",
+        "body": "只走到髋部还能保持水平的距离，然后每次只增加一小步的距离。"
       }
     },
     "standing-calf-raise": {
-      "name": "Standing dumbbell calf raise",
+      "name": "哑铃站姿提踵",
       "cues": [
         "两侧各持一个哑铃",
         "用前脚掌发力向上，不要向前晃动",
         "顶点稍作停顿，然后下放至有控制的拉伸感"
       ],
       "teachingConcept": {
-        "title": "Full range first",
-        "body": "Use full vertical range before adding load; a shorter heavy rep does not count."
+        "title": "先追求完整幅度",
+        "body": "先做满垂直方向的完整幅度，再增加重量；幅度不够的重次不算数。"
       }
     }
   },

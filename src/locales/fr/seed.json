@@ -329,75 +329,75 @@
       }
     },
     "push-up": {
-      "name": "Push-up",
+      "name": "Pompe",
       "cues": [
         "Garde la tête, le buste et les hanches alignés en une seule ligne",
         "Place les mains légèrement plus larges que les épaules",
         "Descends la poitrine et les hanches ensemble, coudes à environ 30-45° du buste"
       ],
       "teachingConcept": {
-        "title": "Elevate to regress",
-        "body": "Raise the hands on the bench to make the same body line easier, then lower the hand position as strength improves."
+        "title": "Surélever pour faciliter",
+        "body": "Surélève les mains sur un banc pour faciliter la même ligne de corps, puis abaisse la position des mains à mesure que ta force progresse."
       }
     },
     "dumbbell-fly": {
-      "name": "Dumbbell fly",
+      "name": "Écarté couché aux haltères",
       "cues": [
         "Garde les omoplates légèrement calées contre le banc",
         "Maintiens une légère flexion des coudes, fixe tout au long du mouvement",
         "Arrête la descente avant que les épaules ne s'enroulent vers l'avant"
       ],
       "teachingConcept": {
-        "title": "The arc, not a press",
-        "body": "Learn the arc with a light load and bring the upper arms toward one another without turning the movement into a press."
+        "title": "Un arc, pas un développé",
+        "body": "Apprends l'arc avec une charge légère et rapproche tes bras l'un de l'autre sans transformer le mouvement en développé."
       }
     },
     "dumbbell-pullover": {
-      "name": "Dumbbell pullover",
+      "name": "Pull-over à l'haltère",
       "cues": [
         "Tiens un seul haltère fermement à deux mains",
         "Garde une légère flexion des coudes, fixe, et les côtes basses",
         "Arrête-toi quand les épaules atteignent un étirement contrôlé"
       ],
       "teachingConcept": {
-        "title": "An arc from the shoulders",
-        "body": "Move the dumbbell in an arc from the shoulders rather than bending and straightening the elbows."
+        "title": "Un arc depuis les épaules",
+        "body": "Déplace l'haltère en arc depuis les épaules plutôt que de plier et tendre les coudes."
       }
     },
     "chest-supported-row": {
-      "name": "Chest-supported dumbbell row",
+      "name": "Rowing buste soutenu aux haltères",
       "cues": [
         "Garde la poitrine en contact avec le banc",
         "Tire les coudes vers l'arrière sans hausser les épaules",
         "Marque une brève pause avant de redescendre avec contrôle"
       ],
       "teachingConcept": {
-        "title": "No momentum to borrow",
-        "body": "The bench removes torso momentum, so reduce the load until the elbows can drive the movement cleanly."
+        "title": "Pas d'élan à emprunter",
+        "body": "Le banc supprime l'élan du buste, donc réduis la charge jusqu'à ce que les coudes puissent mener le mouvement proprement."
       }
     },
     "hamstring-walkout": {
-      "name": "Hamstring walkout",
+      "name": "Marche en pont fessier",
       "cues": [
         "Commence dans un pont fessier stable",
         "Prends de petits pas avec les talons",
         "Garde les hanches hautes et les côtes basses pendant tout le retour"
       ],
       "teachingConcept": {
-        "title": "Hips stay level",
-        "body": "Walk only as far as the hips can stay level, then extend the distance one small step at a time."
+        "title": "Hanches de niveau",
+        "body": "Avance seulement aussi loin que les hanches peuvent rester de niveau, puis augmente la distance un petit pas à la fois."
       }
     },
     "standing-calf-raise": {
-      "name": "Standing dumbbell calf raise",
+      "name": "Mollets debout aux haltères",
       "cues": [
         "Tiens un haltère de chaque côté",
         "Monte sur l'avant des pieds sans basculer vers l'avant",
         "Marque une pause en haut, puis descends jusqu'à un étirement contrôlé"
       ],
       "teachingConcept": {
-        "title": "Full range first",
-        "body": "Use full vertical range before adding load; a shorter heavy rep does not count."
+        "title": "Amplitude complète d'abord",
+        "body": "Utilise toute l'amplitude verticale avant d'ajouter de la charge ; une répétition lourde mais raccourcie ne compte pas."
       }
     }
   },
