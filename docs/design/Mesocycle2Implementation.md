@@ -479,24 +479,27 @@ collide across the boundary, so `PlanDayPage`'s lookup
 
 ### 10.2 Scheduling
 
-§3 pins sessions to Monday/Wednesday/Friday. That is
+§3 originally pinned sessions to Monday/Wednesday/Friday —
 `trainingWeekdays: [1,3,5]` with `schedulingMode: 'weekday-pinned'` and
-`weekdaySessions`.
+`weekdaySessions`. **Superseded, 7 Aug.**
 
-> **CONFLICT — LEAD MUST SEQUENCE.** `docs/design/MissedDayDeferral.md`
-> rulings 4 and 7 **retire weekday pinning** and make rotation canonical,
-> and its Phase 5 deletes both fields. Spec §3 requires *"fixed weekday
-> assignments"* and cites our own finding that the import format cannot
-> preserve them. **These two are in direct opposition and the dev cannot
-> resolve it mid-edit.**
+> **CONFLICT — RESOLVED, 7 Aug.** `docs/design/MissedDayDeferral.md`
+> rulings 4 and 7 retire weekday pinning and make rotation canonical;
+> spec §3 (below) required *"fixed weekday assignments."* The coach's
+> 7 Aug ruling (`~/.claude/plans/m2-rotation-switch.md`) resolves the
+> conflict explicitly in rotation's favour: sessions run sequentially
+> A→B→C on whichever weekdays training actually happens, and
+> `trainingWeekdays` stays as rhythm only, not identity.
+> `mesocycle2Build` now seeds `schedulingMode: 'rotation'`, with
+> `weekdaySessions` removed (not merely unused — `MissedDayDeferral.md`
+> ruling 4 already called a retained-but-dead map a trap for the next
+> reader). `MissedDayDeferral.md` Phase 5's broader field removal
+> (`types.ts`, `programImport.ts`, both Plan surfaces) remains on hold —
+> this is Mesocycle 2's own seed only, not the general-purpose retirement.
 >
-> **Recommendation: Mesocycle 2 seeds `weekday-pinned`, and
-> MissedDayDeferral Phase 5 (field removal) is put on hold.** Rationale:
-> the coach has ruled on the calendar, §3 is dated after the deferral
-> ruling, and deleting a field the live program depends on would break
-> Monday. The deferral doc's *within-phase* work is unaffected.
->
-> This needs the lead's explicit call before the dev seeds anything.
+> **`phase-1-home` is unaffected and stays `weekday-pinned`** — it is
+> completed history by the time this ruling landed, and re-modelling it
+> would rewrite what the Plan page says happened for days already lived.
 
 ### 10.3 Migration cost
 
@@ -669,7 +672,8 @@ spec §6-§8:
   well-meaning refactor);
 - side plank is `mode: 'seconds'` with two levels, 40 then 30 (§8/§10);
 - `trainingWeekdays` is `[1,3,5]` and `startDate`/`endDate` are
-  `2026-08-10` / `2026-09-13` (§3).
+  `2026-08-10` / `2026-09-06` (§3, `endDate` corrected 7 Aug — a
+  four-week block ending before the 7 Sep travel, was `2026-09-13`).
 
 **Negative control:** perturb one seeded weight by 2 kg; the test names
 that exercise. This is stronger than the retired gym test because it

@@ -251,8 +251,8 @@ describe('mesocycle2Build — spec conformance (v2.7 §6-§8)', () => {
   it('trainingWeekdays and dates match spec §3', () => {
     expect(mesocycle2Build.trainingWeekdays).toEqual([1, 3, 5])
     expect(mesocycle2Build.startDate).toBe('2026-08-10')
-    expect(mesocycle2Build.endDate).toBe('2026-09-13')
-    expect(mesocycle2Build.schedulingMode).toBe('weekday-pinned')
+    expect(mesocycle2Build.endDate).toBe('2026-09-06')
+    expect(mesocycle2Build.schedulingMode).toBe('rotation')
   })
 
   it('every session in EXPECTED exists in the seeded program, and vice versa', () => {

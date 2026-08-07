@@ -87,9 +87,11 @@ Shoulders & Arms), equipment tier, and weekly calendar. This doc doesn't
 duplicate that table; treat the coach spec as the source of truth and this
 section as the "why," not the "what."
 
-Scheduling is weekday-pinned, not A/B-rotated (`Program.schedulingMode`) —
-every training weekday always offers the same session identity, so a
-missed day never shifts what a later day offers.
+Phase 1's own scheduling is weekday-pinned, not A/B-rotated
+(`Program.schedulingMode`) — every training weekday always offers the
+same session identity, so a missed day never shifts what a later day
+offers. **This does not carry over to Phase 2** (below) — Fit223 has no
+single scheduling model, it is a per-program choice.
 
 ## Phase 2 (10 Aug →, Mesocycle 2 — Home Progressive)
 
@@ -99,3 +101,14 @@ retired before it shipped: the coach's Mesocycle 2 continues at the same
 (`docs/design/Mesocycle2Implementation.md` §9, 6 Aug). Architecture still
 treats programs as data, so this remains a content change, not a code
 change — only the content itself moved.
+
+Scheduling is **rotation**, not weekday-pinned (coach ruling, 7 Aug,
+`~/.claude/plans/m2-rotation-switch.md`) — session identity follows how
+many sessions have actually been completed, not the calendar; the
+weekly calendar (`trainingWeekdays`) still decides *whether* a given day
+is a training day, but not *which* session it offers. This reverses
+Phase 1's model deliberately: `MissedDayDeferral.md` rulings 3, 4 and 7
+name rotation as the canonical model, and Phase 1 was left pinned only
+because it was already completed history by the time that ruling
+shipped — re-modelling it would rewrite what the Plan page says
+happened.

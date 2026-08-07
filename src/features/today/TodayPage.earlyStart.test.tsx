@@ -152,8 +152,9 @@ describe('Early start on unscheduled days', () => {
   })
 
   it('offers no start of any kind once the phase has ended', async () => {
-    // 14 Sep — the day after mesocycle-2-build's endDate (13 Sep). Mesocycle
-    // 2 Deload (14-20 Sep) is deliberately not seeded yet
+    // 14 Sep — past mesocycle-2-build's endDate (6 Sep, corrected 7 Aug —
+    // the coach's four-week block ending before the 7 Sep travel).
+    // Mesocycle 2 Deload (14-20 Sep) is deliberately not seeded yet
     // (docs/design/Mesocycle2Implementation.md §11.2), so this date still
     // has no active or upcoming program — 11 Aug no longer works for this
     // assertion now that mesocycle-2-build covers it.

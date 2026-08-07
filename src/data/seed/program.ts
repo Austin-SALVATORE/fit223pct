@@ -451,12 +451,11 @@ export const mesocycle2Build: Program = {
   origin: 'seed',
   phase: 2,
   startDate: '2026-08-10',
-  endDate: '2026-09-13',
+  endDate: '2026-09-06',
   trainingWeekdays: [1, 3, 5],
-  schedulingMode: 'weekday-pinned',
-  weekdaySessions: { 1: 'mesocycle2-chest-back', 3: 'mesocycle2-legs-core', 5: 'mesocycle2-shoulders-arms' },
-  // Inert in weekday-pinned mode, kept internally consistent — see
-  // seedProgram's identical convention above.
+  schedulingMode: 'rotation',
+  // Sequential: identity follows completed count, not the calendar
+  // (coach ruling 7 Aug; MissedDayDeferral.md rulings 3/4/7).
   rotation: ['mesocycle2-chest-back', 'mesocycle2-legs-core', 'mesocycle2-shoulders-arms'],
   sessions: [
     // Session A - Chest and Back Emphasis. Target 50-60 min; bench angle
