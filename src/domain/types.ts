@@ -395,6 +395,16 @@ export interface PlateSet {
   plates: { weightKg: number; count: number }[]
   /** How many handles draw from this set's plates. Fewer than 2 means no bilateral pair can be built from this set alone (only single-implement, or a cross-set pair). */
   handleCount: number
+  /**
+   * The physical sleeve's weight rating for one side of a handle drawing
+   * from this set, in kg — a hardware fact, per set, not a plate count.
+   * Superseded 7 Aug from an earlier "4 plates/side" placeholder once the
+   * owner measured the actual rating (15kg/side Set A, 8kg/side Set B) —
+   * both sit at or above each set's own physical plate supply, so the
+   * cap is non-binding for the real profile; it exists for whatever
+   * hardware isn't. Absent means unconstrained.
+   */
+  maxSideKg?: number | null
 }
 
 /**
@@ -424,10 +434,8 @@ export interface PlateSet {
 export interface EquipmentProfile {
   /** kg per bare handle, no plates. */
   handleKg?: number | null
-  /** One entry per non-mixing plate bore — see `PlateSet`'s own doc. */
+  /** One entry per non-mixing plate bore — see `PlateSet`'s own doc, including its own `maxSideKg` sleeve rating. */
   plateSets?: PlateSet[] | null
-  /** Physical ceiling on plates per side, if any — absent means unconstrained. */
-  maxPlatesPerSide?: number | null
   /**
    * ISO date the athlete confirmed this profile. Same contract as
    * `profileConfirmedAt` below — absent means never verified, whatever

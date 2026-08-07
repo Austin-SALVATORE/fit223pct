@@ -34,8 +34,13 @@ function totalWeightQ(plates: PlateSet['plates'], cv: CountVector): number {
   return cv.reduce((sum, count, i) => sum + count * Math.round(plates[i].weightKg * Q), 0)
 }
 
-function plateCountOf(cv: CountVector): number {
-  return cv.reduce((sum, count) => sum + count, 0)
+/**
+ * `PlateSet.maxSideKg` converted to the quarter-kg units the enumeration
+ * works in — `null` when the set has no sleeve rating on record, meaning
+ * unconstrained.
+ */
+function maxSideWeightQ(plateSet: PlateSet): number | null {
+  return plateSet.maxSideKg != null ? Math.round(plateSet.maxSideKg * Q) : null
 }
 
 /**
@@ -63,14 +68,16 @@ function validatePlateSetSize(plateSet: PlateSet): void {
  * Every weight one handle can reach drawing this set's *full* inventory
  * alone. Composition-symmetric (both sides of a handle load identically
  * — the L2 model, plan §1.1), so only count vectors splittable evenly
- * across the two sides are valid. `maxPlatesPerSide` (R3) caps plates on
- * one side; `null` leaves it unconstrained.
+ * across the two sides are valid. `maxSideQ` is the set's sleeve rating
+ * in quarter-kg (a single handle's one side is half its total usage
+ * here, since `cv` covers both sides combined); `null` leaves it
+ * unconstrained.
  */
-function singleHandleWeightsQ(plates: PlateSet['plates'], maxPlatesPerSide: number | null): Set<number> {
+function singleHandleWeightsQ(plates: PlateSet['plates'], maxSideQ: number | null): Set<number> {
   const out = new Set<number>()
   for (const cv of countVectors(plates)) {
     if (!cv.every((count) => count % 2 === 0)) continue
-    if (maxPlatesPerSide !== null && plateCountOf(cv) / 2 > maxPlatesPerSide) continue
+    if (maxSideQ !== null && totalWeightQ(plates, cv) / 2 > maxSideQ) continue
     out.add(totalWeightQ(plates, cv))
   }
   return out
@@ -80,17 +87,20 @@ function singleHandleWeightsQ(plates: PlateSet['plates'], maxPlatesPerSide: numb
  * Every per-handle weight achievable as a *matched bilateral pair* drawn
  * from this one set — ruling ②/⑦: the two handles need only match in
  * total weight, composition may differ across the pair. Enumerates every
- * valid one-side composition, pairs any two (including a composition
- * with itself) whose per-side weight matches, and keeps the pair only if
- * both handles' combined plate usage still fits the set's own inventory
- * — the two handles draw from the same physical pool at once.
+ * valid one-side composition (already the true weight of one side here,
+ * unlike `singleHandleWeightsQ`'s full-handle `cv` — `maxSideQ` applies
+ * directly), pairs any two (including a composition with itself) whose
+ * per-side weight matches, and keeps the pair only if both handles'
+ * combined plate usage still fits the set's own inventory — the two
+ * handles draw from the same physical pool at once.
  */
-function bilateralPairWeightsQ(plates: PlateSet['plates'], maxPlatesPerSide: number | null): Set<number> {
+function bilateralPairWeightsQ(plates: PlateSet['plates'], maxSideQ: number | null): Set<number> {
   const sides: { cv: CountVector; weightQ: number }[] = []
   for (const cv of countVectors(plates)) {
     if (!cv.every((count, i) => count * 2 <= plates[i].count)) continue
-    if (maxPlatesPerSide !== null && plateCountOf(cv) > maxPlatesPerSide) continue
-    sides.push({ cv, weightQ: totalWeightQ(plates, cv) })
+    const weightQ = totalWeightQ(plates, cv)
+    if (maxSideQ !== null && weightQ > maxSideQ) continue
+    sides.push({ cv, weightQ })
   }
 
   const pairs = new Set<number>()
@@ -115,18 +125,19 @@ function computeAchievableLoads(profile: EquipmentProfile): AchievableLoads {
   // unreachable). Never default this.
   if (profile.handleKg == null) return { bilateral: [], singleImplement: [] }
   const handleKg = profile.handleKg
-  const maxPlatesPerSide = profile.maxPlatesPerSide ?? null
 
   // A set with no handle assigned to it contributes nothing physical —
   // exclude it before enumerating rather than enumerating and discarding.
   const usableSets = (profile.plateSets ?? []).filter((set) => set.handleCount >= 1)
   for (const set of usableSets) validatePlateSetSize(set)
 
-  const perSetSingle = usableSets.map((set) => singleHandleWeightsQ(set.plates, maxPlatesPerSide))
+  // Each set carries its own sleeve rating (maxSideKg) — there is no
+  // profile-wide cap, since different bores can have different hardware.
+  const perSetSingle = usableSets.map((set) => singleHandleWeightsQ(set.plates, maxSideWeightQ(set)))
   // A set with only one handle assigned physically cannot supply a
   // same-set matched pair — only one handle exists for that bore.
   const perSetBilateral = usableSets.map((set) =>
-    set.handleCount >= 2 ? bilateralPairWeightsQ(set.plates, maxPlatesPerSide) : new Set<number>(),
+    set.handleCount >= 2 ? bilateralPairWeightsQ(set.plates, maxSideWeightQ(set)) : new Set<number>(),
   )
 
   const singleQ = new Set<number>()

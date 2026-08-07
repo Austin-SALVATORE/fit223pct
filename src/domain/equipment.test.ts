@@ -10,7 +10,6 @@ import type { EquipmentProfile } from './types'
  */
 const REAL_PROFILE: EquipmentProfile = {
   handleKg: 1.2,
-  maxPlatesPerSide: 4,
   plateSets: [
     {
       plates: [
@@ -19,6 +18,12 @@ const REAL_PROFILE: EquipmentProfile = {
         { weightKg: 2.5, count: 4 },
       ],
       handleCount: 2,
+      // Sleeve weight rating, owner-measured 7 Aug ~19:00 — supersedes an
+      // earlier 4-plate count-cap placeholder. 15kg/side sits above Set
+      // A's own physical max (9.5kg/side, one handle drawing everything),
+      // so it is non-binding for this set — see the "sleeve cap" describe
+      // block below, which proves that rather than assuming it.
+      maxSideKg: 15,
     },
     {
       plates: [
@@ -26,6 +31,9 @@ const REAL_PROFILE: EquipmentProfile = {
         { weightKg: 2.0, count: 4 },
       ],
       handleCount: 2,
+      // Set B's own physical max is exactly 8.0kg/side — this rating is
+      // non-binding too, for the same reason.
+      maxSideKg: 8,
     },
   ],
   confirmedAt: '2026-08-07',
@@ -34,20 +42,21 @@ const REAL_PROFILE: EquipmentProfile = {
 describe('achievableLoads — real profile (docs/EquipmentProfile.md)', () => {
   it('computes the exact bilateral list', () => {
     expect(achievableLoads(REAL_PROFILE).bilateral).toEqual([
-      1.2, 3.2, 3.7, 5.2, 5.7, 6.2, 7.2, 8.2, 8.7, 9.2, 10.7, 11.2, 13.2,
+      1.2, 3.2, 3.7, 5.2, 5.7, 6.2, 7.2, 8.2, 8.7, 9.2, 10.7, 11.2, 13.2, 15.2,
     ])
   })
 
   it('computes the exact single-implement list', () => {
     expect(achievableLoads(REAL_PROFILE).singleImplement).toEqual([
       1.2, 3.2, 3.7, 5.2, 5.7, 6.2, 7.2, 7.7, 8.2, 8.7, 9.2, 10.2, 10.7, 11.2, 12.7, 13.2, 13.7, 15.2, 15.7, 16.2,
+      17.2, 17.7, 18.2, 20.2,
     ])
   })
 
-  it('caps the bilateral ceiling at 13.2 kg and the single-implement ceiling at 16.2 kg', () => {
+  it('reaches the bilateral ceiling at 15.2 kg and the single-implement ceiling at 20.2 kg (sleeve-weight amendment, 7 Aug ~19:00)', () => {
     const { bilateral, singleImplement } = achievableLoads(REAL_PROFILE)
-    expect(bilateral.at(-1)).toBe(13.2)
-    expect(singleImplement.at(-1)).toBe(16.2)
+    expect(bilateral.at(-1)).toBe(15.2)
+    expect(singleImplement.at(-1)).toBe(20.2)
   })
 
   it('reaches none of the prescribed 5/6/8/10/12/14/15 kg exactly as a matched bilateral pair', () => {
@@ -57,7 +66,16 @@ describe('achievableLoads — real profile (docs/EquipmentProfile.md)', () => {
     }
   })
 
-  it('maps every prescribed load to its nearest-lower achievable neighbour (ruling ③)', () => {
+  /**
+   * The sleeve-weight amendment raised the bilateral ceiling to 15.2 kg,
+   * but every written target still maps the same way — 15.2 exceeds all
+   * seven of them, so the ceiling move changes nothing here. Asserted
+   * explicitly, not just left to fall out of the list contents, because
+   * this is the specific fact the coach revalidation report leans on:
+   * the amendment reopens what's *directly achievable* at the top end,
+   * not the *mapped* classification for anything already below it.
+   */
+  it('maps every prescribed load to its nearest-lower achievable neighbour (ruling ③) — unchanged by the sleeve-weight amendment', () => {
     const { bilateral } = achievableLoads(REAL_PROFILE)
     expect(nearestAchievableLower(5, bilateral)).toBe(3.7)
     expect(nearestAchievableLower(6, bilateral)).toBe(5.7)
@@ -85,37 +103,79 @@ describe('achievableLoads — real profile (docs/EquipmentProfile.md)', () => {
 
 describe('achievableLoads — cross-set matching is a distinct code path (real profile)', () => {
   /**
-   * Verified against the shipped algorithm (scratchpad `cross-check.mjs`,
-   * 7 Aug 2026): 11.2 and 13.2 kg only appear in the real profile's
-   * bilateral list because Set A and Set B's single-handle lists happen
-   * to intersect at those weights — neither set alone can build a
-   * same-set matched pair there. Removing the second set removes them,
-   * proving the cross-set branch is load-bearing rather than redundant
-   * with same-set pairing.
+   * Verified against the shipped algorithm (scratchpad
+   * `cross-check-weightcap.mjs`, 7 Aug 2026): 11.2, 13.2, and — since the
+   * sleeve-weight amendment retired the old count cap — 15.2 kg only
+   * appear in the real profile's bilateral list because Set A and Set
+   * B's single-handle lists happen to intersect at those weights (15.2 is
+   * a 7.0kg/side match: Set A reaches it with 4 plates, Set B with 5 —
+   * verified against `check-152-composition.mjs`). Neither set alone can
+   * build a same-set matched pair at any of the three. Removing the
+   * second set removes them, proving the cross-set branch is
+   * load-bearing rather than redundant with same-set pairing.
    */
-  it('produces 11.2 and 13.2 kg only when both sets are present', () => {
+  it('produces 11.2, 13.2, and 15.2 kg only when both sets are present', () => {
     const bothSets = achievableLoads(REAL_PROFILE).bilateral
     expect(bothSets).toContain(11.2)
     expect(bothSets).toContain(13.2)
+    expect(bothSets).toContain(15.2)
 
     const setAOnly: EquipmentProfile = { ...REAL_PROFILE, plateSets: [REAL_PROFILE.plateSets![0]] }
     const oneSetBilateral = achievableLoads(setAOnly).bilateral
     expect(oneSetBilateral).not.toContain(11.2)
     expect(oneSetBilateral).not.toContain(13.2)
+    expect(oneSetBilateral).not.toContain(15.2)
   })
 })
 
-describe('achievableLoads — max-plates-per-side (R3) excludes exactly what a 5th plate would unlock', () => {
+describe('achievableLoads — per-set sleeve weight cap (maxSideKg, amended 7 Aug ~19:00)', () => {
   /**
-   * Verified against the shipped algorithm (scratchpad
-   * `real-equipment-nocap.mjs`, 7 Aug 2026). Removing the cap raises
-   * both ceilings — proof the cap is doing real filtering, not a no-op.
+   * The owner's actual measurement: sleeve rating is a *weight* per side,
+   * not a plate count, and it differs per set (15kg/side A, 8kg/side B).
+   * Both ratings sit at or above each set's own physical plate supply
+   * (A maxes at 9.5kg/side, B at exactly 8.0), so for the real profile
+   * the cap is non-binding — proved here by showing it changes nothing
+   * versus no cap at all, rather than assumed from the doc.
    */
-  it('raises the bilateral ceiling from 13.2 to 15.2 kg and the single-implement ceiling from 16.2 to 20.2 kg when uncapped', () => {
-    const uncapped: EquipmentProfile = { ...REAL_PROFILE, maxPlatesPerSide: null }
-    const { bilateral, singleImplement } = achievableLoads(uncapped)
-    expect(bilateral.at(-1)).toBe(15.2)
-    expect(singleImplement.at(-1)).toBe(20.2)
+  it('is non-binding for the real profile — identical lists with the caps removed', () => {
+    const uncapped: EquipmentProfile = {
+      ...REAL_PROFILE,
+      plateSets: REAL_PROFILE.plateSets!.map((set) => ({ ...set, maxSideKg: null })),
+    }
+    expect(achievableLoads(uncapped)).toEqual(achievableLoads(REAL_PROFILE))
+  })
+
+  /**
+   * A genuine, low `maxSideKg` on a synthetic fixture, to prove the bound
+   * is actually enforced rather than a field nothing reads (the real
+   * profile alone can't show this, since its own ratings never bind).
+   * 16×1.0kg plates, handleCount 2, no cap vs. maxSideKg=2 — verified in
+   * scratchpad `synthetic-cap-check.mjs`: uncapped bilateral reaches
+   * [0,2,4,6,8], uncapped single reaches [0,2,4,6,8,10,12,14,16]; capped
+   * at 2kg/side both collapse to [0,2,4].
+   *
+   * Red-first, run 7 Aug 2026: bypassed the cap in `equipment.ts` by
+   * hardcoding both `maxSideWeightQ` call sites to `null` in
+   * `computeAchievableLoads`, re-ran this suite — the two assertions
+   * below failed (bilateral/singleImplement both grew past [0,2,4] to
+   * include 6 and 8), confirming the cap is load-bearing. Reverted.
+   */
+  it('a synthetic low maxSideKg genuinely excludes loads a bare cap-free enumeration would include', () => {
+    const cappedProfile: EquipmentProfile = {
+      handleKg: 0,
+      plateSets: [{ plates: [{ weightKg: 1.0, count: 16 }], handleCount: 2, maxSideKg: 2 }],
+    }
+    const { bilateral, singleImplement } = achievableLoads(cappedProfile)
+    expect(bilateral).toEqual([0, 2, 4])
+    expect(singleImplement).toEqual([0, 2, 4])
+
+    const uncappedProfile: EquipmentProfile = {
+      ...cappedProfile,
+      plateSets: [{ ...cappedProfile.plateSets![0], maxSideKg: null }],
+    }
+    const uncapped = achievableLoads(uncappedProfile)
+    expect(uncapped.bilateral).toEqual([0, 2, 4, 6, 8])
+    expect(uncapped.singleImplement).toEqual([0, 2, 4, 6, 8, 10, 12, 14, 16])
   })
 })
 
