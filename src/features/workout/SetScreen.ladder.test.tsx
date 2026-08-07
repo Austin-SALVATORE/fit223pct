@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { seedProgram } from '@/data/seed/program'
+import { settingsRepo } from '@/data/repositories'
 import { createWorkout, completeWorkout, logSet } from '@/domain/workout'
 import { WorkoutPage } from './WorkoutPage'
 import type { LadderPrescription, SessionTemplate } from '@/domain/types'
@@ -42,7 +43,23 @@ beforeAll(async () => {
 
 afterEach(async () => {
   await db.workouts.clear()
+  await settingsRepo.update({ equipment: undefined })
 })
+
+/**
+ * Equipment-aware progression, Phase 1 (`~/.claude/plans/
+ * equipment-aware-progression.md`, AMENDMENT A) — cross-session history
+ * only reaches the progression engine once the athlete's dumbbell
+ * hardware is verified (coach spec v2.16 §4). The three tests below
+ * construct a *prior completed* workout specifically to exercise
+ * classification (advance / at-equipment-max / load-not-the-lever)
+ * against that history, so they call this first — otherwise the gate
+ * (correctly) offers the un-advanced rung 1 instead, same as a fresh
+ * ladder with no history at all.
+ */
+async function confirmEquipment() {
+  await settingsRepo.update({ equipment: { confirmedAt: '2026-08-01' } })
+}
 
 function renderWorkout() {
   return render(
@@ -92,6 +109,7 @@ describe('SetScreen ladder rendering', () => {
   })
 
   it('pre-fills the next rung stepped up when every rung was completed last time', async () => {
+    await confirmEquipment()
     const priorCompleted = completeWorkout(
       [0, 1, 2].reduce(
         (w, i) =>
@@ -133,6 +151,7 @@ describe('SetScreen ladder rendering', () => {
   })
 
   it('shows at-equipment-max messaging and holds the ladder when the top rung cannot take another step', async () => {
+    await confirmEquipment()
     // Top rung caps at 12 kg here (vs. 14 kg in the other tests) — stepping
     // by weightStepKg (2) would land at 14, over this ceiling, so a fully
     // completed ladder must hold rather than advance.
@@ -198,6 +217,7 @@ describe('SetScreen ladder rendering', () => {
    * that fired for *both* states would pass while checking nothing.
    */
   it('shows load-not-the-lever messaging, never MAX, for a bodyweight ladder with nothing left to add load to', async () => {
+    await confirmEquipment()
     // 'push-up' isn't in the Library yet (Mesocycle 2's Build program,
     // not this batch) — goblet-squat's own id is reused here purely as a
     // resolvable Library entry; the prescription's null weights are what

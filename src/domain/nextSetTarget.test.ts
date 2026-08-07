@@ -229,39 +229,44 @@ describe('the delta is against the set just done, and never zero', () => {
 })
 
 describe('the engine classification survives, so MAX is distinguishable', () => {
-  it('flags the equipment ceiling rather than looking like a failure to progress', () => {
-    // Every rung hit its target, but the top rung cannot take another step.
+  /**
+   * Re-anchored (7 Aug, `~/.claude/plans/equipment-aware-progression.md`
+   * AMENDMENT A) — the four sites below used to pass real cross-session
+   * history and assert the arithmetic it produces. Production no longer
+   * does that: `progressionHistoryFor` (`domain/workout.ts`) returns no
+   * history at all while the athlete's equipment is unverified, so this
+   * is the history `nextSetTarget` actually receives — `[]`, not a
+   * populated `previous` array. The classification/arithmetic rule these
+   * tests documented is not lost — `progression.test.ts` covers
+   * `suggestProgression`/`suggestLadderProgression` directly, unaffected
+   * by this gate, since it never touches equipment settings at all.
+   */
+  it('an equipment ceiling from history never reaches an unverified profile — the gate offers the authored rung instead', () => {
+    // Every rung hit its target last time and the top rung is at the
+    // ceiling — but with no history reaching the engine, that fact is
+    // invisible here. Offers rung 1, unadvanced, same as a fresh ladder.
     const atMax: LadderPrescription = { ...ladder, maxWeightKg: 25 }
-    const previous: LoggedSet[] = [
-      set({ setIndex: 0, weightKg: 20, reps: 12 }),
-      set({ setIndex: 1, weightKg: 22.5, reps: 10 }),
-      set({ setIndex: 2, weightKg: 25, reps: 8 }),
-    ]
 
-    const target = nextSetTarget(atMax, [], previous, 0, 'steady')
-    expect(target.progressionType).toBe('at-equipment-max')
+    const target = nextSetTarget(atMax, [], [], 0, 'steady')
+    expect(target.progressionType).toBeNull()
+    expect(target.weightKg).toBe(atMax.setPlan[0].weightKg)
   })
 
-  it('carries the rep-range engine type through', () => {
-    const previous: LoggedSet[] = [
-      set({ weightKg: 16, reps: 12 }),
-      set({ weightKg: 16, reps: 12 }),
-      set({ weightKg: 16, reps: 12 }),
-    ]
-    const target = nextSetTarget(repRange, [], previous, 0, 'steady')
+  it('carries the rep-range engine type through — gated, so this is the coach\'s own prescription, not computed arithmetic', () => {
+    const target = nextSetTarget(repRange, [], [], 0, 'steady')
 
-    expect(target.progressionType).toBe('increase-load')
-    expect(target.weightKg).toBe(18)
+    expect(target.progressionType).toBe('start')
+    expect(target.weightKg).toBe(repRange.startWeightKg)
   })
 
-  it('defers a load increase on an easier day, same as the engine does', () => {
-    const previous: LoggedSet[] = [
-      set({ weightKg: 16, reps: 12 }),
-      set({ weightKg: 16, reps: 12 }),
-      set({ weightKg: 16, reps: 12 }),
-    ]
-    const target = nextSetTarget(repRange, [], previous, 0, 'easier')
+  it('an easier day has nothing to defer with no history — same start weight either way, for a different reason', () => {
+    // Coincidence worth being explicit about: repRange.startWeightKg is
+    // 16, the same number the old "consolidate" path asserted — but the
+    // type below proves this is the gated 'start' branch, not readiness
+    // deferring an advance that never happened.
+    const target = nextSetTarget(repRange, [], [], 0, 'easier')
 
+    expect(target.progressionType).toBe('start')
     expect(target.weightKg).toBe(16)
   })
 })
@@ -281,18 +286,22 @@ describe('it returns data, never prose', () => {
 })
 
 describe('a ladder that advances reads as an increased load', () => {
-  it('maps advance onto the same discriminant the rep-range engine uses', () => {
-    // Otherwise a stepped-up ladder shows no delta on the caption while an
-    // identical rep-range step-up shows one — the same event, told two ways.
-    const previous: LoggedSet[] = [
-      set({ setIndex: 0, weightKg: 20, reps: 12 }),
-      set({ setIndex: 1, weightKg: 22.5, reps: 10 }),
-      set({ setIndex: 2, weightKg: 25, reps: 8 }),
-    ]
-    const target = nextSetTarget(ladder, [], previous, 0, 'steady')
+  /**
+   * Re-anchored (7 Aug, `equipment-aware-progression.md` AMENDMENT A) —
+   * same reason as the block above: `progressionHistoryFor` never lets a
+   * populated `previous` reach here while equipment is unverified, so a
+   * fully-advanced ladder from history is not what production actually
+   * offers today. The advance→`increase-load` mapping itself is still
+   * real and still covered — `progression.test.ts`'s own
+   * `suggestLadderProgression` "advances" test — this file just no
+   * longer duplicates that coverage against a scenario that can't
+   * currently reach the athlete.
+   */
+  it('with no history reaching the engine, offers the authored rung — the gate, not a repeat it earned', () => {
+    const target = nextSetTarget(ladder, [], [], 0, 'steady')
 
-    expect(target.progressionType).toBe('increase-load')
-    expect(target.weightKg).toBe(22.5)
+    expect(target.progressionType).toBeNull()
+    expect(target.weightKg).toBe(ladder.setPlan[0].weightKg)
   })
 
   it('reports nothing to caption when the ladder repeats', () => {

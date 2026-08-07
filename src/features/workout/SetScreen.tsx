@@ -21,7 +21,19 @@ interface SetScreenProps {
   workoutExercise: WorkoutExercise
   exercise: Exercise
   setIndex: number
+  /** Feeds `<LastTime>` only — what the athlete actually lifted, real information regardless of equipment verification. */
   previousSets: readonly LoggedSet[]
+  /**
+   * Feeds the progression engine only (`nextSetTarget`) — gated by
+   * `progressionHistoryFor` (coach spec v2.16 §4,
+   * `equipment-aware-progression.md` AMENDMENT A): empty whenever the
+   * athlete's dumbbell hardware is unverified, so the stepper pre-fills
+   * the coach's own prescription instead of computed arithmetic.
+   * Deliberately not the same prop as `previousSets` above — `LastTime`
+   * and the engine have different needs and must not share one value,
+   * or gating the engine would also blank the display.
+   */
+  progressionHistory: readonly LoggedSet[]
   exerciseById: Map<string, Exercise>
   readinessTier?: ReadinessTier
   programId: string
@@ -49,6 +61,7 @@ export function SetScreen({
   exercise,
   setIndex,
   previousSets,
+  progressionHistory,
   exerciseById,
   readinessTier,
   programId,
@@ -85,7 +98,7 @@ export function SetScreen({
   const target = nextSetTarget(
     prescription,
     workoutExercise.sets,
-    previousSets,
+    progressionHistory,
     setIndex,
     readinessTier,
   )

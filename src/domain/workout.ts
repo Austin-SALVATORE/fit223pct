@@ -1,6 +1,7 @@
 import type {
   LoggedSet,
   SessionTemplate,
+  UserSettings,
   Workout,
   WorkoutExercise,
 } from './types'
@@ -273,6 +274,41 @@ export function previousSetsFor(
     if (exercise) return exercise.sets
   }
   return []
+}
+
+/**
+ * True only once the athlete has confirmed their actual dumbbell hardware
+ * (coach spec v2.16 §4). Absent profile, or a profile nobody has confirmed
+ * yet, is exactly the same as no profile — "values happen to be present"
+ * and "the athlete verified them" are different things, same contract as
+ * `profileConfirmedAt` (`types.ts`'s `UserSettings`).
+ */
+export function hasVerifiedLoadList(settings: UserSettings | undefined): boolean {
+  return settings?.equipment?.confirmedAt != null
+}
+
+/**
+ * The progression engine's own history — never the display's. Empty
+ * whenever `hasVerifiedLoadList` is false, so `suggestProgression` /
+ * `suggestLadderProgression` fall onto their own well-tested "no history"
+ * path and offer the coach's own prescription verbatim, instead of
+ * arithmetic computed from a load the athlete may not be able to set (§4:
+ * "must not calculate the next or previous load automatically" until the
+ * hardware list is verified).
+ *
+ * **Not the same call site as `previousSetsFor`.** `previousSetsFor` feeds
+ * `<LastTime>`'s display of what was actually lifted — real information the
+ * athlete is entitled to regardless of whether their equipment is
+ * verified — and must keep returning real history. This function is for
+ * the engine argument only.
+ */
+export function progressionHistoryFor(
+  settings: UserSettings | undefined,
+  workouts: readonly Workout[],
+  exerciseId: string,
+): LoggedSet[] {
+  if (!hasVerifiedLoadList(settings)) return []
+  return previousSetsFor(workouts, exerciseId)
 }
 
 function updateExercise(

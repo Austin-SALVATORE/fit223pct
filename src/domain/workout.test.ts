@@ -3,9 +3,11 @@ import {
   addCustomSlot,
   completeWorkout,
   createWorkout,
+  hasVerifiedLoadList,
   logSet,
   plannedSetIndices,
   previousSetsFor,
+  progressionHistoryFor,
   skipPrescribedLevel,
   summarizeWorkout,
   swapExercise,
@@ -18,6 +20,7 @@ import type {
   LoggedSet,
   RepRangePrescription,
   SessionTemplate,
+  UserSettings,
   Workout,
 } from './types'
 
@@ -330,5 +333,65 @@ describe('previousSetsFor', () => {
 
   it('returns an empty list for a never-performed exercise', () => {
     expect(previousSetsFor([makeWorkout()], 'overhead-press')).toEqual([])
+  })
+})
+
+function settings(overrides: Partial<UserSettings> = {}): UserSettings {
+  return {
+    id: 'user',
+    name: 'Test',
+    weeklyGoal: 3,
+    lastSeenWeeklyReviewWeekStart: null,
+    ...overrides,
+  }
+}
+
+/**
+ * Equipment-aware progression, Phase 1 (`~/.claude/plans/
+ * equipment-aware-progression.md`, AMENDMENT A) — coach spec v2.16 §4:
+ * "must not calculate the next or previous load automatically" until the
+ * athlete's dumbbell hardware is verified.
+ */
+describe('hasVerifiedLoadList', () => {
+  it('is false with no settings record at all', () => {
+    expect(hasVerifiedLoadList(undefined)).toBe(false)
+  })
+
+  it('is false with no equipment field', () => {
+    expect(hasVerifiedLoadList(settings())).toBe(false)
+  })
+
+  it('is false when equipment is present but never confirmed — values happen to be present is not the same as verified', () => {
+    expect(hasVerifiedLoadList(settings({ equipment: { handleKg: 2, confirmedAt: null } }))).toBe(false)
+  })
+
+  it('is true once confirmedAt is set', () => {
+    expect(
+      hasVerifiedLoadList(settings({ equipment: { handleKg: 2, confirmedAt: '2026-08-07' } })),
+    ).toBe(true)
+  })
+})
+
+describe('progressionHistoryFor', () => {
+  const older: Workout = {
+    ...logSet(makeWorkout(), 0, set(9, 12), 0),
+    id: 'w-old',
+    date: '2026-07-20',
+    completedAt: '2026-07-20T19:00:00.000Z',
+  }
+
+  it('returns real history once the equipment profile is confirmed — the same result previousSetsFor would give', () => {
+    const confirmed = settings({ equipment: { handleKg: 2, confirmedAt: '2026-08-07' } })
+    expect(progressionHistoryFor(confirmed, [older], 'goblet-squat')).toEqual(
+      previousSetsFor([older], 'goblet-squat'),
+    )
+  })
+
+  it('returns empty history — never the real sets — when unconfirmed, even though the workout exists', () => {
+    expect(progressionHistoryFor(settings(), [older], 'goblet-squat')).toEqual([])
+  })
+
+  it('returns empty history with no settings record at all', () => {
+    expect(progressionHistoryFor(undefined, [older], 'goblet-squat')).toEqual([])
   })
 })

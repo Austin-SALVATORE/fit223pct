@@ -379,6 +379,45 @@ export type Sex = 'male' | 'female'
 export const SUPPORTED_LOCALES = ['en', 'fr', 'zh-CN'] as const
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number]
 
+/**
+ * The athlete's actual dumbbell hardware — coach spec v2.16 §4: "An
+ * available weight step means the next entry in the dumbbell's verified
+ * hardware-setting list. It never means an assumed arithmetic increase."
+ *
+ * **Absent, or `confirmedAt` unset, means unverified — never defaulted.**
+ * Same defect class as the seeded `heightCm` below: a handle weight off by
+ * a quarter kg makes every coach-prescribed integer unreachable (measured,
+ * `equipment-aware-progression.md` §1.3 — four of nine candidate handle
+ * weights reach 0 of 8 prescribed loads). `hasVerifiedLoadList`
+ * (`domain/workout.ts`) is the one gate every automatic load-step
+ * computation must consult before trusting this over the coach's own
+ * prescription.
+ *
+ * Field shapes here are provisional. Phase 2 (the achievable-load
+ * enumerator over plates/handle/mixing) is what actually consumes this
+ * data and is not part of the change that introduced this type — nothing
+ * reads `plates`/`mixable`/`maxPlatesPerSide` yet. The only field
+ * `hasVerifiedLoadList` reads today is `confirmedAt`.
+ */
+export interface EquipmentProfile {
+  /** kg per bare handle, no plates. */
+  handleKg?: number | null
+  /** How many handles the athlete owns — 1 means single-implement lifts only. */
+  handleCount?: number | null
+  /** Plate inventory as {weightKg, count} pairs, e.g. the coach's own "4×1.0, 4×1.25, 4×2.5". */
+  plates?: { weightKg: number; count: number }[]
+  /** Whether plates from different sets can share a bore and load one handle together. */
+  mixable?: boolean | null
+  /** Physical ceiling on plates per side, if any — absent means unconstrained. */
+  maxPlatesPerSide?: number | null
+  /**
+   * ISO date the athlete confirmed this profile. Same contract as
+   * `profileConfirmedAt` below — absent means never verified, whatever
+   * values happen to sit in the other fields.
+   */
+  confirmedAt?: string | null
+}
+
 export interface UserSettings {
   id: 'user'
   name: string
@@ -469,4 +508,17 @@ export interface UserSettings {
    * guess is load-bearing again with no way to tell.
    */
   profileConfirmedAt?: string | null
+
+  /**
+   * The athlete's verified dumbbell hardware (coach spec v2.16 §4). Absent
+   * means unverified — `hasVerifiedLoadList` (`domain/workout.ts`) is the
+   * single gate every automatic load-step computation must consult before
+   * showing a computed number instead of the coach's own prescription.
+   *
+   * Not indexed, so no Dexie version — the version schema declares
+   * indexes, not fields (same reasoning as `activityLevel`/
+   * `profileConfirmedAt` above; `types.ts:445-447`'s rule, restated at the
+   * site of the field that first established it).
+   */
+  equipment?: EquipmentProfile | null
 }

@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { seedExercises } from '@/data/seed/exercises'
 import { seedProgram } from '@/data/seed/program'
-import { createWorkout } from '@/domain/workout'
-import type { LoggedSet, Workout } from '@/domain/types'
+import { completeWorkout, createWorkout, logSet } from '@/domain/workout'
+import type { LoggedSet, UserSettings, Workout } from '@/domain/types'
 import { RestScreen } from './RestScreen'
 
 /**
@@ -63,6 +63,7 @@ function renderRest(overrides: Partial<React.ComponentProps<typeof RestScreen>> 
       position={{ exerciseIndex: 0, setIndex: 1 }}
       exerciseById={exerciseById}
       completed={[]}
+      settings={undefined}
       onDone={() => {}}
       {...overrides}
     />,
@@ -326,5 +327,61 @@ describe('touch targets and structure', () => {
     const row = screen.getByRole('button', { name: '+30s' }).parentElement
     expect(row).not.toBeNull()
     expect(within(row as HTMLElement).getByRole('button', { name: 'Skip' })).toBeInTheDocument()
+  })
+})
+
+/**
+ * Equipment-aware progression, Phase 1 (`~/.claude/plans/
+ * equipment-aware-progression.md`, AMENDMENT A) — surfaces 3 and 4 of
+ * QA's four, the rest-screen hero number and its delta chip both read
+ * from the same `target` this screen resolves at `:72`. rear-delt-fly
+ * (the real seed's own chest-back item 3) starts at 5 kg, steps by 2 —
+ * topped out last time, ungated arithmetic would offer 7.
+ */
+function confirmedSettings(): UserSettings {
+  return {
+    id: 'user',
+    name: 'Test',
+    weeklyGoal: 3,
+    lastSeenWeeklyReviewWeekStart: null,
+    equipment: { confirmedAt: '2026-08-01' },
+  }
+}
+
+describe('the rest-screen hero number is gated on a verified equipment profile', () => {
+  function toppedOutPrior(): Workout {
+    let prior = createWorkout({
+      id: 'prior-rear-delt-fly',
+      programId: seedProgram.id,
+      session: seedProgram.sessions[0],
+      date: '2026-07-18',
+      startedAt: '2026-07-18T09:00:00.000Z',
+    })
+    prior = logSet(prior, 3, { weightKg: 5, reps: 15, seconds: null, completedAt: '2026-07-18T09:05:00.000Z' }, 0)
+    prior = logSet(prior, 3, { weightKg: 5, reps: 15, seconds: null, completedAt: '2026-07-18T09:07:00.000Z' }, 1)
+    return completeWorkout(prior, '2026-07-18T09:40:00.000Z')
+  }
+
+  it('offers the coach\'s own 5 kg, never the computed 7, while equipment is unverified', () => {
+    renderRest({
+      workout: baseWorkout,
+      position: { exerciseIndex: 3, setIndex: 0 },
+      completed: [toppedOutPrior()],
+      settings: undefined,
+    })
+
+    expect(screen.getByText(/5 kg × 12/)).toBeInTheDocument()
+    expect(screen.queryByText(/7 kg × 12/)).toBeNull()
+  })
+
+  it('offers the computed 7 once the equipment profile is confirmed — the rule still holds when the gate is open', () => {
+    renderRest({
+      workout: baseWorkout,
+      position: { exerciseIndex: 3, setIndex: 0 },
+      completed: [toppedOutPrior()],
+      settings: confirmedSettings(),
+    })
+
+    expect(screen.getByText(/7 kg × 12/)).toBeInTheDocument()
   })
 })

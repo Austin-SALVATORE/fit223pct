@@ -9,10 +9,10 @@ import {
   useExerciseTeachingConcept,
 } from '@/i18n/seedExercise'
 import { nextSetTarget, type NextSetTarget } from '@/domain/nextSetTarget'
-import { plannedSetIndices, previousSetsFor, type WorkoutPosition } from '@/domain/workout'
+import { plannedSetIndices, progressionHistoryFor, type WorkoutPosition } from '@/domain/workout'
 import { exerciseAsset, exerciseAssetThumbnailFrame } from '@/lib/exerciseAsset'
 import type { ReadinessTier } from '@/domain/readiness'
-import type { Exercise, ExercisePrescription, Workout } from '@/domain/types'
+import type { Exercise, ExercisePrescription, UserSettings, Workout } from '@/domain/types'
 
 interface RestScreenProps {
   endsAt: number
@@ -24,6 +24,14 @@ interface RestScreenProps {
   exerciseById: Map<string, Exercise>
   /** Completed workouts — needed to resolve the next exercise's own history, which is not what `WorkoutPage` computed `previousSets` for (that's the exercise just finished). */
   completed: readonly Workout[]
+  /**
+   * Gates the engine's cross-session history (coach spec v2.16 §4,
+   * `equipment-aware-progression.md` AMENDMENT A) — `progressionHistoryFor`
+   * returns no history at all while the athlete's dumbbell hardware is
+   * unverified, so this screen's number falls back to the coach's own
+   * prescription instead of computed arithmetic.
+   */
+  settings: UserSettings | undefined
   readinessTier?: ReadinessTier
   onDone: () => void
 }
@@ -36,6 +44,7 @@ export function RestScreen({
   position,
   exerciseById,
   completed,
+  settings,
   readinessTier,
   onDone,
 }: RestScreenProps) {
@@ -69,7 +78,7 @@ export function RestScreen({
    * while the set screen offers the weight you just lifted — the user loads
    * one number and is then offered another. See `nextSetTarget`'s module doc.
    */
-  const previousSets = previousSetsFor(completed, nextWorkoutExercise.exerciseId)
+  const previousSets = progressionHistoryFor(settings, completed, nextWorkoutExercise.exerciseId)
   const target = nextSetTarget(
     nextWorkoutExercise.prescription,
     nextWorkoutExercise.sets,

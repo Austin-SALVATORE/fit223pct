@@ -3,13 +3,14 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
+import { exerciseRepo, programRepo, settingsRepo, workoutRepo } from '@/data/repositories'
 import {
   addCustomSlot,
   completeWorkout,
   logSet,
   plannedSetIndices,
   previousSetsFor,
+  progressionHistoryFor,
   skipPrescribedLevel,
   swapExercise,
   undoCustomSlot,
@@ -63,10 +64,11 @@ export function WorkoutPage() {
   }, [i18n.language, tCommon])
 
   const data = useLiveQuery(async () => {
-    const [workout, exercises, completed] = await Promise.all([
+    const [workout, exercises, completed, settings] = await Promise.all([
       workoutRepo.getActive(),
       exerciseRepo.getAll(),
       workoutRepo.getCompleted(),
+      settingsRepo.get(),
     ])
     // Only origin is needed here (note resolution) — the rest of the
     // program record isn't; Workout is already the source of truth for
@@ -76,6 +78,7 @@ export function WorkoutPage() {
       workout,
       exerciseById: new Map(exercises.map((e) => [e.id, e])),
       completed,
+      settings,
       programOrigin: program?.origin,
     }
   }, [])
@@ -84,7 +87,7 @@ export function WorkoutPage() {
   const [finished, setFinished] = useState<Workout | null>(null)
 
   if (!data) return null
-  const { workout, exerciseById, completed, programOrigin } = data
+  const { workout, exerciseById, completed, settings, programOrigin } = data
 
   if (phase.kind === 'summary' && finished) {
     return <SessionSummary workout={finished} exerciseById={exerciseById} history={completed} />
@@ -112,7 +115,11 @@ export function WorkoutPage() {
   const exercise = exerciseById.get(workoutExercise.exerciseId)
   if (!exercise) return null
 
+  // `previousSets` feeds SetScreen's <LastTime> display only; the engine
+  // gets its own, gated history (progressionHistory) — see SetScreen.tsx's
+  // prop doc for why these must not be the same value.
   const previousSets = previousSetsFor(completed, workoutExercise.exerciseId)
+  const progressionHistory = progressionHistoryFor(settings, completed, workoutExercise.exerciseId)
 
   async function handleLog(set: Omit<LoggedSet, 'setIndex'>) {
     if (!workout || position === 'complete') return
@@ -341,6 +348,7 @@ export function WorkoutPage() {
               position={position}
               exerciseById={exerciseById}
               completed={completed}
+              settings={settings}
               readinessTier={workout.readiness?.tier}
               onDone={() => setPhase({ kind: 'logging' })}
             />
@@ -350,6 +358,7 @@ export function WorkoutPage() {
               exercise={exercise}
               setIndex={position.setIndex}
               previousSets={previousSets}
+              progressionHistory={progressionHistory}
               exerciseById={exerciseById}
               readinessTier={workout.readiness?.tier}
               programId={workout.programId}
