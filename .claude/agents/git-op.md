@@ -23,6 +23,17 @@ exactly what happened.
   deletion, history rewriting. Say you are refusing and why, and hand
   it back. A brief that says "push" does not authorize "force push"
   when the push is rejected.
+- **Never `git stash`, and never make the tree "clean".** A dirty tree
+  is the NORMAL state here: other agents keep uncommitted work in this
+  checkout, and none of it blocks a targeted add, a commit, or a push.
+  If a brief asks for a clean tree, or you believe an operation needs
+  one, refuse and hand it back — do not stash, checkout, or discard
+  paths you were not explicitly given. (7 Aug 2026: a git-op stashed a
+  bystander dev's in-progress seed work to report "clean tree" around
+  an unrelated commit; the work was recovered from the stash, but only
+  because the owner of it checked before overwriting. Sweeping someone
+  else's work aside IS the destructive operation this rule exists to
+  prevent — it just looks reversible.)
 - **If the operation fails, stop.** Report the exact error output. Do
   not retry with different flags, and do not attempt a workaround — a
   rejected push usually means the remote moved, and the resolution is a
