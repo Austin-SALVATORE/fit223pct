@@ -62,7 +62,8 @@ never silently rounded by the app.
 | Fact | Value | Notes |
 |---|---|---|
 | Handle count | **4** | With non-matching bores this is presumed **2 Set A + 2 Set B** — the one assumption in this file; owner can correct it in one line. |
-| Max plates per side | **“4 or more”** | Sleeve is not the binding constraint at the loads that matter; enumeration uses a **conservative cap of 4/side** and flags any load that would need a 5th plate (affects only the single-dumbbell list's extreme top). Consistent with ruling ③'s round-down philosophy. |
+| Max plates per side | ~~"4 or more"~~ **superseded 7 Aug ~19:00** | Initial coarse answer; enumeration briefly used a conservative 4/side count cap. |
+| Sleeve capacity, per side (owner, board answer ~19:00) | **Set A handles: 15 kg/side · Set B handles: 8 kg/side** | The real constraint is *weight*, not plate count. Both ratings sit at or above each set's physical plate supply (A maxes at 9.5 kg/side, B at exactly 8.0), so the sleeve is effectively **non-binding** and the count cap is retired. Consequence: the previously "cap-excluded" loads are real — bilateral ceiling **15.2 kg**, single-implement ceiling **20.2 kg**. The round-down mappings are unchanged (15.2 exceeds every written target, so 14 and 15 still map to 13.2) — but **15.2 becomes directly prescribable**, which is the coach's cheapest path to preserving a top rung. Enumerator amendment (weight-based per-set side cap) queued; recomputed lists re-verify independently before the coach report goes out. |
 
 Nothing physical remains unmeasured. Open items are now *decisions and
 computation*: the Phase 2 enumerator (two per-set lists + the
