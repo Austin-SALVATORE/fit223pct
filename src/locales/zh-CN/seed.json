@@ -331,9 +331,9 @@
     "push-up": {
       "name": "Push-up",
       "cues": [
-        "Keep head, trunk, and hips in one line",
-        "Place the hands slightly wider than the shoulders",
-        "Lower the chest and hips together with the elbows approximately 30-45 degrees from the torso"
+        "保持头部、躯干和髋部呈一条直线",
+        "双手略宽于肩",
+        "胸部和髋部同时下降，手肘与躯干约成30-45度角"
       ],
       "teachingConcept": {
         "title": "Elevate to regress",
@@ -343,9 +343,9 @@
     "dumbbell-fly": {
       "name": "Dumbbell fly",
       "cues": [
-        "Keep the shoulder blades gently set against the bench",
-        "Maintain a small, fixed elbow bend",
-        "Stop lowering before the shoulders roll forward"
+        "肩胛骨轻轻贴住训练凳",
+        "手肘保持微屈，全程不变",
+        "在肩膀向前卷起之前停止下放"
       ],
       "teachingConcept": {
         "title": "The arc, not a press",
@@ -355,9 +355,9 @@
     "dumbbell-pullover": {
       "name": "Dumbbell pullover",
       "cues": [
-        "Hold one dumbbell securely with both hands",
-        "Keep a small fixed elbow bend and the ribs down",
-        "Stop when the shoulders reach a controlled stretch"
+        "双手稳稳握住一个哑铃",
+        "保持手肘微屈固定，肋骨下沉",
+        "肩膀感到有控制的牵拉感时停止"
       ],
       "teachingConcept": {
         "title": "An arc from the shoulders",
@@ -367,9 +367,9 @@
     "chest-supported-row": {
       "name": "Chest-supported dumbbell row",
       "cues": [
-        "Keep the chest in contact with the bench",
-        "Pull the elbows back without shrugging",
-        "Pause briefly before lowering under control"
+        "胸部始终贴住训练凳",
+        "手肘向后拉，不要耸肩",
+        "稍作停顿，再有控制地下放"
       ],
       "teachingConcept": {
         "title": "No momentum to borrow",
@@ -379,9 +379,9 @@
     "hamstring-walkout": {
       "name": "Hamstring walkout",
       "cues": [
-        "Begin in a firm glute bridge",
-        "Take short heel steps",
-        "Keep the hips lifted and ribs controlled throughout the return"
+        "从稳定的臀桥姿势开始",
+        "用脚跟迈小步",
+        "整个还原过程中保持髋部抬高、肋骨下沉"
       ],
       "teachingConcept": {
         "title": "Hips stay level",
@@ -391,9 +391,9 @@
     "standing-calf-raise": {
       "name": "Standing dumbbell calf raise",
       "cues": [
-        "Hold one dumbbell at each side",
-        "Rise through the balls of the feet without rocking forward",
-        "Pause at the top and lower to a controlled stretch"
+        "两侧各持一个哑铃",
+        "用前脚掌发力向上，不要向前晃动",
+        "顶点稍作停顿，然后下放至有控制的拉伸感"
       ],
       "teachingConcept": {
         "title": "Full range first",

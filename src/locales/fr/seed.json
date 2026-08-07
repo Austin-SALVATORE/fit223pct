@@ -331,9 +331,9 @@
     "push-up": {
       "name": "Push-up",
       "cues": [
-        "Keep head, trunk, and hips in one line",
-        "Place the hands slightly wider than the shoulders",
-        "Lower the chest and hips together with the elbows approximately 30-45 degrees from the torso"
+        "Garde la tête, le buste et les hanches alignés en une seule ligne",
+        "Place les mains légèrement plus larges que les épaules",
+        "Descends la poitrine et les hanches ensemble, coudes à environ 30-45° du buste"
       ],
       "teachingConcept": {
         "title": "Elevate to regress",
@@ -343,9 +343,9 @@
     "dumbbell-fly": {
       "name": "Dumbbell fly",
       "cues": [
-        "Keep the shoulder blades gently set against the bench",
-        "Maintain a small, fixed elbow bend",
-        "Stop lowering before the shoulders roll forward"
+        "Garde les omoplates légèrement calées contre le banc",
+        "Maintiens une légère flexion des coudes, fixe tout au long du mouvement",
+        "Arrête la descente avant que les épaules ne s'enroulent vers l'avant"
       ],
       "teachingConcept": {
         "title": "The arc, not a press",
@@ -355,9 +355,9 @@
     "dumbbell-pullover": {
       "name": "Dumbbell pullover",
       "cues": [
-        "Hold one dumbbell securely with both hands",
-        "Keep a small fixed elbow bend and the ribs down",
-        "Stop when the shoulders reach a controlled stretch"
+        "Tiens un seul haltère fermement à deux mains",
+        "Garde une légère flexion des coudes, fixe, et les côtes basses",
+        "Arrête-toi quand les épaules atteignent un étirement contrôlé"
       ],
       "teachingConcept": {
         "title": "An arc from the shoulders",
@@ -367,9 +367,9 @@
     "chest-supported-row": {
       "name": "Chest-supported dumbbell row",
       "cues": [
-        "Keep the chest in contact with the bench",
-        "Pull the elbows back without shrugging",
-        "Pause briefly before lowering under control"
+        "Garde la poitrine en contact avec le banc",
+        "Tire les coudes vers l'arrière sans hausser les épaules",
+        "Marque une brève pause avant de redescendre avec contrôle"
       ],
       "teachingConcept": {
         "title": "No momentum to borrow",
@@ -379,9 +379,9 @@
     "hamstring-walkout": {
       "name": "Hamstring walkout",
       "cues": [
-        "Begin in a firm glute bridge",
-        "Take short heel steps",
-        "Keep the hips lifted and ribs controlled throughout the return"
+        "Commence dans un pont fessier stable",
+        "Prends de petits pas avec les talons",
+        "Garde les hanches hautes et les côtes basses pendant tout le retour"
       ],
       "teachingConcept": {
         "title": "Hips stay level",
@@ -391,9 +391,9 @@
     "standing-calf-raise": {
       "name": "Standing dumbbell calf raise",
       "cues": [
-        "Hold one dumbbell at each side",
-        "Rise through the balls of the feet without rocking forward",
-        "Pause at the top and lower to a controlled stretch"
+        "Tiens un haltère de chaque côté",
+        "Monte sur l'avant des pieds sans basculer vers l'avant",
+        "Marque une pause en haut, puis descends jusqu'à un étirement contrôlé"
       ],
       "teachingConcept": {
         "title": "Full range first",
