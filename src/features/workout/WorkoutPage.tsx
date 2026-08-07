@@ -7,6 +7,7 @@ import { exerciseRepo, programRepo, settingsRepo, workoutRepo } from '@/data/rep
 import {
   addCustomSlot,
   completeWorkout,
+  hasVerifiedLoadList,
   logSet,
   plannedSetIndices,
   previousSetsFor,
@@ -18,8 +19,9 @@ import {
   undoSkip,
   workoutPosition,
 } from '@/domain/workout'
+import { withCeilingVariation } from '@/domain/variationLadder'
 import { PRODUCT_NAME } from '@/lib/brand'
-import type { LoggedSet, Workout } from '@/domain/types'
+import type { LoggedSet, Workout, WorkoutExercise } from '@/domain/types'
 import { SessionSheet } from './SessionSheet'
 import { SetScreen } from './SetScreen'
 import { UndoLastSetButton } from './UndoLastSetButton'
@@ -120,6 +122,27 @@ export function WorkoutPage() {
   // prop doc for why these must not be the same value.
   const previousSets = previousSetsFor(completed, workoutExercise.exerciseId)
   const progressionHistory = progressionHistoryFor(settings, completed, workoutExercise.exerciseId)
+  /**
+   * §10 "Load-ceiling progression" (`~/.claude/plans/variation-ladder.md`
+   * Phase C) — reads the *same already-gated* history the load engine
+   * above reads (`hasVerifiedLoadList`, not a second gate check), so the
+   * tempo ladder ships inert while the equipment profile is unverified
+   * and switches itself on the moment it isn't, with no code change on
+   * that day (OQ1, ruled gated, 7 Aug). Wraps `workoutExercise` rather
+   * than replacing it everywhere: `handleLog`/`handleRemoveSet`/
+   * `canAddSet` below read the *authored* prescription (rest duration,
+   * custom-slot counting), not the display-only tempo-transformed one —
+   * only SetScreen's own target resolution needs the derived label.
+   */
+  const workoutExerciseWithVariation: WorkoutExercise = {
+    ...workoutExercise,
+    prescription: withCeilingVariation(
+      workoutExercise.prescription,
+      hasVerifiedLoadList(settings) ? completed : [],
+      workout.programId,
+      workout.readiness?.tier,
+    ),
+  }
 
   async function handleLog(set: Omit<LoggedSet, 'setIndex'>) {
     if (!workout || position === 'complete') return
@@ -354,7 +377,7 @@ export function WorkoutPage() {
             />
           ) : (
             <SetScreen
-              workoutExercise={workoutExercise}
+              workoutExercise={workoutExerciseWithVariation}
               exercise={exercise}
               setIndex={position.setIndex}
               previousSets={previousSets}

@@ -9,7 +9,8 @@ import {
   useExerciseTeachingConcept,
 } from '@/i18n/seedExercise'
 import { nextSetTarget, type NextSetTarget } from '@/domain/nextSetTarget'
-import { plannedSetIndices, progressionHistoryFor, type WorkoutPosition } from '@/domain/workout'
+import { hasVerifiedLoadList, plannedSetIndices, progressionHistoryFor, type WorkoutPosition } from '@/domain/workout'
+import { withCeilingVariation } from '@/domain/variationLadder'
 import { exerciseAsset, exerciseAssetThumbnailFrame } from '@/lib/exerciseAsset'
 import type { ReadinessTier } from '@/domain/readiness'
 import type { Exercise, ExercisePrescription, UserSettings, Workout } from '@/domain/types'
@@ -79,8 +80,25 @@ export function RestScreen({
    * one number and is then offered another. See `nextSetTarget`'s module doc.
    */
   const previousSets = progressionHistoryFor(settings, completed, nextWorkoutExercise.exerciseId)
-  const target = nextSetTarget(
+  /**
+   * §10 "Load-ceiling progression" (`~/.claude/plans/variation-ladder.md`
+   * Phase C) — reads the *same already-gated* history the load engine
+   * above reads (`hasVerifiedLoadList`, not a second gate check), so the
+   * tempo ladder ships inert while the equipment profile is unverified
+   * and switches itself on the moment it isn't, with no code change on
+   * that day (OQ1, ruled gated, 7 Aug). `readinessTier` passes straight
+   * through to the same `suggestLadderProgression` call the load path
+   * uses internally, so the two can never disagree about whether today
+   * counts as "at ceiling."
+   */
+  const prescription = withCeilingVariation(
     nextWorkoutExercise.prescription,
+    hasVerifiedLoadList(settings) ? completed : [],
+    workout.programId,
+    readinessTier,
+  )
+  const target = nextSetTarget(
+    prescription,
     nextWorkoutExercise.sets,
     previousSets,
     position.setIndex,
@@ -141,7 +159,7 @@ export function RestScreen({
         id={nextUpId}
         exercise={exercise}
         exerciseName={exerciseName}
-        prescription={nextWorkoutExercise.prescription}
+        prescription={prescription}
         target={target}
         setPosition={setPosition}
         totalPlannedSets={totalPlannedSets}
