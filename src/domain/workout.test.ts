@@ -8,6 +8,7 @@ import {
   plannedSetIndices,
   previousSetsFor,
   progressionHistoryFor,
+  repairPositionCompleteWorkout,
   skipPrescribedLevel,
   summarizeWorkout,
   swapExercise,
@@ -294,6 +295,65 @@ describe('undoLastSet', () => {
     expect(result.removed?.exerciseIndex).toBe(0)
     expect(result.workout.exercises[0].sets).toHaveLength(1)
     expect(result.workout.exercises[1].exerciseId).toBe('split-squat')
+  })
+})
+
+/**
+ * Boot-time repair for the "remove-last-set finishes on screen but not
+ * storage" defect (WorkoutPage.handleRemoveSet, fixed alongside this) —
+ * `completedAt` stayed null while `workoutPosition` had already gone
+ * 'complete'. See the function's own doc for the full defect chain.
+ */
+describe('repairPositionCompleteWorkout', () => {
+  const now = '2026-08-11T07:00:00.000Z'
+
+  it('repairs a position-complete workout using the latest logged set\'s own completedAt', () => {
+    // ex0 fully logged (two different timestamps — the later one must win);
+    // ex1 fully skipped, no sets of its own.
+    let workout = logSet(makeWorkout(), 0, { ...set(10, 14), completedAt: '2026-08-10T09:00:00.000Z' }, 0)
+    workout = logSet(workout, 0, { ...set(9, 16), completedAt: '2026-08-10T09:05:00.000Z' }, 1)
+    workout = skipPrescribedLevel(workout, 1, 0)
+    workout = skipPrescribedLevel(workout, 1, 1)
+    expect(workoutPosition(workout)).toBe('complete')
+
+    const repaired = repairPositionCompleteWorkout(workout, now)
+    expect(repaired?.completedAt).toBe('2026-08-10T09:05:00.000Z')
+    expect(repaired?.abandonedAt).toBeNull()
+  })
+
+  it('falls back to abandonedAt when nothing was logged (every slot skipped)', () => {
+    let workout = skipPrescribedLevel(makeWorkout(), 0, 0)
+    workout = skipPrescribedLevel(workout, 0, 1)
+    workout = skipPrescribedLevel(workout, 1, 0)
+    workout = skipPrescribedLevel(workout, 1, 1)
+    workout = { ...workout, abandonedAt: '2026-08-11T06:00:00.000Z' }
+    expect(workoutPosition(workout)).toBe('complete')
+
+    const repaired = repairPositionCompleteWorkout(workout, now)
+    expect(repaired?.completedAt).toBe('2026-08-11T06:00:00.000Z')
+    expect(repaired?.abandonedAt).toBeNull()
+  })
+
+  it('falls back to now when neither a logged set nor abandonedAt exists', () => {
+    let workout = skipPrescribedLevel(makeWorkout(), 0, 0)
+    workout = skipPrescribedLevel(workout, 0, 1)
+    workout = skipPrescribedLevel(workout, 1, 0)
+    workout = skipPrescribedLevel(workout, 1, 1)
+    expect(workoutPosition(workout)).toBe('complete')
+
+    expect(repairPositionCompleteWorkout(workout, now)?.completedAt).toBe(now)
+  })
+
+  it('never touches a genuinely mid-session workout — some slot is still open', () => {
+    const workout = logSet(makeWorkout(), 0, set(10, 14), 0)
+    expect(workoutPosition(workout)).not.toBe('complete')
+
+    expect(repairPositionCompleteWorkout(workout, now)).toBeNull()
+  })
+
+  it('is a no-op on a workout that is already completed', () => {
+    const workout = completeWorkout(makeWorkout(), '2026-08-10T09:00:00.000Z')
+    expect(repairPositionCompleteWorkout(workout, now)).toBeNull()
   })
 })
 

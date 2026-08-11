@@ -240,6 +240,52 @@ export function completeWorkout(workout: Workout, completedAt: string): Workout 
   return { ...workout, completedAt }
 }
 
+/**
+ * Boot-time repair for a workout damaged by the "removing the last
+ * remaining slot finishes the screen but not storage" defect
+ * (`WorkoutPage.handleRemoveSet` used to `put` the skip/undoCustomSlot
+ * result without checking whether it had just emptied
+ * `plannedSetIndices`): `completedAt` stayed `null` while every
+ * prescribed level was already logged or skipped, so `workoutPosition`
+ * read 'complete' and the summary screen showed — but storage still held
+ * an open workout. `closeStaleWorkouts` would abandon it the next boot
+ * and it would vanish from every completion count.
+ *
+ * **Narrow on purpose**: `workoutPosition(workout) === 'complete'` is the
+ * only trigger. A workout with any slot still open is a genuine
+ * mid-session abandonment — `closeStaleWorkouts`'s "closing is not
+ * finishing" model governs those, and this function must never touch
+ * them.
+ *
+ * `completedAt` prefers the *honest* completion time: the latest logged
+ * set's own `completedAt`, if any sets were logged. Falls back to
+ * `abandonedAt` (set by a prior boot's `closeStaleWorkouts`), then to
+ * `now` — threaded in by the caller so this stays a pure function of its
+ * arguments, the same shape as {@link completeWorkout}.
+ *
+ * Returns `null` when nothing needs repair (already completed, or
+ * genuinely still open), so the repository layer can filter without
+ * re-deriving the guard.
+ */
+export function repairPositionCompleteWorkout(workout: Workout, now: string): Workout | null {
+  if (workout.completedAt !== null) return null
+  if (workoutPosition(workout) !== 'complete') return null
+
+  const loggedTimestamps = workout.exercises.flatMap((exercise) =>
+    exercise.sets.map((s) => s.completedAt),
+  )
+  const latestLogged =
+    loggedTimestamps.length > 0
+      ? loggedTimestamps.reduce((latest, t) => (t > latest ? t : latest))
+      : null
+
+  return {
+    ...workout,
+    completedAt: latestLogged ?? workout.abandonedAt ?? now,
+    abandonedAt: null,
+  }
+}
+
 export function summarizeWorkout(workout: Workout): WorkoutSummary {
   const sets = workout.exercises.flatMap((exercise) => exercise.sets)
   const volumeKg = sets.reduce(

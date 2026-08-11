@@ -1,4 +1,5 @@
 import { db } from './db'
+import { repairPositionCompleteWorkout } from '@/domain/workout'
 import type {
   ActivityRecord,
   CheckIn,
@@ -143,6 +144,25 @@ export const workoutRepo = {
     await db.transaction('rw', db.workouts, async () => {
       for (const workout of stale) {
         await db.workouts.put({ ...workout, abandonedAt })
+      }
+    })
+  },
+
+  /**
+   * Boot-time repair, same idempotent/every-boot shape as
+   * `closeStaleWorkouts` above — see `repairPositionCompleteWorkout`'s doc
+   * for the defect this undoes. `now` is threaded through rather than read
+   * inside the pure domain function, so it stays testable.
+   */
+  async repairPositionCompleteWorkouts(now: string): Promise<void> {
+    const candidates = await db.workouts.filter((w) => w.completedAt === null).toArray()
+    const repaired = candidates
+      .map((w) => repairPositionCompleteWorkout(w, now))
+      .filter((w): w is Workout => w !== null)
+    if (repaired.length === 0) return
+    await db.transaction('rw', db.workouts, async () => {
+      for (const workout of repaired) {
+        await db.workouts.put(workout)
       }
     })
   },

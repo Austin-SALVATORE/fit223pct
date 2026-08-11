@@ -20,6 +20,14 @@ workoutRepo.closeStaleWorkouts(toDateKey(new Date())).catch((error: unknown) => 
   console.error('Closing stale workouts failed', error)
 })
 
+// Repairs any workout the "remove-last-set finishes on screen but not in
+// storage" defect left behind (WorkoutPage.handleRemoveSet, fixed
+// alongside this) — same idempotent, every-boot shape as
+// closeStaleWorkouts above. See repairPositionCompleteWorkout's doc.
+workoutRepo.repairPositionCompleteWorkouts(new Date().toISOString()).catch((error: unknown) => {
+  console.error('Repairing position-complete workouts failed', error)
+})
+
 // Training history lives only in IndexedDB, with no server backup — ask the
 // browser not to evict it under storage pressure. No-op where unsupported.
 navigator.storage?.persist().catch(() => {})

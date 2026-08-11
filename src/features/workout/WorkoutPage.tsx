@@ -214,6 +214,17 @@ export function WorkoutPage() {
    * for one without it); an unfilled custom slot decrements `customSlots`
    * outright, no confirmation needed. Either way, exercise.sets is
    * untouched, so this can never lose logged work.
+   *
+   * Either branch can empty `plannedSetIndices` outright — this was the
+   * slot `workoutPosition` had been offering, so if it was also the last
+   * *unlogged* one left in the whole session, removing it finishes the
+   * workout exactly the way logging the last set does. Checking after
+   * `updated` is computed (rather than per-branch) covers both branches
+   * with one guard, since they converge on the same variable. Mirrors
+   * `handleLog`'s persist-before-transition order: storage must never say
+   * "still open" while the screen says "done" — that mismatch is what let
+   * `closeStaleWorkouts` silently abandon a finished session and drop it
+   * from the rotation's count.
    */
   async function handleRemoveSet() {
     if (!workout || position === 'complete') return
@@ -221,6 +232,15 @@ export function WorkoutPage() {
     const updated = isCustomSlot
       ? undoCustomSlot(workout, position.exerciseIndex)
       : skipPrescribedLevel(workout, position.exerciseIndex, position.setIndex)
+
+    if (workoutPosition(updated) === 'complete') {
+      const done = completeWorkout(updated, new Date().toISOString())
+      await workoutRepo.put(done)
+      setFinished(done)
+      setPhase({ kind: 'summary' })
+      return
+    }
+
     await workoutRepo.put(updated)
     setLastRemoval(
       isCustomSlot

@@ -2,8 +2,9 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { db } from './db'
 import { activityRecordRepo, programRepo, settingsRepo, workoutRepo } from './repositories'
 import { resolveDayPlan } from '@/domain/schedule'
+import { mesocycle2Build } from './seed/program'
 import { parseDateKey } from '@/lib/dates'
-import type { ActivityRecord, Program, UserSettings, Workout } from '@/domain/types'
+import type { ActivityRecord, Program, RepRangePrescription, UserSettings, Workout } from '@/domain/types'
 
 afterEach(async () => {
   await db.programs.clear()
@@ -180,6 +181,101 @@ describe('workoutRepo.closeStaleWorkouts', () => {
 
     expect(countAfter).toBe(countBefore)
     expect(planAfter).toEqual(planBefore)
+  })
+})
+
+function repRangePrescription(exerciseId: string, sets: number): RepRangePrescription {
+  return {
+    exerciseId,
+    sets,
+    mode: 'reps',
+    range: { min: 8, max: 12 },
+    restSeconds: 120,
+    perSide: false,
+    startWeightKg: 14,
+    maxWeightKg: 20,
+    weightStepKg: 2,
+  }
+}
+
+/**
+ * Boot-time repair for the owner's Monday defect (11 Aug):
+ * `WorkoutPage.handleRemoveSet` used to `put` a skip that emptied
+ * `plannedSetIndices` without ever setting `completedAt`, so the summary
+ * screen showed while storage stayed open. `closeStaleWorkouts` then
+ * abandoned it the next boot, and it vanished from every completion count
+ * — the rotation re-offered the same session the following morning.
+ */
+describe('workoutRepo.repairPositionCompleteWorkouts', () => {
+  it('repairs a position-complete abandoned workout, and it then counts toward the rotation', async () => {
+    // exercises: [] makes workoutPosition 'complete' vacuously — the repo
+    // wrapper's own guard is exercised here; repairPositionCompleteWorkout's
+    // domain-level tests (workout.test.ts) already cover the "every slot
+    // logged or skipped" shape and the completedAt-source fallback order.
+    await db.workouts.put(
+      makeWorkout({
+        id: 'monday',
+        programId: 'p',
+        date: '2026-07-20',
+        abandonedAt: '2026-07-22T00:00:00.000Z',
+      }),
+    )
+
+    const countBefore = await workoutRepo.countCompleted('p')
+    expect(countBefore).toBe(0)
+
+    await workoutRepo.repairPositionCompleteWorkouts('2026-07-23T00:00:00.000Z')
+
+    const stored = await db.workouts.get('monday')
+    expect(stored?.completedAt).toBe('2026-07-22T00:00:00.000Z') // abandonedAt, the honest fallback here
+    expect(stored?.abandonedAt).toBeNull()
+    expect(await workoutRepo.countCompleted('p')).toBe(1)
+  })
+
+  it('never touches a genuinely mid-session abandoned workout — a slot is still open', async () => {
+    await db.workouts.put(
+      makeWorkout({
+        id: 'mid-session',
+        programId: 'p',
+        date: '2026-07-20',
+        abandonedAt: '2026-07-22T00:00:00.000Z',
+        exercises: [{ exerciseId: 'goblet-squat', prescription: repRangePrescription('goblet-squat', 2), sets: [] }],
+      }),
+    )
+
+    await workoutRepo.repairPositionCompleteWorkouts('2026-07-23T00:00:00.000Z')
+
+    const stored = await db.workouts.get('mid-session')
+    expect(stored?.completedAt).toBeNull()
+    expect(stored?.abandonedAt).toBe('2026-07-22T00:00:00.000Z')
+    expect(await workoutRepo.countCompleted('p')).toBe(0)
+  })
+
+  it("consequence: the repaired Monday workout advances mesocycle-2-build's rotation to Legs & Core on Wednesday", async () => {
+    // The owner's actual Monday (10 Aug 2026) — completed Chest & Back,
+    // but the pre-fix defect left it open in storage and a prior boot's
+    // closeStaleWorkouts had already marked it abandoned.
+    await db.workouts.put(
+      makeWorkout({
+        id: 'mesocycle2-monday',
+        programId: mesocycle2Build.id,
+        sessionTemplateId: 'mesocycle2-chest-back',
+        date: '2026-08-10',
+        startedAt: '2026-08-10T09:00:00.000Z',
+        abandonedAt: '2026-08-11T00:00:00.000Z',
+      }),
+    )
+
+    expect(await workoutRepo.countCompleted(mesocycle2Build.id)).toBe(0)
+
+    await workoutRepo.repairPositionCompleteWorkouts('2026-08-11T07:00:00.000Z')
+
+    const countAfter = await workoutRepo.countCompleted(mesocycle2Build.id)
+    expect(countAfter).toBe(1)
+
+    const plan = resolveDayPlan(mesocycle2Build, new Date('2026-08-12T12:00:00'), countAfter)
+    expect(plan.kind).toBe('training')
+    if (plan.kind === 'training') expect(plan.session.id).toBe('mesocycle2-legs-core')
   })
 })
 
