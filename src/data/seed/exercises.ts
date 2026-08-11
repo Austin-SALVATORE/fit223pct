@@ -344,4 +344,41 @@ export const seedExercises: Exercise[] = [
     substitutionIds: [],
     isUnilateral: false,
   },
+  // Mesocycle 2 Pre-Strength Warm-up Prescription, 11 Aug 2026 — three
+  // Library promotions (art already committed, per program-content.md
+  // "art-only exercises must be promoted first"). Follows 320cf88's
+  // (bird-dog/hammer-curl/incline-push-up) precedent exactly: names only,
+  // no cues or teachingConcept (none given by the coach), substitutionIds
+  // left empty (none named).
+  {
+    id: 'scapular-push-up',
+    // Scapular protraction/retraction in a plank position — same
+    // classification as band-pull-apart/rear-delt-fly, the file's other
+    // scapular-movement entries.
+    muscles: ['shoulders', 'back'],
+    equipment: ['bodyweight'],
+    substitutionIds: [],
+    isUnilateral: false,
+  },
+  {
+    id: 'wall-slide',
+    // Same scapular-movement classification as scapular-push-up above —
+    // the coach's own spec purpose line for both reads "prepare scapular
+    // movement". The wall is a guide surface, not equipment the schema
+    // has a token for (Equipment has no 'wall' — see the asset prompt's
+    // own "not balance support" note).
+    muscles: ['shoulders', 'back'],
+    equipment: ['bodyweight'],
+    substitutionIds: [],
+    isUnilateral: false,
+  },
+  {
+    id: 'bodyweight-squat',
+    // Mirrors tempo-bodyweight-squat's classification exactly — same
+    // movement, no tempo modifier.
+    muscles: ['quads', 'glutes'],
+    equipment: ['bodyweight'],
+    substitutionIds: [],
+    isUnilateral: false,
+  },
 ]

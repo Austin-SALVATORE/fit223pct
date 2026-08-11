@@ -408,6 +408,15 @@
     },
     "incline-push-up": {
       "name": "Pompe inclinée"
+    },
+    "scapular-push-up": {
+      "name": "Pompe scapulaire"
+    },
+    "wall-slide": {
+      "name": "Glissé mural"
+    },
+    "bodyweight-squat": {
+      "name": "Squat au poids du corps"
     }
   },
   "program": {

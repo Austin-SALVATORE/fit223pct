@@ -408,6 +408,15 @@
     },
     "incline-push-up": {
       "name": "Incline push-up"
+    },
+    "scapular-push-up": {
+      "name": "Scapular push-up"
+    },
+    "wall-slide": {
+      "name": "Wall slide"
+    },
+    "bodyweight-squat": {
+      "name": "Bodyweight squat"
     }
   },
   "program": {

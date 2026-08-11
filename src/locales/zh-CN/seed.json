@@ -408,6 +408,15 @@
     },
     "incline-push-up": {
       "name": "上斜俯卧撑"
+    },
+    "scapular-push-up": {
+      "name": "肩胛骨俯卧撑"
+    },
+    "wall-slide": {
+      "name": "靠墙肩胛滑动"
+    },
+    "bodyweight-squat": {
+      "name": "自重深蹲"
     }
   },
   "program": {
