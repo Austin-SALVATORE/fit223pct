@@ -338,6 +338,42 @@ describe('PlanDayPage states', () => {
   })
 
   /**
+   * `ActivitySecondary` renders only `localized.items[0]?.detail` — a
+   * shortcut whose docblock justified it by "every seeded training-day
+   * activity is a single item". As of the M2 revision, `mesocycle2Build`'s
+   * training weekdays (1/3/5) each carry a second item — the
+   * session-specific stretching prescription — which this drops
+   * silently. Uses the real seed content (no fixture override) so the
+   * production data is what's under test.
+   */
+  describe('mesocycle2Build training day activity has two items', () => {
+    beforeAll(async () => {
+      await programRepo.put(mesocycle2Build)
+    })
+
+    afterAll(async () => {
+      await db.programs.delete(mesocycle2Build.id)
+    })
+
+    it('shows both — the ride and the session-specific stretch item', async () => {
+      renderDay('2026-08-10') // Monday, mesocycle2Build's startDate — its first training day
+      expect(await screen.findByRole('heading', { name: /Monday 10 August/ })).toBeInTheDocument()
+
+      expect(screen.getByRole('heading', { level: 2, name: 'Chest & Back' })).toBeInTheDocument()
+
+      // First item — unchanged.
+      expect(screen.getByText('Zone 2 ride')).toBeInTheDocument()
+      expect(screen.getByText(/20 min, after lifting/)).toBeInTheDocument()
+
+      // Second item — the stretching prescription, currently invisible.
+      expect(screen.getByText('Chest & Back Stretching')).toBeInTheDocument()
+      expect(
+        screen.getByText(/Doorway chest stretch, lat stretch, cross-body shoulder stretch/),
+      ).toBeInTheDocument()
+    })
+  })
+
+  /**
    * Owner-reported defect (M2 revision transcription plan, Phase 5):
    * `ScheduleDay` carries no `activation` field, so the Plan day detail
    * never rendered `Program.morningActivation` at all — Today already

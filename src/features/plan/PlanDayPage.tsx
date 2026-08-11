@@ -412,15 +412,17 @@ function MorningActivationPreview({
  * main content, the same distinction `PlanPage.tsx`'s `activitySuffix`
  * already draws at list scale.
  *
- * Still no full item list (device pass D3, 7 Aug) — every seeded
- * training-day activity is a single item whose `label` duplicates the
- * title exactly (`useLocalizedActivity`'s own map preserves that), so a
- * full `ActivityItemList` would repeat the title verbatim. What was
- * genuinely missing was the *duration*: the title alone read as "Zone 2
- * ride" on every training day regardless of whether it prescribed 20
- * minutes or 40, so the leading item's `detail` — where the seed
- * actually carries duration — renders under the title, same tertiary
- * treatment `ActivityItemList` gives it elsewhere.
+ * The leading item's `label` duplicates the title exactly
+ * (`useLocalizedActivity`'s own map preserves that), so the title plus
+ * that item's `detail` — where the seed carries duration — render
+ * together as before, avoiding the repeat. That was true of every
+ * seeded training-day activity until the M2 revision, which gives
+ * `mesocycle2Build`'s training weekdays a *second* item — a
+ * session-specific stretching prescription — that this block silently
+ * dropped (device pass D3's single-item assumption stopped holding).
+ * Any further items render through the same `ActivityItemList` Today
+ * and `ActivityDetail` already use, so the stretch item is visible and,
+ * once Phase 3 lands, its `routineId` is tappable.
  */
 function ActivitySecondary({
   programId,
@@ -436,11 +438,13 @@ function ActivitySecondary({
   const kindLabel = useActivityKindLabel(activity.kind)
   const localized = useLocalizedActivity(programId, weekday, activity, programOrigin)
   const detail = localized.items[0]?.detail
+  const remainingItems = localized.items.slice(1)
   return (
     <div className="mt-8 border-t border-border pt-6">
       <p className="text-sm font-medium text-ink-tertiary">{kindLabel}</p>
       <p className="mt-1 text-ink-secondary">{localized.title}</p>
       {detail && <p className="mt-0.5 text-sm text-ink-tertiary">{detail}</p>}
+      {remainingItems.length > 0 && <ActivityItemList items={remainingItems} />}
     </div>
   )
 }
