@@ -1,0 +1,32 @@
+{
+  "exerciseId": "thoracic-rotation",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1774,
+      887
+    ],
+    "frameSizes": [
+      [
+        705,
+        887
+      ],
+      [
+        705,
+        887
+      ]
+    ],
+    "referenceHash": "cb13741496",
+    "thumbnailHash": "686319b59c",
+    "frameHashes": [
+      "7ae629b2ef",
+      "8f3ff338f2"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

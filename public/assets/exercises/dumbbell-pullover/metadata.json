@@ -1,0 +1,42 @@
+{
+  "exerciseId": "dumbbell-pullover",
+  "version": 1,
+  "media": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        489,
+        822
+      ],
+      [
+        461,
+        822
+      ],
+      [
+        513,
+        822
+      ],
+      [
+        450,
+        822
+      ]
+    ],
+    "referenceHash": "55dd235b61",
+    "thumbnailHash": "f0c7a03fce",
+    "frameHashes": [
+      "93c86b8b6c",
+      "fa547ea2ae",
+      "c42879dd99",
+      "d7ca14d97c"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

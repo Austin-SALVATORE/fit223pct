@@ -1,0 +1,32 @@
+{
+  "exerciseId": "cross-body-shoulder-stretch",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        396,
+        822
+      ],
+      [
+        397,
+        822
+      ]
+    ],
+    "referenceHash": "0692573fab",
+    "thumbnailHash": "0a7a13232c",
+    "frameHashes": [
+      "10809b7e8a",
+      "522ed09960"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "exerciseId": "hamstring-walkout",
+  "version": 1,
+  "media": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        450,
+        823
+      ],
+      [
+        452,
+        823
+      ],
+      [
+        541,
+        823
+      ],
+      [
+        462,
+        823
+      ]
+    ],
+    "referenceHash": "8d71f1c42d",
+    "thumbnailHash": "96f1d69e06",
+    "frameHashes": [
+      "12674759af",
+      "9624c8c8e0",
+      "ea9addb7cb",
+      "25752fadf5"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

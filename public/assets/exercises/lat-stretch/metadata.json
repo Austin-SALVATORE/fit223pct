@@ -1,0 +1,32 @@
+{
+  "exerciseId": "lat-stretch",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1774,
+      887
+    ],
+    "frameSizes": [
+      [
+        768,
+        887
+      ],
+      [
+        855,
+        887
+      ]
+    ],
+    "referenceHash": "d40ead779c",
+    "thumbnailHash": "02adb15c61",
+    "frameHashes": [
+      "de55ac32d3",
+      "310411d343"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

@@ -24,7 +24,7 @@ import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
  * yet: hamstring-walkout and dumbbell-pullover. Remove each in the same
  * reviewed commit that lands its asset batch.
  */
-const KNOWN_MISSING = new Set<string>(['hamstring-walkout', 'dumbbell-pullover'])
+const KNOWN_MISSING = new Set<string>()
 
 describe('exercise asset coverage', () => {
   it.each(seedExercises.map((e) => e.id))('%s resolves an asset or is in KNOWN_MISSING', (id) => {

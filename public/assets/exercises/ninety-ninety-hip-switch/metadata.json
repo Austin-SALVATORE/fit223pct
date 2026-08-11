@@ -1,0 +1,37 @@
+{
+  "exerciseId": "ninety-ninety-hip-switch",
+  "version": 1,
+  "media": {
+    "frameCount": 3,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        564,
+        823
+      ],
+      [
+        620,
+        823
+      ],
+      [
+        609,
+        823
+      ]
+    ],
+    "referenceHash": "3fa38636d0",
+    "thumbnailHash": "fbdcbdef16",
+    "frameHashes": [
+      "9e4b901c55",
+      "e5026daa22",
+      "b88b7ae7de"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

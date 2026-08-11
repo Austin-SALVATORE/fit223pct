@@ -1,0 +1,32 @@
+{
+  "exerciseId": "wall-slide",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        542,
+        821
+      ],
+      [
+        314,
+        821
+      ]
+    ],
+    "referenceHash": "e175c515d5",
+    "thumbnailHash": "efe4d6ca86",
+    "frameHashes": [
+      "554e5d6b63",
+      "dff30eed86"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

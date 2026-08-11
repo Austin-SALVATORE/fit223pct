@@ -1,0 +1,42 @@
+{
+  "exerciseId": "shoulder-circle",
+  "version": 1,
+  "media": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        192,
+        821
+      ],
+      [
+        362,
+        821
+      ],
+      [
+        193,
+        821
+      ],
+      [
+        375,
+        821
+      ]
+    ],
+    "referenceHash": "5f5e88ce7a",
+    "thumbnailHash": "39ddd77abd",
+    "frameHashes": [
+      "7c04e8c81f",
+      "f7c77750cf",
+      "4bf2401701",
+      "4b46b6570b"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

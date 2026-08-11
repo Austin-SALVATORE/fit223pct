@@ -1,0 +1,32 @@
+{
+  "exerciseId": "biceps-wall-stretch",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1904,
+      826
+    ],
+    "frameSizes": [
+      [
+        607,
+        826
+      ],
+      [
+        639,
+        826
+      ]
+    ],
+    "referenceHash": "45afb5f96e",
+    "thumbnailHash": "5a23be3c1b",
+    "frameHashes": [
+      "d31967eaa4",
+      "41f68d189a"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

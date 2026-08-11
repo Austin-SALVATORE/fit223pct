@@ -1,0 +1,32 @@
+{
+  "exerciseId": "overhead-triceps-stretch",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1704,
+      923
+    ],
+    "frameSizes": [
+      [
+        291,
+        923
+      ],
+      [
+        292,
+        923
+      ]
+    ],
+    "referenceHash": "72b2aa70c7",
+    "thumbnailHash": "cb36a3032d",
+    "frameHashes": [
+      "7541d71fcd",
+      "972f3c6f16"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

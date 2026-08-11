@@ -1,0 +1,32 @@
+{
+  "exerciseId": "scapular-push-up",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1857,
+      847
+    ],
+    "frameSizes": [
+      [
+        875,
+        847
+      ],
+      [
+        878,
+        847
+      ]
+    ],
+    "referenceHash": "b33778153c",
+    "thumbnailHash": "194287d696",
+    "frameHashes": [
+      "a82eb7a442",
+      "29b8633d97"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

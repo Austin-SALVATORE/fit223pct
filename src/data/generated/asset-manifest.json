@@ -505,6 +505,30 @@
       "5e61361526"
     ]
   },
+  "biceps-wall-stretch": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1904,
+      826
+    ],
+    "frameSizes": [
+      [
+        607,
+        826
+      ],
+      [
+        639,
+        826
+      ]
+    ],
+    "referenceHash": "45afb5f96e",
+    "thumbnailHash": "5a23be3c1b",
+    "frameHashes": [
+      "d31967eaa4",
+      "41f68d189a"
+    ]
+  },
   "bird-dog": {
     "frameCount": 3,
     "thumbnailFrame": 2,
@@ -840,6 +864,30 @@
       "d56e8e65d6"
     ]
   },
+  "cat-cow": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1774,
+      887
+    ],
+    "frameSizes": [
+      [
+        713,
+        887
+      ],
+      [
+        714,
+        887
+      ]
+    ],
+    "referenceHash": "bb8ea073d1",
+    "thumbnailHash": "39f7f210d4",
+    "frameHashes": [
+      "618ec4bc90",
+      "f49fcfa839"
+    ]
+  },
   "chest-press-machine": {
     "frameCount": 6,
     "thumbnailFrame": 4,
@@ -1052,6 +1100,30 @@
       "7f6acfdfb0",
       "00bd367568",
       "64a44500be"
+    ]
+  },
+  "cross-body-shoulder-stretch": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        396,
+        822
+      ],
+      [
+        397,
+        822
+      ]
+    ],
+    "referenceHash": "0692573fab",
+    "thumbnailHash": "0a7a13232c",
+    "frameHashes": [
+      "10809b7e8a",
+      "522ed09960"
     ]
   },
   "crunch": {
@@ -1485,6 +1557,40 @@
       "24b7bf751f",
       "0b9db1707c",
       "6dab03d660"
+    ]
+  },
+  "dumbbell-pullover": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        489,
+        822
+      ],
+      [
+        461,
+        822
+      ],
+      [
+        513,
+        822
+      ],
+      [
+        450,
+        822
+      ]
+    ],
+    "referenceHash": "55dd235b61",
+    "thumbnailHash": "f0c7a03fce",
+    "frameHashes": [
+      "93c86b8b6c",
+      "fa547ea2ae",
+      "c42879dd99",
+      "d7ca14d97c"
     ]
   },
   "dumbbell-rdl": {
@@ -2027,6 +2133,40 @@
       "3c33252714"
     ]
   },
+  "hamstring-walkout": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        450,
+        823
+      ],
+      [
+        452,
+        823
+      ],
+      [
+        541,
+        823
+      ],
+      [
+        462,
+        823
+      ]
+    ],
+    "referenceHash": "8d71f1c42d",
+    "thumbnailHash": "96f1d69e06",
+    "frameHashes": [
+      "12674759af",
+      "9624c8c8e0",
+      "ea9addb7cb",
+      "25752fadf5"
+    ]
+  },
   "hanging-leg-raise": {
     "frameCount": 4,
     "thumbnailFrame": 3,
@@ -2341,6 +2481,30 @@
       "c8af982f47",
       "a969140dad",
       "543593ee88"
+    ]
+  },
+  "lat-stretch": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1774,
+      887
+    ],
+    "frameSizes": [
+      [
+        768,
+        887
+      ],
+      [
+        855,
+        887
+      ]
+    ],
+    "referenceHash": "d40ead779c",
+    "thumbnailHash": "02adb15c61",
+    "frameHashes": [
+      "de55ac32d3",
+      "310411d343"
     ]
   },
   "lateral-raise": {
@@ -2713,6 +2877,35 @@
       "9c1adba923"
     ]
   },
+  "ninety-ninety-hip-switch": {
+    "frameCount": 3,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1912,
+      823
+    ],
+    "frameSizes": [
+      [
+        564,
+        823
+      ],
+      [
+        620,
+        823
+      ],
+      [
+        609,
+        823
+      ]
+    ],
+    "referenceHash": "3fa38636d0",
+    "thumbnailHash": "fbdcbdef16",
+    "frameHashes": [
+      "9e4b901c55",
+      "e5026daa22",
+      "b88b7ae7de"
+    ]
+  },
   "one-arm-cable-row": {
     "frameCount": 6,
     "thumbnailFrame": 4,
@@ -2833,6 +3026,30 @@
       "beab62b7b8",
       "9a415a2549",
       "1d3dd49d16"
+    ]
+  },
+  "overhead-triceps-stretch": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1704,
+      923
+    ],
+    "frameSizes": [
+      [
+        291,
+        923
+      ],
+      [
+        292,
+        923
+      ]
+    ],
+    "referenceHash": "72b2aa70c7",
+    "thumbnailHash": "cb36a3032d",
+    "frameHashes": [
+      "7541d71fcd",
+      "972f3c6f16"
     ]
   },
   "pec-deck": {
@@ -3253,6 +3470,30 @@
       "65d2de3b1a"
     ]
   },
+  "scapular-push-up": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1857,
+      847
+    ],
+    "frameSizes": [
+      [
+        875,
+        847
+      ],
+      [
+        878,
+        847
+      ]
+    ],
+    "referenceHash": "b33778153c",
+    "thumbnailHash": "194287d696",
+    "frameHashes": [
+      "a82eb7a442",
+      "29b8633d97"
+    ]
+  },
   "seated-butterfly-stretch": {
     "frameCount": 2,
     "thumbnailFrame": 2,
@@ -3421,6 +3662,40 @@
       "50502aaa2f",
       "acf6a0b833",
       "a73c7c0696"
+    ]
+  },
+  "shoulder-circle": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        192,
+        821
+      ],
+      [
+        362,
+        821
+      ],
+      [
+        193,
+        821
+      ],
+      [
+        375,
+        821
+      ]
+    ],
+    "referenceHash": "5f5e88ce7a",
+    "thumbnailHash": "39ddd77abd",
+    "frameHashes": [
+      "7c04e8c81f",
+      "f7c77750cf",
+      "4bf2401701",
+      "4b46b6570b"
     ]
   },
   "shrug": {
@@ -4055,6 +4330,30 @@
       "17325d1ea7"
     ]
   },
+  "thoracic-rotation": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1774,
+      887
+    ],
+    "frameSizes": [
+      [
+        705,
+        887
+      ],
+      [
+        705,
+        887
+      ]
+    ],
+    "referenceHash": "cb13741496",
+    "thumbnailHash": "686319b59c",
+    "frameHashes": [
+      "7ae629b2ef",
+      "8f3ff338f2"
+    ]
+  },
   "triceps-pushdown": {
     "frameCount": 4,
     "thumbnailFrame": 3,
@@ -4213,6 +4512,30 @@
     "frameHashes": [
       "df22a0fc84",
       "c95023cb58"
+    ]
+  },
+  "wall-slide": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        542,
+        821
+      ],
+      [
+        314,
+        821
+      ]
+    ],
+    "referenceHash": "e175c515d5",
+    "thumbnailHash": "efe4d6ca86",
+    "frameHashes": [
+      "554e5d6b63",
+      "dff30eed86"
     ]
   },
   "wide-grip-lat-pulldown": {

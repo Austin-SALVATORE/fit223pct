@@ -1,0 +1,32 @@
+{
+  "exerciseId": "cat-cow",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1774,
+      887
+    ],
+    "frameSizes": [
+      [
+        713,
+        887
+      ],
+      [
+        714,
+        887
+      ]
+    ],
+    "referenceHash": "bb8ea073d1",
+    "thumbnailHash": "39f7f210d4",
+    "frameHashes": [
+      "618ec4bc90",
+      "f49fcfa839"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

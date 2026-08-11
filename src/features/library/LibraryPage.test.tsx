@@ -37,7 +37,7 @@ describe('Settings entry', () => {
 // not imported from a .test.ts file. Two Mesocycle 2 additions (spec v2.7
 // §18) have no art yet; remove an id here in the same commit that removes
 // it from KNOWN_MISSING.
-const KNOWN_MISSING_IDS = new Set(['hamstring-walkout', 'dumbbell-pullover'])
+const KNOWN_MISSING_IDS = new Set<string>()
 
 describe('Every seeded exercise actually reaches the page', () => {
   /**
