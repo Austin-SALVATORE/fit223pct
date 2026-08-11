@@ -143,6 +143,14 @@ Split Squat**, but spec v2.16 §4 writes it as *"12 kg in each hand"*
 exercise is blocked on the answer; do not seed it from either source
 alone.
 
+> **Resolved 11 Aug 2026 — two dumbbells.** The Build Prescription
+> Revision writes B1 as "7.2 kg per dumbbell" using the same bilateral
+> phrasing as every matched-pair movement, and carries no "Use one
+> dumbbell" instruction (which that spec adds explicitly to every
+> single-implement movement). Validator confirmed the reading is
+> unambiguous by the document's own convention; the earlier
+> single-dumbbell example list is superseded.
+
 ## Coach rulings on the verified report — 7 Aug 2026 ~15:55 (board answer, verbatim decisions)
 
 The hardware report was **accepted**, with seven rulings that supersede
