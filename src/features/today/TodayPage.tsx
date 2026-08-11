@@ -21,7 +21,6 @@ import { useActivityKindLabel } from '@/lib/activityKindLabel'
 import { useFocusOnChange } from '@/lib/useFocusOnChange'
 import { useLocale } from '@/i18n/useLocale'
 import {
-  useLocalizedActivation,
   useLocalizedActivity,
   useProgramName,
   useSessionFocus,
@@ -29,7 +28,6 @@ import {
 } from '@/i18n/seedProgram'
 import { ActivityItemList } from '@/features/recovery/ActivityItemList'
 import { RideRecordCard } from '@/features/activity/RideRecordCard'
-import { ActivationRecordControl } from '@/features/activity/ActivationRecordControl'
 import { ConfirmAction } from '@/ui/ConfirmAction'
 import { SettingsLink } from '@/ui/SettingsLink'
 import type {
@@ -45,6 +43,9 @@ import { CheckInCard } from '@/features/checkin/CheckInCard'
 import { MeasurementCard } from '@/features/checkin/MeasurementCard'
 import { SessionPreview } from './SessionPreview'
 import { WeeklyReviewCard } from './WeeklyReviewCard'
+import { ActivationSection } from './ActivationSection'
+import { TrainingDayRide } from './TrainingDayRide'
+import { DoneTodayActivities } from './DoneTodayActivities'
 
 /** Never rendered — see InProgress's Rules-of-Hooks comment. */
 const EMPTY_SESSION: SessionTemplate = { id: '', name: '', focus: '', items: [] }
@@ -570,71 +571,6 @@ function TrainingDay({
 }
 
 /**
- * The one preparation round, shown above the session hero on every
- * training day (docs/design/ActivityPrescriptionPhaseA.md §2) — not a
- * weekday-keyed `ActivityHero`, since it's the same six items regardless
- * of which training day this is. Compact by design: this sits above the
- * actual hero, so it must not compete with it for attention.
- */
-function ActivationSection({
-  program,
-  activation,
-  heading,
-  todayKey,
-  existing,
-}: {
-  program: Program
-  activation: ActivityTemplate
-  heading: string
-  todayKey: string
-  /** Today's activation record, if any (coach spec v2.11 §3). */
-  existing: ActivityRecord | undefined
-}) {
-  const localized = useLocalizedActivation(program.id, activation, program.origin)
-  return (
-    <div className="mt-8">
-      <p className="text-sm font-medium text-ink-tertiary">{heading}</p>
-      <ActivityItemList items={localized.items} />
-      <ActivationRecordControl dateKey={todayKey} programId={program.id} existing={existing} />
-    </div>
-  )
-}
-
-/**
- * Post-strength cardio for this weekday, shown below the session preview
- * — display only, free text (§1). Weekday-keyed like a rest day's
- * activity, reusing `useLocalizedActivity` rather than a parallel hook.
- */
-function TrainingDayRide({
-  program,
-  activity,
-  weekday,
-  heading,
-  todayKey,
-  existing,
-}: {
-  program: Program
-  activity: ActivityTemplate
-  weekday: IsoWeekday
-  heading: string
-  todayKey: string
-  /** Today's ride record, if any (coach spec v2.11 §3). */
-  existing: ActivityRecord | undefined
-}) {
-  const localized = useLocalizedActivity(program.id, weekday, activity, program.origin)
-  // `recordable` marks the one item, if any, that a ride record control
-  // belongs under — structural, not inferred from label text (types.ts).
-  const recordable = localized.items.some((item) => item.recordable === 'ride')
-  return (
-    <div className="mt-8">
-      <p className="text-sm font-medium text-ink-tertiary">{heading}</p>
-      <ActivityItemList items={localized.items} />
-      {recordable && <RideRecordCard dateKey={todayKey} programId={program.id} existing={existing} />}
-    </div>
-  )
-}
-
-/**
  * A day with no scheduled session — a rest day, or any day before the
  * program starts. The day's framing (rest, anticipation) stays the hero;
  * the way into Workout Mode is a quiet affordance below the preview, so
@@ -865,70 +801,6 @@ function DoneToday({ workout }: { workout: Workout }) {
         volume: Math.round(summary.volumeKg),
       })}
     />
-  )
-}
-
-/**
- * The post-lift ride and the morning activation are prescribed
- * independently of whether today's session has already been completed
- * (coach spec v2.11 §3 — recording is available as soon as the session
- * ends). `TodayBody`'s `doneToday` branch used to render only
- * `DoneToday` + the check-in card, which made both controls unreachable
- * the moment a training day's workout was marked complete — exactly
- * when a post-lift ride is supposed to be logged (owner-reported defect,
- * M2 first live session, 10 Aug).
- *
- * Reuses `TrainingDayRide`/`ActivationSection` verbatim rather than
- * building parallel markup. What triggers them differs from a training
- * day's own branch: `weekdayActivities`/`morningActivation` are read
- * directly off `program` for today's weekday, not through
- * `resolveDayPlan` — this stays out of domain scheduling by design
- * (architecture.md), and a workout only exists for a day that was a
- * training day, so this is the same activity `resolveDayPlan` would
- * have surfaced.
- */
-function DoneTodayActivities({
-  program,
-  today,
-  todayKey,
-  todayActivityRecords,
-}: {
-  program: Program
-  today: Date
-  todayKey: string
-  todayActivityRecords: ActivityRecord[]
-}) {
-  const { t } = useTranslation('today')
-  const weekday = isoWeekday(today)
-  const activity = program.weekdayActivities?.[weekday] ?? null
-  const activation = program.morningActivation ?? null
-  const rideRecord = todayActivityRecords.find((r) => r.kind === 'ride')
-  const activationRecord = todayActivityRecords.find((r) => r.kind === 'activation')
-
-  if (!activity && !activation) return null
-
-  return (
-    <>
-      {activation && (
-        <ActivationSection
-          program={program}
-          activation={activation}
-          heading={t('trainingDay.activationHeading')}
-          todayKey={todayKey}
-          existing={activationRecord}
-        />
-      )}
-      {activity && (
-        <TrainingDayRide
-          program={program}
-          activity={activity}
-          weekday={weekday}
-          heading={t('trainingDay.rideHeading')}
-          todayKey={todayKey}
-          existing={rideRecord}
-        />
-      )}
-    </>
   )
 }
 
