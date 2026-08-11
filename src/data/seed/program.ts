@@ -900,7 +900,11 @@ export const mesocycle2Build: Program = {
       items: [
         { label: 'Normal walking' },
         { label: 'Light mobility' },
-        { label: 'Optional gentle stretching' },
+        // Points at the existing illustrated routine (routines.ts) — the
+        // generic §9 prescription this item transcribes is exactly what
+        // that routine now serves, unlike the session-specific stretch
+        // lists elsewhere in this file (see those items' own comments).
+        { label: 'Optional gentle stretching', routineId: 'recovery-stretch-v1' },
         { label: 'Complete rest is a fine choice too' },
       ],
     },
@@ -927,7 +931,7 @@ export const mesocycle2Build: Program = {
       items: [
         { label: 'Normal walking' },
         { label: 'Light mobility' },
-        { label: 'Optional gentle stretching' },
+        { label: 'Optional gentle stretching', routineId: 'recovery-stretch-v1' },
         { label: 'Complete rest is a fine choice too' },
       ],
     },
@@ -954,7 +958,7 @@ export const mesocycle2Build: Program = {
       items: [
         { label: 'Normal walking' },
         { label: 'Light mobility' },
-        { label: 'Optional gentle stretching' },
+        { label: 'Optional gentle stretching', routineId: 'recovery-stretch-v1' },
         { label: 'Complete rest is a fine choice too' },
       ],
     },
