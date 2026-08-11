@@ -896,7 +896,7 @@ export const mesocycle2Build: Program = {
         {
           label: 'Chest & Back Stretching',
           detail:
-            'Doorway chest stretch, lat stretch, cross-body shoulder stretch — 30 sec/side, one round, about 3-4 min total',
+            'Wall chest stretch, lat stretch, cross-body shoulder stretch — 30 sec/side, one round, about 3-4 min total',
         },
       ],
     },

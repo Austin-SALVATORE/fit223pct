@@ -429,7 +429,7 @@ describe('PlanDayPage states', () => {
       // Second item — the stretching prescription, currently invisible.
       expect(screen.getByText('Chest & Back Stretching')).toBeInTheDocument()
       expect(
-        screen.getByText(/Doorway chest stretch, lat stretch, cross-body shoulder stretch/),
+        screen.getByText(/Wall chest stretch, lat stretch, cross-body shoulder stretch/),
       ).toBeInTheDocument()
     })
   })
