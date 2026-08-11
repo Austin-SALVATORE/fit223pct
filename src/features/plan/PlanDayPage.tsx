@@ -7,7 +7,7 @@ import { summarizeWorkout } from '@/domain/workout'
 import { formatLongDate, isoWeekday, parseDateKey, toDateKey, type IsoWeekday } from '@/lib/dates'
 import { useActivityKindLabel } from '@/lib/activityKindLabel'
 import { useExerciseName } from '@/i18n/seedExercise'
-import { useLocalizedActivity, useSessionName } from '@/i18n/seedProgram'
+import { useLocalizedActivation, useLocalizedActivity, useSessionName } from '@/i18n/seedProgram'
 import { useLocale } from '@/i18n/useLocale'
 import { SessionPreview } from '@/features/today/SessionPreview'
 import type { ActivityTemplate, Exercise, LoggedSet, Program, SessionTemplate, Workout } from '@/domain/types'
@@ -45,6 +45,10 @@ export function PlanDayPage() {
       programId: program.id,
       programOrigin: program.origin,
       schedulingMode: program.schedulingMode,
+      // Read straight off `program`, same as TodayPage's DoneTodayActivities
+      // — ScheduleDay carries no `activation` field, and this deliberately
+      // stays out of domain scheduling (see ProjectedDetail's own comment).
+      morningActivation: program.morningActivation ?? null,
     }
   }, [date, validDate])
 
@@ -64,6 +68,7 @@ export function PlanDayPage() {
         programId={data.programId}
         programOrigin={data.programOrigin}
         schedulingMode={data.schedulingMode}
+        morningActivation={data.morningActivation}
       />
     </div>
   )
@@ -76,6 +81,7 @@ function DayDetailBody({
   programId,
   programOrigin,
   schedulingMode,
+  morningActivation,
 }: {
   day: ScheduleDay
   exerciseById: Map<string, Exercise>
@@ -83,6 +89,7 @@ function DayDetailBody({
   programId: string
   programOrigin: Program['origin']
   schedulingMode: Program['schedulingMode']
+  morningActivation: ActivityTemplate | null
 }) {
   const { t } = useTranslation('plan')
 
@@ -126,6 +133,7 @@ function DayDetailBody({
       <ProjectedDetail
         session={day.session}
         activity={day.activity}
+        activation={morningActivation}
         programId={programId}
         programOrigin={programOrigin}
         weekday={weekday}
@@ -317,6 +325,7 @@ function LoggedExerciseRow({
 function ProjectedDetail({
   session,
   activity,
+  activation,
   programId,
   programOrigin,
   weekday,
@@ -326,6 +335,7 @@ function ProjectedDetail({
 }: {
   session: SessionTemplate
   activity: ActivityTemplate | null
+  activation: ActivityTemplate | null
   programId: string
   programOrigin: Program['origin']
   weekday: IsoWeekday
@@ -341,6 +351,9 @@ function ProjectedDetail({
       <p className="mt-4 text-sm leading-relaxed text-ink-tertiary">
         {t(schedulingMode === 'weekday-pinned' ? 'projectedNotePinned' : 'projectedNote')}
       </p>
+      {activation && (
+        <MorningActivationPreview programId={programId} programOrigin={programOrigin} activation={activation} />
+      )}
       <SessionPreview
         session={session}
         programId={programId}
@@ -353,6 +366,40 @@ function ProjectedDetail({
         <ActivitySecondary programId={programId} programOrigin={programOrigin} weekday={weekday} activity={activity} />
       )}
     </>
+  )
+}
+
+/**
+ * The one preparation round shown above the session on training days
+ * (coach spec §13, `Program.morningActivation`'s own doc). `ScheduleDay`
+ * carries no `activation` field (F13 of the M2 revision transcription
+ * plan) — read straight off `program` at this UI call site, exactly as
+ * `TodayPage.tsx`'s `DoneTodayActivities` already does, whose docblock
+ * states this deliberately stays out of domain scheduling.
+ *
+ * Quieter than `SessionPreview` — the session keeps the primary position
+ * (`DayDetailBody`'s 7 Aug comment already established this hierarchy
+ * for the activity/session pair; the same ordering applies here: this
+ * renders before the session, styled tertiary, matching Today's own
+ * order where activation renders above the ride). Preview only — no
+ * record control, unlike Today's `ActivationSection`; recording belongs
+ * to the day it's actually being done, not a projected future day.
+ */
+function MorningActivationPreview({
+  programId,
+  programOrigin,
+  activation,
+}: {
+  programId: string
+  programOrigin: Program['origin']
+  activation: ActivityTemplate
+}) {
+  const localized = useLocalizedActivation(programId, activation, programOrigin)
+  return (
+    <div className="mt-6">
+      <p className="text-sm font-medium text-ink-tertiary">{localized.title}</p>
+      <ActivityItemList items={localized.items} />
+    </div>
   )
 }
 

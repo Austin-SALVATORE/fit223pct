@@ -337,6 +337,58 @@ describe('PlanDayPage states', () => {
     ).toBeTruthy()
   })
 
+  /**
+   * Owner-reported defect (M2 revision transcription plan, Phase 5):
+   * `ScheduleDay` carries no `activation` field, so the Plan day detail
+   * never rendered `Program.morningActivation` at all — Today already
+   * did (`DoneTodayActivities`). Fixed by reading `morningActivation`
+   * straight off `program` at this UI call site, the same pattern
+   * Today's own code already uses.
+   */
+  it('a future training day carries the morning activation preview above the session', async () => {
+    await programRepo.put({
+      ...seedProgram,
+      origin: 'imported',
+      morningActivation: {
+        kind: 'mobility',
+        title: 'Morning Activation',
+        items: [{ label: 'Cat-cow', detail: '6 controlled reps' }],
+      },
+    })
+    renderDay('2026-08-03') // Monday, future relative to 27 Jul "today" — a training day
+    expect(await screen.findByRole('heading', { name: /Monday 3 August/ })).toBeInTheDocument()
+
+    const activationTitle = screen.getByText('Morning Activation')
+    expect(activationTitle).toBeInTheDocument()
+    expect(screen.getByText('Cat-cow')).toBeInTheDocument()
+    expect(screen.getByText(/6 controlled reps/)).toBeInTheDocument()
+
+    // Activation precedes the session in document order — quieter
+    // styling, but ahead of it, matching Today's own order
+    // (DoneTodayActivities renders activation above the ride).
+    const sessionHeading = screen.getByRole('heading', { level: 2, name: 'Chest & Back' })
+    expect(
+      activationTitle.compareDocumentPosition(sessionHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+  })
+
+  it('a completed day never renders the morning activation preview — CompletedDetail is out of scope', async () => {
+    await programRepo.put({
+      ...seedProgram,
+      origin: 'imported',
+      morningActivation: {
+        kind: 'mobility',
+        title: 'Morning Activation',
+        items: [{ label: 'Cat-cow', detail: '6 controlled reps' }],
+      },
+    })
+    await putCompletedWorkout('2026-07-22')
+    renderDay('2026-07-22')
+
+    expect(await screen.findByRole('heading', { name: /Wednesday 22 July/ })).toBeInTheDocument()
+    expect(screen.queryByText('Morning Activation')).toBeNull()
+  })
+
   it('past scheduled day, nothing logged: shows the day\'s own ride/stretch activity, never a fabricated session', async () => {
     // Friday now carries its own display-only activity (6 Aug content
     // batch — seed/program.ts's weekdayActivities comment), independent
