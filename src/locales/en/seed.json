@@ -573,9 +573,6 @@
           "exercise": {
             "single-arm-db-row": {
               "note": "Rest after both sides"
-            },
-            "goblet-squat": {
-              "note": "Progress tempo first, then weight"
             }
           }
         },
@@ -587,13 +584,16 @@
               "note": "Rest after both sides"
             },
             "standing-calf-raise": {
-              "note": "Hold this pyramid once every level is loaded and clean — a harder variation is next in your progression"
+              "note": "Full range of motion — controlled stretch at the bottom"
             },
             "dead-bug": {
               "note": "Rest 45-60 sec"
             },
-            "push-up": {
-              "note": "After both levels, progress to the separate harder-leverage variation"
+            "bird-dog": {
+              "note": "Hold the fully extended position for 2 seconds before returning."
+            },
+            "side-plank": {
+              "note": "Rest 45-60 sec"
             }
           }
         },
@@ -601,8 +601,8 @@
           "name": "Shoulders & Arms",
           "focus": "Shoulders and Arms Emphasis",
           "exercise": {
-            "side-plank": {
-              "note": "Rest 45-60 sec"
+            "dumbbell-lateral-raise": {
+              "note": "Technique takes priority over load"
             }
           }
         }
@@ -614,6 +614,10 @@
             "0": {
               "label": "Zone 2 ride",
               "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+            },
+            "1": {
+              "label": "Chest & Back Stretching",
+              "detail": "Doorway chest stretch, lat stretch, cross-body shoulder stretch — 30 sec/side, one round, about 3-4 min total"
             }
           }
         },
@@ -621,12 +625,16 @@
           "title": "Recovery day",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
+              "label": "Normal walking"
             },
             "1": {
-              "label": "Recovery-day stretching",
-              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+              "label": "Light mobility"
+            },
+            "2": {
+              "label": "Optional gentle stretching"
+            },
+            "3": {
+              "label": "Complete rest is a fine choice too"
             }
           }
         },
@@ -636,6 +644,10 @@
             "0": {
               "label": "Zone 2 ride",
               "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+            },
+            "1": {
+              "label": "Legs & Core Stretching",
+              "detail": "Standing or supported quad stretch, hamstring stretch, hip flexor stretch, figure-four glute stretch — 30 sec/side, one round, about 4-5 min total"
             }
           }
         },
@@ -643,12 +655,16 @@
           "title": "Recovery day",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "35 min (5 min easy warm-up, 5 min easy cool-down)"
+              "label": "Normal walking"
             },
             "1": {
-              "label": "Recovery-day stretching",
-              "detail": "10-15 min — hip flexor, hamstring, glute or figure-four, doorway chest, lat (using the bench), gentle thoracic rotation"
+              "label": "Light mobility"
+            },
+            "2": {
+              "label": "Optional gentle stretching"
+            },
+            "3": {
+              "label": "Complete rest is a fine choice too"
             }
           }
         },
@@ -658,33 +674,46 @@
             "0": {
               "label": "Zone 2 ride",
               "detail": "20 min, after lifting — 0-2 min easy transition before, up to 3 min easy spin after (about 25 min total)"
+            },
+            "1": {
+              "label": "Shoulders & Arms Stretching",
+              "detail": "Cross-body shoulder stretch, overhead triceps stretch, biceps/chest wall stretch — 30 sec/side, one round, about 3-4 min total"
             }
           }
         },
         "6": {
-          "title": "Optional recovery ride",
+          "title": "Recovery day",
           "item": {
             "0": {
-              "label": "Zone 2 ride",
-              "detail": "45 min (5 min easy warm-up, 5 min easy cool-down) — only when recovery is Green"
+              "label": "Normal walking"
             },
             "1": {
+              "label": "Light mobility"
+            },
+            "2": {
+              "label": "Optional gentle stretching"
+            },
+            "3": {
               "label": "Complete rest is a fine choice too"
             }
           }
         },
         "7": {
-          "title": "Weekly checkpoint",
+          "title": "Dedicated ride & weekly checkpoint",
           "item": {
             "0": {
+              "label": "Dedicated Zone 2 ride",
+              "detail": "40-50 min Zone 2 with an easy warm-up and cool-down — shorten to 30-40 min or skip it if fatigue is clearly elevated"
+            },
+            "1": {
               "label": "Weigh in",
               "detail": "Same conditions each week — morning, before eating"
             },
-            "1": {
+            "2": {
               "label": "Measure your waist",
               "detail": "Same spot, same conditions as last week"
             },
-            "2": {
+            "3": {
               "label": "Prepare the coming week",
               "detail": "Confirm training times and any sport plans"
             }

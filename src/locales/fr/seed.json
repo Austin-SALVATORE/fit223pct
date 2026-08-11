@@ -573,9 +573,6 @@
           "exercise": {
             "single-arm-db-row": {
               "note": "Repos après les deux côtés"
-            },
-            "goblet-squat": {
-              "note": "Progresse d'abord le tempo, puis la charge"
             }
           }
         },
@@ -587,13 +584,16 @@
               "note": "Repos après les deux côtés"
             },
             "standing-calf-raise": {
-              "note": "Maintiens cette pyramide une fois que chaque niveau est chargé et propre — une variante plus difficile est la suite de ta progression"
+              "note": "Amplitude complète — étirement contrôlé en bas"
             },
             "dead-bug": {
               "note": "Repos 45-60 sec"
             },
-            "push-up": {
-              "note": "Une fois les deux niveaux maîtrisés, passe à la variante distincte à levier plus difficile"
+            "bird-dog": {
+              "note": "Maintiens la position complètement tendue pendant 2 secondes avant de revenir."
+            },
+            "side-plank": {
+              "note": "Repos 45-60 sec"
             }
           }
         },
@@ -601,8 +601,8 @@
           "name": "Épaules et bras",
           "focus": "Accent épaules et bras",
           "exercise": {
-            "side-plank": {
-              "note": "Repos 45-60 sec"
+            "dumbbell-lateral-raise": {
+              "note": "La technique passe avant la charge"
             }
           }
         }
@@ -614,6 +614,10 @@
             "0": {
               "label": "Sortie Zone 2",
               "detail": "20 min, après la musculation — 0-2 min de transition facile avant, jusqu'à 3 min de pédalage facile après (environ 25 min au total)"
+            },
+            "1": {
+              "label": "Étirements poitrine et dos",
+              "detail": "Étirement des pectoraux dans l'embrasure de porte, étirement du grand dorsal, étirement croisé de l'épaule — 30 sec par côté, une série, environ 3-4 min au total"
             }
           }
         },
@@ -621,12 +625,16 @@
           "title": "Jour de récupération",
           "item": {
             "0": {
-              "label": "Sortie Zone 2",
-              "detail": "35 min (5 min d'échauffement facile, 5 min de retour au calme facile)"
+              "label": "Marche normale"
             },
             "1": {
-              "label": "Étirements du jour de récupération",
-              "detail": "10-15 min — fléchisseurs de hanche, ischio-jambiers, fessiers ou chiffre quatre, pectoraux dans l'embrasure de porte, grand dorsal (avec le banc), rotation thoracique douce"
+              "label": "Mobilité légère"
+            },
+            "2": {
+              "label": "Étirements doux (optionnel)"
+            },
+            "3": {
+              "label": "Le repos complet est aussi un bon choix"
             }
           }
         },
@@ -636,6 +644,10 @@
             "0": {
               "label": "Sortie Zone 2",
               "detail": "20 min, après la musculation — 0-2 min de transition facile avant, jusqu'à 3 min de pédalage facile après (environ 25 min au total)"
+            },
+            "1": {
+              "label": "Étirements jambes et gainage",
+              "detail": "Étirement des quadriceps (debout ou avec appui), étirement des ischio-jambiers, étirement des fléchisseurs de hanche, étirement des fessiers en chiffre quatre — 30 sec par côté, une série, environ 4-5 min au total"
             }
           }
         },
@@ -643,12 +655,16 @@
           "title": "Jour de récupération",
           "item": {
             "0": {
-              "label": "Sortie Zone 2",
-              "detail": "35 min (5 min d'échauffement facile, 5 min de retour au calme facile)"
+              "label": "Marche normale"
             },
             "1": {
-              "label": "Étirements du jour de récupération",
-              "detail": "10-15 min — fléchisseurs de hanche, ischio-jambiers, fessiers ou chiffre quatre, pectoraux dans l'embrasure de porte, grand dorsal (avec le banc), rotation thoracique douce"
+              "label": "Mobilité légère"
+            },
+            "2": {
+              "label": "Étirements doux (optionnel)"
+            },
+            "3": {
+              "label": "Le repos complet est aussi un bon choix"
             }
           }
         },
@@ -658,33 +674,46 @@
             "0": {
               "label": "Sortie Zone 2",
               "detail": "20 min, après la musculation — 0-2 min de transition facile avant, jusqu'à 3 min de pédalage facile après (environ 25 min au total)"
+            },
+            "1": {
+              "label": "Étirements épaules et bras",
+              "detail": "Étirement croisé de l'épaule, étirement des triceps au-dessus de la tête, étirement biceps/pectoraux au mur — 30 sec par côté, une série, environ 3-4 min au total"
             }
           }
         },
         "6": {
-          "title": "Sortie de récupération optionnelle",
+          "title": "Jour de récupération",
           "item": {
             "0": {
-              "label": "Sortie Zone 2",
-              "detail": "45 min (5 min d'échauffement facile, 5 min de retour au calme facile) — seulement si ton état est Vert"
+              "label": "Marche normale"
             },
             "1": {
+              "label": "Mobilité légère"
+            },
+            "2": {
+              "label": "Étirements doux (optionnel)"
+            },
+            "3": {
               "label": "Le repos complet est aussi un bon choix"
             }
           }
         },
         "7": {
-          "title": "Bilan hebdomadaire",
+          "title": "Sortie dédiée et bilan hebdomadaire",
           "item": {
             "0": {
+              "label": "Sortie Zone 2 dédiée",
+              "detail": "40-50 min en Zone 2 avec un échauffement et un retour au calme faciles — réduis à 30-40 min ou passe ton tour si la fatigue est clairement élevée"
+            },
+            "1": {
               "label": "Pesée",
               "detail": "Mêmes conditions chaque semaine — le matin, avant de manger"
             },
-            "1": {
+            "2": {
               "label": "Mesure ton tour de taille",
               "detail": "Même endroit, mêmes conditions que la semaine dernière"
             },
-            "2": {
+            "3": {
               "label": "Prépare la semaine à venir",
               "detail": "Confirme tes créneaux d'entraînement et tes activités sportives"
             }

@@ -8,7 +8,12 @@ import type { EquipmentProfile } from './types'
  * consumer-facing correctness rests on this fixture matching that
  * document exactly, not on any synthetic case below it.
  */
-const REAL_PROFILE: EquipmentProfile = {
+// Exported so mesocycle2Build.conformance.test.ts's achievable-load
+// membership guard (§6.1 of the M2 revision transcription plan) can
+// reuse the identical fixture rather than re-transcribing
+// docs/EquipmentProfile.md a second time, which would risk the two
+// silently diverging.
+export const REAL_PROFILE: EquipmentProfile = {
   handleKg: 1.2,
   plateSets: [
     {
