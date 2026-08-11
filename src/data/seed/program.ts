@@ -978,20 +978,15 @@ export const mesocycle2Build: Program = {
       ],
     },
   },
-  // Spec §13 — the same six-item round every training day, ~8-12 min,
-  // preparation rather than a workout: no timing target, no score, no
-  // progression. One program-level field, not per-weekday
-  // (docs/design/ActivityPrescriptionPhaseA.md §2).
+  // Owner ruling (11 Aug): morning activation moves from the six-item
+  // mobility round to Apple Fitness+, with the owner choosing the
+  // program themselves each day. `kind` stays 'mobility' and the
+  // single-item shape is otherwise unchanged — `ActivationRecordControl`
+  // (src/features/activity/ActivationRecordControl.tsx) is a bare
+  // completion timestamp that never keys off item count.
   morningActivation: {
     kind: 'mobility',
     title: 'Morning Activation',
-    items: [
-      { label: 'Cat-cow', detail: '6 controlled reps' },
-      { label: 'Thoracic rotation', detail: '6 reps per side' },
-      { label: 'Wall slide or shoulder circle', detail: '8 controlled reps' },
-      { label: '90/90 hip switch', detail: '6 reps per side' },
-      { label: 'Bodyweight glute bridge', detail: '10 reps' },
-      { label: 'Bodyweight squat', detail: '8 reps' },
-    ],
+    items: [{ label: 'Apple Fitness+', detail: 'Choose your own program in the Apple Fitness+ app' }],
   },
 }

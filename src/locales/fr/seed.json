@@ -724,28 +724,8 @@
         "title": "Activation matinale",
         "item": {
           "0": {
-            "label": "Chat-vache",
-            "detail": "6 répétitions contrôlées"
-          },
-          "1": {
-            "label": "Rotation thoracique",
-            "detail": "6 répétitions par côté"
-          },
-          "2": {
-            "label": "Glissé au mur ou rotation d'épaule",
-            "detail": "8 répétitions contrôlées"
-          },
-          "3": {
-            "label": "Changement de hanches 90/90",
-            "detail": "6 répétitions par côté"
-          },
-          "4": {
-            "label": "Pont fessier au poids du corps",
-            "detail": "10 répétitions"
-          },
-          "5": {
-            "label": "Squat au poids du corps",
-            "detail": "8 répétitions"
+            "label": "Apple Fitness+",
+            "detail": "Choisis toi-même ton programme dans l'appli Apple Fitness+"
           }
         }
       }

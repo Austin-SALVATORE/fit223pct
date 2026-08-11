@@ -724,28 +724,8 @@
         "title": "晨间激活",
         "item": {
           "0": {
-            "label": "猫牛式",
-            "detail": "6次可控重复"
-          },
-          "1": {
-            "label": "胸椎旋转",
-            "detail": "每侧6次"
-          },
-          "2": {
-            "label": "靠墙滑臂或肩部环绕",
-            "detail": "8次可控重复"
-          },
-          "3": {
-            "label": "90/90髋关节转换",
-            "detail": "每侧6次"
-          },
-          "4": {
-            "label": "自重臀桥",
-            "detail": "10次"
-          },
-          "5": {
-            "label": "自重深蹲",
-            "detail": "8次"
+            "label": "Apple Fitness+",
+            "detail": "自己在 Apple Fitness+ 应用里选择训练项目"
           }
         }
       }

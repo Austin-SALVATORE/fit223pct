@@ -724,28 +724,8 @@
         "title": "Morning Activation",
         "item": {
           "0": {
-            "label": "Cat-cow",
-            "detail": "6 controlled reps"
-          },
-          "1": {
-            "label": "Thoracic rotation",
-            "detail": "6 reps per side"
-          },
-          "2": {
-            "label": "Wall slide or shoulder circle",
-            "detail": "8 controlled reps"
-          },
-          "3": {
-            "label": "90/90 hip switch",
-            "detail": "6 reps per side"
-          },
-          "4": {
-            "label": "Bodyweight glute bridge",
-            "detail": "10 reps"
-          },
-          "5": {
-            "label": "Bodyweight squat",
-            "detail": "8 reps"
+            "label": "Apple Fitness+",
+            "detail": "Choose your own program in the Apple Fitness+ app"
           }
         }
       }

@@ -477,8 +477,15 @@ describe('mesocycle2Build — spec conformance (11 Aug 2026 Build Prescription R
     }
   })
 
-  it('Morning Activation is one round of six items (§13)', () => {
-    expect(mesocycle2Build.morningActivation?.items).toHaveLength(6)
+  /**
+   * Owner ruling (11 Aug 2026): morning activation moved from the
+   * §13 six-item mobility round to Apple Fitness+, with the owner
+   * choosing the program themselves — a single item, not a routine to
+   * enumerate.
+   */
+  it('Morning Activation is a single Apple Fitness+ item (11 Aug ruling)', () => {
+    expect(mesocycle2Build.morningActivation?.items).toHaveLength(1)
+    expect(mesocycle2Build.morningActivation?.items[0]?.label).toBe('Apple Fitness+')
   })
 
   /**
