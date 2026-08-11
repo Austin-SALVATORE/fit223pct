@@ -172,6 +172,15 @@ authored routines; the other three recovery activities; anything on
 training days. Routines are content the app plays, not data it
 accumulates.
 
+> **Scope narrowed 11 Aug 2026 (coach ruling, board answer, archived as
+> `Stretching-Skip-State-Ruling-2026-08-11.md` in the validator's spec
+> archive):** on **training days only**, the app may store a
+> post-workout-stretching fact with three states — completed / skipped /
+> unresolved — for historical accuracy. Stretching never gates day
+> completion, and the fact carries no guilt, penalty, readiness,
+> progression, or compliance meaning. This file's no-tracking rule
+> continues to hold in full for recovery-day guided routines.
+
 ## Content — settled 28 Jul
 
 The routine's content is
