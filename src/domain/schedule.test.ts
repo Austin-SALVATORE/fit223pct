@@ -412,3 +412,110 @@ describe('projectSchedule', () => {
     expect(futureTuesday.projected).toBe(true)
   })
 })
+
+/**
+ * The `:196` fallback used to hardcode `workout: null, session: null` for
+ * every past scheduled day with no *completed* workout — discarding a
+ * workout that was started and had sets logged but never finished. That
+ * contradicts `ScheduleDay`'s own contract above (`:84-85`): "the actual
+ * workout on this date, if any — including early-started (unscheduled-day)
+ * sessions". Fixed by carrying the workout (and the session it actually
+ * started, read from `sessionTemplateId`, a stored fact) whenever one
+ * exists and has logged sets. A genuine skip — no workout row at all, or
+ * one with zero logged sets — keeps the old `workout: null, session: null`
+ * answer; `session: null` there is correct and must stay (`:86-91`):
+ * skipping never consumes a rotation slot, so there is no honest answer to
+ * what would have happened.
+ *
+ * Control (proven red before this fix, at `af468f4`): reverting this block
+ * to the hardcoded `workout: null, session: null` return makes "carries
+ * the workout" fail with `expected undefined to be 'w-abandoned'` and
+ * "names the session that was actually attempted" fail with `expected
+ * undefined to be 'A'`.
+ */
+describe('projectSchedule — an abandoned-but-logged past day is reachable', () => {
+  // Wednesday 22 Jul 2026 — a training day. Started, three sets logged,
+  // never completed, closed by closeStaleWorkouts (abandonedAt set,
+  // completedAt left null).
+  const abandonedWorkout: Workout = {
+    id: 'w-abandoned',
+    programId: program.id,
+    sessionTemplateId: 'A',
+    date: '2026-07-22',
+    startedAt: '2026-07-22T07:00:00.000Z',
+    completedAt: null,
+    abandonedAt: '2026-07-23T03:00:00.000Z',
+    exercises: [
+      {
+        exerciseId: 'goblet-squat',
+        prescription: {
+          exerciseId: 'goblet-squat',
+          sets: 3,
+          mode: 'reps',
+          restSeconds: 90,
+          perSide: false,
+          range: { min: 8, max: 12 },
+          startWeightKg: 20,
+          maxWeightKg: 30,
+          weightStepKg: 2,
+        },
+        sets: [
+          { setIndex: 0, weightKg: 20, reps: 12, seconds: null, completedAt: '2026-07-22T07:05:00.000Z' },
+          { setIndex: 1, weightKg: 20, reps: 11, seconds: null, completedAt: '2026-07-22T07:08:00.000Z' },
+          { setIndex: 2, weightKg: 20, reps: 9, seconds: null, completedAt: '2026-07-22T07:11:00.000Z' },
+        ],
+      },
+    ],
+  }
+
+  it('carries the workout, so the logged sets are reachable from the Plan', () => {
+    const days = projectSchedule(program, [abandonedWorkout], new Date(2026, 6, 27))
+    expect(byDate(days, '2026-07-22').workout?.id).toBe('w-abandoned')
+  })
+
+  it('names the session that was actually attempted, from the stored template id', () => {
+    const days = projectSchedule(program, [abandonedWorkout], new Date(2026, 6, 27))
+    expect(byDate(days, '2026-07-22').session?.id).toBe('A')
+  })
+
+  it('is not projected — what happened is a fact, not an assumption', () => {
+    const days = projectSchedule(program, [abandonedWorkout], new Date(2026, 6, 27))
+    expect(byDate(days, '2026-07-22').projected).toBe(false)
+  })
+
+  /**
+   * Edge case named in the plan: a workout row can exist with zero logged
+   * sets (started, left immediately, closed at next boot). "You started
+   * this and logged nothing" is a different fact from "you logged sets and
+   * stopped" — a row promising logged work that doesn't exist would be a
+   * new dishonesty, so this falls through to the ordinary skip answer.
+   */
+  it('a workout with zero logged sets renders as a genuine skip, not an attempted day', () => {
+    const zeroSetWorkout: Workout = {
+      ...abandonedWorkout,
+      id: 'w-zero-set',
+      date: '2026-07-24', // Friday, also a training day
+      exercises: [{ ...abandonedWorkout.exercises[0], sets: [] }],
+    }
+    const days = projectSchedule(program, [zeroSetWorkout], new Date(2026, 6, 27))
+    const day = byDate(days, '2026-07-24')
+    expect(day.workout).toBeNull()
+    expect(day.session).toBeNull()
+  })
+
+  it('a genuinely skipped day (no workout row at all) still yields workout: null, session: null — unchanged', () => {
+    const days = projectSchedule(program, [], new Date(2026, 6, 27))
+    const day = byDate(days, '2026-07-24') // Friday, a training day, nothing logged
+    expect(day.workout).toBeNull()
+    expect(day.session).toBeNull()
+  })
+
+  it('a completed day still takes the completed branch, unaffected by this change', () => {
+    const completedWorkout = makeWorkout('2026-07-22', 'A') // completed: true (default)
+    const days = projectSchedule(program, [completedWorkout], new Date(2026, 6, 27))
+    const day = byDate(days, '2026-07-22')
+    expect(day.workout?.id).toBe(completedWorkout.id)
+    expect(day.session?.id).toBe('A')
+    expect(day.projected).toBe(false)
+  })
+})

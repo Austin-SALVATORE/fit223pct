@@ -196,6 +196,67 @@ describe('PlanDayPage: custom sets and skipped levels in history', () => {
   })
 })
 
+/**
+ * Owner-reported defect (11 Aug plan) — a day that was started, had sets
+ * logged, and never finished used to be indistinguishable from a
+ * genuinely skipped day: the domain fallback hardcoded `workout: null,
+ * session: null`, discarding the logged work. Fixed at the domain layer
+ * (schedule.ts) plus this new detail branch, landed in the same commit —
+ * shipping the domain fix alone would have made `ProjectedDetail` render
+ * a *prescription* for a past day once `day.session` stopped being null,
+ * which is worse than today's "nothing logged".
+ */
+describe('PlanDayPage: an attempted day (started, not finished)', () => {
+  async function putAbandonedWorkout(date: string, loggedSets: boolean) {
+    let workout = createWorkout({
+      id: `w-abandoned-${date}`,
+      programId: seedProgram.id,
+      session: seedProgram.sessions[1], // Legs & Core, item 0 = goblet-squat
+      date,
+      startedAt: `${date}T09:00:00.000Z`,
+    })
+    if (loggedSets) {
+      workout = logSet(
+        workout,
+        0,
+        { weightKg: 20, reps: 10, seconds: null, completedAt: `${date}T09:10:00.000Z` },
+        0,
+      )
+    }
+    workout = { ...workout, abandonedAt: `${date}T20:00:00.000Z` }
+    await db.workouts.put(workout)
+  }
+
+  it('shows the started-not-finished heading, the session, and the logged sets — not a Projected prescription', async () => {
+    await putAbandonedWorkout('2026-07-22', true) // Wednesday
+    renderDay('2026-07-22')
+
+    expect(await screen.findByRole('heading', { name: /Wednesday 22 July/ })).toBeInTheDocument()
+    expect(screen.getByText('You started this session')).toBeInTheDocument()
+    expect(screen.getByText('Legs & Core')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Goblet squat' })).toBeInTheDocument()
+    expect(screen.getByText('10 × 20 kg')).toBeInTheDocument()
+    expect(screen.queryByText('Projected')).toBeNull()
+    expect(screen.queryByText(/RIR/)).toBeNull()
+  })
+
+  /**
+   * Edge case named in the plan: a workout row can exist with zero logged
+   * sets (started, left immediately, closed at next boot). Handled at the
+   * domain layer (schedule.ts treats it as a genuine skip), so this
+   * screen never even receives a workout to build an attempted-day
+   * detail from — it falls through to the ordinary "nothing logged" copy.
+   */
+  it('a zero-set workout never reaches the attempted detail — the domain layer treats it as a skip', async () => {
+    await putAbandonedWorkout('2026-07-22', false)
+    renderDay('2026-07-22')
+
+    expect(await screen.findByRole('heading', { name: /Wednesday 22 July/ })).toBeInTheDocument()
+    expect(screen.queryByText('You started this session')).toBeNull()
+    expect(screen.getByText(/Nothing was logged this day/)).toBeInTheDocument()
+  })
+})
+
 describe('PlanDayPage states', () => {
   it('completed workout day: facts only — session name, per-exercise logged sets, summary, no RIR anywhere', async () => {
     await putCompletedWorkout('2026-07-22')

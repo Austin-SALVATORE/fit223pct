@@ -63,7 +63,12 @@ export function PlanPage() {
     const [programs, activeProgram, workouts] = await Promise.all([
       programRepo.getAll(),
       programRepo.getActive(todayKey),
-      workoutRepo.getCompleted(),
+      // getAll(), not getCompleted() — an abandoned day (completedAt still
+      // null; see Workout.abandonedAt's doc) must still reach
+      // projectSchedule so it can be carried as attempted rather than
+      // discarded as skipped. getCompleted()'s filter would exclude it
+      // before projectSchedule ever sees it.
+      workoutRepo.getAll(),
     ])
     return { programs, activeProgram, workouts }
   }, [todayKey])
@@ -200,6 +205,29 @@ function DayRow({
         </span>
         <span className="shrink-0 text-right text-sm text-ink-secondary">
           {day.session ? resolvedSessionName : (day.activity ? localizedActivity.title : t('restFallback'))}
+          {activitySuffix}
+        </span>
+      </GroupedRow>
+    )
+  }
+
+  // An attempted day (started, sets logged, never finished —
+  // `day.workout.completedAt === null` because `closeStaleWorkouts`
+  // never sets it; see `Workout.abandonedAt`'s "closing is not
+  // finishing" doc) must not read as a completed one: same real
+  // session name and set/volume summary, plus a quiet qualifier that
+  // is neither failure nor completion language (docs/Design.md:68).
+  if (day.workout && day.workout.completedAt === null) {
+    const summary = summarizeWorkout(day.workout)
+    return (
+      <GroupedRow to={dayHref}>
+        <span className="font-medium text-ink">{label}</span>
+        <span className="shrink-0 text-right text-sm text-ink-secondary">
+          {sessionName}
+          <span className="block text-ink-tertiary">
+            {t('setsVolume', { count: summary.totalSets, volume: Math.round(summary.volumeKg) })}
+          </span>
+          <span className="block text-ink-tertiary">{t('attemptedBadge')}</span>
           {activitySuffix}
         </span>
       </GroupedRow>

@@ -190,9 +190,25 @@ export function projectSchedule(
       }
     }
 
-    // A past scheduled day with no completed workout: skipped. A non-
-    // training day still carries its activity, if any — there is no
-    // "skipped" state for an activity, since there's nothing to complete.
+    // A past scheduled day with no completed workout. If it was started
+    // and something was logged, it was attempted, not skipped — carry the
+    // workout and the session actually attempted, read from the stored
+    // `sessionTemplateId` (a fact, not a projection; the completed branch
+    // above already reads it the same way). A workout with zero logged
+    // sets (started, left immediately, closed at next boot) has nothing
+    // to reach, so it falls through to the skip return below rather than
+    // promising logged work that doesn't exist.
+    if (workout && workout.exercises.some((exercise) => exercise.sets.length > 0)) {
+      const session = program.sessions.find((s) => s.id === workout.sessionTemplateId) ?? null
+      return { date, isToday, isTrainingDay, workout, session, projected: false, activity }
+    }
+
+    // A genuine skip — no workout row, or one with nothing logged — and a
+    // non-training day both land here. `session: null` is deliberate: a
+    // skipped day never consumed a rotation slot, so there is no honest
+    // answer to what would have happened. A non-training day still
+    // carries its activity, if any — there is no "skipped" state for an
+    // activity, since there's nothing to complete.
     return { date, isToday, isTrainingDay, workout: null, session: null, projected: false, activity }
   })
 }

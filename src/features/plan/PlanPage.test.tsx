@@ -68,6 +68,35 @@ async function putCompletedWorkout(date: string, session = seedProgram.sessions[
   await db.workouts.put(workout)
 }
 
+/**
+ * A day that was started, had a set logged, and closed by
+ * `closeStaleWorkouts` without ever completing — `completedAt` stays
+ * null, `abandonedAt` records when it was closed (types.ts's own
+ * docblock: "closing is not finishing").
+ */
+async function putAbandonedWorkout(date: string, session = seedProgram.sessions[0]) {
+  let workout = createWorkout({
+    id: `w-${date}`,
+    programId: seedProgram.id,
+    session,
+    date,
+    startedAt: `${date}T09:00:00.000Z`,
+  })
+  workout = logSet(
+    workout,
+    0,
+    {
+      weightKg: 20,
+      reps: 10,
+      seconds: null,
+      completedAt: `${date}T09:10:00.000Z`,
+    },
+    0,
+  )
+  workout = { ...workout, abandonedAt: `${date}T20:00:00.000Z` }
+  await db.workouts.put(workout)
+}
+
 describe('PlanPage', () => {
   it('opens Settings from the gear and returns to Plan', async () => {
     renderApp()
@@ -142,6 +171,26 @@ describe('PlanPage', () => {
     // this always rendered "sets" regardless of count.
     expect(row).toHaveTextContent('1 set')
     expect(row).not.toHaveTextContent('Projected')
+  })
+
+  /**
+   * Owner-reported defect (11 Aug plan): `if (day.workout)` at the top of
+   * the completed branch had no `completedAt` check, so an attempted day
+   * (started, sets logged, never finished) rendered the identical row a
+   * completed day gets — the list claimed the day was finished. Fixed by
+   * distinguishing on `completedAt === null` and adding a quiet qualifier
+   * that is neither failure nor completion language.
+   */
+  it('shows a started-but-not-finished day as attempted, never as completed — real summary plus a distinct qualifier', async () => {
+    await putAbandonedWorkout('2026-07-22', seedProgram.sessions[1]) // Wed = Legs & Core
+    renderApp()
+    const row = (await screen.findByText('Wed 22 Jul')).closest('li')
+    expect(row).not.toBeNull()
+    expect(row).toHaveTextContent('Legs & Core')
+    // The logged set is a real fact, shown exactly as a completed day's is.
+    expect(row).toHaveTextContent('1 set')
+    // The qualifier that keeps this from reading as completed.
+    expect(row).toHaveTextContent('Started — not finished')
   })
 
   it('links today\'s row back to Today', async () => {

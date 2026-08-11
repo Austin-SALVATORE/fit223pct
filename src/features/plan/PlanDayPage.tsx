@@ -35,7 +35,10 @@ export function PlanDayPage() {
     const [program, exercises, workouts] = await Promise.all([
       programRepo.getActive(date),
       exerciseRepo.getAll(),
-      workoutRepo.getCompleted(),
+      // getAll(), not getCompleted() — see PlanPage.tsx's identical
+      // comment: an abandoned day must reach projectSchedule to be
+      // carried as attempted rather than discarded as skipped.
+      workoutRepo.getAll(),
     ])
     if (!program) return { day: null }
     const days = projectSchedule(program, workouts, new Date())
@@ -98,6 +101,28 @@ function DayDetailBody({
   if (day.workout && day.workout.completedAt !== null) {
     return (
       <CompletedDetail
+        workout={day.workout}
+        session={day.session ?? undefined}
+        activity={day.activity}
+        programId={programId}
+        programOrigin={programOrigin}
+        weekday={weekday}
+        exerciseById={exerciseById}
+        date={date}
+      />
+    )
+  }
+
+  // An attempted day (started, sets logged, never finished —
+  // `completedAt` stays null; `Workout.abandonedAt`'s doc: "closing is
+  // not finishing"). Checked before `day.session` below: `day.session` is
+  // non-null here too (the domain fix carries the session actually
+  // started), and letting it fall to `ProjectedDetail` would render a
+  // *prescription* for a past day — worse than "nothing logged", because
+  // it shows a plan where sets already exist.
+  if (day.workout && day.workout.completedAt === null) {
+    return (
+      <AttemptedDetail
         workout={day.workout}
         session={day.session ?? undefined}
         activity={day.activity}
@@ -212,6 +237,80 @@ function CompletedDetail({
           volume: Math.round(summary.volumeKg),
           minutesPhrase,
         })}
+      </p>
+
+      <h2 className="eyebrow mt-8">{t('dayDetail.exercisesHeading')}</h2>
+      <ul
+        aria-label={t('dayDetail.loggedExercisesAriaLabel')}
+        className="mt-3 divide-y divide-border overflow-hidden rounded-card border border-border bg-surface"
+      >
+        {loggedExercises.map((we) => (
+          <LoggedExerciseRow
+            key={we.exerciseId}
+            workoutExercise={we}
+            exercise={exerciseById.get(we.exerciseId)}
+            date={date}
+            formatLoggedSet={formatLoggedSet}
+          />
+        ))}
+      </ul>
+      {activity && (
+        <ActivitySecondary programId={programId} programOrigin={programOrigin} weekday={weekday} activity={activity} />
+      )}
+    </>
+  )
+}
+
+/**
+ * A day that was started and never finished. Deliberately not
+ * `CompletedDetail` reused wholesale — that component's framing asserts
+ * completion — but it shares `LoggedExerciseRow` (the logged sets are the
+ * point, and they must be reachable exactly as a completed day's are) and
+ * the same set/volume summary line, which never claims a duration:
+ * `summarizeWorkout`'s `durationMinutes` is `null` whenever `completedAt`
+ * is (workout.ts), so the line reads as "N sets · M kg" with nothing
+ * implying how long the session ran. The heading above it is the one
+ * thing that must never be ambiguous — neither failure language nor
+ * completion language (docs/Design.md:68) — and copy is the owner's call
+ * (§7 Q4 of the 11 Aug plan), not this component's.
+ */
+function AttemptedDetail({
+  workout,
+  session,
+  activity,
+  programId,
+  programOrigin,
+  weekday,
+  exerciseById,
+  date,
+}: {
+  workout: Workout
+  session: SessionTemplate | undefined
+  activity: ActivityTemplate | null
+  programId: string
+  programOrigin: Program['origin']
+  weekday: IsoWeekday
+  exerciseById: Map<string, Exercise>
+  date: string
+}) {
+  const { t } = useTranslation('plan')
+  const formatLoggedSet = useFormatLoggedSet()
+  // Same defensive fallback as CompletedDetail's resolvedSessionName —
+  // see that component's comment.
+  const resolvedSessionName = useSessionName(programId, session ?? EMPTY_SESSION, programOrigin)
+  const sessionName = session ? resolvedSessionName : t('sessionFallback')
+  const summary = summarizeWorkout(workout)
+  const loggedExercises = workout.exercises.filter(
+    (e) => e.sets.length > 0 || (e.skippedLevels?.length ?? 0) > 0,
+  )
+  const setsPhrase = t('dayDetail.sets', { count: summary.totalSets })
+
+  return (
+    <>
+      <p className="mt-1 text-sm font-medium text-amber">{t('dayDetail.attemptedHeading')}</p>
+      <p className="mt-4 text-ink-secondary">{sessionName}</p>
+      <p className="mt-1 text-sm text-ink-tertiary" data-numeric>
+        {t('dayDetail.summaryLine', { setsPhrase, volume: Math.round(summary.volumeKg), minutesPhrase: '' })}
       </p>
 
       <h2 className="eyebrow mt-8">{t('dayDetail.exercisesHeading')}</h2>
