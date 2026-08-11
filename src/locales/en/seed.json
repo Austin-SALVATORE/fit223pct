@@ -399,6 +399,15 @@
         "title": "Full range first",
         "body": "Use full vertical range before adding load; a shorter heavy rep does not count."
       }
+    },
+    "bird-dog": {
+      "name": "Bird dog"
+    },
+    "hammer-curl": {
+      "name": "Hammer curl"
+    },
+    "incline-push-up": {
+      "name": "Incline push-up"
     }
   },
   "program": {

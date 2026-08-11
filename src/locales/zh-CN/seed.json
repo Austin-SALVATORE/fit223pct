@@ -399,6 +399,15 @@
         "title": "先追求完整幅度",
         "body": "先做满垂直方向的完整幅度，再增加重量；幅度不够的重次不算数。"
       }
+    },
+    "bird-dog": {
+      "name": "鸟狗式"
+    },
+    "hammer-curl": {
+      "name": "锤式弯举"
+    },
+    "incline-push-up": {
+      "name": "上斜俯卧撑"
     }
   },
   "program": {

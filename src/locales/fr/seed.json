@@ -399,6 +399,15 @@
         "title": "Amplitude complète d'abord",
         "body": "Utilise toute l'amplitude verticale avant d'ajouter de la charge ; une répétition lourde mais raccourcie ne compte pas."
       }
+    },
+    "bird-dog": {
+      "name": "Bird dog"
+    },
+    "hammer-curl": {
+      "name": "Curl marteau"
+    },
+    "incline-push-up": {
+      "name": "Pompe inclinée"
     }
   },
   "program": {

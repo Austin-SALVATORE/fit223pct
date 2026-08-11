@@ -312,4 +312,36 @@ export const seedExercises: Exercise[] = [
     // which is what this flag distinguishes (see single-arm-db-row).
     isUnilateral: false,
   },
+  // Mesocycle 2 Build Prescription Revision, 11 Aug 2026 — three Library
+  // promotions (art already committed, F5 of the revision transcription
+  // plan). substitutionIds: [] on all three per the same rule as above:
+  // not named by the coach, not invented here.
+  {
+    id: 'bird-dog',
+    muscles: ['core'],
+    equipment: ['bodyweight'],
+    // Matches dead-bug's own precedent (`['core']` + isUnilateral: true
+    // even though it also loads hip flexors) — the file's convention is
+    // the coach's classification, not an anatomy audit.
+    substitutionIds: [],
+    isUnilateral: true,
+  },
+  {
+    id: 'hammer-curl',
+    muscles: ['biceps'],
+    equipment: ['dumbbell'],
+    // MuscleGroup has no brachioradialis token; dumbbell-curl is
+    // ['biceps'] for the same reason.
+    substitutionIds: [],
+    isUnilateral: false,
+  },
+  {
+    id: 'incline-push-up',
+    muscles: ['chest', 'triceps', 'shoulders', 'core'],
+    equipment: ['bench', 'bodyweight'],
+    // Mirrors push-up plus bench, following single-leg-hip-thrust's own
+    // ['bench', 'bodyweight'] precedent for the same reason.
+    substitutionIds: [],
+    isUnilateral: false,
+  },
 ]
