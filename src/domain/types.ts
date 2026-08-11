@@ -129,6 +129,18 @@ export interface SessionTemplate {
   name: string
   focus: string
   items: ExercisePrescription[]
+  /**
+   * Names a pre-strength warm-up (src/data/seed/warmups.ts) shown on Today
+   * before this session and while it's in progress. Absent is the norm —
+   * most sessions have no dedicated warm-up content yet.
+   *
+   * This is `ActivityItem.routineId` reproduced exactly: a pointer into the
+   * app's own closed catalogue, not into the Library and not into program
+   * content. What it points at structurally cannot carry sets, weights or
+   * progression (see domain/warmup.ts) — ramp-up loads are display text,
+   * never a route into the progression engine.
+   */
+  warmupId?: string
 }
 
 export type ActivityKind = 'recovery' | 'mobility' | 'cardio' | 'optional' | 'checkpoint'

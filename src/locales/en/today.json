@@ -10,7 +10,14 @@
     "lowStreak_one": "{{count}} low day in a row now — making this a rest day is a completely fine choice. Your session will wait for you.",
     "lowStreak_other": "{{count}} low days in a row now — making this a rest day is a completely fine choice. Your session will wait for you.",
     "activationHeading": "Before you start",
-    "rideHeading": "Also today"
+    "rideHeading": "Also today",
+    "warmupHeading": "Warm-up"
+  },
+  "warmup": {
+    "cycleLine": "Easy cycling · {{min}}–{{max}} min",
+    "reps_one": "{{count}} rep",
+    "reps_other": "{{count}} reps",
+    "rampWeightReps": "{{weight}} kg per dumbbell × {{reps}}"
   },
   "noProgram": "No training program is set up yet. Your next phase will appear here.",
   "plannedDay": {

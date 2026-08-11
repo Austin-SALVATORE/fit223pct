@@ -10,6 +10,8 @@ import { useExerciseName } from '@/i18n/seedExercise'
 import { useLocalizedActivation, useLocalizedActivity, useSessionName } from '@/i18n/seedProgram'
 import { useLocale } from '@/i18n/useLocale'
 import { SessionPreview } from '@/features/today/SessionPreview'
+import { WarmupSection } from '@/features/today/WarmupSection'
+import { warmupById } from '@/data/seed/warmups'
 import type { ActivityTemplate, Exercise, LoggedSet, Program, SessionTemplate, Workout } from '@/domain/types'
 import { ActivityItemList } from '@/features/recovery/ActivityItemList'
 import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
@@ -444,6 +446,7 @@ function ProjectedDetail({
 }) {
   const { t } = useTranslation('plan')
   const sessionName = useSessionName(programId, session, programOrigin)
+  const warmup = session.warmupId ? warmupById(session.warmupId) : undefined
   return (
     <>
       <p className="mt-1 text-sm font-medium text-amber">{t('dayDetail.projectedLabel')}</p>
@@ -453,6 +456,9 @@ function ProjectedDetail({
       {activation && (
         <MorningActivationPreview programId={programId} programOrigin={programOrigin} activation={activation} />
       )}
+      {/* Activation → Warm-up → Strength, same order and same preview-only,
+          no-control treatment as Today's own flow (11 Aug plan §4b). */}
+      {warmup && <WarmupSection warmup={warmup} />}
       <SessionPreview
         session={session}
         programId={programId}

@@ -9,7 +9,13 @@
     "heading": "今天",
     "lowStreak_other": "已经连续 {{count}} 天状态偏低——把这天当作休息日完全没问题。你的训练会等着你。",
     "activationHeading": "开始前",
-    "rideHeading": "今天还有"
+    "rideHeading": "今天还有",
+    "warmupHeading": "热身"
+  },
+  "warmup": {
+    "cycleLine": "轻松骑行 · {{min}}–{{max}} 分钟",
+    "reps_other": "{{count}} 次",
+    "rampWeightReps": "每只哑铃 {{weight}} kg × {{reps}}"
   },
   "noProgram": "还没有设置训练计划。你的下一阶段会显示在这里。",
   "plannedDay": {

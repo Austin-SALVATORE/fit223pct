@@ -544,6 +544,8 @@ export const mesocycle2Build: Program = {
       id: 'mesocycle2-chest-back',
       name: 'Chest & Back',
       focus: 'Chest and Back Emphasis',
+      // Mesocycle 2 Pre-Strength Warm-up Prescription, 11 Aug 2026 — Session A.
+      warmupId: 'mesocycle2-chest-back-warmup-v1',
       items: [
         // Repeated 15.2 kg top rung (sets 3 and 4) is coach-confirmed
         // intentional, not a transcription error — see the docblock above
@@ -637,6 +639,8 @@ export const mesocycle2Build: Program = {
       id: 'mesocycle2-legs-core',
       name: 'Legs & Core',
       focus: 'Legs and Core Emphasis',
+      // Mesocycle 2 Pre-Strength Warm-up Prescription, 11 Aug 2026 — Session B.
+      warmupId: 'mesocycle2-legs-core-warmup-v1',
       items: [
         // Two dumbbells (docs/EquipmentProfile.md, resolved 11 Aug 2026 —
         // the revision writes "7.2 kg per dumbbell" with the same
@@ -759,6 +763,8 @@ export const mesocycle2Build: Program = {
       id: 'mesocycle2-shoulders-arms',
       name: 'Shoulders & Arms',
       focus: 'Shoulders and Arms Emphasis',
+      // Mesocycle 2 Pre-Strength Warm-up Prescription, 11 Aug 2026 — Session C.
+      warmupId: 'mesocycle2-shoulders-arms-warmup-v1',
       items: [
         ladder(
           'dumbbell-shoulder-press',

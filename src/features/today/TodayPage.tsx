@@ -13,6 +13,7 @@ import {
 } from '@/data/repositories'
 import { resolveDayPlan } from '@/domain/schedule'
 import { createWorkout, summarizeWorkout } from '@/domain/workout'
+import { warmupById } from '@/data/seed/warmups'
 import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readiness'
 import { applyReadiness } from '@/domain/adjustments'
 import { buildWeeklyReview, reviewIsUnseen, type WeeklyReview } from '@/domain/weeklyReview'
@@ -46,6 +47,7 @@ import { WeeklyReviewCard } from './WeeklyReviewCard'
 import { ActivationSection } from './ActivationSection'
 import { TrainingDayRide } from './TrainingDayRide'
 import { DoneTodayActivities } from './DoneTodayActivities'
+import { WarmupSection } from './WarmupSection'
 
 /** Never rendered — see InProgress's Rules-of-Hooks comment. */
 const EMPTY_SESSION: SessionTemplate = { id: '', name: '', focus: '', items: [] }
@@ -511,6 +513,7 @@ function TrainingDay({
   const adjusted = applyReadiness(session, readiness)
   const eased = adjusted.adjustments.length > 0
   const because = describeDrivers(readiness.drivers)
+  const warmup = session.warmupId ? warmupById(session.warmupId) : undefined
 
   return (
     <>
@@ -523,6 +526,14 @@ function TrainingDay({
           existing={activationRecord}
         />
       )}
+      {/*
+        Activation → Warm-up → Strength, per the coach's own flow (11 Aug
+        plan §4b). Also rendered in InProgress below, for the same reason
+        ActivationSection/TrainingDayRide render in both branches — a
+        static card placed only here vanishes the moment the owner taps
+        Start (dc5a119), exactly when a ramp-up load is needed.
+      */}
+      {warmup && <WarmupSection warmup={warmup} />}
       <Hero
         // Per-locale punctuation, not an ASCII join: zh-CN sets the middot
         // without surrounding spaces (docs/review-backlog.md I7). Visible on
@@ -736,6 +747,11 @@ function InProgress({ workout, program }: { workout: Workout; program?: Program 
   const resolvedName = useSessionName(program?.id ?? '', session ?? EMPTY_SESSION, program?.origin)
   const resolvedFocus = useSessionFocus(program?.id ?? '', session ?? EMPTY_SESSION, program?.origin)
   const loggedSets = workout.exercises.reduce((n, e) => n + e.sets.length, 0)
+  // The non-obvious rendering case (11 Aug plan §4b): without this, the
+  // warm-up card is only ever visible in the planned branch and vanishes
+  // the instant the owner taps Start — exactly when "5.2 kg × 8" is
+  // needed at the dumbbells. Same dc5a119 reasoning as TrainingDayRide.
+  const warmup = session?.warmupId ? warmupById(session.warmupId) : undefined
 
   return (
     <>
@@ -781,6 +797,7 @@ function InProgress({ workout, program }: { workout: Workout; program?: Program 
           {t('inProgress.discard')}
         </button>
       )}
+      {warmup && <WarmupSection warmup={warmup} />}
     </>
   )
 }

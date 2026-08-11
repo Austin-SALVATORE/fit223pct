@@ -435,6 +435,41 @@ describe('PlanDayPage states', () => {
   })
 
   /**
+   * The pre-strength warm-up preview (11 Aug plan §4b) — same tertiary,
+   * preview-only treatment as `MorningActivationPreview`, beside it and
+   * before the session. Uses the real seed content (mesocycle2-chest-
+   * back's shipped `warmupId`), no fixture override.
+   */
+  describe('mesocycle2Build training day carries a warm-up preview', () => {
+    beforeAll(async () => {
+      await programRepo.put(mesocycle2Build)
+    })
+
+    afterAll(async () => {
+      await db.programs.delete(mesocycle2Build.id)
+    })
+
+    it('shows the warm-up above the session, with the ramp-up loads as text', async () => {
+      renderDay('2026-08-10') // Monday, mesocycle2Build's startDate — its first training day
+      expect(await screen.findByRole('heading', { name: /Monday 10 August/ })).toBeInTheDocument()
+
+      const warmupHeading = screen.getByText('Warm-up')
+      expect(warmupHeading).toBeInTheDocument()
+      expect(screen.getByText('Easy cycling · 2–3 min')).toBeInTheDocument()
+      expect(screen.getByText('Scapular push-up')).toBeInTheDocument()
+      expect(screen.getByText('5.2 kg per dumbbell × 8')).toBeInTheDocument()
+      expect(screen.getByText('8.2 kg per dumbbell × 5')).toBeInTheDocument()
+
+      // Warm-up precedes the session in document order — same hierarchy
+      // as Today's own Activation → Warm-up → Strength flow.
+      const sessionHeading = screen.getByRole('heading', { level: 2, name: 'Chest & Back' })
+      expect(
+        warmupHeading.compareDocumentPosition(sessionHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy()
+    })
+  })
+
+  /**
    * Owner-reported defect (M2 revision transcription plan, Phase 5):
    * `ScheduleDay` carries no `activation` field, so the Plan day detail
    * never rendered `Program.morningActivation` at all — Today already
