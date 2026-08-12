@@ -39,6 +39,18 @@ exactly what happened.
   rejected push usually means the remote moved, and the resolution is a
   decision, not a command.
 - **Never resolve a conflict.** Report it.
+- **A push brief names a SHA; push that SHA, not HEAD.** Run pushes as
+  `git push origin <sha>:main` so exactly the named, verified commit
+  reaches the remote. If HEAD sits ahead of the named SHA, that is not
+  yours to include — another agent committed mid-window, and whether
+  their commit ships is a verification decision, not a push detail.
+  If the brief names no SHA, stop and ask for one rather than pushing
+  whatever HEAD happens to be. (12 Aug 2026: a brief named 10de793;
+  HEAD had moved to an unverified b25295f between dispatch and
+  execution, and the push carried it to production. Pushing to main
+  deploys — a SHA nobody verified reached the owner's phone. The
+  commit happened to be test-only; the rule exists because it might
+  not have been.)
 
 ## Report
 

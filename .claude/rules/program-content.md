@@ -25,11 +25,19 @@ equipment claims that hold, round-trips that survive.
   and prescribable into a training session — which is precisely what
   keeping routines out of the Library prevents. A manifest entry
   without a Library entry is a defect only for exercises.
-- **Equipment tier is a hard constraint.** Phase 1 Home is adjustable
-  dumbbells + bench, 15 kg per hand. A prescription exceeding the
-  declared tier is a defect, not a preference.
-- **Weights are per dumbbell**, for both single- and double-dumbbell
-  lifts.
+- **Equipment tier is a hard constraint.** A prescription exceeding the
+  declared tier is a defect, not a preference. Since 12 Aug 2026 the
+  verified tier is: two 2 kg adjustable handles + shared plate pool
+  (8×1 / 4×2 / 4×5 kg) + 7.75 kg barbell (no rack — floor/bench-start
+  movements only) + bench + bike. (Phase 1 Home's retired tier was
+  adjustable dumbbells + bench, 15 kg per hand.)
+- **Weights are per dumbbell** for both single- and double-dumbbell
+  lifts; **barbell weights are the total load including the bar**
+  (coach convention, 12 Aug 2026 — doc 5 §3: per-dumbbell, per-side-of-
+  barbell and per-end-of-dumbbell units must never be ambiguous). The
+  buildability guard pins this structurally: barbell exercise ids
+  check against the total-weight barbell ladder, so a per-side
+  transcription fails the suite.
 - **User content is never translated or shadowed.** Seeded content is
   locale-keyed; imported content (`origin: 'imported'`) renders
   verbatim. The seed-clobber guard exists because reseeding once
