@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { toCanonicalProgramJson, programExportFilename } from './programExport'
 import { validateProgramImport } from './programImport'
-import { seedProgram } from '@/data/seed/program'
+import { seedProgram, mesocycle2Build } from '@/data/seed/program'
 import { seedExercises } from '@/data/seed/exercises'
+import type { LadderPrescription } from './types'
 
 const libraryIds = new Set(seedExercises.map((e) => e.id))
 
@@ -130,6 +131,54 @@ describe('toCanonicalProgramJson', () => {
       { weightKg: 10, reps: 10 },
       { weightKg: 12, reps: 8 },
     ])
+  })
+
+  /**
+   * D3/R9, 12 Aug 2026 equipment upgrade — `LadderPrescription.rehearsal`
+   * is a new field on the strict ladder schema. Round-trips the real
+   * `mesocycle2Build` Session A (not a synthetic fixture) because the
+   * plan named Session A specifically: `bent-over-row` is the one
+   * shipped prescription that actually carries a `rehearsal` set, so
+   * this is the regression the schema update exists to prevent, proven
+   * against real seeded data rather than a hand-built stand-in.
+   *
+   * Scoped to Session A alone, not the whole program — Session B's
+   * `plank` hits a pre-existing, unrelated gap the plan already named
+   * and explicitly left unfixed (D8: `ladderPrescriptionSchema` requires
+   * `mode: z.literal('reps')`; `side-plank` already violated it before
+   * this migration, `plank` is the second seconds-mode ladder that
+   * cannot survive a round-trip). Confirmed by running the unscoped
+   * version first: it fails with `plan:import.ladderRequiresRepsMode` /
+   * `plank`, not anything rehearsal-related — exactly the known gap, not
+   * a new defect. Scoping to Session A isolates the property this test
+   * is actually for.
+   */
+  it("round-trips mesocycle2Build Session A's rehearsal field (D3/R9)", () => {
+    const sessionA = mesocycle2Build.sessions.find((s) => s.id === 'mesocycle2-chest-back')!
+    const sessionAOnly = {
+      ...mesocycle2Build,
+      sessions: [sessionA],
+      rotation: [sessionA.id],
+      weekdayActivities: undefined,
+    }
+    const json = toCanonicalProgramJson(sessionAOnly)
+    const result = validateProgramImport(JSON.parse(json), libraryIds)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+
+    // Compares items only, not the whole session — sessionTemplateSchema
+    // silently strips `warmupId` (found by this test, not previously
+    // known or documented; same defect class as this file's routineId
+    // and recordable regressions above, but a new instance, unrelated to
+    // `rehearsal`). Flagged to the lead rather than fixed here — outside
+    // this test's assigned scope.
+    expect(result.program.sessions[0].items).toEqual(sessionA.items)
+    expect(result.program.sessions[0].id).toBe(sessionA.id)
+
+    const bentOverRow = result.program.sessions[0].items.find(
+      (i) => i.exerciseId === 'bent-over-row',
+    ) as LadderPrescription
+    expect(bentOverRow.rehearsal).toEqual({ weightKg: 13.75, reps: 6 })
   })
 
   it('round-trips a weekdayActivities field', () => {
