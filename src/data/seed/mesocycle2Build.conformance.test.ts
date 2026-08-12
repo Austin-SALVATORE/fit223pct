@@ -4,8 +4,11 @@ import { seedExercises } from './exercises'
 import { suggestLadderProgression } from '@/domain/progression'
 import { achievableLoads } from '@/domain/equipment'
 // Fixture flip to NEW_PROFILE (plan §2 Phase 1's sequencing constraint) —
-// lands in this commit, together with the rung rewrite it depends on.
-import { NEW_PROFILE } from '@/domain/equipment.test'
+// landed together with the rung rewrite it depends on. Imported from the
+// non-test fixtures module, not from equipment.test.ts directly — a
+// test-importing-a-test doubled equipment.test.ts's entire describe/it
+// tree as a side effect (12 Aug claim-verification finding).
+import { NEW_PROFILE } from '@/domain/equipment.fixtures'
 import type { LadderPrescription, LoggedSet, SetVariant } from '@/domain/types'
 
 /**
@@ -356,9 +359,10 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
    * catches "too heavy"; this catches "unbuildable", which is the
    * failure mode the spec actually names ("do not assume integer
    * dumbbell weights", "do not silently round"). The lists are imported
-   * from the same fixture `equipment.test.ts`'s own assertions rest on,
-   * not re-transcribed here, so the two can never silently diverge.
-   * Barbell exercise ids route to the total-weight `barbell` list (D1) —
+   * from `equipment.fixtures.ts`, the same fixture `equipment.test.ts`'s
+   * own assertions rest on, not re-transcribed here, so the two can
+   * never silently diverge. Barbell exercise ids route to the
+   * total-weight `barbell` list (D1) —
    * a per-side transcription slip on a barbell exercise fails here
    * rather than shipping quietly (A.2).
    */
