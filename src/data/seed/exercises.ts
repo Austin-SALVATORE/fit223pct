@@ -444,17 +444,23 @@ export const seedExercises: Exercise[] = [
     // dumbbell-curl already document that same gap.
     muscles: ['biceps'],
     equipment: ['barbell'],
-    // dumbbell-curl is the movement this replaces (history stays
-    // unmerged — a substitution link, not a progression merge);
-    // band-curl was already dumbbell-curl's own alternative.
-    substitutionIds: ['dumbbell-curl', 'band-curl'],
+    // Lead ruling (12 Aug 2026), overriding the migration plan's table:
+    // not named by the coach, not invented here — same rule as
+    // overhead-triceps-extension's own precedent above. dumbbell-curl
+    // is the movement this replaces (history stays unmerged, doc 7),
+    // but a replacement relationship is not a coach-named substitution.
+    substitutionIds: [],
     isUnilateral: false,
   },
   {
     id: 'bodyweight-hip-hinge',
     muscles: ['hamstrings', 'glutes', 'back'],
     equipment: ['bodyweight'],
-    substitutionIds: ['romanian-deadlift'],
+    // Lead ruling (12 Aug 2026), overriding the migration plan's table:
+    // not named by the coach, not invented here. Unlike the five core
+    // entries (doc 4 §8 rules their regressions explicitly), the coach
+    // named no substitute for this warm-up movement.
+    substitutionIds: [],
     isUnilateral: false,
   },
 ]

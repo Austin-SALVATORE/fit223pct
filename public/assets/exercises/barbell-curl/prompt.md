@@ -1,8 +1,16 @@
 # Biceps Curl — image generation prompt
 
+**Reused as `barbell-curl`, 12 Aug 2026** — an independent visual audit
+passed this committed art as FIT for the new Mesocycle 2 barbell curl
+(straight bar under zoom, supinated shoulder-width grip, correct curl
+arc, elbows pinned, upright torso, zero pixel defects). Directory
+renamed (`git mv`), manifest key renamed via `update-manifest-dims.mjs`
+— frame/reference/thumbnail bytes and hashes are unchanged. The prompt
+below is the original generation record and is left as written.
+
 | Field | Value |
 |---|---|
-| Exercise id | `biceps-curl` |
+| Exercise id | `barbell-curl` (originally generated as `biceps-curl`) |
 | Category | Arms |
 | Camera | `three-quarter-front` |
 | Frames | 4 |

@@ -325,6 +325,40 @@
       "1c9a4c9f40"
     ]
   },
+  "barbell-curl": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1919,
+      820
+    ],
+    "frameSizes": [
+      [
+        467,
+        820
+      ],
+      [
+        459,
+        820
+      ],
+      [
+        444,
+        820
+      ],
+      [
+        464,
+        820
+      ]
+    ],
+    "referenceHash": "929772ec68",
+    "thumbnailHash": "22218c3d51",
+    "frameHashes": [
+      "92519f3b51",
+      "c15f08cdac",
+      "3feba24b7e",
+      "5e61361526"
+    ]
+  },
   "barbell-hip-thrust": {
     "frameCount": 6,
     "thumbnailFrame": 4,
@@ -469,40 +503,6 @@
       "7794094a0f",
       "78b459c032",
       "016e06a30f"
-    ]
-  },
-  "biceps-curl": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
-    "referenceSize": [
-      1919,
-      820
-    ],
-    "frameSizes": [
-      [
-        467,
-        820
-      ],
-      [
-        459,
-        820
-      ],
-      [
-        444,
-        820
-      ],
-      [
-        464,
-        820
-      ]
-    ],
-    "referenceHash": "929772ec68",
-    "thumbnailHash": "22218c3d51",
-    "frameHashes": [
-      "92519f3b51",
-      "c15f08cdac",
-      "3feba24b7e",
-      "5e61361526"
     ]
   },
   "biceps-wall-stretch": {

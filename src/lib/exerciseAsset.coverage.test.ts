@@ -19,18 +19,26 @@ import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
  * things going forward (new exercise first, asset generated after) —
  * not a regression to fix, just this list doing its job again.
  *
- * Refilled 12 Aug with four of the seven equipment-upgrade Library
- * promotions that have no art yet: bicycle-crunch, mountain-climber,
- * barbell-curl, bodyweight-hip-hinge. `dumbbell-rowboat`, `russian-twist`
- * and `plank` are not listed — their art resolves (deploy-order
- * constraint on `russian-twist`: its Library entry must ship in the same
- * deploy as, or after, the regenerated art, since the id already
- * resolves through the manifest and this list can't catch a wrong
- * illustration, only a missing one). Was empty again as of the previous
- * entry (hamstring-walkout/dumbbell-pullover landed 6 Aug and were
- * removed) — this docblock was stale, still describing that refill.
+ * Refilled 12 Aug with three of the seven equipment-upgrade Library
+ * promotions that have no art yet: bicycle-crunch and mountain-climber
+ * (a mirrored-frame regeneration attempt audited UNFIT — jarring
+ * head/anchor flip — placeholder stands, art revisited later) and
+ * bodyweight-hip-hinge. `dumbbell-rowboat`, `russian-twist` and `plank`
+ * are not listed — their art resolves (deploy-order constraint on
+ * `russian-twist`: its Library entry must ship in the same deploy as,
+ * or after, the regenerated art, since the id already resolves through
+ * the manifest and this list can't catch a wrong illustration, only a
+ * missing one). `barbell-curl` is not listed either — an independent
+ * visual audit passed the committed `biceps-curl` art as FIT for the
+ * new barbell curl; the asset directory and manifest key were renamed
+ * (`git mv` + `update-manifest-dims.mjs`, frame/reference/thumbnail
+ * bytes and hashes unchanged), a direct manifest hit under the Library
+ * id with no alias (`ASSET_ID_ALIASES` is shrink-only by policy). Was
+ * empty again as of the previous entry (hamstring-walkout/dumbbell-
+ * pullover landed 6 Aug and were removed) — this docblock was stale,
+ * still describing that refill.
  */
-const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber', 'barbell-curl', 'bodyweight-hip-hinge'])
+const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber', 'bodyweight-hip-hinge'])
 
 describe('exercise asset coverage', () => {
   it.each(seedExercises.map((e) => e.id))('%s resolves an asset or is in KNOWN_MISSING', (id) => {
