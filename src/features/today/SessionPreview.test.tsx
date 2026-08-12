@@ -115,6 +115,115 @@ describe('SessionPreview ladder prescriptions', () => {
     )
     expect(await screen.findByText('8→10→12 kg · 12/10/8')).toBeInTheDocument()
   })
+
+  /**
+   * Owner-reported (zh locale, screenshot evidence, 12 Aug 2026): a
+   * null-weight ladder (bicycle-crunch) rendered "–→–→– kg · 16/20/24" —
+   * a dash per rung in the weight slot plus a stray "kg" unit, both
+   * false claims about a bodyweight movement. `formatPrescription`'s
+   * setPlan branch built the weight fragment and appended " kg"
+   * unconditionally, never checking whether any rung actually carried a
+   * weight. Fixed to omit the weight fragment (and the middotJoin it
+   * would sit in) entirely when every rung is null-weight.
+   */
+  function renderSinglePrescriptionSession(item: LadderPrescription) {
+    const session: SessionTemplate = {
+      id: 'A',
+      name: 'Session A',
+      focus: 'Core',
+      items: [item],
+    }
+    return render(
+      <MemoryRouter>
+        <SessionPreview
+          session={session}
+          programId="phase-1-home"
+          exerciseById={new Map([['goblet-squat', withAsset]])}
+          heading="Today"
+        />
+      </MemoryRouter>,
+    )
+  }
+
+  it('renders an all-null-weight reps ladder as reps alone — no weight fragment, no "kg", no dashes', async () => {
+    const bodyweightLadder: LadderPrescription = {
+      exerciseId: 'goblet-squat',
+      sets: 3,
+      mode: 'reps',
+      restSeconds: 45,
+      perSide: false,
+      setPlan: [
+        { weightKg: null, reps: 16 },
+        { weightKg: null, reps: 20 },
+        { weightKg: null, reps: 24 },
+      ],
+      maxWeightKg: null,
+      weightStepKg: null,
+    }
+    renderSinglePrescriptionSession(bodyweightLadder)
+    expect(await screen.findByText('16/20/24')).toBeInTheDocument()
+    expect(screen.queryByText(/kg/)).toBeNull()
+    expect(screen.queryByText(/–/)).toBeNull()
+  })
+
+  it('renders an all-null-weight seconds ladder with a seconds unit — no "kg", no dashes', async () => {
+    const timedLadder: LadderPrescription = {
+      exerciseId: 'goblet-squat',
+      sets: 3,
+      mode: 'seconds',
+      restSeconds: 60,
+      perSide: false,
+      setPlan: [
+        { weightKg: null, reps: 40 },
+        { weightKg: null, reps: 50 },
+        { weightKg: null, reps: 60 },
+      ],
+      maxWeightKg: null,
+      weightStepKg: null,
+    }
+    renderSinglePrescriptionSession(timedLadder)
+    // No space before "s" — matches unitSeconds' own convention (en has no
+    // leading space; fr/zh do), same as the existing rep-range branch's use
+    // of the same key ("30–45s", never "30–45 s").
+    expect(await screen.findByText('40/50/60s')).toBeInTheDocument()
+    expect(screen.queryByText(/kg/)).toBeNull()
+  })
+
+  it('appends the per-side suffix to an all-null-weight ladder, unaffected by the weight-fragment fix', async () => {
+    const perSideBodyweightLadder: LadderPrescription = {
+      exerciseId: 'goblet-squat',
+      sets: 2,
+      mode: 'reps',
+      restSeconds: 60,
+      perSide: true,
+      setPlan: [
+        { weightKg: null, reps: 10 },
+        { weightKg: null, reps: 8 },
+      ],
+      maxWeightKg: null,
+      weightStepKg: null,
+    }
+    renderSinglePrescriptionSession(perSideBodyweightLadder)
+    expect(await screen.findByText('10/8 /side')).toBeInTheDocument()
+  })
+
+  it('still renders the weight fragment for a partially-null ladder — only an all-null ladder omits it', async () => {
+    const partialLadder: LadderPrescription = {
+      exerciseId: 'goblet-squat',
+      sets: 2,
+      mode: 'reps',
+      restSeconds: 60,
+      perSide: false,
+      setPlan: [
+        { weightKg: 10, reps: 12 },
+        { weightKg: null, reps: 10 },
+      ],
+      maxWeightKg: 20,
+      weightStepKg: 2,
+    }
+    renderSinglePrescriptionSession(partialLadder)
+    expect(await screen.findByText('10→– kg · 12/10')).toBeInTheDocument()
+  })
 })
 
 /**

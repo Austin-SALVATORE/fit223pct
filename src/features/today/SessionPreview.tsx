@@ -181,6 +181,17 @@ function ItemRow({
  * arrows, en-dash and × stay as they are — i18n correctly ruled those
  * locale-neutral, and rewriting them for screen readers is A14, a separate
  * defect on the same line that ships independently.
+ *
+ * Owner-reported, 12 Aug 2026: a null-weight ladder (bicycle-crunch,
+ * plank, the retired dead-bug family) rendered a dash per rung plus a
+ * stray "kg" unit — false claims about a bodyweight movement that has no
+ * weight at all. The weight fragment (and the middotJoin that would sit
+ * it beside the rep/duration count) is now built only when at least one
+ * rung actually carries a weight; an all-null ladder renders its
+ * rep/duration count alone. `mode === 'seconds'` gets the same unit
+ * suffix the rep-range branch below already uses — the setPlan branch
+ * never applied it before, so a seconds-mode ladder's durations rendered
+ * as bare numbers indistinguishable from reps.
  */
 function formatPrescription(
   t: TFunction<'common'>,
@@ -188,11 +199,17 @@ function formatPrescription(
   perSideSuffix: string,
 ): string {
   if (item.setPlan) {
-    const weights = item.setPlan.map((rung) => (rung.weightKg !== null ? String(rung.weightKg) : '–'))
     const reps = item.setPlan.map((rung) => String(rung.reps))
+    const unit = item.mode === 'seconds' ? t('unitSeconds') : ''
+    const repsLine = `${reps.join('/')}${unit}${perSideSuffix}`
+
+    const hasWeight = item.setPlan.some((rung) => rung.weightKg !== null)
+    if (!hasWeight) return repsLine
+
+    const weights = item.setPlan.map((rung) => (rung.weightKg !== null ? String(rung.weightKg) : '–'))
     return t('middotJoin', {
       a: `${weights.join('→')} kg`,
-      b: `${reps.join('/')}${perSideSuffix}`,
+      b: repsLine,
     })
   }
   const unit = item.mode === 'seconds' ? t('unitSeconds') : ''
