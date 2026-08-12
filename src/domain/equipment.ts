@@ -13,6 +13,13 @@ export interface AchievableLoads {
   readonly bilateral: readonly number[]
   /** Loads buildable on one handle alone, unconstrained by needing a matching partner (ruling ⑥). */
   readonly singleImplement: readonly number[]
+  /**
+   * Total bar weight buildable on `EquipmentProfile.barKg`, drawing the
+   * same plate pool `singleImplement` draws — symmetric loading reuses
+   * `singleHandleWeightsQ` rather than a second enumeration (12 Aug 2026
+   * hardware upgrade). Empty when the profile has no `barKg`.
+   */
+  readonly barbell: readonly number[]
 }
 
 // Plate weights in this app are always multiples of 0.25kg. Quantizing to
@@ -119,13 +126,6 @@ function toKg(weightQ: number, handleKg: number): number {
 }
 
 function computeAchievableLoads(profile: EquipmentProfile): AchievableLoads {
-  // T4: a handle weight this module invents is worse than no list at all
-  // — the same defect class `EquipmentProfile`'s own doc warns about (a
-  // handle off by a quarter kg makes every prescribed integer
-  // unreachable). Never default this.
-  if (profile.handleKg == null) return { bilateral: [], singleImplement: [] }
-  const handleKg = profile.handleKg
-
   // A set with no handle assigned to it contributes nothing physical —
   // exclude it before enumerating rather than enumerating and discarding.
   const usableSets = (profile.plateSets ?? []).filter((set) => set.handleCount >= 1)
@@ -156,9 +156,22 @@ function computeAchievableLoads(profile: EquipmentProfile): AchievableLoads {
     }
   }
 
-  const bilateral = [...bilateralQ].map((q) => toKg(q, handleKg)).sort((a, b) => a - b)
-  const singleImplement = [...singleQ].map((q) => toKg(q, handleKg)).sort((a, b) => a - b)
-  return { bilateral, singleImplement }
+  // T4: an implement weight this module invents is worse than no list at
+  // all — the same defect class `EquipmentProfile`'s own doc warns about
+  // (a handle off by a quarter kg makes every prescribed integer
+  // unreachable). Never default either `handleKg` or `barKg`; each
+  // implement's list is zeroed independently so a bar-only profile still
+  // yields a barbell list, and a handle-only profile still yields
+  // dumbbell lists.
+  const { handleKg, barKg } = profile
+  const bilateral = handleKg != null ? [...bilateralQ].map((q) => toKg(q, handleKg)).sort((a, b) => a - b) : []
+  const singleImplement = handleKg != null ? [...singleQ].map((q) => toKg(q, handleKg)).sort((a, b) => a - b) : []
+  // The bar draws the same `singleQ` set a lone dumbbell handle draws —
+  // symmetric loading is symmetric loading, whichever implement carries
+  // it (D1, plan §0.2/§1).
+  const barbell = barKg != null ? [...singleQ].map((q) => toKg(q, barKg)).sort((a, b) => a - b) : []
+
+  return { bilateral, singleImplement, barbell }
 }
 
 // Memoised by profile object identity. This codebase's immutability rule

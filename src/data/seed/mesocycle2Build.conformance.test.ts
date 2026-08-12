@@ -3,7 +3,11 @@ import { mesocycle2Build } from './program'
 import { seedExercises } from './exercises'
 import { suggestLadderProgression } from '@/domain/progression'
 import { achievableLoads } from '@/domain/equipment'
-import { REAL_PROFILE } from '@/domain/equipment.test'
+// Still the retired two-bore profile in this phase — the fixture flip to
+// NEW_PROFILE belongs to Phase 2, in the same commit as the rung
+// rewrite (plan §2 Phase 1's sequencing constraint: flipping early makes
+// every existing rung unbuildable against the new hardware).
+import { RETIRED_PROFILE_2026_08_07 } from '@/domain/equipment.test'
 import type { LadderPrescription, LoggedSet, SetVariant } from '@/domain/types'
 
 /**
@@ -323,7 +327,7 @@ describe('mesocycle2Build — spec conformance (11 Aug 2026 Build Prescription R
    * here, so the two can never silently diverge.
    */
   it('every loaded rung is a member of the appropriate verified achievable-load list (§2)', () => {
-    const { bilateral, singleImplement } = achievableLoads(REAL_PROFILE)
+    const { bilateral, singleImplement } = achievableLoads(RETIRED_PROFILE_2026_08_07)
     const bilateralSet = new Set(bilateral)
     const singleSet = new Set(singleImplement)
     const unbuildable: string[] = []

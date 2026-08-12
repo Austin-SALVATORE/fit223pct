@@ -3,17 +3,19 @@ import { achievableLoads, nearestAchievableLower } from './equipment'
 import type { EquipmentProfile } from './types'
 
 /**
- * `docs/EquipmentProfile.md`, measurement-complete 7 Aug 2026. Every
- * value here is owner-measured or coach-confirmed — the enumerator's
- * consumer-facing correctness rests on this fixture matching that
- * document exactly, not on any synthetic case below it.
+ * `docs/EquipmentProfile.md`, measurement-complete 7 Aug 2026, **retired
+ * 12 Aug 2026** by the equipment upgrade (see `NEW_PROFILE` below for the
+ * current hardware). Kept, not deleted: this is the only two-bore
+ * profile in the suite, and `equipment.ts`'s cross-set matching branch
+ * (`:153-157`) has no other fixture that exercises it — the
+ * "cross-set matching is a distinct code path" describe block below
+ * exists to prove that branch is load-bearing (D6).
  */
 // Exported so mesocycle2Build.conformance.test.ts's achievable-load
-// membership guard (§6.1 of the M2 revision transcription plan) can
-// reuse the identical fixture rather than re-transcribing
-// docs/EquipmentProfile.md a second time, which would risk the two
-// silently diverging.
-export const REAL_PROFILE: EquipmentProfile = {
+// membership guard could reuse the identical fixture without
+// re-transcribing docs/EquipmentProfile.md a second time. Phase 2 flips
+// that import to NEW_PROFILE; this export stays for D6 coverage.
+export const RETIRED_PROFILE_2026_08_07: EquipmentProfile = {
   handleKg: 1.2,
   plateSets: [
     {
@@ -44,69 +46,42 @@ export const REAL_PROFILE: EquipmentProfile = {
   confirmedAt: '2026-08-07',
 }
 
-describe('achievableLoads — real profile (docs/EquipmentProfile.md)', () => {
+describe('achievableLoads — retired two-bore profile (docs/EquipmentProfile.md, retired 12 Aug 2026)', () => {
   it('computes the exact bilateral list', () => {
-    expect(achievableLoads(REAL_PROFILE).bilateral).toEqual([
+    expect(achievableLoads(RETIRED_PROFILE_2026_08_07).bilateral).toEqual([
       1.2, 3.2, 3.7, 5.2, 5.7, 6.2, 7.2, 8.2, 8.7, 9.2, 10.7, 11.2, 13.2, 15.2,
     ])
   })
 
   it('computes the exact single-implement list', () => {
-    expect(achievableLoads(REAL_PROFILE).singleImplement).toEqual([
+    expect(achievableLoads(RETIRED_PROFILE_2026_08_07).singleImplement).toEqual([
       1.2, 3.2, 3.7, 5.2, 5.7, 6.2, 7.2, 7.7, 8.2, 8.7, 9.2, 10.2, 10.7, 11.2, 12.7, 13.2, 13.7, 15.2, 15.7, 16.2,
       17.2, 17.7, 18.2, 20.2,
     ])
   })
 
   it('reaches the bilateral ceiling at 15.2 kg and the single-implement ceiling at 20.2 kg (sleeve-weight amendment, 7 Aug ~19:00)', () => {
-    const { bilateral, singleImplement } = achievableLoads(REAL_PROFILE)
+    const { bilateral, singleImplement } = achievableLoads(RETIRED_PROFILE_2026_08_07)
     expect(bilateral.at(-1)).toBe(15.2)
     expect(singleImplement.at(-1)).toBe(20.2)
   })
 
-  it('reaches none of the prescribed 5/6/8/10/12/14/15 kg exactly as a matched bilateral pair', () => {
-    const { bilateral } = achievableLoads(REAL_PROFILE)
-    for (const prescribed of [5, 6, 8, 10, 12, 14, 15]) {
-      expect(bilateral).not.toContain(prescribed)
-    }
-  })
-
-  /**
-   * The sleeve-weight amendment raised the bilateral ceiling to 15.2 kg,
-   * but every written target still maps the same way — 15.2 exceeds all
-   * seven of them, so the ceiling move changes nothing here. Asserted
-   * explicitly, not just left to fall out of the list contents, because
-   * this is the specific fact the coach revalidation report leans on:
-   * the amendment reopens what's *directly achievable* at the top end,
-   * not the *mapped* classification for anything already below it.
-   */
-  it('maps every prescribed load to its nearest-lower achievable neighbour (ruling ③) — unchanged by the sleeve-weight amendment', () => {
-    const { bilateral } = achievableLoads(REAL_PROFILE)
-    expect(nearestAchievableLower(5, bilateral)).toBe(3.7)
-    expect(nearestAchievableLower(6, bilateral)).toBe(5.7)
-    expect(nearestAchievableLower(8, bilateral)).toBe(7.2)
-    expect(nearestAchievableLower(10, bilateral)).toBe(9.2)
-    expect(nearestAchievableLower(12, bilateral)).toBe(11.2)
-    expect(nearestAchievableLower(14, bilateral)).toBe(13.2)
-    expect(nearestAchievableLower(15, bilateral)).toBe(13.2)
-  })
-
   it('is memoised by profile object identity — same object returns the same array reference', () => {
-    const first = achievableLoads(REAL_PROFILE)
-    const second = achievableLoads(REAL_PROFILE)
+    const first = achievableLoads(RETIRED_PROFILE_2026_08_07)
+    const second = achievableLoads(RETIRED_PROFILE_2026_08_07)
     expect(second).toBe(first)
   })
 
   it('does not reuse the cache for a structurally-identical but distinct profile object', () => {
-    const clone: EquipmentProfile = { ...REAL_PROFILE, plateSets: REAL_PROFILE.plateSets!.map((s) => ({ ...s })) }
-    const original = achievableLoads(REAL_PROFILE)
+    const clone: EquipmentProfile = { ...RETIRED_PROFILE_2026_08_07, plateSets: RETIRED_PROFILE_2026_08_07.plateSets!.map((s) => ({ ...s })) }
+    const original = achievableLoads(RETIRED_PROFILE_2026_08_07)
     const clonedResult = achievableLoads(clone)
     expect(clonedResult).not.toBe(original)
     expect(clonedResult).toEqual(original)
   })
 })
 
-describe('achievableLoads — cross-set matching is a distinct code path (real profile)', () => {
+describe('achievableLoads — cross-set matching is a distinct code path (retired two-bore profile)', () => {
   /**
    * Verified against the shipped algorithm (scratchpad
    * `cross-check-weightcap.mjs`, 7 Aug 2026): 11.2, 13.2, and — since the
@@ -120,12 +95,12 @@ describe('achievableLoads — cross-set matching is a distinct code path (real p
    * load-bearing rather than redundant with same-set pairing.
    */
   it('produces 11.2, 13.2, and 15.2 kg only when both sets are present', () => {
-    const bothSets = achievableLoads(REAL_PROFILE).bilateral
+    const bothSets = achievableLoads(RETIRED_PROFILE_2026_08_07).bilateral
     expect(bothSets).toContain(11.2)
     expect(bothSets).toContain(13.2)
     expect(bothSets).toContain(15.2)
 
-    const setAOnly: EquipmentProfile = { ...REAL_PROFILE, plateSets: [REAL_PROFILE.plateSets![0]] }
+    const setAOnly: EquipmentProfile = { ...RETIRED_PROFILE_2026_08_07, plateSets: [RETIRED_PROFILE_2026_08_07.plateSets![0]] }
     const oneSetBilateral = achievableLoads(setAOnly).bilateral
     expect(oneSetBilateral).not.toContain(11.2)
     expect(oneSetBilateral).not.toContain(13.2)
@@ -133,7 +108,7 @@ describe('achievableLoads — cross-set matching is a distinct code path (real p
   })
 })
 
-describe('achievableLoads — per-set sleeve weight cap (maxSideKg, amended 7 Aug ~19:00)', () => {
+describe('achievableLoads — per-set sleeve weight cap (maxSideKg, retired two-bore profile)', () => {
   /**
    * The owner's actual measurement: sleeve rating is a *weight* per side,
    * not a plate count, and it differs per set (15kg/side A, 8kg/side B).
@@ -144,10 +119,10 @@ describe('achievableLoads — per-set sleeve weight cap (maxSideKg, amended 7 Au
    */
   it('is non-binding for the real profile — identical lists with the caps removed', () => {
     const uncapped: EquipmentProfile = {
-      ...REAL_PROFILE,
-      plateSets: REAL_PROFILE.plateSets!.map((set) => ({ ...set, maxSideKg: null })),
+      ...RETIRED_PROFILE_2026_08_07,
+      plateSets: RETIRED_PROFILE_2026_08_07.plateSets!.map((set) => ({ ...set, maxSideKg: null })),
     }
-    expect(achievableLoads(uncapped)).toEqual(achievableLoads(REAL_PROFILE))
+    expect(achievableLoads(uncapped)).toEqual(achievableLoads(RETIRED_PROFILE_2026_08_07))
   })
 
   /**
@@ -181,6 +156,96 @@ describe('achievableLoads — per-set sleeve weight cap (maxSideKg, amended 7 Au
     const uncapped = achievableLoads(uncappedProfile)
     expect(uncapped.bilateral).toEqual([0, 2, 4, 6, 8])
     expect(uncapped.singleImplement).toEqual([0, 2, 4, 6, 8, 10, 12, 14, 16])
+  })
+})
+
+/**
+ * The current hardware (12 Aug 2026 equipment upgrade) — two 2 kg
+ * adjustable handles sharing one plate pool (8×1 kg, 4×2 kg, 4×5 kg)
+ * plus a 7.75 kg barbell drawing the same pool (`.claude/rules/program-content.md`).
+ * One bore, unlike `RETIRED_PROFILE_2026_08_07` above.
+ */
+export const NEW_PROFILE: EquipmentProfile = {
+  handleKg: 2,
+  barKg: 7.75,
+  plateSets: [
+    {
+      plates: [
+        { weightKg: 1, count: 8 },
+        { weightKg: 2, count: 4 },
+        { weightKg: 5, count: 4 },
+      ],
+      handleCount: 2,
+    },
+  ],
+}
+
+describe('achievableLoads — current hardware (NEW_PROFILE, 12 Aug 2026 equipment upgrade)', () => {
+  it('computes the exact bilateral list — 2..20 kg in 2 kg steps', () => {
+    expect(achievableLoads(NEW_PROFILE).bilateral).toEqual([2, 4, 6, 8, 10, 12, 14, 16, 18, 20])
+  })
+
+  it('computes the exact single-implement list — 2..38 kg in 2 kg steps', () => {
+    expect(achievableLoads(NEW_PROFILE).singleImplement).toEqual([
+      2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38,
+    ])
+  })
+
+  it('computes the exact 19-rung barbell list — 7.75 (bare bar) to 43.75 (whole pool) in 2 kg steps', () => {
+    expect(achievableLoads(NEW_PROFILE).barbell).toEqual([
+      7.75, 9.75, 11.75, 13.75, 15.75, 17.75, 19.75, 21.75, 23.75, 25.75, 27.75, 29.75, 31.75, 33.75, 35.75, 37.75,
+      39.75, 41.75, 43.75,
+    ])
+  })
+
+  /**
+   * NEG-A (mandatory, plan §2 Phase 1): the correct bilateral answer is a
+   * suspiciously clean 2,4,...,20 — indistinguishable from a hardcoded
+   * list without this control. Red-first, run 12 Aug 2026: replaced
+   * `computeAchievableLoads`'s bilateral branch with the literal
+   * `[2,4,6,8,10,12,14,16,18,20]`, re-ran this suite against the profile
+   * below (5 kg plates removed) — the assertion failed, reporting the
+   * hardcoded 20 kg ceiling instead of the true 10 kg one. Reverted;
+   * failure quoted in the phase report.
+   */
+  it('NEG-A: dropping the 5 kg plates collapses bilateral to [2,4,6,8,10]', () => {
+    const noFivePlates: EquipmentProfile = {
+      ...NEW_PROFILE,
+      plateSets: [
+        { ...NEW_PROFILE.plateSets![0], plates: NEW_PROFILE.plateSets![0].plates.filter((p) => p.weightKg !== 5) },
+      ],
+    }
+    expect(achievableLoads(noFivePlates).bilateral).toEqual([2, 4, 6, 8, 10])
+  })
+
+  /**
+   * NEG-bar (mandatory, plan §2 Phase 1) — T4's "never default an
+   * implement weight" contract, extended to the bar. Red-first, run
+   * 12 Aug 2026: dropped the `barKg != null` guard so `barbell` mapped
+   * `singleQ` unconditionally, re-ran with `barKg: null` — the barbell
+   * assertion failed, returning the 19-rung list instead of `[]`.
+   * Reverted; failure quoted in the phase report.
+   */
+  it('NEG-bar: barKg null empties barbell while bilateral/singleImplement are unaffected', () => {
+    const noBar: EquipmentProfile = { ...NEW_PROFILE, barKg: null }
+    const result = achievableLoads(noBar)
+    expect(result.barbell).toEqual([])
+    expect(result.bilateral).toEqual(achievableLoads(NEW_PROFILE).bilateral)
+    expect(result.singleImplement).toEqual(achievableLoads(NEW_PROFILE).singleImplement)
+  })
+
+  /**
+   * NEG-bar-weight (mandatory, plan §2 Phase 1). Red-first, run
+   * 12 Aug 2026: hardcoded the barbell mapping's `toKg` call to the
+   * literal `7.75` regardless of `profile.barKg`, re-ran with
+   * `barKg: 20` — the assertion failed, still returning the 7.75-based
+   * ladder. Reverted; failure quoted in the phase report.
+   */
+  it('NEG-bar-weight: barKg 20 shifts every rung to 20,22,24,... — barKg is read, not a constant', () => {
+    const heavierBar: EquipmentProfile = { ...NEW_PROFILE, barKg: 20 }
+    expect(achievableLoads(heavierBar).barbell).toEqual([
+      20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56,
+    ])
   })
 })
 
@@ -301,7 +366,7 @@ describe('achievableLoads — handle-count gating', () => {
       handleKg: 1.0,
       plateSets: [{ plates: [{ weightKg: 2.5, count: 4 }], handleCount: 0 }],
     }
-    expect(achievableLoads(profile)).toEqual({ bilateral: [], singleImplement: [] })
+    expect(achievableLoads(profile)).toEqual({ bilateral: [], singleImplement: [], barbell: [] })
   })
 })
 
@@ -321,7 +386,7 @@ describe('achievableLoads — boundary validator (R3)', () => {
   })
 
   it('the real profile is well within the cap and never throws', () => {
-    expect(() => achievableLoads(REAL_PROFILE)).not.toThrow()
+    expect(() => achievableLoads(RETIRED_PROFILE_2026_08_07)).not.toThrow()
   })
 })
 

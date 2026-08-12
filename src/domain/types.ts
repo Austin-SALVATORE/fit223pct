@@ -446,6 +446,20 @@ export interface PlateSet {
 export interface EquipmentProfile {
   /** kg per bare handle, no plates. */
   handleKg?: number | null
+  /**
+   * kg of the bar alone, no plates — the barbell equivalent of `handleKg`.
+   * Draws from the same `plateSets` pool as the dumbbell handles (12 Aug
+   * 2026 hardware upgrade): a bar is symmetric-loading like a single
+   * handle's two ends, so it shares `singleHandleWeightsQ`'s enumeration
+   * rather than needing a second algorithm. **Known limitation:**
+   * `computeAchievableLoads` filters plate sets to `handleCount >= 1`
+   * before enumerating — a set with no dumbbell handle assigned would be
+   * invisible to the bar even though a bar doesn't need one. Non-binding
+   * for the current hardware (`handleCount: 2`); stated here rather than
+   * silently assumed general. Absent or null means no bar in this
+   * profile — never defaulted, same T4 contract as `handleKg`.
+   */
+  barKg?: number | null
   /** One entry per non-mixing plate bore — see `PlateSet`'s own doc, including its own `maxSideKg` sleeve rating. */
   plateSets?: PlateSet[] | null
   /**
