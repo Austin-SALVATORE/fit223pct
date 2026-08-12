@@ -446,22 +446,47 @@ function TargetCaption({
   const { t: tCommon } = useTranslation('common')
   const isSeconds = prescription.mode === 'seconds'
 
+  /**
+   * QA-found, 12 Aug 2026 (same defect class already fixed once in
+   * `SessionPreview.formatPrescription` — `c322497` — but that commit
+   * never touched this, a second independent formatter over the same
+   * setPlan/mode data). `setScreen.targetRung` used to build
+   * unconditionally with `weight: target.prescribed.weightKg ?? '–'`, so
+   * a null-weight ladder (bicycle-crunch, incline-push-up) captioned
+   * "– kg × 15", and a seconds-mode null-weight ladder (plank) captioned
+   * "– kg × –" — the duration wasn't dashed for lack of a value, it was
+   * dashed because this code only ever read `target.prescribed.reps`,
+   * which `nextSetTarget.ts` sets to null in seconds mode; the real value
+   * sits in `target.prescribed.seconds` instead.
+   *
+   * Four distinct locale keys, not one parameterised string with a
+   * conditional unit — same reasoning as the ramp-row fix (U-1): a
+   * caption that states "kg" is a prose claim, and a wrong claim here is
+   * mid-set guidance the athlete is actively acting on, not a summary
+   * they can cross-check later.
+   */
+  const rung = setIndex + 1
+  const total = prescription.setPlan?.length ?? 0
+  // The *advanced* rung, from the same resolution the card used. Reading
+  // `prescription.setPlan[setIndex]` here would show the authored ladder
+  // and caption "8 kg" under a card offering 10.
+  const weight = target.prescribed.weightKg
+  const effort = (isSeconds ? target.prescribed.seconds : target.prescribed.reps) ?? '–'
+
   const targetText = isCustomSlot
     ? t('setScreen.targetCustom')
-    : prescription.setPlan
-      ? t('setScreen.targetRung', {
-          rung: setIndex + 1,
-          total: prescription.setPlan.length,
-          // The *advanced* rung, from the same resolution the card used. Reading
-          // `prescription.setPlan[setIndex]` here would show the authored ladder
-          // and caption "8 kg" under a card offering 10.
-          weight: target.prescribed.weightKg ?? '–',
-          reps: target.prescribed.reps ?? '–',
-        })
-      : t(isSeconds ? 'setScreen.targetSecondsRange' : 'setScreen.targetRepRange', {
+    : !prescription.setPlan
+      ? t(isSeconds ? 'setScreen.targetSecondsRange' : 'setScreen.targetRepRange', {
           min: prescription.range.min,
           max: prescription.range.max,
         })
+      : weight !== null
+        ? isSeconds
+          ? t('setScreen.targetRungWeightedSeconds', { rung, total, weight, seconds: effort })
+          : t('setScreen.targetRung', { rung, total, weight, reps: effort })
+        : isSeconds
+          ? t('setScreen.targetRungSeconds', { rung, total, seconds: effort })
+          : t('setScreen.targetRungReps', { rung, total, reps: effort })
 
   return (
     <p id={id} className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-ink-tertiary">

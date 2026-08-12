@@ -284,6 +284,13 @@ describe('SetScreen ladder rendering', () => {
     expect(
       screen.queryByText('Every rung is maxed for this setup — hold the ladder and own the reps.'),
     ).toBeNull()
+    // QA-found (12 Aug 2026): TargetCaption used to build "– kg × N" for a
+    // null-weight ladder — a false weight claim, same defect class as the
+    // already-fixed SessionPreview formatter, but a second independent
+    // formatter this file's own test never asserted a caption string for.
+    expect(screen.getByText('Rung 1 of 2 · 12 reps')).toBeInTheDocument()
+    expect(screen.queryByText(/kg/)).toBeNull()
+    expect(screen.queryByText(/–/)).toBeNull()
   })
 
   /**
@@ -345,5 +352,49 @@ describe('SetScreen ladder rendering', () => {
     renderWorkout()
     expect(await screen.findByText('Slow')).toBeInTheDocument()
     expect(screen.queryByText('Normal')).toBeNull()
+  })
+
+  /**
+   * QA-found (12 Aug 2026): the same TargetCaption bug, worse in this
+   * shape — a seconds-mode null-weight ladder (plank) captioned
+   * "– kg × –", dashing out the duration entirely rather than just the
+   * weight, because `nextSetTarget.ts` puts a seconds-mode rung's value
+   * in `prescribed.seconds`, never `prescribed.reps`, and the caption
+   * only ever read `reps`.
+   */
+  it('shows the duration with a seconds unit, never "kg", for a seconds-mode null-weight ladder', async () => {
+    const timedLadder: LadderPrescription = {
+      exerciseId: 'goblet-squat',
+      sets: 3,
+      mode: 'seconds',
+      restSeconds: 60,
+      perSide: false,
+      setPlan: [
+        { weightKg: null, reps: 40 },
+        { weightKg: null, reps: 50 },
+        { weightKg: null, reps: 60 },
+      ],
+      maxWeightKg: null,
+      weightStepKg: null,
+    }
+    const timedSession: SessionTemplate = {
+      id: 'timed-test',
+      name: 'Timed session',
+      focus: 'Core',
+      items: [timedLadder],
+    }
+    const workout = createWorkout({
+      id: 'test-timed-fresh',
+      programId: seedProgram.id,
+      session: timedSession,
+      date: '2026-07-23',
+      startedAt: '2026-07-23T09:00:00.000Z',
+    })
+    await db.workouts.put(workout)
+
+    renderWorkout()
+    expect(await screen.findByText('Rung 1 of 3 · 40 s')).toBeInTheDocument()
+    expect(screen.queryByText(/kg/)).toBeNull()
+    expect(screen.queryByText(/–/)).toBeNull()
   })
 })
