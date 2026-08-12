@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { render } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { warmupById } from '@/data/seed/warmups'
@@ -39,7 +40,11 @@ describe('a rendered warm-up writes nothing', () => {
       'mesocycle2-shoulders-arms-warmup-v1',
     ]) {
       const warmup = warmupById(id)!
-      const { unmount } = render(<WarmupSection warmup={warmup} />)
+      const { unmount } = render(
+        <MemoryRouter>
+          <WarmupSection warmup={warmup} />
+        </MemoryRouter>,
+      )
       unmount()
     }
     // A fire-and-forget write (a `.then(...)` never awaited by the

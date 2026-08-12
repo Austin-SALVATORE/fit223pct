@@ -458,7 +458,7 @@ function ProjectedDetail({
       )}
       {/* Activation → Warm-up → Strength, same order and same preview-only,
           no-control treatment as Today's own flow (11 Aug plan §4b). */}
-      {warmup && <WarmupSection warmup={warmup} />}
+      {warmup && <WarmupSection warmup={warmup} origin={{ from: 'plan-day', date }} />}
       <SessionPreview
         session={session}
         programId={programId}
