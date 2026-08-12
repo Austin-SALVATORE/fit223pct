@@ -417,6 +417,54 @@
     },
     "bodyweight-squat": {
       "name": "Squat au poids du corps"
+    },
+    "dumbbell-rowboat": {
+      "name": "Rowing bateau à l'haltère",
+      "cues": [
+        "Utilise un seul haltère",
+        "Tempo normal et contrôlé",
+        "N'utilise pas l'élan pour terminer le mouvement"
+      ]
+    },
+    "russian-twist": {
+      "name": "Russian twist",
+      "cues": [
+        "Un seul haltère, tenu à deux mains",
+        "Tourne le tronc de façon contrôlée — ne balance pas l'haltère",
+        "Une rotation de chaque côté compte pour une répétition"
+      ]
+    },
+    "bicycle-crunch": {
+      "name": "Bicycle crunch",
+      "cues": [
+        "Un coude vers le genou opposé compte pour une répétition",
+        "Tempo contrôlé — ne te précipite pas",
+        "Cet exercice travaille la flexion du tronc avec rotation, pas le cardio"
+      ]
+    },
+    "plank": {
+      "name": "Planche",
+      "cues": [
+        "Côtes engagées, bassin neutre",
+        "Fessiers engagés, respire en continu",
+        "Tiens la position jusqu'à ce que tu ne puisses plus la maintenir"
+      ]
+    },
+    "mountain-climber": {
+      "name": "Mountain climber"
+    },
+    "barbell-curl": {
+      "name": "Curl à la barre",
+      "cues": [
+        "Coudes contrôlés, près du torse",
+        "Pas d'impulsion des hanches",
+        "Pas de bascule excessive du buste",
+        "Ne laisse pas les dernières répétitions devenir un swing du corps",
+        "Descends la barre avec contrôle"
+      ]
+    },
+    "bodyweight-hip-hinge": {
+      "name": "Charnière de hanche au poids du corps"
     }
   },
   "program": {

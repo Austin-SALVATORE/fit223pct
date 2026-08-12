@@ -381,4 +381,75 @@ export const seedExercises: Exercise[] = [
     substitutionIds: [],
     isUnilateral: false,
   },
+  // Equipment upgrade + Mesocycle 2 migration, 12 Aug 2026 — seven Library
+  // promotions. `MuscleGroup` has no obliques/hip-flexor/deep-trunk-
+  // stabilizer/brachialis tokens, so the coach's richer classification
+  // (Mesocycle-2-Core-Block-Redesign §8, Mesocycle-2-Session-C-
+  // Authoritative-Amendment §4) maps to the closest enum members and
+  // carries its full form in the locale cues, where prose belongs — not
+  // by widening a closed union for a content migration.
+  {
+    id: 'dumbbell-rowboat',
+    muscles: ['core'],
+    equipment: ['dumbbell'],
+    // Dead Bug as regression (Mesocycle-2-Core-Block-Redesign): no
+    // reverse link added, per the coach's own instruction not to.
+    substitutionIds: ['dead-bug'],
+    isUnilateral: false,
+  },
+  {
+    id: 'russian-twist',
+    muscles: ['core'],
+    equipment: ['dumbbell'],
+    // Bird Dog as rotational-control regression (Mesocycle-2-Core-Block-
+    // Redesign) — a programming regression, not a claim of biomechanical
+    // equivalence.
+    substitutionIds: ['bird-dog'],
+    isUnilateral: false,
+  },
+  {
+    id: 'bicycle-crunch',
+    muscles: ['core'],
+    equipment: ['bodyweight'],
+    substitutionIds: ['dead-bug'],
+    isUnilateral: false,
+  },
+  {
+    id: 'plank',
+    // side-plank is deliberately not listed here or as this entry's
+    // substitute — the coach names it a distinct anti-lateral-flexion
+    // movement, not a regression of this one.
+    muscles: ['core', 'shoulders', 'glutes'],
+    equipment: ['bodyweight'],
+    substitutionIds: ['dead-bug'],
+    isUnilateral: false,
+  },
+  {
+    id: 'mountain-climber',
+    // Library-only — the coach reserves it for a future conditioning
+    // block; not part of the active Session B prescription.
+    muscles: ['core', 'shoulders', 'quads'],
+    equipment: ['bodyweight'],
+    substitutionIds: ['plank'],
+    isUnilateral: false,
+  },
+  {
+    id: 'barbell-curl',
+    // MuscleGroup has no brachialis/forearm token — hammer-curl and
+    // dumbbell-curl already document that same gap.
+    muscles: ['biceps'],
+    equipment: ['barbell'],
+    // dumbbell-curl is the movement this replaces (history stays
+    // unmerged — a substitution link, not a progression merge);
+    // band-curl was already dumbbell-curl's own alternative.
+    substitutionIds: ['dumbbell-curl', 'band-curl'],
+    isUnilateral: false,
+  },
+  {
+    id: 'bodyweight-hip-hinge',
+    muscles: ['hamstrings', 'glutes', 'back'],
+    equipment: ['bodyweight'],
+    substitutionIds: ['romanian-deadlift'],
+    isUnilateral: false,
+  },
 ]

@@ -1,38 +1,38 @@
 {
-  "exerciseId": "russian-twist",
+  "exerciseId": "dumbbell-rowboat",
   "version": 1,
   "media": {
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1912,
+      1911,
       823
     ],
     "frameSizes": [
       [
-        424,
+        553,
         823
       ],
       [
-        486,
+        427,
         823
       ],
       [
-        429,
+        337,
         823
       ],
       [
-        494,
+        574,
         823
       ]
     ],
-    "referenceHash": "941761aefc",
-    "thumbnailHash": "ea8b03086c",
+    "referenceHash": "d3cb3ab878",
+    "thumbnailHash": "992a1cdb70",
     "frameHashes": [
-      "bd3c0417a6",
-      "7d9f69118a",
-      "f147b7612b",
-      "79785d88bb"
+      "959322506a",
+      "312c3fe1cb",
+      "9de7e9efe3",
+      "7301b4dc07"
     ]
   },
   "credits": {

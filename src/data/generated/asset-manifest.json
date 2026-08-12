@@ -1681,6 +1681,40 @@
       "c0c26ccefb"
     ]
   },
+  "dumbbell-rowboat": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1911,
+      823
+    ],
+    "frameSizes": [
+      [
+        553,
+        823
+      ],
+      [
+        427,
+        823
+      ],
+      [
+        337,
+        823
+      ],
+      [
+        574,
+        823
+      ]
+    ],
+    "referenceHash": "d3cb3ab878",
+    "thumbnailHash": "992a1cdb70",
+    "frameHashes": [
+      "959322506a",
+      "312c3fe1cb",
+      "9de7e9efe3",
+      "7301b4dc07"
+    ]
+  },
   "dumbbell-shoulder-press": {
     "frameCount": 6,
     "thumbnailFrame": 4,
@@ -3440,34 +3474,34 @@
     "frameCount": 4,
     "thumbnailFrame": 3,
     "referenceSize": [
-      1914,
-      822
+      1912,
+      823
     ],
     "frameSizes": [
       [
-        503,
-        822
+        424,
+        823
       ],
       [
-        458,
-        822
+        486,
+        823
       ],
       [
-        481,
-        822
+        429,
+        823
       ],
       [
-        440,
-        822
+        494,
+        823
       ]
     ],
-    "referenceHash": "930496d264",
-    "thumbnailHash": "d07ffb0352",
+    "referenceHash": "941761aefc",
+    "thumbnailHash": "ea8b03086c",
     "frameHashes": [
-      "bc34bf826d",
-      "c62875b50a",
-      "108b6157e1",
-      "65d2de3b1a"
+      "bd3c0417a6",
+      "7d9f69118a",
+      "f147b7612b",
+      "79785d88bb"
     ]
   },
   "scapular-push-up": {

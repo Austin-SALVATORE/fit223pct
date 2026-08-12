@@ -417,6 +417,54 @@
     },
     "bodyweight-squat": {
       "name": "Bodyweight squat"
+    },
+    "dumbbell-rowboat": {
+      "name": "Dumbbell rowboat",
+      "cues": [
+        "Use one dumbbell",
+        "Normal, controlled tempo",
+        "Don't use momentum to complete the movement"
+      ]
+    },
+    "russian-twist": {
+      "name": "Russian twist",
+      "cues": [
+        "One dumbbell, held with both hands",
+        "Rotate through controlled trunk movement — don't swing the dumbbell",
+        "One rotation to each side counts as one rep"
+      ]
+    },
+    "bicycle-crunch": {
+      "name": "Bicycle crunch",
+      "cues": [
+        "One elbow to the opposite knee counts as one rep",
+        "Controlled tempo — don't race through reps",
+        "This trains trunk flexion with rotation, not cardio"
+      ]
+    },
+    "plank": {
+      "name": "Plank",
+      "cues": [
+        "Ribs controlled, pelvis neutral",
+        "Glutes engaged, breathe continuously",
+        "Hold until you can no longer maintain the position"
+      ]
+    },
+    "mountain-climber": {
+      "name": "Mountain climber"
+    },
+    "barbell-curl": {
+      "name": "Barbell curl",
+      "cues": [
+        "Keep your elbows controlled, close to your torso",
+        "No hip drive",
+        "No exaggerated torso lean",
+        "Don't let the final reps turn into a body-swing curl",
+        "Lower the bar under control"
+      ]
+    },
+    "bodyweight-hip-hinge": {
+      "name": "Bodyweight hip hinge"
     }
   },
   "program": {

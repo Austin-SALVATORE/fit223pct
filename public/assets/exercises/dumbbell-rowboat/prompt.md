@@ -1,10 +1,10 @@
-# Russian Twist — image generation prompt
+# Dumbbell Rowboat — image generation prompt
 
 | Field | Value |
 |---|---|
-| Exercise id | `russian-twist` |
+| Exercise id | `dumbbell-rowboat` |
 | Category | Core |
-| Camera | `three-quarter-front` |
+| Camera | `floor-side` |
 | Frames | 4 |
 | Equipment | One dumbbell, held with both hands |
 | Status | `planned` |
@@ -76,66 +76,63 @@ lines, grids, watermarks, logos, background objects, mirrors, other people,
 extra or missing limbs, distorted hands, any magenta on the figure, clothing or equipment, drop shadows or glow halos around the figure, broken or hyperextended joints.
 
 MOVEMENT FOR THIS IMAGE:
-Exercise: Russian Twist
-Camera: three-quarter-front view, so the rotation of the ribcage away from the
-square pelvis is clearly visible.
+Exercise: Dumbbell Rowboat
+Camera: floor-side view in full profile so the torso recline angle, the
+elevated feet, and the hip/trunk flexion-extension are all clearly visible.
 Equipment: one matte black hexagonal-head dumbbell with a brushed chrome
-knurled handle, held horizontally in both hands in front of the sternum, one
-hand near each end of the handle.
+knurled handle, held horizontally in both hands at chest height, one hand
+near each end of the handle. This is a Core exercise, not a back row —
+the dumbbell never leaves the chest and is never pulled toward the ribs or
+pushed away from the body.
 Number of frames: 4, evenly spaced left to right.
-All four figures are seated on the same shared invisible ground line as each
-other, at exactly identical scale and spacing.
-
-IMPORTANT — this is a RECLINED seated ab exercise, NOT a squat and NOT an
-upright seated pose. In every frame: the torso leans backward, well away
-from vertical, with the weight balanced mainly on the sit bones/tailbone;
-the heels touch the ground lightly for balance only, close together and
-in front of the body, NOT spread wide apart with the knees pointing
-outward. Do not depict a squat stance, a frog-legged wide-knee position,
-or an upright torso — the chest must visibly lean back throughout.
+All four figures are seated and balanced on the same shared invisible ground
+line as each other, at exactly identical scale and spacing.
 
 Frames:
-1. Start. Seated on the ground, balanced back on the sit bones, knees bent
-   to roughly 90 degrees and held together, feet close together with the
-   heels resting lightly on the ground for balance only — most of the body
-   weight stays on the seat, not the feet. Torso leaning back to roughly 45
-   degrees from vertical with the spine long and flat — chest open, no
-   rounding of the lower back. Both hands holding the dumbbell horizontally
-   in front of the sternum, one hand near each end of the handle, elbows
-   softly bent, shoulders square to the front.
-2. Rotation to the right. The ribcage and shoulders turn to the right while the
-   dumbbell, still held in both hands, travels across to the outside of the
-   right hip. The pelvis and both knees stay square to the front, the torso
-   keeps its 45-degree lean and its long flat spine, and the head turns with
-   the chest.
-3. Back through centre. Torso square to the front again, the dumbbell
-   returned in front of the sternum, still held in both hands, lean angle and
-   spine position unchanged from frame 1.
-4. Rotation to the left, an exact mirror of frame 2. Ribcage and shoulders
-   turned left, the dumbbell — still held in both hands — outside the left
-   hip, pelvis and knees still square to the front, lean angle unchanged.
+1. Start — open position. Seated on the ground, balanced on the sit bones
+   with both feet elevated off the ground. Torso reclined to roughly 45
+   degrees from vertical, spine long and flat, chest open. Legs extended
+   fairly straight and lifted so they form a wide "V" with the reclined
+   torso. Elbows bent and close to the ribs, both hands holding the
+   dumbbell horizontally at chest height, one hand near each end of the
+   handle. Gaze forward, neck long.
+2. Beginning flexion. The torso rises slightly toward more upright while the
+   knees begin to bend and draw in toward the chest, narrowing the "V".
+   Both feet stay elevated, never touching the ground. The dumbbell stays
+   held in both hands at the chest, elbows still close to the ribs.
+3. Top — closed position. The torso is more upright (though still leaning
+   back enough to stay balanced on the sit bones, never past vertical) and
+   the knees are drawn in close to the chest, shins closer to parallel with
+   the ground — the narrowest point of the "V". The dumbbell remains at the
+   chest in both hands, unchanged from frame 1. Core braced, spine still
+   long.
+4. Controlled return toward the open position. The torso reclines back
+   again and the legs extend back out toward the angle of frame 1, feet
+   still elevated, the dumbbell still held steady at the chest with both
+   hands throughout.
 
 TECHNIQUE — must be correct in every frame:
-- The rotation comes from the thoracic spine — the pelvis and knees stay square
-  to the front in every frame.
-- The torso lean angle stays constant at roughly 45 degrees; the figure does not
-  sit up or fall back as she turns.
-- The spine stays long and flat; the lower back never rounds into a slump.
-- The dumbbell is held with both hands in every frame and is carried by the
-  torso's rotation, not swung independently — it is never held with one hand
-  alone and never set down.
-- The head and gaze follow the chest.
+- Both feet stay elevated off the ground in every frame — this is a balanced
+  hold, not a movement resting on the floor.
+- The dumbbell is held with both hands at the chest in every frame, one hand
+  near each end of the handle, and is never held with one hand alone.
+- This is not a rowing or pulling exercise: the arms stay in a fixed
+  relationship to the chest and never pull the dumbbell toward the ribs or
+  push it away from the body.
+- The trunk and legs move together in a controlled see-saw between the
+  reclined and flexed positions — no sudden or ballistic motion.
+- The spine stays long throughout; the lower back never rounds or collapses.
+- Balance is held on the sit bones in every frame; the legs and feet never
+  rest on the ground.
 ```
 
 ## Form checkpoints (QA)
 
-- [ ] Torso is clearly reclined back (~45 degrees), not upright, in every frame
-- [ ] Knees held together and feet close, not a wide-knee squat/frog stance
-- [ ] Pelvis and knees square to the front in all four frames
-- [ ] Torso lean angle identical in all four frames
-- [ ] Rotation clearly visible in the ribcage and shoulders
-- [ ] One dumbbell held with both hands and clearly visible in every frame
-- [ ] Frames 2 and 4 are true mirrors of each other
+- [ ] Both feet stay elevated off the ground in all four frames
+- [ ] One dumbbell held with both hands at the chest in every frame
+- [ ] Reads as controlled trunk/hip flexion-extension, not a dumbbell row
+- [ ] Torso recline angle and leg elevation change smoothly across frames
+- [ ] Spine stays long; no lower-back rounding in any frame
 - [ ] Same face, hair, wardrobe, and body proportions in all four frames
 - [ ] All four figures identical scale on one shared ground line
-- [ ] Readable as a seated dumbbell rotation at 64 px wide
+- [ ] Readable as a seated core rock at 64 px wide

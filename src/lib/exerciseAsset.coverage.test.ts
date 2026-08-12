@@ -19,12 +19,18 @@ import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
  * things going forward (new exercise first, asset generated after) —
  * not a regression to fix, just this list doing its job again.
  *
- * Refilled 6 Aug with the two Mesocycle 2 additions
- * (Mesocycle-2-Home-Progressive-Coach-Spec-v2.7.md §18) that have no art
- * yet: hamstring-walkout and dumbbell-pullover. Remove each in the same
- * reviewed commit that lands its asset batch.
+ * Refilled 12 Aug with four of the seven equipment-upgrade Library
+ * promotions that have no art yet: bicycle-crunch, mountain-climber,
+ * barbell-curl, bodyweight-hip-hinge. `dumbbell-rowboat`, `russian-twist`
+ * and `plank` are not listed — their art resolves (deploy-order
+ * constraint on `russian-twist`: its Library entry must ship in the same
+ * deploy as, or after, the regenerated art, since the id already
+ * resolves through the manifest and this list can't catch a wrong
+ * illustration, only a missing one). Was empty again as of the previous
+ * entry (hamstring-walkout/dumbbell-pullover landed 6 Aug and were
+ * removed) — this docblock was stale, still describing that refill.
  */
-const KNOWN_MISSING = new Set<string>()
+const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber', 'barbell-curl', 'bodyweight-hip-hinge'])
 
 describe('exercise asset coverage', () => {
   it.each(seedExercises.map((e) => e.id))('%s resolves an asset or is in KNOWN_MISSING', (id) => {
