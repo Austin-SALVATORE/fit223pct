@@ -34,12 +34,13 @@ describe('Settings entry', () => {
 })
 
 // Kept in sync by hand with exerciseAsset.coverage.test.ts's KNOWN_MISSING —
-// not imported from a .test.ts file. Three of the seven equipment-upgrade
-// Library promotions (12 Aug 2026) have no art yet — barbell-curl reuses
-// the audited-FIT biceps-curl art under a renamed id/directory, so it is
-// not one of them; remove an id here in the same commit that removes it
-// from KNOWN_MISSING.
-const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber', 'bodyweight-hip-hinge'])
+// not imported from a .test.ts file. Two of the seven equipment-upgrade
+// Library promotions (12 Aug 2026) still have no art — barbell-curl reuses
+// the audited-FIT biceps-curl art under a renamed id/directory, and
+// bodyweight-hip-hinge landed its own audited-FIT batch the same day, so
+// neither is one of them; remove an id here in the same commit that
+// removes it from KNOWN_MISSING.
+const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber'])
 
 describe('Every seeded exercise actually reaches the page', () => {
   /**

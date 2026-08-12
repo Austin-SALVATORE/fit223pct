@@ -1,0 +1,37 @@
+{
+  "exerciseId": "bodyweight-hip-hinge",
+  "version": 1,
+  "media": {
+    "frameCount": 3,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1915,
+      821
+    ],
+    "frameSizes": [
+      [
+        287,
+        821
+      ],
+      [
+        403,
+        821
+      ],
+      [
+        459,
+        821
+      ]
+    ],
+    "referenceHash": "d35ec926b0",
+    "thumbnailHash": "9e1b16008c",
+    "frameHashes": [
+      "8e70abf884",
+      "964e05b61f",
+      "4c19aa28f2"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}
