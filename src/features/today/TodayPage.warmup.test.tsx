@@ -75,10 +75,10 @@ describe('the warm-up card before the session starts', () => {
     renderApp()
 
     expect(await screen.findByText('Warm-up')).toBeInTheDocument()
-    expect(screen.getByText('Easy cycling · 2–3 min')).toBeInTheDocument()
+    expect(screen.getByText('Easy cycling · 3 min')).toBeInTheDocument()
     expect(screen.getByText('Scapular push-up')).toBeInTheDocument()
-    expect(screen.getByText('5.2 kg per dumbbell × 8')).toBeInTheDocument()
-    expect(screen.getByText('8.2 kg per dumbbell × 5')).toBeInTheDocument()
+    expect(screen.getByText('6 kg per dumbbell × 8')).toBeInTheDocument()
+    expect(screen.getByText('10 kg per dumbbell × 5')).toBeInTheDocument()
 
     // Still the session's day — the warm-up doesn't replace anything.
     expect(screen.getByRole('button', { name: 'Start session' })).toBeInTheDocument()
@@ -100,7 +100,7 @@ describe('the warm-up card while the session is in progress', () => {
     expect(await screen.findByRole('link', { name: 'Resume session' })).toBeInTheDocument()
     expect(screen.getByText('Warm-up')).toBeInTheDocument()
     expect(screen.getByText('Scapular push-up')).toBeInTheDocument()
-    expect(screen.getByText('5.2 kg per dumbbell × 8')).toBeInTheDocument()
+    expect(screen.getByText('6 kg per dumbbell × 8')).toBeInTheDocument()
   })
 
   it('shows nothing extra in progress when the session has no warmupId', async () => {

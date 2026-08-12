@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { TFunction } from 'i18next'
 import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
@@ -67,21 +68,52 @@ export function SessionPreview({
           {session.items.map((item) => {
             const exercise = exerciseById.get(item.exerciseId)
             if (!exercise) return null
+            // D3, 12 Aug 2026 — a technique-rehearsal set renders above
+            // its exercise's first working set, in the same static,
+            // non-interactive treatment WarmupSection established.
+            // Structurally invisible to setPlan/progression (types.ts).
+            const rehearsal = 'rehearsal' in item ? item.rehearsal : undefined
             return (
-              <ItemRow
-                key={item.exerciseId}
-                item={item}
-                exercise={exercise}
-                origin={origin}
-                programId={programId}
-                programOrigin={programOrigin}
-                sessionId={session.id}
-              />
+              <Fragment key={item.exerciseId}>
+                {rehearsal && <RehearsalRow exercise={exercise} rehearsal={rehearsal} />}
+                <ItemRow
+                  item={item}
+                  exercise={exercise}
+                  origin={origin}
+                  programId={programId}
+                  programOrigin={programOrigin}
+                  sessionId={session.id}
+                />
+              </Fragment>
             )
           })}
         </GroupedList>
       </div>
     </section>
+  )
+}
+
+/**
+ * A technique-rehearsal set (D3) — same visual shape as ItemRow's
+ * thumbnail-plus-text grid, but a plain `GroupedRow` with no `to`, since
+ * this is not a navigable exercise slot. Never rendered from `setPlan`,
+ * so it carries no note and no `formatPrescription` call.
+ */
+function RehearsalRow({ exercise, rehearsal }: { exercise: Exercise; rehearsal: { weightKg: number; reps: number } }) {
+  const { t } = useTranslation('today')
+  const exerciseName = useExerciseName(exercise.id)
+  return (
+    <GroupedRow>
+      <div className="grid w-full min-w-0 grid-cols-[3rem_1fr] items-start gap-x-4">
+        <ExerciseThumbnail exerciseId={exercise.id} />
+        <div className="min-w-0">
+          <p className="truncate font-medium text-ink">{exerciseName}</p>
+          <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
+            {t('sessionPreview.rehearsalWeightReps', { weight: rehearsal.weightKg, reps: rehearsal.reps })}
+          </p>
+        </div>
+      </div>
+    </GroupedRow>
   )
 }
 

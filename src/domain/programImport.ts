@@ -93,6 +93,12 @@ const ladderPrescriptionSchema = z
     weightStepKg: z.number().positive().nullable(),
     note: z.string().min(1).optional(),
     substitutionIds: z.array(z.string().min(1)).optional(),
+    // D3, 12 Aug 2026 equipment upgrade — a technique-rehearsal set, not
+    // a setPlan rung. Both branches are `.strict()` (this file's own
+    // comment above), so an un-added field here would be rejected on
+    // import, not silently stripped: a JSON round-trip of a program
+    // carrying a rehearsal set would fail without this.
+    rehearsal: z.object({ weightKg: z.number().nonnegative(), reps: z.number().int().positive() }).optional(),
   })
   .strict()
   .refine((p) => p.sets === p.setPlan.length, {

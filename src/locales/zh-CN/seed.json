@@ -635,13 +635,10 @@
             "standing-calf-raise": {
               "note": "完成全程动作——在最低点有控制地拉伸。"
             },
-            "dead-bug": {
-              "note": "休息 45-60 秒"
+            "russian-twist": {
+              "note": "计总次数，不分左右"
             },
-            "bird-dog": {
-              "note": "在完全伸展的位置保持 2 秒，然后有控制地还原。"
-            },
-            "side-plank": {
+            "plank": {
               "note": "休息 45-60 秒"
             }
           }

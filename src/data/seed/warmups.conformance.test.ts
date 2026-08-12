@@ -7,46 +7,45 @@ import type { WarmupStep } from '@/domain/warmup'
 
 /**
  * Conformance guard for the Mesocycle 2 Pre-Strength Warm-up Prescription
- * (11 Aug 2026), mirroring `mesocycle2Build.conformance.test.ts`'s own
- * method: `EXPECTED` below is transcribed independently from the coach
- * spec, not derived from `seedWarmups` itself — a circular check (the seed
- * compared against a copy of the seed) would pass on a shared mistake.
+ * (11 Aug 2026, as amended 12 Aug 2026 by the equipment upgrade and the
+ * Session B Warm-up Amendment), mirroring
+ * `mesocycle2Build.conformance.test.ts`'s own method: `EXPECTED` below is
+ * transcribed independently from the coach spec, not derived from
+ * `seedWarmups` itself — a circular check (the seed compared against a
+ * copy of the seed) would pass on a shared mistake.
  */
 
 interface ExpectedStep {
   kind: WarmupStep['kind']
   exerciseId?: string
-  weightKgPerImplement?: number
+  implement?: 'dumbbell' | 'barbell'
+  weightKg?: number
   reps?: number
   perSide?: boolean
-  minutesMin?: number
-  minutesMax?: number
+  minutes?: number
 }
 
 const EXPECTED: Record<string, ExpectedStep[]> = {
   'mesocycle2-chest-back-warmup-v1': [
-    { kind: 'cycle', minutesMin: 2, minutesMax: 3 },
+    { kind: 'cycle', minutes: 3 },
     { kind: 'movement', exerciseId: 'scapular-push-up', reps: 8 },
-    { kind: 'ramp', exerciseId: 'incline-dumbbell-press', weightKgPerImplement: 5.2, reps: 8 },
-    { kind: 'ramp', exerciseId: 'incline-dumbbell-press', weightKgPerImplement: 8.2, reps: 5 },
+    { kind: 'ramp', exerciseId: 'incline-dumbbell-press', implement: 'dumbbell', weightKg: 6, reps: 8 },
+    { kind: 'ramp', exerciseId: 'incline-dumbbell-press', implement: 'dumbbell', weightKg: 10, reps: 5 },
   ],
+  // Replaced wholesale (doc 8) — rehearses the Barbell RDL, now the
+  // session's first movement. The Bulgarian Split Squat rehearsal is
+  // removed, not relocated.
   'mesocycle2-legs-core-warmup-v1': [
-    { kind: 'cycle', minutesMin: 2, minutesMax: 3 },
-    { kind: 'movement', exerciseId: 'bodyweight-squat', reps: 8 },
-    { kind: 'movement', exerciseId: 'bulgarian-split-squat', reps: 5, perSide: true },
-    {
-      kind: 'ramp',
-      exerciseId: 'bulgarian-split-squat',
-      weightKgPerImplement: 5.2,
-      reps: 5,
-      perSide: true,
-    },
+    { kind: 'cycle', minutes: 3 },
+    { kind: 'movement', exerciseId: 'bodyweight-hip-hinge', reps: 8 },
+    { kind: 'ramp', exerciseId: 'romanian-deadlift', implement: 'barbell', weightKg: 7.75, reps: 8 },
+    { kind: 'ramp', exerciseId: 'romanian-deadlift', implement: 'barbell', weightKg: 15.75, reps: 5 },
   ],
   'mesocycle2-shoulders-arms-warmup-v1': [
-    { kind: 'cycle', minutesMin: 2, minutesMax: 3 },
+    { kind: 'cycle', minutes: 3 },
     { kind: 'movement', exerciseId: 'wall-slide', reps: 8 },
-    { kind: 'ramp', exerciseId: 'dumbbell-shoulder-press', weightKgPerImplement: 3.7, reps: 8 },
-    { kind: 'ramp', exerciseId: 'dumbbell-shoulder-press', weightKgPerImplement: 5.7, reps: 5 },
+    { kind: 'ramp', exerciseId: 'dumbbell-shoulder-press', implement: 'dumbbell', weightKg: 4, reps: 8 },
+    { kind: 'ramp', exerciseId: 'dumbbell-shoulder-press', implement: 'dumbbell', weightKg: 6, reps: 5 },
   ],
 }
 
@@ -102,16 +101,16 @@ describe('warm-up catalogue conformance (transcription independent of the seed)'
           `${session.id}'s ramp rehearses ${ramp.exerciseId}, not the session's first exercise ${firstItem.exerciseId}`,
         ).toBe(firstItem.exerciseId)
         expect(
-          ramp.weightKgPerImplement,
-          `${session.id}: ramp load ${ramp.weightKgPerImplement} kg is not below the first working rung ${firstRungKg} kg`,
+          ramp.weightKg,
+          `${session.id}: ramp load ${ramp.weightKg} kg is not below the first working rung ${firstRungKg} kg`,
         ).toBeLessThan(firstRungKg!)
       }
 
       for (let i = 1; i < ramps.length; i += 1) {
         expect(
-          ramps[i].weightKgPerImplement,
+          ramps[i].weightKg,
           `${session.id}: ramp ${i + 1} does not increase load over ramp ${i}`,
-        ).toBeGreaterThan(ramps[i - 1].weightKgPerImplement)
+        ).toBeGreaterThan(ramps[i - 1].weightKg)
         expect(
           ramps[i].reps,
           `${session.id}: ramp ${i + 1} does not decrease reps as load rises over ramp ${i}`,

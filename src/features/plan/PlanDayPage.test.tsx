@@ -455,10 +455,10 @@ describe('PlanDayPage states', () => {
 
       const warmupHeading = screen.getByText('Warm-up')
       expect(warmupHeading).toBeInTheDocument()
-      expect(screen.getByText('Easy cycling · 2–3 min')).toBeInTheDocument()
+      expect(screen.getByText('Easy cycling · 3 min')).toBeInTheDocument()
       expect(screen.getByText('Scapular push-up')).toBeInTheDocument()
-      expect(screen.getByText('5.2 kg per dumbbell × 8')).toBeInTheDocument()
-      expect(screen.getByText('8.2 kg per dumbbell × 5')).toBeInTheDocument()
+      expect(screen.getByText('6 kg per dumbbell × 8')).toBeInTheDocument()
+      expect(screen.getByText('10 kg per dumbbell × 5')).toBeInTheDocument()
 
       // Warm-up precedes the session in document order — same hierarchy
       // as Today's own Activation → Warm-up → Strength flow.

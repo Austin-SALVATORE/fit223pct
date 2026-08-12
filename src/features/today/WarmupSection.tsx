@@ -48,7 +48,7 @@ function CycleRow({ step }: { step: Extract<WarmupStep, { kind: 'cycle' }> }) {
   const { t } = useTranslation('today')
   return (
     <p className="text-sm leading-relaxed text-ink-secondary" data-numeric>
-      {t('warmup.cycleLine', { min: step.minutesMin, max: step.minutesMax })}
+      {t('warmup.cycleLine', { minutes: step.minutes })}
     </p>
   )
 }
@@ -75,13 +75,17 @@ function RampRow({ step }: { step: Extract<WarmupStep, { kind: 'ramp' }> }) {
   const { t } = useTranslation('today')
   const name = useExerciseName(step.exerciseId)
   const suffix = step.perSide ? t('sessionPreview.perSideSuffix') : ''
+  // Distinct keys per implement (U-1) — the unit is stated, not inferred,
+  // because this row makes a prose claim about what weight means, unlike
+  // a bare setPlan number.
+  const key = step.implement === 'barbell' ? 'warmup.rampWeightRepsBarbell' : 'warmup.rampWeightRepsDumbbell'
   return (
     <div className="grid grid-cols-[3rem_1fr] items-center gap-x-4">
       <ExerciseThumbnail exerciseId={step.exerciseId} />
       <div className="min-w-0">
         <p className="truncate font-medium text-ink">{name}</p>
         <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
-          {t('warmup.rampWeightReps', { weight: step.weightKgPerImplement, reps: step.reps })}
+          {t(key, { weight: step.weightKg, reps: step.reps })}
           {suffix}
         </p>
       </div>

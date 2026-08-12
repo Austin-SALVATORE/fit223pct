@@ -1,6 +1,7 @@
 {
   "sessionPreview": {
-    "perSideSuffix": " /côté"
+    "perSideSuffix": " /côté",
+    "rehearsalWeightReps": "Série technique · {{weight}} kg × {{reps}}"
   },
   "trainingDay": {
     "easedSubtitle": "On lève un peu le pied aujourd'hui — $t({{driversKey}}). Se présenter un jour comme celui-ci compte double.",
@@ -14,10 +15,11 @@
     "warmupHeading": "Échauffement"
   },
   "warmup": {
-    "cycleLine": "Vélo facile · {{min}} à {{max}} min",
+    "cycleLine": "Vélo facile · {{minutes}} min",
     "reps_one": "{{count}} répétition",
     "reps_other": "{{count}} répétitions",
-    "rampWeightReps": "{{weight}} kg par haltère × {{reps}}"
+    "rampWeightRepsDumbbell": "{{weight}} kg par haltère × {{reps}}",
+    "rampWeightRepsBarbell": "{{weight}} kg au total × {{reps}}"
   },
   "noProgram": "Aucun programme d'entraînement n'est encore configuré. Ta prochaine phase apparaîtra ici.",
   "plannedDay": {

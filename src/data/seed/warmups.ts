@@ -11,59 +11,55 @@ import type { Warmup } from '@/domain/warmup'
  * the coach's call, not this repo's.
  *
  * Content is transcribed verbatim from the coach's Mesocycle 2 Pre-Strength
- * Warm-up Prescription (11 Aug 2026). All three sessions share the same
- * shape — a 2–3 min easy cycle, one bodyweight movement-preparation drill,
- * then one or two ramp-up sets rehearsing the session's first working
- * exercise — because that shape *is* the coach's rule 3 ("keep the default
- * routine intentionally minimal"), not a convenience of this file.
+ * Warm-up Prescription (11 Aug 2026), **as amended 12 Aug 2026** by the
+ * equipment upgrade (new ramp loads on the current hardware, fixed 3:00
+ * cycle — doc 4 §5) and by the Session B Warm-up Amendment (doc 8), which
+ * replaces Session B's warm-up wholesale to rehearse the Barbell RDL —
+ * now the session's first movement — rather than the Bulgarian Split
+ * Squat it used to open with.
  *
- * `weightKgPerImplement` is per-dumbbell, matching every other prescription
- * in this program (program-content.md: "Weights are per dumbbell, for both
- * single- and double-dumbbell lifts"). Ramp reps fall as ramp load rises on
- * every session (rule 8) and every ramp is strictly below its session's
- * first working rung (rule 6) — pinned by
- * `mesocycle2Build.conformance.test.ts`'s warm-up conformance block, not
- * re-derived here.
- *
- * Session B's optional light RDL rehearsal set (spec, "RDL transition") is
- * not modelled — the spec gives it no load, reps or trigger, and
- * program-content.md forbids inventing coach content. Carried as an open
- * question (11 Aug plan §7 Q6), not this file's to guess at.
+ * A `ramp` step's `weightKg` states its own `implement` (U-1) — per
+ * dumbbell for Sessions A/C, total bar weight for Session B's two RDL
+ * ramps. Ramp reps fall as ramp load rises on every session (rule 8) and
+ * every ramp is strictly below its session's first working rung (rule 6)
+ * — pinned by `mesocycle2Build.conformance.test.ts`'s warm-up conformance
+ * block, not re-derived here. Session B's 30–60 sec inter-ramp rest
+ * (doc 8) is deliberately not modelled — `WarmupStep`'s structural
+ * guarantee is that it has no `restSeconds`, and the coach's own phrasing
+ * is non-prescriptive ("only as needed for setup").
  */
 export const seedWarmups: readonly Warmup[] = [
   {
     id: 'mesocycle2-chest-back-warmup-v1',
     steps: [
-      { kind: 'cycle', minutesMin: 2, minutesMax: 3 },
+      { kind: 'cycle', minutes: 3 },
       { kind: 'movement', exerciseId: 'scapular-push-up', reps: 8 },
-      { kind: 'ramp', exerciseId: 'incline-dumbbell-press', weightKgPerImplement: 5.2, reps: 8 },
-      { kind: 'ramp', exerciseId: 'incline-dumbbell-press', weightKgPerImplement: 8.2, reps: 5 },
+      { kind: 'ramp', exerciseId: 'incline-dumbbell-press', implement: 'dumbbell', weightKg: 6, reps: 8 },
+      { kind: 'ramp', exerciseId: 'incline-dumbbell-press', implement: 'dumbbell', weightKg: 10, reps: 5 },
     ],
   },
+  // Replaced wholesale (doc 8) — the Bulgarian Split Squat rehearsal is
+  // REMOVED, not relocated: the session now opens with the Barbell RDL,
+  // so the specific warm-up prepares that movement instead. BSS itself
+  // is now the session's second exercise and gets no rehearsal set.
   {
     id: 'mesocycle2-legs-core-warmup-v1',
     steps: [
-      { kind: 'cycle', minutesMin: 2, minutesMax: 3 },
-      { kind: 'movement', exerciseId: 'bodyweight-squat', reps: 8 },
-      // "Bulgarian Split Squat — Bodyweight" — stance/balance rehearsal,
-      // no load, distinct from the ramp-up step below it.
-      { kind: 'movement', exerciseId: 'bulgarian-split-squat', reps: 5, perSide: true },
-      {
-        kind: 'ramp',
-        exerciseId: 'bulgarian-split-squat',
-        weightKgPerImplement: 5.2,
-        reps: 5,
-        perSide: true,
-      },
+      { kind: 'cycle', minutes: 3 },
+      { kind: 'movement', exerciseId: 'bodyweight-hip-hinge', reps: 8 },
+      // Technique ramp — empty bar.
+      { kind: 'ramp', exerciseId: 'romanian-deadlift', implement: 'barbell', weightKg: 7.75, reps: 8 },
+      // Load ramp.
+      { kind: 'ramp', exerciseId: 'romanian-deadlift', implement: 'barbell', weightKg: 15.75, reps: 5 },
     ],
   },
   {
     id: 'mesocycle2-shoulders-arms-warmup-v1',
     steps: [
-      { kind: 'cycle', minutesMin: 2, minutesMax: 3 },
+      { kind: 'cycle', minutes: 3 },
       { kind: 'movement', exerciseId: 'wall-slide', reps: 8 },
-      { kind: 'ramp', exerciseId: 'dumbbell-shoulder-press', weightKgPerImplement: 3.7, reps: 8 },
-      { kind: 'ramp', exerciseId: 'dumbbell-shoulder-press', weightKgPerImplement: 5.7, reps: 5 },
+      { kind: 'ramp', exerciseId: 'dumbbell-shoulder-press', implement: 'dumbbell', weightKg: 4, reps: 8 },
+      { kind: 'ramp', exerciseId: 'dumbbell-shoulder-press', implement: 'dumbbell', weightKg: 6, reps: 5 },
     ],
   },
 ]

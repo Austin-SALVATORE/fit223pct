@@ -120,6 +120,20 @@ export interface LadderPrescription extends ExercisePrescriptionBase {
   weightStepKg: number | null
   range?: undefined
   startWeightKg?: undefined
+  /**
+   * A single, fully-prescribed technique-rehearsal set, rendered above
+   * this exercise's first working set (12 Aug 2026 equipment upgrade,
+   * D3). Deliberately NOT a `setPlan` rung: it is not working volume,
+   * does not affect pyramid completion, and cannot trigger progression —
+   * `suggestLadderProgression` reads `setPlan` only, so a rehearsal set
+   * here is structurally invisible to it. Anchored to the exercise, not
+   * a session index, so it survives a session reorder with no edit here
+   * (proved live — a same-day coach reorder moved this exercise and the
+   * rehearsal needed no change). Absent is the norm; as of 12 Aug only
+   * `bent-over-row` carries one — the coach's own named exception
+   * (`barbell-curl` is ruled out by name in the same document).
+   */
+  rehearsal?: { weightKg: number; reps: number }
 }
 
 export type ExercisePrescription = RepRangePrescription | LadderPrescription

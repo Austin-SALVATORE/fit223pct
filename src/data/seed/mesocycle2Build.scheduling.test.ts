@@ -114,7 +114,7 @@ describe('mesocycle2Build scheduling — mid-mesocycle continuity (owner require
     expect(session.items).toHaveLength(7)
     const press = session.items[0]
     expect(press.exerciseId).toBe('incline-dumbbell-press')
-    expect((press as LadderPrescription).setPlan.at(-1)?.weightKg).toBe(15.2)
+    expect((press as LadderPrescription).setPlan.at(-1)?.weightKg).toBe(18)
     const exerciseIds = session.items.map((i) => i.exerciseId)
     expect(exerciseIds).toContain('dumbbell-bench-press')
     expect(exerciseIds).toContain('incline-push-up')

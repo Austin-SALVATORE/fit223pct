@@ -1,8 +1,13 @@
 import type { Exercise } from '@/domain/types'
 
 /**
- * Exercise library for Austin's home setup: barbell 0–30 kg, dumbbells
- * (1×20 kg or 2×10 kg), adjustable bench, resistance bands.
+ * Exercise library for Austin's home setup. Current tier (12 Aug 2026
+ * equipment upgrade, `.claude/rules/program-content.md`): two 2 kg
+ * adjustable handles sharing one plate pool (8×1 kg, 4×2 kg, 4×5 kg)
+ * plus a 7.75 kg barbell drawing the same pool (no rack —
+ * floor/bench-start movements only), adjustable bench, resistance
+ * bands. See `docs/EquipmentProfile.md` for the full measured profile
+ * and the retired 7 Aug tier it replaces.
  *
  * Display content (name, cues, teachingConcept) lives in each locale's
  * seed.json under src/locales, keyed by id — these records are the

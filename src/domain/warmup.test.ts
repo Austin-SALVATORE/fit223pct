@@ -8,9 +8,9 @@ import type { WarmupStep } from './warmup'
  * domain/progression.ts is what these assertions exist to pin.
  */
 describe('WarmupStep', () => {
-  it('a cycle step carries only kind/minutesMin/minutesMax', () => {
-    const step: WarmupStep = { kind: 'cycle', minutesMin: 2, minutesMax: 3 }
-    expect(Object.keys(step).sort()).toEqual(['kind', 'minutesMax', 'minutesMin'])
+  it('a cycle step carries only kind/minutes', () => {
+    const step: WarmupStep = { kind: 'cycle', minutes: 3 }
+    expect(Object.keys(step).sort()).toEqual(['kind', 'minutes'])
   })
 
   it('a movement step carries only kind/exerciseId/reps — no weightKg, setPlan, mode or recordable', () => {
@@ -28,21 +28,23 @@ describe('WarmupStep', () => {
     expect(Object.keys(step).sort()).toEqual(['exerciseId', 'kind', 'perSide', 'reps'])
   })
 
-  it('a ramp step carries only kind/exerciseId/weightKgPerImplement/reps — never a setPlan rung', () => {
+  it('a ramp step carries only kind/exerciseId/implement/weightKg/reps — never a setPlan rung', () => {
     const step: WarmupStep = {
       kind: 'ramp',
       exerciseId: 'incline-dumbbell-press',
-      weightKgPerImplement: 5.2,
+      implement: 'dumbbell',
+      weightKg: 6,
       reps: 8,
     }
-    expect(Object.keys(step).sort()).toEqual(['exerciseId', 'kind', 'reps', 'weightKgPerImplement'])
+    expect(Object.keys(step).sort()).toEqual(['exerciseId', 'implement', 'kind', 'reps', 'weightKg'])
   })
 
   it('is not assignable to ExercisePrescription — a warm-up value cannot reach domain/progression.ts', () => {
     const step: WarmupStep = {
       kind: 'ramp',
       exerciseId: 'incline-dumbbell-press',
-      weightKgPerImplement: 5.2,
+      implement: 'dumbbell',
+      weightKg: 6,
       reps: 8,
     }
     // Compile-time guard: if WarmupStep ever grows a shape that satisfies

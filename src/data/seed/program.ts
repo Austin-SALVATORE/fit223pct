@@ -50,33 +50,50 @@ const band = { start: null, max: null, step: null }
 const bodyweight = band
 
 /**
- * Adjustable-dumbbell weight increment used throughout — the coach spec
- * (docs/programs/phase-1-home-v3-coach-spec.md) prescribes starting/target
- * loads but doesn't name a between-session step size; 2 kg/hand matches the
- * spacing the spec's own rungs already use and is a conservative default
- * for this equipment tier (docs/PyramidProgression.md: "conservative
- * weightStepKg values are the safety margin RIR used to provide").
+ * Adjustable-dumbbell weight increment used throughout. **The value is an
+ * arithmetic step, and it happens to coincide with the new hardware's
+ * uniform 2 kg spacing on all three verified ladders** (bilateral,
+ * single-implement, barbell — `equipment.test.ts`'s `NEW_PROFILE`
+ * assertions). Coincidence is not justification: `equipment.ts:3-10`'s
+ * standing rule forbids treating a numeric gap as a step size, and the
+ * list-based replacement remains owed. Also still consumed by
+ * phase-1-home (13 sites below) — changing the number would silently
+ * re-tune a retired program, so it stays 2 regardless of what the
+ * equipment layer eventually replaces it with.
  */
 const DUMBBELL_STEP_KG = 2
 /** 15 kg/hand is the hard equipment ceiling for this phase (docs/programs/phase-1-home-v3-coach-spec.md). */
 const DUMBBELL_MAX_KG = 15
 
 /**
- * Mesocycle 2 Build revision (11 Aug 2026) ceilings. The owner's verified
- * matched-pair ceiling — `equipment.test.ts:44-46`'s bilateral list ends
- * at 15.2. Distinct from phase-1-home's `DUMBBELL_MAX_KG` (15), which
- * describes that phase's declared tier and is left alone. Read live by
- * SetScreen's weight Stepper (`max` prop) with no gate — the transcribed
- * revision puts eight rungs at 15.2 kg, above the old 15 kg cap, which
- * would silently clamp the Stepper's typed/± input below the prescribed
- * load; that's the reason for this constant, not the (currently
- * unreachable) auto-progression path. Read by suggestLadderProgression
- * only once an equipment profile is confirmed, which nothing currently
- * writes (workout.ts:286).
+ * Mesocycle 2 Build ceilings, current hardware (12 Aug 2026 equipment
+ * upgrade — `docs/EquipmentProfile.md`'s "Current hardware" section,
+ * `equipment.test.ts`'s `NEW_PROFILE`). Two 2 kg adjustable handles
+ * sharing one plate pool (8×1 kg, 4×2 kg, 4×5 kg): bilateral tops out at
+ * 20 kg/hand, single-implement at 38 kg. Distinct from phase-1-home's
+ * `DUMBBELL_MAX_KG` (15), which describes that phase's retired tier and
+ * is left alone. Read live by `SetScreen`'s weight Stepper (`max` prop)
+ * with no gate — a prescribed rung above the cap would silently clamp
+ * the Stepper's typed/± input below the prescribed load; that is the
+ * reason for these constants, not the (currently unreachable)
+ * auto-progression path (`hasVerifiedLoadList` gates it closed — nothing
+ * in `src/**` writes `settings.equipment`, D5).
  */
-const BILATERAL_MAX_KG = 15.2
-/** Single-implement ceiling — `equipment.test.ts:50-53`'s list ends at 20.2. Used only by the four M2 prescriptions the coach marks "use one dumbbell" (dumbbell-pullover, single-arm-db-row, goblet-squat in Session B, overhead-triceps-extension). */
-const SINGLE_IMPLEMENT_MAX_KG = 20.2
+const BILATERAL_MAX_KG = 20
+/** Single-implement ceiling, current hardware — `equipment.test.ts`'s `NEW_PROFILE.singleImplement` ends at 38. Used by every M2 prescription the coach marks "use one dumbbell". */
+const SINGLE_IMPLEMENT_MAX_KG = 38
+/**
+ * Barbell ceiling, current hardware — the 7.75 kg bar draws the same
+ * plate pool the dumbbells do, symmetric-loaded (`equipment.ts`'s
+ * `barbell` list, D1). 19 rungs, 7.75 (bare bar) to 43.75 (whole pool),
+ * uniform 2 kg step. **Barbell weight is the total load including the
+ * bar** — a different convention from the per-dumbbell weights
+ * everywhere else in this file (`.claude/rules/program-content.md`,
+ * Amendment A.2). The buildability guard routes every barbell exercise
+ * id to this ladder, not the dumbbell ones, so a per-side transcription
+ * slip fails the suite instead of shipping quietly.
+ */
+const BARBELL_MAX_KG = 43.75
 
 /**
  * Phase 1 — Home, 20 Jul to 9 Aug 2026 (docs/Training.md,
@@ -460,63 +477,84 @@ export const seedProgram: Program = {
  *
  * **Revised 11 Aug 2026** (Mesocycle 2 Build Prescription Revision,
  * coach spec, plus the "Six Validation Rulings" document answering the
- * validator's residuals) — Sessions A-C's `items` below are the
- * revision's Week 1 opening prescriptions, transcribed directly per the
- * spec's own "Opening-weight handoff": Fit223 seeds the exact Week 1
- * Pyramid levels; it does not infer them from workout history at
- * runtime. Every subsequent week is computed by the engine
- * (suggestLadderProgression), the same as phase-1-home — this program
- * does not encode weeks 2-5 as separate records. `weekdayActivities`
- * (below the sessions) and the constants immediately above this comment
- * were revised in the same pass — see their own comments.
+ * validator's residuals) — the revision's own "Opening-weight handoff"
+ * still governs: Fit223 seeds the exact Week 1 Pyramid levels; it does
+ * not infer them from workout history at runtime. Every subsequent week
+ * is computed by the engine (suggestLadderProgression), the same as
+ * phase-1-home — this program does not encode weeks 2-5 as separate
+ * records.
  *
- * `BILATERAL_MAX_KG` (15.2) / `SINGLE_IMPLEMENT_MAX_KG` (20.2) replace
- * `DUMBBELL_MAX_KG` (15) for every weighted M2 ladder as of the 11 Aug
- * revision — the transcribed prescription puts eight rungs at 15.2 kg,
- * above the old cap, which would silently clamp `SetScreen`'s weight
- * Stepper below the prescribed load (see the constants' own doc).
- * `DUMBBELL_STEP_KG` stays reused unchanged: it is inert while the
- * equipment gate is closed (nothing in `src/**` writes
- * `settings.equipment`), and changing it is a list-based-progression
- * decision out of scope here (see the follow-up list in
- * ~/.claude/plans/m2-revision-transcription.md §6).
+ * **Superseded 12 Aug 2026** by the equipment upgrade + Mesocycle 2
+ * migration (eight coach documents, all archived
+ * `~/.claude/agent-memory/program-spec-validator/spec-archive/*-2026-08-12.md`;
+ * resolved order map in `Mesocycle-2-Exercise-Order-Amendment` +
+ * `Mesocycle-2-Session-C-Authoritative-Amendment`). New hardware — two
+ * 2 kg adjustable handles sharing one plate pool (8×1 kg, 4×2 kg,
+ * 4×5 kg) plus a 7.75 kg barbell drawing the same pool
+ * (`docs/EquipmentProfile.md`, `.claude/rules/program-content.md`).
+ * `BILATERAL_MAX_KG` (20) / `SINGLE_IMPLEMENT_MAX_KG` (38) /
+ * `BARBELL_MAX_KG` (43.75) replace the 15.2/20.2 sleeve-weight-era
+ * ceilings for every weighted M2 ladder (see the constants' own docs).
+ * `DUMBBELL_STEP_KG` stays reused unchanged, still 2 — see its own
+ * docblock for why that is coincidence, not justification.
  *
- * Role (main/accessory) follows the revision's "Prescription roles"
- * exactly: six named primaries are ladder()'s default 'main' —
- * incline-dumbbell-press (A1), dumbbell-bench-press (A2),
- * single-arm-db-row (A5), bulgarian-split-squat (B1), dumbbell-rdl (B2),
- * dumbbell-shoulder-press (C1). Every other movement across Sessions
- * A-C is `role: 'accessory'`.
+ * **Barbell weights are total load including the bar, never per side**
+ * — a different convention from every dumbbell prescription in this
+ * file, which stays per-dumbbell (Amendment A.2,
+ * `.claude/rules/program-content.md`). The buildability guard pins this
+ * structurally: a barbell exercise id routes to `achievableLoads(...).barbell`
+ * (a total-weight list), so a per-side transcription slip fails the
+ * suite rather than shipping quietly.
  *
- * Bodyweight movements with a coach-named per-level variation
- * (hamstring-walkout, dead-bug, bird-dog, side-plank) are seeded as
- * null-weight ladders carrying `variantKey` per rung. Incline-push-up
- * (A7) is also a null-weight ladder but carries no `variantKey` — the
- * spec prescribes "normal controlled tempo" for both of its sets, and a
- * `'normal'` label on a two-rung ladder with no second state would
- * invent a progression nobody prescribed. A ladder whose every rung is
- * null-weight returns `load-not-the-lever` once complete (never a false
- * `at-equipment-max`) — the interim the coach names for movements at a
- * variation ceiling is the shipped behaviour for all five, not something
- * this revision adds. Side plank needed a real fix to make this true —
- * repo's first seconds-mode ladder; `suggestLadderProgression`'s
- * completion gate used to read `LoggedSet.reps` unconditionally, so a
- * timed hold (logged into `seconds`, never `reps`) could never be seen
- * as complete — fixed in progression.ts to read through the existing
- * `effortOf` helper. That fix is unchanged by this revision; side plank
- * only moved from Session C to Session B (§8's calendar move).
+ * Role (main/accessory): **seven** named primaries are `ladder()`'s
+ * default `'main'` — incline-dumbbell-press, dumbbell-bench-press,
+ * single-arm-db-row, bent-over-row (new — Doc 2 §10 names it a "new
+ * primary benchmark" alongside romanian-deadlift), bulgarian-split-squat,
+ * romanian-deadlift (replaces dumbbell-rdl as B1), dumbbell-shoulder-press.
+ * Every other movement across Sessions A-C is `role: 'accessory'`,
+ * including `barbell-hip-thrust`, `dumbbell-rowboat` and `barbell-curl` —
+ * each carries block-qualified "primary" language in its own coach
+ * document, but none appears on Doc 2 §10's program-level "New primary
+ * benchmarks" list, which names only the barbell RDL and the barbell row.
  *
- * A1 (incline-dumbbell-press) and B2 (dumbbell-rdl) each repeat their
- * top rung's weight (15.2 kg) across their last two sets — coach-
- * confirmed intentional (11 Aug "Six Validation Rulings" §1, covering
- * both under the same reasoning): 15.2 kg/DB is the verified
- * matched-pair hardware ceiling, so the coach holds load steady while
- * the final set progresses on reps instead. The final set of each stays
- * NORMAL TEMPO — do not automatically convert it to a tempo variant; the
- * caveat is addressed to this codebase, not the athlete, so it lives
- * here rather than in an athlete-facing `note` (lead ruling D1). Neither
- * rung carries a `variantKey`; the conformance suite's D6 guard asserts
- * this stays true even if a future at-ceiling pyramid gains one.
+ * **The bent-over-row rehearsal set** (`rehearsal: { weightKg: 13.75,
+ * reps: 6 }`) is the only prescription in this program carrying a
+ * `rehearsal` field — doc 7 rules out the same treatment for barbell-curl
+ * by name ("does not introduce a complex unsupported hip-hinge
+ * position"). It renders above bent-over-row's first working set in the
+ * session preview, structurally invisible to `suggestLadderProgression`
+ * (D3): not in `setPlan`, so it cannot affect volume, pyramid completion
+ * or progression. `conformance.test.ts` asserts exactly one prescription
+ * carries it, so a second one added later goes red rather than silently
+ * riding the pyramid.
+ *
+ * **Four movements retired from the active session, Library entries
+ * kept**: `dumbbell-rdl`, `hamstring-walkout`, `dead-bug`, `bird-dog`,
+ * `side-plank` leave Session B (replaced by the barbell RDL and the new
+ * Core block); `chest-supported-row` leaves Session A; `dumbbell-curl`
+ * leaves Session C (replaced by `barbell-curl` — a new, unmerged
+ * progression history, doc 7). None is deleted from
+ * `src/data/seed/exercises.ts` — every one remains a valid regression,
+ * substitution or future-programming target, per each coach document's
+ * own instruction not to delete.
+ *
+ * **The new Core block** (`dumbbell-rowboat` → `russian-twist` →
+ * `bicycle-crunch` → `plank`, Session B, in that order —
+ * Mesocycle-2-Core-Block-Redesign's own stated sequencing: loaded work
+ * while fresh, then rotation, then dynamic flexion, then anti-extension
+ * last) replaces the old Dead Bug/Bird Dog/Side Plank block wholesale.
+ * `bicycle-crunch` and `plank` are null-weight/seconds-mode ladders —
+ * same `load-not-the-lever` mechanism the retired movements used, not
+ * something this migration adds. `russian-twist` is single-implement,
+ * total reps (doc 4 §7: one rotation to either side is one rep, never
+ * per-side) — the convention is stated in its own `note` plus the three
+ * locale keys, since a silent misread here would double every logged
+ * rep count.
+ *
+ * `mountain-climber` is Library-only, deliberately unprescribed — the
+ * coach reserves it for a future conditioning block (doc 3), and adding
+ * it to Session B would raise conditioning demand where the coach's
+ * stated priority is targeted Core development.
  *
  * Session durations (50-60 min / 50-60 min / 45-55 min) and Session A's
  * ~30° bench angle have no field on Program or SessionTemplate — noted
@@ -547,36 +585,60 @@ export const mesocycle2Build: Program = {
       // Mesocycle 2 Pre-Strength Warm-up Prescription, 11 Aug 2026 — Session A.
       warmupId: 'mesocycle2-chest-back-warmup-v1',
       items: [
-        // Repeated 15.2 kg top rung (sets 3 and 4) is coach-confirmed
-        // intentional, not a transcription error — see the docblock above
-        // for the full rationale (shared with B2/dumbbell-rdl below). No
-        // variantKey on any rung; set 4 stays NORMAL TEMPO.
         ladder(
           'incline-dumbbell-press',
           [
-            { weightKg: 11.2, reps: 12 },
-            { weightKg: 13.2, reps: 10 },
-            { weightKg: 15.2, reps: 8 },
-            { weightKg: 15.2, reps: 6 },
+            { weightKg: 12, reps: 12 },
+            { weightKg: 14, reps: 10 },
+            { weightKg: 16, reps: 8 },
+            { weightKg: 18, reps: 6 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
+        ),
+        // New primary benchmark (Doc 2 §10) — first barbell movement of
+        // the session, a different pattern from the preceding chest work,
+        // hence the rehearsal set (D3, docblock above).
+        ladder(
+          'bent-over-row',
+          [
+            { weightKg: 17.75, reps: 12 },
+            { weightKg: 21.75, reps: 10 },
+            { weightKg: 25.75, reps: 8 },
+            { weightKg: 29.75, reps: 6 },
+          ],
+          BARBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { rehearsal: { weightKg: 13.75, reps: 6 } },
         ),
         ladder(
           'dumbbell-bench-press',
           [
-            { weightKg: 11.2, reps: 12 },
-            { weightKg: 13.2, reps: 10 },
-            { weightKg: 15.2, reps: 8 },
+            { weightKg: 12, reps: 12 },
+            { weightKg: 14, reps: 10 },
+            { weightKg: 16, reps: 8 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
         ),
+        // Use one dumbbell — spec's single-implement instruction.
+        ladder(
+          'single-arm-db-row',
+          [
+            { weightKg: 14, reps: 12 },
+            { weightKg: 16, reps: 10 },
+            { weightKg: 18, reps: 8 },
+            { weightKg: 20, reps: 6 },
+          ],
+          SINGLE_IMPLEMENT_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { perSide: true, restSeconds: 90, note: 'Rest after both sides' },
+        ),
         ladder(
           'dumbbell-fly',
           [
-            { weightKg: 5.2, reps: 15 },
-            { weightKg: 5.7, reps: 12 },
+            { weightKg: 4, reps: 15 },
+            { weightKg: 6, reps: 12 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -586,37 +648,13 @@ export const mesocycle2Build: Program = {
         ladder(
           'dumbbell-pullover',
           [
-            { weightKg: 9.2, reps: 15 },
-            { weightKg: 11.2, reps: 12 },
-            { weightKg: 13.2, reps: 10 },
+            { weightKg: 10, reps: 15 },
+            { weightKg: 12, reps: 12 },
+            { weightKg: 14, reps: 10 },
           ],
           SINGLE_IMPLEMENT_MAX_KG,
           DUMBBELL_STEP_KG,
           { restSeconds: 75, role: 'accessory' },
-        ),
-        // Use one dumbbell — spec's single-implement instruction.
-        ladder(
-          'single-arm-db-row',
-          [
-            { weightKg: 11.2, reps: 12 },
-            { weightKg: 13.2, reps: 10 },
-            { weightKg: 15.2, reps: 8 },
-            { weightKg: 17.2, reps: 6 },
-          ],
-          SINGLE_IMPLEMENT_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { perSide: true, restSeconds: 90, note: 'Rest after both sides' },
-        ),
-        ladder(
-          'chest-supported-row',
-          [
-            { weightKg: 9.2, reps: 15 },
-            { weightKg: 10.7, reps: 12 },
-            { weightKg: 11.2, reps: 10 },
-          ],
-          BILATERAL_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { restSeconds: 90, role: 'accessory' },
         ),
         // Bodyweight — the spec prescribes "normal controlled tempo" for
         // both sets, so no variantKey (a 'normal' label on a two-rung
@@ -642,68 +680,62 @@ export const mesocycle2Build: Program = {
       // Mesocycle 2 Pre-Strength Warm-up Prescription, 11 Aug 2026 — Session B.
       warmupId: 'mesocycle2-legs-core-warmup-v1',
       items: [
-        // Two dumbbells (docs/EquipmentProfile.md, resolved 11 Aug 2026 —
-        // the revision writes "7.2 kg per dumbbell" with the same
-        // bilateral phrasing as every matched-pair movement and no "use
-        // one dumbbell" instruction).
+        // New primary benchmark (Doc 2 §10) — first exercise of the
+        // session as of Doc 6's final order; opens the session unramped
+        // beyond the two RDL ramps in its own warm-up (B.3/B.9, coach
+        // question resolved by replacing the warm-up rather than adding a
+        // session-start rehearsal — see warmups.ts).
+        ladder(
+          'romanian-deadlift',
+          [
+            { weightKg: 23.75, reps: 12 },
+            { weightKg: 27.75, reps: 10 },
+            { weightKg: 31.75, reps: 8 },
+            { weightKg: 35.75, reps: 6 },
+          ],
+          BARBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+        ),
         ladder(
           'bulgarian-split-squat',
           [
-            { weightKg: 7.2, reps: 12 },
-            { weightKg: 9.2, reps: 10 },
-            { weightKg: 11.2, reps: 8 },
+            { weightKg: 8, reps: 12 },
+            { weightKg: 10, reps: 10 },
+            { weightKg: 12, reps: 8 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
           { perSide: true, restSeconds: 120, note: 'Rest after both sides' },
         ),
-        // Repeated 15.2 kg top rung (sets 3 and 4) is coach-confirmed
-        // intentional — same reasoning as A1/incline-dumbbell-press above
-        // (see the docblock). No variantKey on any rung; set 4 stays
-        // NORMAL TEMPO.
         ladder(
-          'dumbbell-rdl',
+          'barbell-hip-thrust',
           [
-            { weightKg: 11.2, reps: 12 },
-            { weightKg: 13.2, reps: 10 },
-            { weightKg: 15.2, reps: 8 },
-            { weightKg: 15.2, reps: 6 },
+            { weightKg: 27.75, reps: 12 },
+            { weightKg: 31.75, reps: 10 },
+            { weightKg: 35.75, reps: 8 },
           ],
-          BILATERAL_MAX_KG,
+          BARBELL_MAX_KG,
           DUMBBELL_STEP_KG,
+          { restSeconds: 90, role: 'accessory' },
         ),
-        // Use one dumbbell — spec's single-implement instruction. The
-        // retired mixed normal/slow/slow-pause Pyramid and its
-        // "Progress tempo first, then weight" note are both gone —
-        // superseded by the revision, which no longer prescribes tempo
-        // variants for this movement.
+        // Use one dumbbell — spec's single-implement instruction.
         ladder(
           'goblet-squat',
           [
-            { weightKg: 13.2, reps: 15 },
-            { weightKg: 15.2, reps: 12 },
-            { weightKg: 17.2, reps: 10 },
+            { weightKg: 14, reps: 15 },
+            { weightKg: 16, reps: 12 },
+            { weightKg: 18, reps: 10 },
           ],
           SINGLE_IMPLEMENT_MAX_KG,
           DUMBBELL_STEP_KG,
           { restSeconds: 90, role: 'accessory' },
         ),
         ladder(
-          'hamstring-walkout',
-          [
-            { weightKg: null, reps: 12, variantKey: 'normal' },
-            { weightKg: null, reps: 10, variantKey: 'slow' },
-          ],
-          null,
-          null,
-          { restSeconds: 75, role: 'accessory' },
-        ),
-        ladder(
           'standing-calf-raise',
           [
-            { weightKg: 11.2, reps: 20 },
-            { weightKg: 13.2, reps: 15 },
-            { weightKg: 15.2, reps: 12 },
+            { weightKg: 12, reps: 20 },
+            { weightKg: 14, reps: 15 },
+            { weightKg: 16, reps: 12 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -713,48 +745,61 @@ export const mesocycle2Build: Program = {
             note: 'Full range of motion — controlled stretch at the bottom',
           },
         ),
+        // Core block (Mesocycle-2-Core-Block-Redesign) — replaces the
+        // retired Dead Bug/Bird Dog/Side Plank block wholesale; order is
+        // the coach's own: loaded work while fresh, then rotation, then
+        // dynamic flexion, then anti-extension last.
         ladder(
-          'dead-bug',
+          'dumbbell-rowboat',
           [
-            { weightKg: null, reps: 10, variantKey: 'normal' },
-            { weightKg: null, reps: 8, variantKey: 'longer-reach' },
-            { weightKg: null, reps: 6, variantKey: 'reach-pause' },
+            { weightKg: 10, reps: 12 },
+            { weightKg: 12, reps: 10 },
+            { weightKg: 14, reps: 8 },
           ],
-          null,
-          null,
-          { perSide: true, restSeconds: 60, role: 'accessory', note: 'Rest 45-60 sec' },
+          SINGLE_IMPLEMENT_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 60, role: 'accessory' },
         ),
-        // New in the 11 Aug revision. Coach-accepted 'with-pause' mapping
-        // for the second rung, coaching cue in the note rather than a new
-        // enum token (SetVariant widening is a coach decision, not this
-        // codebase's — types.ts:62-63).
+        // One dumbbell, both hands, total reps — not per side (doc 4 §7:
+        // one rotation to either side is one rep).
         ladder(
-          'bird-dog',
+          'russian-twist',
           [
-            { weightKg: null, reps: 10, variantKey: 'normal' },
-            { weightKg: null, reps: 8, variantKey: 'with-pause' },
+            { weightKg: 6, reps: 16 },
+            { weightKg: 8, reps: 14 },
+            { weightKg: 10, reps: 12 },
           ],
-          null,
-          null,
-          {
-            perSide: true,
-            restSeconds: 60,
-            role: 'accessory',
-            note: 'Hold the fully extended position for 2 seconds before returning.',
-          },
+          SINGLE_IMPLEMENT_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 60, role: 'accessory', note: 'Total reps, not per side' },
         ),
-        // Moved here from Session C (§8's calendar move) — mode/setPlan
-        // unchanged, including the seconds-mode progression.ts fix noted
-        // in the docblock above.
+        // Bodyweight — reps rise across sets by coach design (doc 4 §10:
+        // "Fit223 does NOT need to auto-increment"); this is the ruled
+        // behaviour, not a gap. load-not-the-lever once complete, same
+        // mechanism the retired bodyweight ladders used.
         ladder(
-          'side-plank',
+          'bicycle-crunch',
           [
-            { weightKg: null, reps: 40, variantKey: 'normal' },
-            { weightKg: null, reps: 30, variantKey: 'harder-leverage' },
+            { weightKg: null, reps: 16 },
+            { weightKg: null, reps: 20 },
+            { weightKg: null, reps: 24 },
           ],
           null,
           null,
-          { mode: 'seconds', perSide: true, restSeconds: 60, role: 'accessory', note: 'Rest 45-60 sec' },
+          { restSeconds: 45, role: 'accessory' },
+        ),
+        // Not per side, unlike side-plank — a front plank is one hold, not
+        // an alternating one.
+        ladder(
+          'plank',
+          [
+            { weightKg: null, reps: 40 },
+            { weightKg: null, reps: 50 },
+            { weightKg: null, reps: 60 },
+          ],
+          null,
+          null,
+          { mode: 'seconds', restSeconds: 60, role: 'accessory', note: 'Rest 45-60 sec' },
         ),
       ],
     },
@@ -769,55 +814,57 @@ export const mesocycle2Build: Program = {
         ladder(
           'dumbbell-shoulder-press',
           [
-            { weightKg: 7.2, reps: 12 },
-            { weightKg: 9.2, reps: 10 },
-            { weightKg: 11.2, reps: 8 },
+            { weightKg: 8, reps: 12 },
+            { weightKg: 10, reps: 10 },
+            { weightKg: 12, reps: 8 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
         ),
+        // 6 kg repeats across the last two sets — intentional (doc 1 §C2:
+        // "Do NOT force an 8 kg lateral raise merely to preserve a
+        // visually clean load ladder"), same reasoning as rear-delt-fly
+        // below. Flagged to the coach (D5/§0.4): once the equipment gate
+        // opens, suggestLadderProgression would suggest exactly that 8 kg
+        // rung — a conflict to resolve before the gate opens, not
+        // something this seed can pre-empt.
         ladder(
           'dumbbell-lateral-raise',
           [
-            { weightKg: 3.7, reps: 15 },
-            { weightKg: 5.2, reps: 12 },
-            { weightKg: 5.7, reps: 10 },
+            { weightKg: 4, reps: 15 },
+            { weightKg: 6, reps: 12 },
+            { weightKg: 6, reps: 10 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
           { restSeconds: 60, role: 'accessory', note: 'Technique takes priority over load' },
         ),
+        // 6 kg repeats across the last two sets — same reasoning as
+        // dumbbell-lateral-raise above.
         ladder(
           'rear-delt-fly',
           [
-            { weightKg: 3.7, reps: 15 },
-            { weightKg: 5.2, reps: 12 },
-            { weightKg: 5.7, reps: 10 },
+            { weightKg: 4, reps: 15 },
+            { weightKg: 6, reps: 12 },
+            { weightKg: 6, reps: 10 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
           { restSeconds: 60, role: 'accessory' },
         ),
+        // Replaces dumbbell-curl (doc 7 §4) — a new, unmerged progression
+        // history; dumbbell-curl's own history stays untouched and the
+        // Library entry stays. No rehearsal set: doc 7 rules it out by
+        // name ("does not introduce a complex unsupported hip-hinge
+        // position", unlike bent-over-row).
         ladder(
-          'dumbbell-curl',
+          'barbell-curl',
           [
-            { weightKg: 7.2, reps: 12 },
-            { weightKg: 8.2, reps: 10 },
-            { weightKg: 9.2, reps: 8 },
+            { weightKg: 15.75, reps: 12 },
+            { weightKg: 17.75, reps: 10 },
+            { weightKg: 19.75, reps: 8 },
           ],
-          BILATERAL_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { restSeconds: 75, role: 'accessory' },
-        ),
-        // New in the 11 Aug revision (Library promotion, see exercises.ts).
-        ladder(
-          'hammer-curl',
-          [
-            { weightKg: 7.2, reps: 12 },
-            { weightKg: 8.2, reps: 10 },
-            { weightKg: 9.2, reps: 8 },
-          ],
-          BILATERAL_MAX_KG,
+          BARBELL_MAX_KG,
           DUMBBELL_STEP_KG,
           { restSeconds: 75, role: 'accessory' },
         ),
@@ -825,11 +872,22 @@ export const mesocycle2Build: Program = {
         ladder(
           'overhead-triceps-extension',
           [
-            { weightKg: 9.2, reps: 12 },
-            { weightKg: 11.2, reps: 10 },
-            { weightKg: 13.2, reps: 8 },
+            { weightKg: 10, reps: 12 },
+            { weightKg: 12, reps: 10 },
+            { weightKg: 14, reps: 8 },
           ],
           SINGLE_IMPLEMENT_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 75, role: 'accessory' },
+        ),
+        ladder(
+          'hammer-curl',
+          [
+            { weightKg: 8, reps: 12 },
+            { weightKg: 10, reps: 10 },
+            { weightKg: 12, reps: 8 },
+          ],
+          BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
           { restSeconds: 75, role: 'accessory' },
         ),

@@ -1,6 +1,7 @@
 {
   "sessionPreview": {
-    "perSideSuffix": " /侧"
+    "perSideSuffix": " /侧",
+    "rehearsalWeightReps": "技术组 · {{weight}} kg × {{reps}}"
   },
   "trainingDay": {
     "easedSubtitle": "今天练轻松一点——$t({{driversKey}})。像这样的日子还坚持训练，价值翻倍。",
@@ -13,9 +14,10 @@
     "warmupHeading": "热身"
   },
   "warmup": {
-    "cycleLine": "轻松骑行 · {{min}}–{{max}} 分钟",
+    "cycleLine": "轻松骑行 · {{minutes}} 分钟",
     "reps_other": "{{count}} 次",
-    "rampWeightReps": "每只哑铃 {{weight}} kg × {{reps}}"
+    "rampWeightRepsDumbbell": "每只哑铃 {{weight}} kg × {{reps}}",
+    "rampWeightRepsBarbell": "杠铃总重 {{weight}} kg × {{reps}}"
   },
   "noProgram": "还没有设置训练计划。你的下一阶段会显示在这里。",
   "plannedDay": {

@@ -1,15 +1,18 @@
 # Verified Equipment Profile
 
-**Status: measurement-complete 7 Aug 2026 — every physical fact is now
-owner-measured or coach-confirmed. "Verified" in the app's sense still
-requires the owner confirming the profile in the app once the settings
-flow exists (equipment plan Phase 3); the progression gate stays closed
-until then.**
+**Status: measurement-complete 12 Aug 2026 — a hardware upgrade
+superseded the 7 Aug profile (see "Current hardware" below); every
+physical fact for the new tier is coach-confirmed across the day's eight
+documents (archived
+`~/.claude/agent-memory/program-spec-validator/spec-archive/*-2026-08-12.md`).
+"Verified" in the app's sense still requires the owner confirming the
+profile in the app once the settings flow exists (equipment plan
+Phase 3); the progression gate stays closed until then (D5,
+`equipment-upgrade-m2-migration.md`).**
 
 This document is the durable home for the athlete's real equipment. It
 exists because the inventory below arrived in a coach *message*, appears
-in no versioned spec file (verified against v2.16 — no plate or handle
-content anywhere in its 762 lines), and the coach's spec files overwrite
+in no versioned spec file, and the coach's spec files overwrite
 themselves on revision. Facts that live only in messages are the next
 thing to vanish.
 
@@ -17,6 +20,53 @@ The authority split, per the coach's 7 Aug amendment:
 
 > **Coach prescribes the training target; the equipment profile defines
 > which physical loads actually exist.**
+
+## Current hardware (coach-confirmed, 12 Aug 2026)
+
+Two 2 kg adjustable dumbbell handles sharing **one** plate pool — no
+bore separation, unlike the retired 7 Aug tier below — plus a 7.75 kg
+barbell drawing the same pool. No rack: floor/bench-start movements
+only.
+
+| Component | Value |
+|---|---|
+| Handle weight (`handleKg`) | 2 kg, each |
+| Plate pool | 8 × 1 kg · 4 × 2 kg · 4 × 5 kg (36 kg total) |
+| Bar weight (`barKg`) | 7.75 kg |
+| Sleeve rating (`maxSideKg`) | Absent — owner-confirmed "no practical limit, everything fits" (12 Aug), so unconstrained is a verified fact, not an assumption |
+
+**Verified achievable loads** (`src/domain/equipment.ts`'s
+`NEW_PROFILE`, cross-checked against an independent re-derivation
+written without the repo code — Mesocycle-2-Barbell-Calibration-
+Follow-up-Rulings' own preamble lists the identical barbell ladder):
+
+| List | Values |
+|---|---|
+| Bilateral (per dumbbell, matched pair) | 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 kg — 10 rungs, uniform 2 kg step |
+| Single-implement (one dumbbell) | 2, 4, …, 38 kg — 19 rungs, uniform 2 kg step |
+| Barbell (total load, symmetric) | 7.75, 9.75, …, 43.75 kg — 19 rungs, uniform 2 kg step |
+
+Every value happens to fall on a clean, uniform step — a hardcoded list
+would be indistinguishable from a correct enumeration without a
+negative control (`equipment.test.ts`'s NEG-A: dropping the 5 kg plates
+collapses bilateral to `[2,4,6,8,10]`, confirming the enumerator reads
+`plates`, not a constant).
+
+**Barbell weight is total load including the bar, never per side** —
+distinct from every dumbbell weight in the program, which stays
+per-dumbbell (`.claude/rules/program-content.md`). The buildability
+guard (`mesocycle2Build.conformance.test.ts`) pins this structurally by
+routing barbell exercise ids to the `barbell` list.
+
+## Retired 12 Aug 2026
+
+Everything below this heading describes the 7 Aug two-bore hardware,
+superseded by the upgrade above. Kept, not deleted: it is the
+provenance for `equipment.test.ts`'s `RETIRED_PROFILE_2026_08_07`
+fixture, which stays in the suite to exercise the enumerator's
+cross-set-matching branch (D6, `equipment-upgrade-m2-migration.md`) —
+the new hardware is a single bore, so no other fixture reaches that
+code path.
 
 ## Hardware (coach-confirmed, 7 Aug 2026)
 
