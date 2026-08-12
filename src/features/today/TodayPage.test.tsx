@@ -114,9 +114,9 @@ describe('Settings entry', () => {
 describe('Library entry path', () => {
   it('round-trips Library → exercise detail → Library', async () => {
     renderApp('/library')
-    await userEvent.click(await screen.findByRole('link', { name: /^Romanian deadlift/ }))
+    await userEvent.click(await screen.findByRole('link', { name: /^Barbell Romanian deadlift/ }))
     expect(
-      await screen.findByRole('heading', { name: 'Romanian deadlift' }),
+      await screen.findByRole('heading', { name: 'Barbell Romanian deadlift' }),
     ).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('link', { name: /Library/ }))

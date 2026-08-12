@@ -23,10 +23,10 @@ describe('WarmupSection', () => {
     const warmup = warmupById('mesocycle2-legs-core-warmup-v1')!
     render(<WarmupSection warmup={warmup} />)
 
-    // Romanian deadlift names both ramp rows (technique + load) plus the
-    // movement step — three occurrences.
+    // Barbell Romanian deadlift names both ramp rows (technique + load)
+    // plus the movement step — three occurrences.
     expect(screen.getByText('Bodyweight hip hinge')).toBeInTheDocument()
-    expect(screen.getAllByText('Romanian deadlift')).toHaveLength(2)
+    expect(screen.getAllByText('Barbell Romanian deadlift')).toHaveLength(2)
     expect(screen.getByText('7.75 kg total × 8')).toBeInTheDocument()
     expect(screen.getByText('15.75 kg total × 5')).toBeInTheDocument()
     expect(screen.queryByText(/per dumbbell/)).toBeNull()
