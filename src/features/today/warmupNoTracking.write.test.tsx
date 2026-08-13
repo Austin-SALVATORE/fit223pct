@@ -35,9 +35,9 @@ describe('a rendered warm-up writes nothing', () => {
     const before = await snapshotDatabase()
 
     for (const id of [
-      'mesocycle2-chest-back-warmup-v1',
-      'mesocycle2-legs-core-warmup-v1',
-      'mesocycle2-shoulders-arms-warmup-v1',
+      'mesocycle2-fullbody-squat-warmup-v1',
+      'mesocycle2-fullbody-hinge-warmup-v1',
+      'mesocycle2-fullbody-hipext-shoulder-warmup-v1',
     ]) {
       const warmup = warmupById(id)!
       const { unmount } = render(

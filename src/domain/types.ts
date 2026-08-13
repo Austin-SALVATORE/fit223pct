@@ -129,9 +129,13 @@ export interface LadderPrescription extends ExercisePrescriptionBase {
    * here is structurally invisible to it. Anchored to the exercise, not
    * a session index, so it survives a session reorder with no edit here
    * (proved live — a same-day coach reorder moved this exercise and the
-   * rehearsal needed no change). Absent is the norm; as of 12 Aug only
-   * `bent-over-row` carries one — the coach's own named exception
-   * (`barbell-curl` is ruled out by name in the same document).
+   * rehearsal needed no change). Absent is the norm — `bent-over-row`
+   * carried one from 12 Aug until the 13 Aug Full Body Restructure
+   * dropped it (a session-position change, not a change of mind about
+   * the mechanism: a ramp/rehearsal set is now understood to attach to a
+   * session's first major technical movement, which is what every
+   * session's own warm-up ramp already enforces). No seeded prescription
+   * currently carries one.
    */
   rehearsal?: { weightKg: number; reps: number }
 }

@@ -323,7 +323,7 @@ describe('PlanPage rotation-mode: the rotation sentence resolves session ids to 
     renderMesocycle2()
     expect(await screen.findByRole('heading', { name: 'Mesocycle 2 — Build' })).toBeInTheDocument()
     const rotationSentence = await screen.findByText(
-      'Chest & Back, Legs & Core, and Shoulders & Arms alternate in the order you complete them.',
+      'Full Body A, Full Body B, and Full Body C alternate in the order you complete them.',
     )
     expect(rotationSentence).toBeInTheDocument()
     // Scoped to the sentence itself, not the whole page — the day list
@@ -337,7 +337,7 @@ describe('PlanPage rotation-mode: the rotation sentence resolves session ids to 
     await i18n.changeLanguage('zh-CN')
     renderMesocycle2()
     expect(await screen.findByRole('heading', { name: '第二中周期——强化期' })).toBeInTheDocument()
-    const rotationSentence = await screen.findByText('胸背训练、腿部与核心和肩臂训练按完成顺序交替。')
+    const rotationSentence = await screen.findByText('全身训练A、全身训练B和全身训练C按完成顺序交替。')
     expect(rotationSentence).toBeInTheDocument()
     expect(rotationSentence.textContent).not.toMatch(/周一|周三|周五/)
     expect(document.body.textContent).not.toMatch(/mesocycle2-/)
@@ -347,7 +347,7 @@ describe('PlanPage rotation-mode: the rotation sentence resolves session ids to 
     await i18n.changeLanguage('fr')
     renderMesocycle2()
     const rotationSentence = await screen.findByText(
-      "Poitrine et dos, Jambes et gainage et Épaules et bras alternent dans l'ordre où tu les termines.",
+      "Corps entier A, Corps entier B et Corps entier C alternent dans l'ordre où tu les termines.",
     )
     expect(rotationSentence).toBeInTheDocument()
     expect(rotationSentence.textContent).not.toMatch(/\blun\.|\bmer\.|\bven\./)

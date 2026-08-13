@@ -251,7 +251,7 @@ describe('workoutRepo.repairPositionCompleteWorkouts', () => {
     expect(await workoutRepo.countCompleted('p')).toBe(0)
   })
 
-  it("consequence: the repaired Monday workout advances mesocycle-2-build's rotation to Legs & Core on Wednesday", async () => {
+  it("consequence: the repaired Monday workout advances mesocycle-2-build's rotation to Full Body B on Wednesday", async () => {
     // The owner's actual Monday (10 Aug 2026) — completed Chest & Back,
     // but the pre-fix defect left it open in storage and a prior boot's
     // closeStaleWorkouts had already marked it abandoned.
@@ -259,7 +259,7 @@ describe('workoutRepo.repairPositionCompleteWorkouts', () => {
       makeWorkout({
         id: 'mesocycle2-monday',
         programId: mesocycle2Build.id,
-        sessionTemplateId: 'mesocycle2-chest-back',
+        sessionTemplateId: 'mesocycle2-fullbody-squat',
         date: '2026-08-10',
         startedAt: '2026-08-10T09:00:00.000Z',
         abandonedAt: '2026-08-11T00:00:00.000Z',
@@ -275,7 +275,7 @@ describe('workoutRepo.repairPositionCompleteWorkouts', () => {
 
     const plan = resolveDayPlan(mesocycle2Build, new Date('2026-08-12T12:00:00'), countAfter)
     expect(plan.kind).toBe('training')
-    if (plan.kind === 'training') expect(plan.session.id).toBe('mesocycle2-legs-core')
+    if (plan.kind === 'training') expect(plan.session.id).toBe('mesocycle2-fullbody-hinge')
   })
 })
 
@@ -385,7 +385,7 @@ describe('activityRecordRepo', () => {
     const workout: Workout = {
       id: 'w1',
       programId: 'mesocycle-2-build',
-      sessionTemplateId: 'mesocycle2-chest-back',
+      sessionTemplateId: 'mesocycle2-fullbody-squat',
       date: '2026-08-10',
       startedAt: '2026-08-10T09:00:00.000Z',
       completedAt: '2026-08-10T09:40:00.000Z',

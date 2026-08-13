@@ -619,39 +619,39 @@
     "mesocycle-2-build": {
       "name": "第二中周期——强化期",
       "session": {
-        "mesocycle2-chest-back": {
-          "name": "胸背训练",
-          "focus": "胸背强化",
+        "mesocycle2-fullbody-squat": {
+          "name": "全身训练A",
+          "focus": "深蹲强化",
           "exercise": {
-            "single-arm-db-row": {
-              "note": "两侧完成后休息"
-            }
-          }
-        },
-        "mesocycle2-legs-core": {
-          "name": "腿部与核心",
-          "focus": "腿部与核心强化",
-          "exercise": {
-            "bulgarian-split-squat": {
-              "note": "两侧完成后休息"
+            "dumbbell-lateral-raise": {
+              "note": "动作质量优先于重量。"
             },
-            "standing-calf-raise": {
-              "note": "完成全程动作——在最低点有控制地拉伸。"
-            },
-            "russian-twist": {
-              "note": "计总次数，不分左右"
+            "overhead-triceps-extension": {
+              "note": "单个哑铃，双手持握"
             },
             "plank": {
               "note": "休息 45-60 秒"
             }
           }
         },
-        "mesocycle2-shoulders-arms": {
-          "name": "肩臂训练",
-          "focus": "肩臂强化",
+        "mesocycle2-fullbody-hinge": {
+          "name": "全身训练B",
+          "focus": "髋关节铰链强化",
           "exercise": {
-            "dumbbell-lateral-raise": {
-              "note": "动作质量优先于重量。"
+            "single-arm-db-row": {
+              "note": "两侧完成后休息"
+            },
+            "russian-twist": {
+              "note": "计总次数，不分左右"
+            }
+          }
+        },
+        "mesocycle2-fullbody-hipext-shoulder": {
+          "name": "全身训练C",
+          "focus": "髋伸展与肩部强化",
+          "exercise": {
+            "standing-calf-raise": {
+              "note": "跳过不会影响C日的完成——不要用其他下肢动作代替。"
             }
           }
         }

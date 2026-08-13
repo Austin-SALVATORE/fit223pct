@@ -21,7 +21,7 @@ describe('mesocycle2Build scheduling — identity follows completed count, not t
   it('a Tuesday start with nothing completed offers Session A', () => {
     const plan = resolveDayPlan(mesocycle2Build, new Date('2026-08-11T12:00:00'), 0)
     expect(plan.kind).toBe('rest')
-    if (plan.kind === 'rest') expect(plan.nextSession?.id).toBe('mesocycle2-chest-back')
+    if (plan.kind === 'rest') expect(plan.nextSession?.id).toBe('mesocycle2-fullbody-squat')
   })
 
   it('sessions run sequentially across off-pin days', () => {
@@ -34,7 +34,7 @@ describe('mesocycle2Build scheduling — identity follows completed count, not t
       const p = resolveDayPlan(mesocycle2Build, new Date(`${d}T12:00:00`), n)
       return p.kind === 'rest' ? p.nextSession?.id : null
     })
-    expect(got).toEqual(['mesocycle2-chest-back', 'mesocycle2-legs-core', 'mesocycle2-shoulders-arms'])
+    expect(got).toEqual(['mesocycle2-fullbody-squat', 'mesocycle2-fullbody-hinge', 'mesocycle2-fullbody-hipext-shoulder'])
   })
 
   it('an activity is fixed to its weekday, not to session identity', () => {
@@ -93,10 +93,10 @@ describe('mesocycle2Build scheduling — 11 Aug revision calendar changes', () =
  * Each gets its own assertion so a failure names which direction broke.
  */
 describe('mesocycle2Build scheduling — mid-mesocycle continuity (owner requirement §0b)', () => {
-  it('R-A: rotation position survives the content rewrite — one completed workout on 12 Aug offers Legs & Core', () => {
+  it('R-A: rotation position survives the content rewrite — one completed workout on 12 Aug offers Full Body B', () => {
     const plan = resolveDayPlan(mesocycle2Build, new Date('2026-08-12T12:00:00'), 1)
     expect(plan.kind).toBe('training')
-    if (plan.kind === 'training') expect(plan.session.id).toBe('mesocycle2-legs-core')
+    if (plan.kind === 'training') expect(plan.session.id).toBe('mesocycle2-fullbody-hinge')
   })
 
   it('R-A both-directions: the same date under 0/2 completed offers the neighbouring sessions, not a hard-coded Wednesday', () => {
@@ -104,25 +104,29 @@ describe('mesocycle2Build scheduling — mid-mesocycle continuity (owner require
     const two = resolveDayPlan(mesocycle2Build, new Date('2026-08-12T12:00:00'), 2)
     expect(zero.kind).toBe('training')
     expect(two.kind).toBe('training')
-    if (zero.kind === 'training') expect(zero.session.id).toBe('mesocycle2-chest-back')
-    if (two.kind === 'training') expect(two.session.id).toBe('mesocycle2-shoulders-arms')
+    if (zero.kind === 'training') expect(zero.session.id).toBe('mesocycle2-fullbody-squat')
+    if (two.kind === 'training') expect(two.session.id).toBe('mesocycle2-fullbody-hipext-shoulder')
   })
 
   it('R-B: sessionAt returns the revised Session A content one full cycle on from Monday', () => {
     const session = sessionAt(mesocycle2Build, 3)
-    expect(session.id).toBe('mesocycle2-chest-back')
-    expect(session.items).toHaveLength(7)
-    const press = session.items[0]
-    expect(press.exerciseId).toBe('incline-dumbbell-press')
-    expect((press as LadderPrescription).setPlan.at(-1)?.weightKg).toBe(18)
+    expect(session.id).toBe('mesocycle2-fullbody-squat')
+    expect(session.items).toHaveLength(6)
+    const squat = session.items[0]
+    // 13 Aug Full Body Restructure: Session A now opens with goblet-squat,
+    // not incline-dumbbell-press — the top rung (18) is goblet-squat's
+    // own, a coincidence with the pre-restructure incline-press top rung,
+    // not evidence this assertion still describes the old exercise.
+    expect(squat.exerciseId).toBe('goblet-squat')
+    expect((squat as LadderPrescription).setPlan.at(-1)?.weightKg).toBe(18)
     const exerciseIds = session.items.map((i) => i.exerciseId)
-    expect(exerciseIds).toContain('dumbbell-bench-press')
-    expect(exerciseIds).toContain('incline-push-up')
+    expect(exerciseIds).toContain('bent-over-row')
+    expect(exerciseIds).toContain('plank')
   })
 
   it('R-B: Session A prescription is identical every time it comes round — the revision is not deferred', () => {
     const sessions = [0, 3, 6].map((completedCount) => sessionAt(mesocycle2Build, completedCount))
-    for (const session of sessions) expect(session.id).toBe('mesocycle2-chest-back')
+    for (const session of sessions) expect(session.id).toBe('mesocycle2-fullbody-squat')
     const [first, ...rest] = sessions
     for (const session of rest) expect(session.items).toEqual(first.items)
   })

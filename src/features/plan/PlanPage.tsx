@@ -301,7 +301,7 @@ function PhaseHeader({ program, locale }: { program: Program; locale: string }) 
     return resolveSessionName(tSeed, program.id, session, program.origin)
   }
 
-  // `program.rotation` is session IDS (mesocycle2-chest-back, …) — never
+  // `program.rotation` is session IDS (mesocycle2-fullbody-squat, …) — never
   // rendered raw (owner finding, zh-CN, 7 Aug: the ids leaked straight
   // into the rendered sentence). Resolved through `sessionName` with the
   // same defensive fallback to the bare id `weekdaySessionsLine` below

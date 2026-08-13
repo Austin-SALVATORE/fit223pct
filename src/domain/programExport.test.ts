@@ -135,33 +135,49 @@ describe('toCanonicalProgramJson', () => {
 
   /**
    * D3/R9, 12 Aug 2026 equipment upgrade — `LadderPrescription.rehearsal`
-   * is a new field on the strict ladder schema. Round-trips the real
-   * `mesocycle2Build` Session A (not a synthetic fixture) because the
-   * plan named Session A specifically: `bent-over-row` is the one
-   * shipped prescription that actually carries a `rehearsal` set, so
-   * this is the regression the schema update exists to prevent, proven
-   * against real seeded data rather than a hand-built stand-in.
+   * is a new field on the strict ladder schema. **Retargeted to a
+   * synthetic prescription 13 Aug 2026** (Full Body Restructure, six-
+   * question bundle Q3): the seed dropped `bent-over-row`'s rehearsal
+   * set, the only one this program ever carried, so no shipped
+   * prescription exercises this property any more — the round-trip
+   * property is what this test is for, and it should not depend on the
+   * seed happening to exercise it
+   * (`~/.claude/plans/m2-fullbody-restructure.md` §3.6).
    *
-   * Scoped to Session A alone, not the whole program — Session B's
-   * `plank` hits a pre-existing, unrelated gap the plan already named
-   * and explicitly left unfixed (D8: `ladderPrescriptionSchema` requires
-   * `mode: z.literal('reps')`; `side-plank` already violated it before
-   * this migration, `plank` is the second seconds-mode ladder that
-   * cannot survive a round-trip). Confirmed by running the unscoped
-   * version first: it fails with `plan:import.ladderRequiresRepsMode` /
-   * `plank`, not anything rehearsal-related — exactly the known gap, not
-   * a new defect. Scoping to Session A isolates the property this test
-   * is actually for.
+   * Built from a real seeded ladder's shape (`bent-over-row`'s old
+   * rehearsal-bearing rung set) rather than an arbitrary literal, so a
+   * schema regression here still reads as plausible seed content.
    */
-  it("round-trips mesocycle2Build Session A's rehearsal field (D3/R9)", () => {
-    const sessionA = mesocycle2Build.sessions.find((s) => s.id === 'mesocycle2-chest-back')!
-    const sessionAOnly = {
+  it("round-trips a LadderPrescription's rehearsal field (D3/R9)", () => {
+    const rehearsalItem: LadderPrescription = {
+      exerciseId: 'bent-over-row',
+      sets: 3,
+      mode: 'reps',
+      perSide: false,
+      role: 'main',
+      restSeconds: 120,
+      setPlan: [
+        { weightKg: 17.75, reps: 12 },
+        { weightKg: 21.75, reps: 10 },
+        { weightKg: 25.75, reps: 8 },
+      ],
+      maxWeightKg: 43.75,
+      weightStepKg: 2,
+      rehearsal: { weightKg: 13.75, reps: 6 },
+    }
+    const syntheticSession = {
+      id: 'test-rehearsal-session',
+      name: 'Test Session',
+      focus: 'Test',
+      items: [rehearsalItem],
+    }
+    const syntheticProgram = {
       ...mesocycle2Build,
-      sessions: [sessionA],
-      rotation: [sessionA.id],
+      sessions: [syntheticSession],
+      rotation: [syntheticSession.id],
       weekdayActivities: undefined,
     }
-    const json = toCanonicalProgramJson(sessionAOnly)
+    const json = toCanonicalProgramJson(syntheticProgram)
     const result = validateProgramImport(JSON.parse(json), libraryIds)
     expect(result.ok).toBe(true)
     if (!result.ok) return
@@ -172,8 +188,8 @@ describe('toCanonicalProgramJson', () => {
     // and recordable regressions above, but a new instance, unrelated to
     // `rehearsal`). Flagged to the lead rather than fixed here — outside
     // this test's assigned scope.
-    expect(result.program.sessions[0].items).toEqual(sessionA.items)
-    expect(result.program.sessions[0].id).toBe(sessionA.id)
+    expect(result.program.sessions[0].items).toEqual(syntheticSession.items)
+    expect(result.program.sessions[0].id).toBe(syntheticSession.id)
 
     const bentOverRow = result.program.sessions[0].items.find(
       (i) => i.exerciseId === 'bent-over-row',

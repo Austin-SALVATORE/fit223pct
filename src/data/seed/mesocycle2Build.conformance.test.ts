@@ -9,24 +9,24 @@ import { achievableLoads } from '@/domain/equipment'
 // test-importing-a-test doubled equipment.test.ts's entire describe/it
 // tree as a side effect (12 Aug claim-verification finding).
 import { NEW_PROFILE } from '@/domain/equipment.fixtures'
-import type { LadderPrescription, LoggedSet, SetVariant } from '@/domain/types'
+import type { LadderPrescription, LoggedSet, RepRangePrescription, SetVariant } from '@/domain/types'
 
 /**
  * docs/design/Mesocycle2Implementation.md §12.2 — "Spec conformance,
  * replacing what §9 retires." Reads the **seeded** Build program and
- * asserts it against the coach's 12 Aug 2026 equipment upgrade +
- * Mesocycle 2 migration (eight coach documents, resolved order map in
- * `Mesocycle-2-Exercise-Order-Amendment` +
- * `Mesocycle-2-Session-C-Authoritative-Amendment`, both archived
- * `~/.claude/agent-memory/program-spec-validator/spec-archive/`) — this
+ * asserts it against the coach's 13 Aug 2026 Full Body Restructure (the
+ * restructure itself, the Session C calf-raise ruling, and the
+ * six-question follow-up bundle — three coach documents, archived
+ * `~/.claude/agent-memory/program-spec-validator/spec-archive/*-2026-08-13.md`;
+ * transcription plan `~/.claude/plans/m2-fullbody-restructure.md`) — this
  * is what actually ships.
  *
  * `EXPECTED` below is transcribed independently from the coach docs, not
  * derived from `mesocycle2Build` itself — a circular check (comparing
  * the seed against a copy of the seed) would pass on a shared mistake.
- * This is the guard §2 of the original revision's own risk register
- * named and the equipment-upgrade plan repeats: "the transcription's
- * risk is arithmetic, not code."
+ * This is the guard the original 12 Aug revision's own risk register
+ * named and every migration since repeats: "the transcription's risk is
+ * arithmetic, not code."
  */
 
 interface ExpectedRung {
@@ -35,7 +35,8 @@ interface ExpectedRung {
   variantKey?: SetVariant
 }
 
-interface ExpectedPrescription {
+/** setPlan-bearing prescriptions — primary compound lifts and every ladder accessory. */
+interface ExpectedLadderPrescription {
   exerciseId: string
   setPlan: ExpectedRung[]
   restSeconds: number
@@ -45,15 +46,40 @@ interface ExpectedPrescription {
   rehearsal?: { weightKg: number; reps: number }
 }
 
+/**
+ * Rep-range prescriptions — `incline-push-up` as of the 13 Aug Full Body
+ * Restructure is the first (§3.3 of the transcription plan; the row
+ * assertion below used to cast every item to `LadderPrescription`
+ * unconditionally, which this union replaces).
+ */
+interface ExpectedRepRangePrescription {
+  exerciseId: string
+  range: { min: number; max: number }
+  sets: number
+  restSeconds: number
+  role?: 'main' | 'accessory'
+}
+
+type ExpectedPrescription = ExpectedLadderPrescription | ExpectedRepRangePrescription
+
 const EXPECTED: Record<string, ExpectedPrescription[]> = {
-  'mesocycle2-chest-back': [
+  'mesocycle2-fullbody-squat': [
+    {
+      exerciseId: 'goblet-squat',
+      setPlan: [
+        { weightKg: 14, reps: 12 },
+        { weightKg: 16, reps: 10 },
+        { weightKg: 18, reps: 8 },
+      ],
+      restSeconds: 90,
+      role: 'accessory',
+    },
     {
       exerciseId: 'incline-dumbbell-press',
       setPlan: [
-        { weightKg: 12, reps: 12 },
-        { weightKg: 14, reps: 10 },
-        { weightKg: 16, reps: 8 },
-        { weightKg: 18, reps: 6 },
+        { weightKg: 10, reps: 12 },
+        { weightKg: 12, reps: 10 },
+        { weightKg: 14, reps: 8 },
       ],
       restSeconds: 120,
     },
@@ -63,139 +89,27 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
         { weightKg: 17.75, reps: 12 },
         { weightKg: 21.75, reps: 10 },
         { weightKg: 25.75, reps: 8 },
-        { weightKg: 29.75, reps: 6 },
-      ],
-      restSeconds: 120,
-      rehearsal: { weightKg: 13.75, reps: 6 },
-    },
-    {
-      exerciseId: 'dumbbell-bench-press',
-      setPlan: [
-        { weightKg: 12, reps: 12 },
-        { weightKg: 14, reps: 10 },
-        { weightKg: 16, reps: 8 },
       ],
       restSeconds: 120,
     },
     {
-      exerciseId: 'single-arm-db-row',
-      setPlan: [
-        { weightKg: 14, reps: 12 },
-        { weightKg: 16, reps: 10 },
-        { weightKg: 18, reps: 8 },
-        { weightKg: 20, reps: 6 },
-      ],
-      restSeconds: 90,
-      perSide: true,
-    },
-    {
-      exerciseId: 'dumbbell-fly',
+      exerciseId: 'dumbbell-lateral-raise',
       setPlan: [
         { weightKg: 4, reps: 15 },
         { weightKg: 6, reps: 12 },
-      ],
-      restSeconds: 75,
-      role: 'accessory',
-    },
-    {
-      exerciseId: 'dumbbell-pullover',
-      setPlan: [
-        { weightKg: 10, reps: 15 },
-        { weightKg: 12, reps: 12 },
-        { weightKg: 14, reps: 10 },
-      ],
-      restSeconds: 75,
-      role: 'accessory',
-    },
-    {
-      exerciseId: 'incline-push-up',
-      setPlan: [
-        { weightKg: null, reps: 15 },
-        { weightKg: null, reps: 12 },
-      ],
-      restSeconds: 75,
-      role: 'accessory',
-    },
-  ],
-  'mesocycle2-legs-core': [
-    {
-      exerciseId: 'romanian-deadlift',
-      setPlan: [
-        { weightKg: 23.75, reps: 12 },
-        { weightKg: 27.75, reps: 10 },
-        { weightKg: 31.75, reps: 8 },
-        { weightKg: 35.75, reps: 6 },
-      ],
-      restSeconds: 120,
-    },
-    {
-      exerciseId: 'bulgarian-split-squat',
-      setPlan: [
-        { weightKg: 8, reps: 12 },
-        { weightKg: 10, reps: 10 },
-        { weightKg: 12, reps: 8 },
-      ],
-      restSeconds: 120,
-      perSide: true,
-    },
-    {
-      exerciseId: 'barbell-hip-thrust',
-      setPlan: [
-        { weightKg: 27.75, reps: 12 },
-        { weightKg: 31.75, reps: 10 },
-        { weightKg: 35.75, reps: 8 },
-      ],
-      restSeconds: 90,
-      role: 'accessory',
-    },
-    {
-      exerciseId: 'goblet-squat',
-      setPlan: [
-        { weightKg: 14, reps: 15 },
-        { weightKg: 16, reps: 12 },
-        { weightKg: 18, reps: 10 },
-      ],
-      restSeconds: 90,
-      role: 'accessory',
-    },
-    {
-      exerciseId: 'standing-calf-raise',
-      setPlan: [
-        { weightKg: 12, reps: 20 },
-        { weightKg: 14, reps: 15 },
-        { weightKg: 16, reps: 12 },
+        { weightKg: 6, reps: 10 },
       ],
       restSeconds: 60,
       role: 'accessory',
     },
     {
-      exerciseId: 'dumbbell-rowboat',
+      exerciseId: 'overhead-triceps-extension',
       setPlan: [
         { weightKg: 10, reps: 12 },
         { weightKg: 12, reps: 10 },
         { weightKg: 14, reps: 8 },
       ],
-      restSeconds: 60,
-      role: 'accessory',
-    },
-    {
-      exerciseId: 'russian-twist',
-      setPlan: [
-        { weightKg: 6, reps: 16 },
-        { weightKg: 8, reps: 14 },
-        { weightKg: 10, reps: 12 },
-      ],
-      restSeconds: 60,
-      role: 'accessory',
-    },
-    {
-      exerciseId: 'bicycle-crunch',
-      setPlan: [
-        { weightKg: null, reps: 16 },
-        { weightKg: null, reps: 20 },
-        { weightKg: null, reps: 24 },
-      ],
-      restSeconds: 45,
+      restSeconds: 75,
       role: 'accessory',
     },
     {
@@ -210,25 +124,35 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       role: 'accessory',
     },
   ],
-  'mesocycle2-shoulders-arms': [
+  'mesocycle2-fullbody-hinge': [
     {
-      exerciseId: 'dumbbell-shoulder-press',
+      exerciseId: 'romanian-deadlift',
       setPlan: [
-        { weightKg: 8, reps: 12 },
-        { weightKg: 10, reps: 10 },
-        { weightKg: 12, reps: 8 },
+        { weightKg: 23.75, reps: 12 },
+        { weightKg: 27.75, reps: 10 },
+        { weightKg: 31.75, reps: 8 },
+        { weightKg: 35.75, reps: 6 },
       ],
       restSeconds: 120,
     },
     {
-      exerciseId: 'dumbbell-lateral-raise',
+      exerciseId: 'dumbbell-bench-press',
       setPlan: [
-        { weightKg: 4, reps: 15 },
-        { weightKg: 6, reps: 12 },
-        { weightKg: 6, reps: 10 },
+        { weightKg: 10, reps: 12 },
+        { weightKg: 12, reps: 10 },
+        { weightKg: 14, reps: 8 },
       ],
-      restSeconds: 60,
-      role: 'accessory',
+      restSeconds: 120,
+    },
+    {
+      exerciseId: 'single-arm-db-row',
+      setPlan: [
+        { weightKg: 10, reps: 12 },
+        { weightKg: 12, reps: 10 },
+        { weightKg: 14, reps: 8 },
+      ],
+      restSeconds: 90,
+      perSide: true,
     },
     {
       exerciseId: 'rear-delt-fly',
@@ -251,13 +175,51 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       role: 'accessory',
     },
     {
-      exerciseId: 'overhead-triceps-extension',
+      exerciseId: 'russian-twist',
+      setPlan: [
+        { weightKg: 6, reps: 16 },
+        { weightKg: 8, reps: 14 },
+        { weightKg: 10, reps: 12 },
+      ],
+      restSeconds: 60,
+      role: 'accessory',
+    },
+  ],
+  'mesocycle2-fullbody-hipext-shoulder': [
+    {
+      exerciseId: 'barbell-hip-thrust',
+      setPlan: [
+        { weightKg: 27.75, reps: 12 },
+        { weightKg: 31.75, reps: 10 },
+        { weightKg: 35.75, reps: 8 },
+      ],
+      restSeconds: 90,
+      role: 'accessory',
+    },
+    {
+      exerciseId: 'dumbbell-shoulder-press',
+      setPlan: [
+        { weightKg: 8, reps: 12 },
+        { weightKg: 10, reps: 10 },
+        { weightKg: 12, reps: 8 },
+      ],
+      restSeconds: 120,
+    },
+    {
+      exerciseId: 'dumbbell-pullover',
       setPlan: [
         { weightKg: 10, reps: 12 },
         { weightKg: 12, reps: 10 },
         { weightKg: 14, reps: 8 },
       ],
-      restSeconds: 75,
+      restSeconds: 90,
+      role: 'accessory',
+    },
+    {
+      exerciseId: 'incline-push-up',
+      range: { min: 10, max: 15 },
+      sets: 3,
+      restSeconds: 60,
       role: 'accessory',
     },
     {
@@ -270,16 +232,40 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       restSeconds: 75,
       role: 'accessory',
     },
+    {
+      exerciseId: 'bicycle-crunch',
+      setPlan: [
+        { weightKg: null, reps: 16 },
+        { weightKg: null, reps: 20 },
+        { weightKg: null, reps: 24 },
+      ],
+      restSeconds: 60,
+      role: 'accessory',
+    },
+    {
+      exerciseId: 'standing-calf-raise',
+      setPlan: [
+        { weightKg: 12, reps: 20 },
+        { weightKg: 14, reps: 15 },
+        { weightKg: 16, reps: 12 },
+      ],
+      restSeconds: 60,
+      role: 'accessory',
+    },
   ],
 }
 
 /**
- * D7 — seven primaries as of the equipment upgrade. `bent-over-row` and
- * `romanian-deadlift` are Doc 2 §10's explicit "New primary benchmarks"
- * list; `barbell-hip-thrust`, `dumbbell-rowboat` and `barbell-curl` each
- * carry block-qualified "primary" language in their own coach document
- * but are absent from that program-level list, so they stay accessory
- * (D7/B.8's reading, same test applied to both).
+ * D7 — seven primaries, unchanged by the 13 Aug Full Body Restructure
+ * (six-question bundle Q5: role is not reclassified). `bent-over-row` and
+ * `romanian-deadlift` were Doc 2 §10's explicit "New primary benchmarks"
+ * list (12 Aug); `barbell-hip-thrust`, `goblet-squat` and `barbell-curl`
+ * each carry block-qualified "primary" language in their own coach
+ * document but are absent from that program-level list, so they stay
+ * accessory. `bulgarian-split-squat` is no longer seeded (removed from
+ * the active program by the restructure) — its continued Set membership
+ * is inert, not stale, since the role guard below iterates present
+ * items only.
  */
 const PRIMARY_EXERCISE_IDS = new Set([
   'incline-dumbbell-press',
@@ -295,14 +281,17 @@ const PRIMARY_EXERCISE_IDS = new Set([
  * The prescriptions the spec marks "use one dumbbell" — hard-coded with a
  * citation rather than derived from `maxWeightKg`, which would make this
  * test circular with Phase 2's own seed content (plan §6.1).
+ * `dumbbell-rowboat` left the active program in the 13 Aug restructure;
+ * `standing-calf-raise` joined this list the same day (Session C
+ * calf-raise ruling: "Use one dumbbell").
  */
 const SINGLE_IMPLEMENT_EXERCISE_IDS = new Set([
-  'dumbbell-pullover', // Session A, "Use one dumbbell"
-  'single-arm-db-row', // Session A, "Use one dumbbell"
-  'goblet-squat', // Session B, "Use one dumbbell"
-  'overhead-triceps-extension', // Session C, "Use one dumbbell"
-  'dumbbell-rowboat', // Session B, "Use one dumbbell" (doc 3 §1)
-  'russian-twist', // Session B, "ONE dumbbell held with BOTH hands" (doc 4 §7)
+  'goblet-squat', // Session A, "Use one dumbbell"
+  'overhead-triceps-extension', // Session A, "Use one dumbbell, both hands"
+  'single-arm-db-row', // Session B, "Use one dumbbell"
+  'russian-twist', // Session B, "ONE dumbbell held with BOTH hands"
+  'dumbbell-pullover', // Session C, "Use one dumbbell"
+  'standing-calf-raise', // Session C, "Use one dumbbell" (calf-raise ruling, 13 Aug)
 ])
 
 /**
@@ -339,16 +328,27 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
         it(`${expected.exerciseId} matches its spec row exactly`, () => {
           const actual = session.items.find((i) => i.exerciseId === expected.exerciseId)
           expect(actual, `${expected.exerciseId} is missing from ${session.id}`).toBeDefined()
-          const ladder = actual as LadderPrescription
 
-          expect(ladder.setPlan, `${session.id}/${expected.exerciseId} setPlan`).toEqual(expected.setPlan)
-          expect(ladder.restSeconds, `${session.id}/${expected.exerciseId} restSeconds`).toBe(
+          expect(actual!.restSeconds, `${session.id}/${expected.exerciseId} restSeconds`).toBe(
             expected.restSeconds,
           )
-          expect(ladder.perSide, `${session.id}/${expected.exerciseId} perSide`).toBe(expected.perSide ?? false)
-          expect(ladder.mode, `${session.id}/${expected.exerciseId} mode`).toBe(expected.mode ?? 'reps')
-          expect(ladder.role, `${session.id}/${expected.exerciseId} role`).toBe(expected.role ?? 'main')
-          expect(ladder.rehearsal, `${session.id}/${expected.exerciseId} rehearsal`).toEqual(expected.rehearsal)
+          expect(actual!.role, `${session.id}/${expected.exerciseId} role`).toBe(expected.role ?? 'main')
+
+          if ('setPlan' in expected) {
+            const ladder = actual as LadderPrescription
+            expect(ladder.setPlan, `${session.id}/${expected.exerciseId} setPlan`).toEqual(expected.setPlan)
+            expect(ladder.perSide, `${session.id}/${expected.exerciseId} perSide`).toBe(expected.perSide ?? false)
+            expect(ladder.mode, `${session.id}/${expected.exerciseId} mode`).toBe(expected.mode ?? 'reps')
+            expect(ladder.rehearsal, `${session.id}/${expected.exerciseId} rehearsal`).toEqual(expected.rehearsal)
+          } else {
+            const repRange = actual as RepRangePrescription
+            expect(repRange.range, `${session.id}/${expected.exerciseId} range`).toEqual(expected.range)
+            expect(repRange.sets, `${session.id}/${expected.exerciseId} sets`).toBe(expected.sets)
+            expect(
+              repRange.setPlan,
+              `${session.id}/${expected.exerciseId} setPlan should be undefined (rep-range)`,
+            ).toBeUndefined()
+          }
         })
       }
     })
@@ -438,15 +438,15 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
 
   /**
    * §D8: a timed hold, not a rep Pyramid — 40s/50s/60s, never reps.
-   * Retargeted from `side-plank` (12 Aug 2026 equipment upgrade —
-   * `side-plank` left the active session; `plank` is its Session B Core
-   * block replacement) to keep proving a timed hold can complete — the
-   * only test in the suite that does. `plank` is not per-side, unlike
-   * side-plank.
+   * Retargeted from `side-plank` (12 Aug 2026 equipment upgrade) to
+   * `plank` in Session B's old Core block, and retargeted again (13 Aug
+   * Full Body Restructure — plank moves Session B → Session A) to keep
+   * proving a timed hold can complete — the only test in the suite that
+   * does. `plank` is not per-side, unlike side-plank.
    */
   it('plank is a three-level timed hold, 40/50/60 sec, never reps', () => {
-    const sessionB = mesocycle2Build.sessions.find((s) => s.id === 'mesocycle2-legs-core')!
-    const plank = sessionB.items.find((i) => i.exerciseId === 'plank') as LadderPrescription
+    const sessionA = mesocycle2Build.sessions.find((s) => s.id === 'mesocycle2-fullbody-squat')!
+    const plank = sessionA.items.find((i) => i.exerciseId === 'plank') as LadderPrescription
 
     expect(plank.mode).toBe('seconds')
     expect(plank.perSide).toBe(false)
@@ -465,14 +465,14 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
    * `LoggedSet.reps` unconditionally — `SetScreen` logs a timed hold into
    * `seconds`, never `reps`, so the check was `0 >= 40` forever. Fixed in
    * progression.ts to read through `effortOf`, which already existed for
-   * exactly this branch. Retargeted to `plank` (12 Aug 2026) to keep
-   * proving the fix against real seeded data, not just a synthetic
-   * fixture — the mechanism plank now exercises is unchanged from what
-   * side-plank exercised before it.
+   * exactly this branch. Retargeted to `plank` (12 Aug 2026), then again
+   * to Session A's `plank` (13 Aug restructure) to keep proving the fix
+   * against real seeded data, not just a synthetic fixture — the
+   * mechanism plank exercises is unchanged by either move.
    */
   it('the seeded plank actually reaches load-not-the-lever from a perfect seconds log', () => {
-    const sessionB = mesocycle2Build.sessions.find((s) => s.id === 'mesocycle2-legs-core')!
-    const plank = sessionB.items.find((i) => i.exerciseId === 'plank') as LadderPrescription
+    const sessionA = mesocycle2Build.sessions.find((s) => s.id === 'mesocycle2-fullbody-squat')!
+    const plank = sessionA.items.find((i) => i.exerciseId === 'plank') as LadderPrescription
 
     const perfectLog: LoggedSet[] = plank.setPlan.map((rung, setIndex) => ({
       setIndex,
@@ -487,12 +487,21 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
   })
 
   /**
-   * D3/doc 7 — `bent-over-row` is the only prescription in the program
-   * carrying a `rehearsal` field; doc 7 rules out the same treatment for
-   * `barbell-curl` by name. This guard goes red the day someone
-   * "helpfully" adds a second one.
+   * Six-question bundle Q3, 13 Aug 2026 — the mandatory `bent-over-row`
+   * rehearsal set is dropped (docblock, `program.ts`): a ramp/rehearsal
+   * set is now understood to attach to a session's *first* major
+   * technical movement, which every session's own warm-up ramp already
+   * enforces, so the concept is retired from the seed without removing
+   * the field, its import schema, or its renderer (§3.6 of the
+   * transcription plan). No seeded prescription carries one as of this
+   * restructure — retitled from "exactly one … carries a rehearsal set"
+   * to keep meaning something on its own: expecting `[]` alone would
+   * also pass if the field stopped existing, so this guard is only
+   * trustworthy alongside a negative control (add a `rehearsal` to any
+   * prescription, confirm this goes red naming it, restore — run
+   * manually, not encoded here).
    */
-  it('exactly one prescription across all three sessions carries a rehearsal set', () => {
+  it('no prescription carries a rehearsal set (Q3, 13 Aug — dropped)', () => {
     const withRehearsal: string[] = []
     for (const session of mesocycle2Build.sessions) {
       for (const item of session.items) {
@@ -502,7 +511,7 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
         }
       }
     }
-    expect(withRehearsal).toEqual(['mesocycle2-chest-back/bent-over-row'])
+    expect(withRehearsal).toEqual([])
   })
 
   it('the seven primary movements are role: main; everything else in Sessions A-C is role: accessory (§4, D7)', () => {

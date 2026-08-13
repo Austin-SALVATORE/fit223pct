@@ -420,13 +420,15 @@ describe('PlanDayPage states', () => {
       renderDay('2026-08-10') // Monday, mesocycle2Build's startDate — its first training day
       expect(await screen.findByRole('heading', { name: /Monday 10 August/ })).toBeInTheDocument()
 
-      expect(screen.getByRole('heading', { level: 2, name: 'Chest & Back' })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { level: 2, name: 'Full Body A' })).toBeInTheDocument()
 
       // First item — unchanged.
       expect(screen.getByText('Zone 2 ride')).toBeInTheDocument()
       expect(screen.getByText(/20 min, after lifting/)).toBeInTheDocument()
 
       // Second item — the stretching prescription, currently invisible.
+      // Content is rewritten in Phase 3 of the transcription plan (own
+      // commit, same push) — still the old body-part-named block here.
       expect(screen.getByText('Chest & Back Stretching')).toBeInTheDocument()
       expect(
         screen.getByText(/Wall chest stretch, lat stretch, cross-body shoulder stretch/),
@@ -437,8 +439,8 @@ describe('PlanDayPage states', () => {
   /**
    * The pre-strength warm-up preview (11 Aug plan §4b) — same tertiary,
    * preview-only treatment as `MorningActivationPreview`, beside it and
-   * before the session. Uses the real seed content (mesocycle2-chest-
-   * back's shipped `warmupId`), no fixture override.
+   * before the session. Uses the real seed content (mesocycle2-fullbody-
+   * squat's shipped `warmupId`), no fixture override.
    */
   describe('mesocycle2Build training day carries a warm-up preview', () => {
     beforeAll(async () => {
@@ -456,13 +458,15 @@ describe('PlanDayPage states', () => {
       const warmupHeading = screen.getByText('Warm-up')
       expect(warmupHeading).toBeInTheDocument()
       expect(screen.getByText('Easy cycling · 3 min')).toBeInTheDocument()
-      expect(screen.getByText('Scapular push-up')).toBeInTheDocument()
-      expect(screen.getByText('6 kg per dumbbell × 8')).toBeInTheDocument()
-      expect(screen.getByText('10 kg per dumbbell × 5')).toBeInTheDocument()
+      // 13 Aug Full Body Restructure — Session A's warm-up rehearses
+      // goblet-squat with a single ramp, not incline-dumbbell-press with
+      // two.
+      expect(screen.getByText('Bodyweight squat')).toBeInTheDocument()
+      expect(screen.getByText('8 kg per dumbbell × 5')).toBeInTheDocument()
 
       // Warm-up precedes the session in document order — same hierarchy
       // as Today's own Activation → Warm-up → Strength flow.
-      const sessionHeading = screen.getByRole('heading', { level: 2, name: 'Chest & Back' })
+      const sessionHeading = screen.getByRole('heading', { level: 2, name: 'Full Body A' })
       expect(
         warmupHeading.compareDocumentPosition(sessionHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
       ).toBeTruthy()
@@ -722,7 +726,10 @@ describe('PlanDayPage navigation round-trip preserves the viewed phase (owner re
     await userEvent.click(await screen.findByRole('link', { name: /Mon 10 Aug/ }))
     expect(await screen.findByRole('heading', { name: /Monday 10 August/ })).toBeInTheDocument()
 
-    await userEvent.click(screen.getByRole('link', { name: /Plan/ }))
+    // Exact match, not /Plan/ — Session A now includes `plank` (13 Aug
+    // Full Body Restructure), and a loose regex also matches its Library
+    // link ("Plank …").
+    await userEvent.click(screen.getByRole('link', { name: 'Plan' }))
     expect(await screen.findByRole('heading', { name: 'Mesocycle 2 — Build' })).toBeInTheDocument()
   })
 

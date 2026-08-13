@@ -475,28 +475,42 @@ export const seedProgram: Program = {
  * "Calendar and delivery ruling" and is deferred
  * (docs/design/Mesocycle2Implementation.md §11.2), not seeded here.
  *
- * **Revised 11 Aug 2026** (Mesocycle 2 Build Prescription Revision,
- * coach spec, plus the "Six Validation Rulings" document answering the
- * validator's residuals) — the revision's own "Opening-weight handoff"
- * still governs: Fit223 seeds the exact Week 1 Pyramid levels; it does
- * not infer them from workout history at runtime. Every subsequent week
- * is computed by the engine (suggestLadderProgression), the same as
- * phase-1-home — this program does not encode weeks 2-5 as separate
- * records.
+ * **Restructured 13 Aug 2026** — Full Body Restructure (coach's
+ * AUTHORITATIVE PROGRAM AMENDMENT, plus the Session C calf-raise ruling
+ * and the six-question follow-up bundle, all archived
+ * `~/.claude/agent-memory/program-spec-validator/spec-archive/*-2026-08-13.md`;
+ * transcription plan `~/.claude/plans/m2-fullbody-restructure.md`). The
+ * athlete reported excessive session fatigue after the old Session B
+ * ("Legs & Core") accumulated RDL + Bulgarian split squat + hip thrust +
+ * goblet squat + calf raise + a four-exercise Core block in one sitting.
+ * The coach's fix distributes weekly volume rather than concentrating a
+ * body region into one session: the old Chest & Back / Legs & Core /
+ * Shoulders & Arms split is superseded prospectively by three full-body
+ * sessions (Squat / Hinge / Hip-Extension+Shoulder emphasis), each
+ * targeting ~6 primary movements with weekly, not per-session, coverage
+ * of every body region. **Ids were renamed along with the content**
+ * (`mesocycle2-chest-back` → `mesocycle2-fullbody-squat`, etc.,
+ * likewise the three warm-up ids) — the old ids described a body-part
+ * split that no longer exists, and would otherwise permanently
+ * mis-describe the sessions they name. History is unaffected: the two
+ * workouts already completed under the old structure (10/12 Aug) keep
+ * their own logged sets, snapshotted at completion time
+ * (`workout.ts`'s `createWorkout` docblock) — only their *session name*
+ * display degrades to the generic `sessionFallback` label, since the old
+ * ids no longer resolve. Removed movements (`bulgarian-split-squat`,
+ * `dumbbell-rowboat`, `dumbbell-fly`; `dumbbell-curl` already out) keep
+ * their Library entries and progression history — nothing is deleted
+ * from `src/data/seed/exercises.ts`.
  *
- * **Superseded 12 Aug 2026** by the equipment upgrade + Mesocycle 2
- * migration (eight coach documents, all archived
- * `~/.claude/agent-memory/program-spec-validator/spec-archive/*-2026-08-12.md`;
- * resolved order map in `Mesocycle-2-Exercise-Order-Amendment` +
- * `Mesocycle-2-Session-C-Authoritative-Amendment`). New hardware — two
- * 2 kg adjustable handles sharing one plate pool (8×1 kg, 4×2 kg,
- * 4×5 kg) plus a 7.75 kg barbell drawing the same pool
- * (`docs/EquipmentProfile.md`, `.claude/rules/program-content.md`).
- * `BILATERAL_MAX_KG` (20) / `SINGLE_IMPLEMENT_MAX_KG` (38) /
- * `BARBELL_MAX_KG` (43.75) replace the 15.2/20.2 sleeve-weight-era
- * ceilings for every weighted M2 ladder (see the constants' own docs).
- * `DUMBBELL_STEP_KG` stays reused unchanged, still 2 — see its own
- * docblock for why that is coincidence, not justification.
+ * Previous revision history (11/12 Aug 2026 equipment upgrade and
+ * prescription revisions) is summarized rather than repeated — see git
+ * history for the superseded docblock. New hardware — two 2 kg
+ * adjustable handles sharing one plate pool (8×1 kg, 4×2 kg, 4×5 kg)
+ * plus a 7.75 kg barbell drawing the same pool
+ * (`docs/EquipmentProfile.md`, `.claude/rules/program-content.md`) —
+ * still governs every ceiling below. `BILATERAL_MAX_KG` (20) /
+ * `SINGLE_IMPLEMENT_MAX_KG` (38) / `BARBELL_MAX_KG` (43.75) /
+ * `DUMBBELL_STEP_KG` (2) are unchanged by this restructure.
  *
  * **Barbell weights are total load including the bar, never per side**
  * — a different convention from every dumbbell prescription in this
@@ -506,62 +520,86 @@ export const seedProgram: Program = {
  * (a total-weight list), so a per-side transcription slip fails the
  * suite rather than shipping quietly.
  *
- * Role (main/accessory): **seven** named primaries are `ladder()`'s
- * default `'main'` — incline-dumbbell-press, dumbbell-bench-press,
- * single-arm-db-row, bent-over-row (new — Doc 2 §10 names it a "new
- * primary benchmark" alongside romanian-deadlift), bulgarian-split-squat,
- * romanian-deadlift (replaces dumbbell-rdl as B1), dumbbell-shoulder-press.
- * Every other movement across Sessions A-C is `role: 'accessory'`,
- * including `barbell-hip-thrust`, `dumbbell-rowboat` and `barbell-curl` —
- * each carries block-qualified "primary" language in its own coach
- * document, but none appears on Doc 2 §10's program-level "New primary
- * benchmarks" list, which names only the barbell RDL and the barbell row.
+ * **Role (main/accessory) is unchanged by this restructure** — the
+ * restructure moves and re-times prescriptions, it does not reclassify
+ * any of them (six-question bundle, Q5). The seven primaries remain
+ * `ladder()`'s default `'main'`: incline-dumbbell-press,
+ * dumbbell-bench-press, single-arm-db-row, bent-over-row,
+ * bulgarian-split-squat (no longer seeded — the guard iterates present
+ * items, so its continued Set membership is inert, not stale),
+ * romanian-deadlift, dumbbell-shoulder-press. Every other movement
+ * across Sessions A-C is `role: 'accessory'`, including
+ * `barbell-hip-thrust`, `goblet-squat` and `barbell-curl` — each of
+ * these three, plus the coach's new "primary knee-dominant / squat-
+ * pattern movement for Session A" language about goblet-squat, is
+ * block-qualified "primary" prose that has never promoted a movement in
+ * this program (same non-promotion as `dumbbell-rowboat` before it left
+ * the program). **Role and progression policy are independent
+ * dimensions** — the coach's own framing (Q5): LOAD-FIRST progression
+ * does not imply `role: 'main'`, and technique-gated progression
+ * (`dumbbell-lateral-raise`, `rear-delt-fly`) does not imply
+ * `role: 'accessory'` either; the two must never be inferred from one
+ * another. A per-prescription progression-policy field is a named
+ * prerequisite for a later feature (`~/.claude/plans/load-setup-ux.md`
+ * §0.1b) and is deliberately not built here.
  *
- * **The bent-over-row rehearsal set** (`rehearsal: { weightKg: 13.75,
- * reps: 6 }`) is the only prescription in this program carrying a
- * `rehearsal` field — doc 7 rules out the same treatment for barbell-curl
- * by name ("does not introduce a complex unsupported hip-hinge
- * position"). It renders above bent-over-row's first working set in the
- * session preview, structurally invisible to `suggestLadderProgression`
- * (D3): not in `setPlan`, so it cannot affect volume, pyramid completion
- * or progression. `conformance.test.ts` asserts exactly one prescription
- * carries it, so a second one added later goes red rather than silently
- * riding the pyramid.
+ * **The `bent-over-row` rehearsal set is dropped** (six-question bundle,
+ * Q3) — it was prescribed when bent-over-row opened its old session as
+ * the first barbell movement; in the new Session A it is the third
+ * exercise, reached only after squat rehearsal and two working
+ * movements, so the athlete is already systemically warm and the
+ * mandatory 13.75×6 no longer earns its place. **New rule**: a
+ * ramp/rehearsal set is primarily attached to the *first* major
+ * technical movement of a session, not automatically to every later
+ * compound — which is exactly what every session's own warm-up ramp
+ * already does (`warmups.conformance.test.ts`'s "every ramp targets the
+ * session's first item"), so the rule now lives structurally in the
+ * warm-up catalogue rather than as a second mechanism. The `rehearsal`
+ * field, its import schema, its `SessionPreview` renderer and its locale
+ * keys all stay — the coach's ruling is about *this* prescription, not
+ * the concept, and removing the field would break the import round-trip
+ * for any already-exported program that carries one. As of this
+ * restructure, **no seeded prescription carries a `rehearsal`** — absent
+ * is the norm, same as before 12 Aug.
  *
- * **Four movements retired from the active session, Library entries
- * kept**: `dumbbell-rdl`, `hamstring-walkout`, `dead-bug`, `bird-dog`,
- * `side-plank` leave Session B (replaced by the barbell RDL and the new
- * Core block); `chest-supported-row` leaves Session A; `dumbbell-curl`
- * leaves Session C (replaced by `barbell-curl` — a new, unmerged
- * progression history, doc 7). None is deleted from
- * `src/data/seed/exercises.ts` — every one remains a valid regression,
- * substitution or future-programming target, per each coach document's
- * own instruction not to delete.
+ * **`standing-calf-raise` moves to the single-implement ladder** (Session
+ * C calf-raise ruling, 13 Aug: "Use one dumbbell") — `maxWeightKg` moves
+ * from `BILATERAL_MAX_KG` to `SINGLE_IMPLEMENT_MAX_KG`, raising its
+ * Stepper ceiling 20→38 kg; no other production code keys off the
+ * classification (`SetScreen.tsx`'s `max` prop is the sole consumer).
+ * It is Session C's optional seventh accessory — skipping it never
+ * invalidates Day Completion (no `ExercisePrescription` field is
+ * required, and no completion gate reads item count), and it is never
+ * substituted with another lower-body movement when skipped.
  *
- * **The new Core block** (`dumbbell-rowboat` → `russian-twist` →
- * `bicycle-crunch` → `plank`, Session B, in that order —
- * Mesocycle-2-Core-Block-Redesign's own stated sequencing: loaded work
- * while fresh, then rotation, then dynamic flexion, then anti-extension
- * last) replaces the old Dead Bug/Bird Dog/Side Plank block wholesale.
- * `bicycle-crunch` and `plank` are null-weight/seconds-mode ladders —
- * same `load-not-the-lever` mechanism the retired movements used, not
- * something this migration adds. `russian-twist` is single-implement,
- * total reps (doc 4 §7: one rotation to either side is one rep, never
- * per-side) — the convention is stated in its own `note` plus the three
- * locale keys, since a silent misread here would double every logged
- * rep count.
+ * **Three rest values differ from the shipped 11/12 Aug seed**, per the
+ * coach's explicit 19-row rest table in the six-question bundle (Q2):
+ * `dumbbell-pullover` 75→90, `incline-push-up` 75→60,
+ * `bicycle-crunch` 45→60. Every other rest value carries forward
+ * unchanged. (Flagged to the coach as an FYI, not a blocker: the
+ * ruling's own framing was "carry forward the existing values", but
+ * these three are not the existing values — the plan follows the
+ * explicit table, the more specific and later instruction.)
  *
- * `mountain-climber` is Library-only, deliberately unprescribed — the
- * coach reserves it for a future conditioning block (doc 3), and adding
- * it to Session B would raise conditioning demand where the coach's
- * stated priority is targeted Core development.
+ * **`incline-push-up` becomes a rep-range prescription** (3 × 10-15,
+ * bodyweight) — the spec's own text ("3 working sets / 10-15 reps /
+ * Bodyweight") is a rep-range verbatim, not a ladder. Uses the existing
+ * `reps()` helper; no schema change (`RepRangePrescription` already
+ * exists in `types.ts`).
  *
- * Session durations (50-60 min / 50-60 min / 45-55 min) and Session A's
- * ~30° bench angle have no field on Program or SessionTemplate — noted
- * here rather than invented into the schema, per the owner's ruling.
- * Rest values given as a range in the spec ("45-60 sec", "after both
- * sides") are recorded in each prescription's own `note`, since
- * `restSeconds` is a single number.
+ * **The new Core-adjacent movements are distributed across the week
+ * instead of concentrated in one session**: `plank` (Session A, timed
+ * hold, `mode: 'seconds'`), `russian-twist` (Session B, single-implement,
+ * total reps — one rotation to either side is one rep, never per-side)
+ * and `bicycle-crunch` (Session C, reps rise across sets by coach
+ * design, not a gap) — each retains the `load-not-the-lever` treatment
+ * (`weightKg: null`) the old Core block already used.
+ *
+ * Session durations and bench angle have no field on `Program` or
+ * `SessionTemplate` — noted here rather than invented into the schema,
+ * per the owner's ruling. Rest values given as a range in the spec
+ * ("45-60 sec", "after both sides") are recorded in each prescription's
+ * own `note`, since `restSeconds` is a single number.
  */
 export const mesocycle2Build: Program = {
   id: 'mesocycle-2-build',
@@ -573,184 +611,72 @@ export const mesocycle2Build: Program = {
   trainingWeekdays: [1, 3, 5],
   schedulingMode: 'rotation',
   // Sequential: identity follows completed count, not the calendar
-  // (coach ruling 7 Aug; MissedDayDeferral.md rulings 3/4/7).
-  rotation: ['mesocycle2-chest-back', 'mesocycle2-legs-core', 'mesocycle2-shoulders-arms'],
+  // (coach ruling 7 Aug, reaffirmed 13 Aug six-question bundle Q4 —
+  // Mon/Wed/Fri is the intended rhythm, A→B→C the ordered sequence; a
+  // missed weekday never skips a session).
+  rotation: ['mesocycle2-fullbody-squat', 'mesocycle2-fullbody-hinge', 'mesocycle2-fullbody-hipext-shoulder'],
   sessions: [
-    // Session A - Chest and Back Emphasis. Target 50-60 min; bench angle
-    // ~30° for incline pressing (spec §6, no schema field for either).
+    // Session A - Full Body / Squat Emphasis (13 Aug restructure).
     {
-      id: 'mesocycle2-chest-back',
-      name: 'Chest & Back',
-      focus: 'Chest and Back Emphasis',
-      // Mesocycle 2 Pre-Strength Warm-up Prescription, 11 Aug 2026 — Session A.
-      warmupId: 'mesocycle2-chest-back-warmup-v1',
+      id: 'mesocycle2-fullbody-squat',
+      name: 'Full Body A',
+      focus: 'Squat Emphasis',
+      // Six-question bundle Q1, 13 Aug 2026 — concrete ramp loads, not
+      // deferred to Load Setup.
+      warmupId: 'mesocycle2-fullbody-squat-warmup-v1',
       items: [
+        // Primary knee-dominant / squat-pattern movement for Session A
+        // (coach's own language) — block-qualified "primary" prose that
+        // does not promote role, same treatment as barbell-hip-thrust and
+        // barbell-curl (docblock above).
+        ladder(
+          'goblet-squat',
+          [
+            { weightKg: 14, reps: 12 },
+            { weightKg: 16, reps: 10 },
+            { weightKg: 18, reps: 8 },
+          ],
+          SINGLE_IMPLEMENT_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 90, role: 'accessory' },
+        ),
         ladder(
           'incline-dumbbell-press',
           [
-            { weightKg: 12, reps: 12 },
-            { weightKg: 14, reps: 10 },
-            { weightKg: 16, reps: 8 },
-            { weightKg: 18, reps: 6 },
+            { weightKg: 10, reps: 12 },
+            { weightKg: 12, reps: 10 },
+            { weightKg: 14, reps: 8 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
         ),
-        // New primary benchmark (Doc 2 §10) — first barbell movement of
-        // the session, a different pattern from the preceding chest work,
-        // hence the rehearsal set (D3, docblock above).
+        // Third exercise of the session, not the first barbell movement —
+        // no rehearsal set (six-question bundle Q3, docblock above).
         ladder(
           'bent-over-row',
           [
             { weightKg: 17.75, reps: 12 },
             { weightKg: 21.75, reps: 10 },
             { weightKg: 25.75, reps: 8 },
-            { weightKg: 29.75, reps: 6 },
           ],
           BARBELL_MAX_KG,
           DUMBBELL_STEP_KG,
-          { rehearsal: { weightKg: 13.75, reps: 6 } },
         ),
         ladder(
-          'dumbbell-bench-press',
-          [
-            { weightKg: 12, reps: 12 },
-            { weightKg: 14, reps: 10 },
-            { weightKg: 16, reps: 8 },
-          ],
-          BILATERAL_MAX_KG,
-          DUMBBELL_STEP_KG,
-        ),
-        // Use one dumbbell — spec's single-implement instruction.
-        ladder(
-          'single-arm-db-row',
-          [
-            { weightKg: 14, reps: 12 },
-            { weightKg: 16, reps: 10 },
-            { weightKg: 18, reps: 8 },
-            { weightKg: 20, reps: 6 },
-          ],
-          SINGLE_IMPLEMENT_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { perSide: true, restSeconds: 90, note: 'Rest after both sides' },
-        ),
-        ladder(
-          'dumbbell-fly',
+          'dumbbell-lateral-raise',
           [
             { weightKg: 4, reps: 15 },
             { weightKg: 6, reps: 12 },
+            { weightKg: 6, reps: 10 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
-          { restSeconds: 75, role: 'accessory' },
+          { restSeconds: 60, role: 'accessory', note: 'Technique takes priority over load' },
         ),
-        // Use one dumbbell — spec's single-implement instruction.
+        // Use one dumbbell, both hands — spec's single-implement
+        // instruction.
         ladder(
-          'dumbbell-pullover',
-          [
-            { weightKg: 10, reps: 15 },
-            { weightKg: 12, reps: 12 },
-            { weightKg: 14, reps: 10 },
-          ],
-          SINGLE_IMPLEMENT_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { restSeconds: 75, role: 'accessory' },
-        ),
-        // Bodyweight — the spec prescribes "normal controlled tempo" for
-        // both sets, so no variantKey (a 'normal' label on a two-rung
-        // ladder with no second state would invent a progression nobody
-        // prescribed — see the docblock above).
-        ladder(
-          'incline-push-up',
-          [
-            { weightKg: null, reps: 15 },
-            { weightKg: null, reps: 12 },
-          ],
-          null,
-          null,
-          { restSeconds: 75, role: 'accessory' },
-        ),
-      ],
-    },
-    // Session B - Legs and Core Emphasis. Target 50-60 min (spec §7).
-    {
-      id: 'mesocycle2-legs-core',
-      name: 'Legs & Core',
-      focus: 'Legs and Core Emphasis',
-      // Mesocycle 2 Pre-Strength Warm-up Prescription, 11 Aug 2026 — Session B.
-      warmupId: 'mesocycle2-legs-core-warmup-v1',
-      items: [
-        // New primary benchmark (Doc 2 §10) — first exercise of the
-        // session as of Doc 6's final order; opens the session unramped
-        // beyond the two RDL ramps in its own warm-up (B.3/B.9, coach
-        // question resolved by replacing the warm-up rather than adding a
-        // session-start rehearsal — see warmups.ts).
-        ladder(
-          'romanian-deadlift',
-          [
-            { weightKg: 23.75, reps: 12 },
-            { weightKg: 27.75, reps: 10 },
-            { weightKg: 31.75, reps: 8 },
-            { weightKg: 35.75, reps: 6 },
-          ],
-          BARBELL_MAX_KG,
-          DUMBBELL_STEP_KG,
-        ),
-        ladder(
-          'bulgarian-split-squat',
-          [
-            { weightKg: 8, reps: 12 },
-            { weightKg: 10, reps: 10 },
-            { weightKg: 12, reps: 8 },
-          ],
-          BILATERAL_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { perSide: true, restSeconds: 120, note: 'Rest after both sides' },
-        ),
-        ladder(
-          'barbell-hip-thrust',
-          [
-            { weightKg: 27.75, reps: 12 },
-            { weightKg: 31.75, reps: 10 },
-            { weightKg: 35.75, reps: 8 },
-          ],
-          BARBELL_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { restSeconds: 90, role: 'accessory' },
-        ),
-        // Use one dumbbell — spec's single-implement instruction.
-        ladder(
-          'goblet-squat',
-          [
-            { weightKg: 14, reps: 15 },
-            { weightKg: 16, reps: 12 },
-            { weightKg: 18, reps: 10 },
-          ],
-          SINGLE_IMPLEMENT_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { restSeconds: 90, role: 'accessory' },
-        ),
-        ladder(
-          'standing-calf-raise',
-          [
-            { weightKg: 12, reps: 20 },
-            { weightKg: 14, reps: 15 },
-            { weightKg: 16, reps: 12 },
-          ],
-          BILATERAL_MAX_KG,
-          DUMBBELL_STEP_KG,
-          {
-            restSeconds: 60,
-            role: 'accessory',
-            note: 'Full range of motion — controlled stretch at the bottom',
-          },
-        ),
-        // Core block (Mesocycle-2-Core-Block-Redesign) — replaces the
-        // retired Dead Bug/Bird Dog/Side Plank block wholesale; order is
-        // the coach's own: loaded work while fresh, then rotation, then
-        // dynamic flexion, then anti-extension last.
-        ladder(
-          'dumbbell-rowboat',
+          'overhead-triceps-extension',
           [
             { weightKg: 10, reps: 12 },
             { weightKg: 12, reps: 10 },
@@ -758,38 +684,10 @@ export const mesocycle2Build: Program = {
           ],
           SINGLE_IMPLEMENT_MAX_KG,
           DUMBBELL_STEP_KG,
-          { restSeconds: 60, role: 'accessory' },
+          { restSeconds: 75, role: 'accessory', note: 'One dumbbell, both hands' },
         ),
-        // One dumbbell, both hands, total reps — not per side (doc 4 §7:
-        // one rotation to either side is one rep).
-        ladder(
-          'russian-twist',
-          [
-            { weightKg: 6, reps: 16 },
-            { weightKg: 8, reps: 14 },
-            { weightKg: 10, reps: 12 },
-          ],
-          SINGLE_IMPLEMENT_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { restSeconds: 60, role: 'accessory', note: 'Total reps, not per side' },
-        ),
-        // Bodyweight — reps rise across sets by coach design (doc 4 §10:
-        // "Fit223 does NOT need to auto-increment"); this is the ruled
-        // behaviour, not a gap. load-not-the-lever once complete, same
-        // mechanism the retired bodyweight ladders used.
-        ladder(
-          'bicycle-crunch',
-          [
-            { weightKg: null, reps: 16 },
-            { weightKg: null, reps: 20 },
-            { weightKg: null, reps: 24 },
-          ],
-          null,
-          null,
-          { restSeconds: 45, role: 'accessory' },
-        ),
-        // Not per side, unlike side-plank — a front plank is one hold, not
-        // an alternating one.
+        // Moved here from the old Core block (Session B → Session A) —
+        // not per side, a front plank is one hold.
         ladder(
           'plank',
           [
@@ -803,44 +701,51 @@ export const mesocycle2Build: Program = {
         ),
       ],
     },
-    // Session C - Shoulders and Arms Emphasis. Target 45-55 min (spec §8).
+    // Session B - Full Body / Hinge Emphasis (13 Aug restructure).
     {
-      id: 'mesocycle2-shoulders-arms',
-      name: 'Shoulders & Arms',
-      focus: 'Shoulders and Arms Emphasis',
-      // Mesocycle 2 Pre-Strength Warm-up Prescription, 11 Aug 2026 — Session C.
-      warmupId: 'mesocycle2-shoulders-arms-warmup-v1',
+      id: 'mesocycle2-fullbody-hinge',
+      name: 'Full Body B',
+      focus: 'Hinge Emphasis',
+      // Six-question bundle Q1, 13 Aug 2026 — "No change" from the 12 Aug
+      // Session B Warm-up Amendment.
+      warmupId: 'mesocycle2-fullbody-hinge-warmup-v1',
       items: [
+        // Primary posterior-chain / hip-hinge movement of the week
+        // (coach's own language) — opens the session unramped beyond the
+        // two RDL ramps in its own warm-up.
         ladder(
-          'dumbbell-shoulder-press',
+          'romanian-deadlift',
           [
-            { weightKg: 8, reps: 12 },
-            { weightKg: 10, reps: 10 },
-            { weightKg: 12, reps: 8 },
+            { weightKg: 23.75, reps: 12 },
+            { weightKg: 27.75, reps: 10 },
+            { weightKg: 31.75, reps: 8 },
+            { weightKg: 35.75, reps: 6 },
+          ],
+          BARBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+        ),
+        ladder(
+          'dumbbell-bench-press',
+          [
+            { weightKg: 10, reps: 12 },
+            { weightKg: 12, reps: 10 },
+            { weightKg: 14, reps: 8 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
         ),
-        // 6 kg repeats across the last two sets — intentional (doc 1 §C2:
-        // "Do NOT force an 8 kg lateral raise merely to preserve a
-        // visually clean load ladder"), same reasoning as rear-delt-fly
-        // below. Flagged to the coach (D5/§0.4): once the equipment gate
-        // opens, suggestLadderProgression would suggest exactly that 8 kg
-        // rung — a conflict to resolve before the gate opens, not
-        // something this seed can pre-empt.
+        // Use one dumbbell — spec's single-implement instruction.
         ladder(
-          'dumbbell-lateral-raise',
+          'single-arm-db-row',
           [
-            { weightKg: 4, reps: 15 },
-            { weightKg: 6, reps: 12 },
-            { weightKg: 6, reps: 10 },
+            { weightKg: 10, reps: 12 },
+            { weightKg: 12, reps: 10 },
+            { weightKg: 14, reps: 8 },
           ],
-          BILATERAL_MAX_KG,
+          SINGLE_IMPLEMENT_MAX_KG,
           DUMBBELL_STEP_KG,
-          { restSeconds: 60, role: 'accessory', note: 'Technique takes priority over load' },
+          { perSide: true, restSeconds: 90, note: 'Rest after both sides' },
         ),
-        // 6 kg repeats across the last two sets — same reasoning as
-        // dumbbell-lateral-raise above.
         ladder(
           'rear-delt-fly',
           [
@@ -852,11 +757,6 @@ export const mesocycle2Build: Program = {
           DUMBBELL_STEP_KG,
           { restSeconds: 60, role: 'accessory' },
         ),
-        // Replaces dumbbell-curl (doc 7 §4) — a new, unmerged progression
-        // history; dumbbell-curl's own history stays untouched and the
-        // Library entry stays. No rehearsal set: doc 7 rules it out by
-        // name ("does not introduce a complex unsupported hip-hinge
-        // position", unlike bent-over-row).
         ladder(
           'barbell-curl',
           [
@@ -868,9 +768,61 @@ export const mesocycle2Build: Program = {
           DUMBBELL_STEP_KG,
           { restSeconds: 75, role: 'accessory' },
         ),
-        // Use one dumbbell — spec's single-implement instruction.
+        // One dumbbell, both hands, total reps — not per side (one
+        // rotation to either side is one rep).
         ladder(
-          'overhead-triceps-extension',
+          'russian-twist',
+          [
+            { weightKg: 6, reps: 16 },
+            { weightKg: 8, reps: 14 },
+            { weightKg: 10, reps: 12 },
+          ],
+          SINGLE_IMPLEMENT_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 60, role: 'accessory', note: 'Total reps, not per side' },
+        ),
+      ],
+    },
+    // Session C - Full Body / Hip Extension + Shoulder Emphasis (13 Aug
+    // restructure).
+    {
+      id: 'mesocycle2-fullbody-hipext-shoulder',
+      name: 'Full Body C',
+      focus: 'Hip Extension & Shoulder Emphasis',
+      // Six-question bundle Q1, 13 Aug 2026 — concrete ramp loads, not
+      // deferred to Load Setup.
+      warmupId: 'mesocycle2-fullbody-hipext-shoulder-warmup-v1',
+      items: [
+        // Primary loaded hip-extension / glute movement, and the only
+        // primary lower-body compound required in Session C (coach's own
+        // language) — block-qualified "primary" prose that does not
+        // promote role (docblock above).
+        ladder(
+          'barbell-hip-thrust',
+          [
+            { weightKg: 27.75, reps: 12 },
+            { weightKg: 31.75, reps: 10 },
+            { weightKg: 35.75, reps: 8 },
+          ],
+          BARBELL_MAX_KG,
+          DUMBBELL_STEP_KG,
+          { restSeconds: 90, role: 'accessory' },
+        ),
+        ladder(
+          'dumbbell-shoulder-press',
+          [
+            { weightKg: 8, reps: 12 },
+            { weightKg: 10, reps: 10 },
+            { weightKg: 12, reps: 8 },
+          ],
+          BILATERAL_MAX_KG,
+          DUMBBELL_STEP_KG,
+        ),
+        // Use one dumbbell, both hands — spec's single-implement
+        // instruction. Reps/rest changed from the 12 Aug seed (was
+        // 15/12/10, rest 75) — six-question bundle §3.2/§3.4.
+        ladder(
+          'dumbbell-pullover',
           [
             { weightKg: 10, reps: 12 },
             { weightKg: 12, reps: 10 },
@@ -878,8 +830,12 @@ export const mesocycle2Build: Program = {
           ],
           SINGLE_IMPLEMENT_MAX_KG,
           DUMBBELL_STEP_KG,
-          { restSeconds: 75, role: 'accessory' },
+          { restSeconds: 90, role: 'accessory' },
         ),
+        // Rep-range, not a ladder — the spec's own text ("3 working sets /
+        // 10-15 reps / Bodyweight") is a rep-range verbatim. Rest changed
+        // from the 12 Aug seed (was 75) — six-question bundle §3.4.
+        reps('incline-push-up', 3, 10, 15, bodyweight, { restSeconds: 60, role: 'accessory' }),
         ladder(
           'hammer-curl',
           [
@@ -890,6 +846,44 @@ export const mesocycle2Build: Program = {
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
           { restSeconds: 75, role: 'accessory' },
+        ),
+        // Reps rise across sets by coach design, not a gap.
+        // load-not-the-lever once complete. Rest changed from the 12 Aug
+        // seed (was 45) — six-question bundle §3.4.
+        ladder(
+          'bicycle-crunch',
+          [
+            { weightKg: null, reps: 16 },
+            { weightKg: null, reps: 20 },
+            { weightKg: null, reps: 24 },
+          ],
+          null,
+          null,
+          { restSeconds: 60, role: 'accessory' },
+        ),
+        // Optional seventh accessory (Session C calf-raise ruling, 13
+        // Aug): "Use one dumbbell" moves this to the single-implement
+        // ladder (was BILATERAL_MAX_KG) — the buildability guard is blind
+        // to the move at 12/14/16 kg, since those loads sit on both
+        // lists; see mesocycle2Build.conformance.test.ts's 22 kg negative
+        // control. Skipping never invalidates Session C completion and is
+        // never replaced with another lower-body movement — carried as
+        // this item's own note plus its three locale keys, and nothing
+        // more (no completion gate reads item count).
+        ladder(
+          'standing-calf-raise',
+          [
+            { weightKg: 12, reps: 20 },
+            { weightKg: 14, reps: 15 },
+            { weightKg: 16, reps: 12 },
+          ],
+          SINGLE_IMPLEMENT_MAX_KG,
+          DUMBBELL_STEP_KG,
+          {
+            restSeconds: 60,
+            role: 'accessory',
+            note: 'Skipping never invalidates Session C — do not substitute another lower-body movement',
+          },
         ),
       ],
     },
@@ -903,11 +897,11 @@ export const mesocycle2Build: Program = {
     display only, not a replacement for the session.
 
     **Weekdays 1/3/5 (training)** — the 20 min post-lift ride (§12,
-    unchanged from 6 Aug) plus a new second item, the session-specific
-    cooldown/stretch sequence the coach's "Six Validation Rulings"
-    document supplies (superseding the plan's original "label only, no
-    detail" placeholder — the coach explicitly rejected leaving this
-    generic). Plain text, no `routineId`: none of the six named stretches
+    unchanged from 6 Aug) plus a second item, the session-specific
+    cooldown/stretch sequence (Phase 3 of the 13 Aug Full Body Restructure
+    transcription plan rewrites this to the coach's new session-specific
+    blocks — six-question bundle Q6 — landing in its own commit, same
+    push). Plain text, no `routineId`: none of the six named stretches
     has a routine step id yet (same reasoning phase-1-home's own
     recovery-day stretching already documents below). Label names the
     session (matching the coach's own "Session A/B/C — … Stretching"

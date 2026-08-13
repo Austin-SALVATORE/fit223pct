@@ -6,9 +6,9 @@ import type { LadderPrescription } from '@/domain/types'
 import type { WarmupStep } from '@/domain/warmup'
 
 /**
- * Conformance guard for the Mesocycle 2 Pre-Strength Warm-up Prescription
- * (11 Aug 2026, as amended 12 Aug 2026 by the equipment upgrade and the
- * Session B Warm-up Amendment), mirroring
+ * Conformance guard for the 13 Aug 2026 Full Body Restructure's warm-up
+ * prescriptions (six-question bundle Q1: exact ramp loads, "Do NOT defer
+ * these warm-up loads to the future Load Setup engine"), mirroring
  * `mesocycle2Build.conformance.test.ts`'s own method: `EXPECTED` below is
  * transcribed independently from the coach spec, not derived from
  * `seedWarmups` itself — a circular check (the seed compared against a
@@ -26,26 +26,29 @@ interface ExpectedStep {
 }
 
 const EXPECTED: Record<string, ExpectedStep[]> = {
-  'mesocycle2-chest-back-warmup-v1': [
+  // New (13 Aug restructure) — rehearses goblet-squat, now the session's
+  // opening movement.
+  'mesocycle2-fullbody-squat-warmup-v1': [
     { kind: 'cycle', minutes: 3 },
-    { kind: 'movement', exerciseId: 'scapular-push-up', reps: 8 },
-    { kind: 'ramp', exerciseId: 'incline-dumbbell-press', implement: 'dumbbell', weightKg: 6, reps: 8 },
-    { kind: 'ramp', exerciseId: 'incline-dumbbell-press', implement: 'dumbbell', weightKg: 10, reps: 5 },
+    { kind: 'movement', exerciseId: 'bodyweight-squat', reps: 8 },
+    { kind: 'ramp', exerciseId: 'goblet-squat', implement: 'dumbbell', weightKg: 8, reps: 5 },
   ],
-  // Replaced wholesale (doc 8) — rehearses the Barbell RDL, now the
-  // session's first movement. The Bulgarian Split Squat rehearsal is
-  // removed, not relocated.
-  'mesocycle2-legs-core-warmup-v1': [
+  // Byte-identical to what shipped before the restructure — the Romanian
+  // deadlift already opened this session, only the id changes.
+  'mesocycle2-fullbody-hinge-warmup-v1': [
     { kind: 'cycle', minutes: 3 },
     { kind: 'movement', exerciseId: 'bodyweight-hip-hinge', reps: 8 },
     { kind: 'ramp', exerciseId: 'romanian-deadlift', implement: 'barbell', weightKg: 7.75, reps: 8 },
     { kind: 'ramp', exerciseId: 'romanian-deadlift', implement: 'barbell', weightKg: 15.75, reps: 5 },
   ],
-  'mesocycle2-shoulders-arms-warmup-v1': [
+  // New (13 Aug restructure) — rehearses barbell-hip-thrust, now the
+  // session's opening movement; movement step is glute-bridge, promoted
+  // to the Library for this warm-up (Phase 1 of the transcription plan).
+  'mesocycle2-fullbody-hipext-shoulder-warmup-v1': [
     { kind: 'cycle', minutes: 3 },
-    { kind: 'movement', exerciseId: 'wall-slide', reps: 8 },
-    { kind: 'ramp', exerciseId: 'dumbbell-shoulder-press', implement: 'dumbbell', weightKg: 4, reps: 8 },
-    { kind: 'ramp', exerciseId: 'dumbbell-shoulder-press', implement: 'dumbbell', weightKg: 6, reps: 5 },
+    { kind: 'movement', exerciseId: 'glute-bridge', reps: 8 },
+    { kind: 'ramp', exerciseId: 'barbell-hip-thrust', implement: 'barbell', weightKg: 11.75, reps: 8 },
+    { kind: 'ramp', exerciseId: 'barbell-hip-thrust', implement: 'barbell', weightKg: 19.75, reps: 5 },
   ],
 }
 

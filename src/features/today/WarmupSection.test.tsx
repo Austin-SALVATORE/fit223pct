@@ -14,23 +14,23 @@ function renderWarmup(warmup: Warmup, origin?: Parameters<typeof WarmupSection>[
 }
 
 describe('WarmupSection', () => {
-  it('renders the heading, the fixed cycle line, the movement step and both ramp steps with real exercise names', () => {
-    const warmup = warmupById('mesocycle2-chest-back-warmup-v1')!
+  it('renders the heading, the fixed cycle line, the movement step and the ramp step with a real exercise name', () => {
+    // 13 Aug 2026 Full Body Restructure — Session A's warm-up now
+    // rehearses goblet-squat (the session's new opening movement) with a
+    // single ramp, not incline-dumbbell-press with two.
+    const warmup = warmupById('mesocycle2-fullbody-squat-warmup-v1')!
     renderWarmup(warmup)
 
     expect(screen.getByText('Warm-up')).toBeInTheDocument()
     expect(screen.getByText('Easy cycling · 3 min')).toBeInTheDocument()
-    expect(screen.getByText('Scapular push-up')).toBeInTheDocument()
+    expect(screen.getByText('Bodyweight squat')).toBeInTheDocument()
     expect(screen.getByText('8 reps')).toBeInTheDocument()
-    // Incline dumbbell press names both ramp rows — assert the count and
-    // let the two distinct numeric lines below do the disambiguating.
-    expect(screen.getAllByText('Incline dumbbell press')).toHaveLength(2)
-    expect(screen.getByText('6 kg per dumbbell × 8')).toBeInTheDocument()
-    expect(screen.getByText('10 kg per dumbbell × 5')).toBeInTheDocument()
+    expect(screen.getByText('Goblet squat')).toBeInTheDocument()
+    expect(screen.getByText('8 kg per dumbbell × 5')).toBeInTheDocument()
   })
 
   it('renders a barbell ramp with the total-weight phrasing, never "per dumbbell"', () => {
-    const warmup = warmupById('mesocycle2-legs-core-warmup-v1')!
+    const warmup = warmupById('mesocycle2-fullbody-hinge-warmup-v1')!
     renderWarmup(warmup)
 
     // Barbell Romanian deadlift names both ramp rows (technique + load)

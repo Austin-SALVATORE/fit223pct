@@ -627,39 +627,39 @@
     "mesocycle-2-build": {
       "name": "Mesocycle 2 — Build",
       "session": {
-        "mesocycle2-chest-back": {
-          "name": "Chest & Back",
-          "focus": "Chest and Back Emphasis",
+        "mesocycle2-fullbody-squat": {
+          "name": "Full Body A",
+          "focus": "Squat Emphasis",
           "exercise": {
-            "single-arm-db-row": {
-              "note": "Rest after both sides"
-            }
-          }
-        },
-        "mesocycle2-legs-core": {
-          "name": "Legs & Core",
-          "focus": "Legs and Core Emphasis",
-          "exercise": {
-            "bulgarian-split-squat": {
-              "note": "Rest after both sides"
+            "dumbbell-lateral-raise": {
+              "note": "Technique takes priority over load"
             },
-            "standing-calf-raise": {
-              "note": "Full range of motion — controlled stretch at the bottom"
-            },
-            "russian-twist": {
-              "note": "Total reps, not per side"
+            "overhead-triceps-extension": {
+              "note": "One dumbbell, both hands"
             },
             "plank": {
               "note": "Rest 45-60 sec"
             }
           }
         },
-        "mesocycle2-shoulders-arms": {
-          "name": "Shoulders & Arms",
-          "focus": "Shoulders and Arms Emphasis",
+        "mesocycle2-fullbody-hinge": {
+          "name": "Full Body B",
+          "focus": "Hinge Emphasis",
           "exercise": {
-            "dumbbell-lateral-raise": {
-              "note": "Technique takes priority over load"
+            "single-arm-db-row": {
+              "note": "Rest after both sides"
+            },
+            "russian-twist": {
+              "note": "Total reps, not per side"
+            }
+          }
+        },
+        "mesocycle2-fullbody-hipext-shoulder": {
+          "name": "Full Body C",
+          "focus": "Hip Extension & Shoulder Emphasis",
+          "exercise": {
+            "standing-calf-raise": {
+              "note": "Skipping never invalidates Session C — do not substitute another lower-body movement"
             }
           }
         }

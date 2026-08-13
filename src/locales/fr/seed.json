@@ -627,39 +627,39 @@
     "mesocycle-2-build": {
       "name": "Mésocycle 2 — Construction",
       "session": {
-        "mesocycle2-chest-back": {
-          "name": "Poitrine et dos",
-          "focus": "Accent poitrine et dos",
+        "mesocycle2-fullbody-squat": {
+          "name": "Corps entier A",
+          "focus": "Accent squat",
           "exercise": {
-            "single-arm-db-row": {
-              "note": "Repos après les deux côtés"
-            }
-          }
-        },
-        "mesocycle2-legs-core": {
-          "name": "Jambes et gainage",
-          "focus": "Accent jambes et gainage",
-          "exercise": {
-            "bulgarian-split-squat": {
-              "note": "Repos après les deux côtés"
+            "dumbbell-lateral-raise": {
+              "note": "La technique passe avant la charge"
             },
-            "standing-calf-raise": {
-              "note": "Amplitude complète — étirement contrôlé en bas"
-            },
-            "russian-twist": {
-              "note": "Répétitions totales, pas par côté"
+            "overhead-triceps-extension": {
+              "note": "Un haltère, à deux mains"
             },
             "plank": {
               "note": "Repos 45-60 sec"
             }
           }
         },
-        "mesocycle2-shoulders-arms": {
-          "name": "Épaules et bras",
-          "focus": "Accent épaules et bras",
+        "mesocycle2-fullbody-hinge": {
+          "name": "Corps entier B",
+          "focus": "Accent charnière de hanche",
           "exercise": {
-            "dumbbell-lateral-raise": {
-              "note": "La technique passe avant la charge"
+            "single-arm-db-row": {
+              "note": "Repos après les deux côtés"
+            },
+            "russian-twist": {
+              "note": "Répétitions totales, pas par côté"
+            }
+          }
+        },
+        "mesocycle2-fullbody-hipext-shoulder": {
+          "name": "Corps entier C",
+          "focus": "Accent extension de hanche et épaules",
+          "exercise": {
+            "standing-calf-raise": {
+              "note": "Peut être passé sans invalider la séance C — ne le remplace pas par un autre mouvement du bas du corps"
             }
           }
         }
