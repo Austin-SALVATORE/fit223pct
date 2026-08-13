@@ -386,6 +386,19 @@ export const seedExercises: Exercise[] = [
     substitutionIds: [],
     isUnilateral: false,
   },
+  {
+    id: 'glute-bridge',
+    // Full Body Restructure, 13 Aug 2026 — promoted for Session C's
+    // warm-up movement step (`~/.claude/plans/m2-fullbody-restructure.md`
+    // §2), same reasoning as scapular-push-up/wall-slide/bodyweight-squat
+    // above (a1ce8a4, 11 Aug): the coach names the movement and nothing
+    // else, so only mechanically-evident fields are filled — no cues, no
+    // KNOWN_MISSING (art already resolves under this id).
+    muscles: ['glutes', 'hamstrings'],
+    equipment: ['bodyweight'],
+    substitutionIds: ['barbell-hip-thrust'],
+    isUnilateral: false,
+  },
   // Equipment upgrade + Mesocycle 2 migration, 12 Aug 2026 — seven Library
   // promotions. `MuscleGroup` has no obliques/hip-flexor/deep-trunk-
   // stabilizer/brachialis tokens, so the coach's richer classification

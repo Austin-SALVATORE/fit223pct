@@ -418,6 +418,9 @@
     "bodyweight-squat": {
       "name": "Bodyweight squat"
     },
+    "glute-bridge": {
+      "name": "Glute bridge"
+    },
     "dumbbell-rowboat": {
       "name": "Dumbbell rowboat",
       "cues": [

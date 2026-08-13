@@ -418,6 +418,9 @@
     "bodyweight-squat": {
       "name": "Squat au poids du corps"
     },
+    "glute-bridge": {
+      "name": "Pont fessier"
+    },
     "dumbbell-rowboat": {
       "name": "Rowing bateau à l'haltère",
       "cues": [

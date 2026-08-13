@@ -418,6 +418,9 @@
     "bodyweight-squat": {
       "name": "自重深蹲"
     },
+    "glute-bridge": {
+      "name": "臀桥"
+    },
     "dumbbell-rowboat": {
       "name": "哑铃划船式",
       "cues": ["只用一只哑铃", "动作正常、有控制地进行", "不要借助惯性完成动作"]
