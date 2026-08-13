@@ -650,6 +650,9 @@
           "name": "全身训练C",
           "focus": "髋伸展与肩部强化",
           "exercise": {
+            "overhead-press": {
+              "note": "严格推举——不借助腿部发力"
+            },
             "standing-calf-raise": {
               "note": "跳过不会影响C日的完成——不要用其他下肢动作代替。"
             }

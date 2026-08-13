@@ -197,11 +197,14 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       role: 'accessory',
     },
     {
-      exerciseId: 'dumbbell-shoulder-press',
+      // Session C Shoulder Press Amendment, 13 Aug 2026 evening —
+      // replaces dumbbell-shoulder-press; role omitted → defaults 'main'
+      // (role travels with the slot on a replacement).
+      exerciseId: 'overhead-press',
       setPlan: [
-        { weightKg: 8, reps: 12 },
-        { weightKg: 10, reps: 10 },
-        { weightKg: 12, reps: 8 },
+        { weightKg: 11.75, reps: 12 },
+        { weightKg: 13.75, reps: 10 },
+        { weightKg: 15.75, reps: 8 },
       ],
       restSeconds: 120,
     },
@@ -232,16 +235,9 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       restSeconds: 75,
       role: 'accessory',
     },
-    {
-      exerciseId: 'bicycle-crunch',
-      setPlan: [
-        { weightKg: null, reps: 16 },
-        { weightKg: null, reps: 20 },
-        { weightKg: null, reps: 24 },
-      ],
-      restSeconds: 60,
-      role: 'accessory',
-    },
+    // Items 6/7 swapped by the same amendment ("Session C remains" 6.
+    // Standing Calf Raise / 7. Bicycle Crunch, inverting the Calf-Raise
+    // Ruling from earlier the same day — latest text wins).
     {
       exerciseId: 'standing-calf-raise',
       setPlan: [
@@ -252,20 +248,36 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       restSeconds: 60,
       role: 'accessory',
     },
+    {
+      exerciseId: 'bicycle-crunch',
+      setPlan: [
+        { weightKg: null, reps: 16 },
+        { weightKg: null, reps: 20 },
+        { weightKg: null, reps: 24 },
+      ],
+      restSeconds: 60,
+      role: 'accessory',
+    },
   ],
 }
 
 /**
- * D7 — seven primaries, unchanged by the 13 Aug Full Body Restructure
- * (six-question bundle Q5: role is not reclassified). `bent-over-row` and
- * `romanian-deadlift` were Doc 2 §10's explicit "New primary benchmarks"
- * list (12 Aug); `barbell-hip-thrust`, `goblet-squat` and `barbell-curl`
- * each carry block-qualified "primary" language in their own coach
- * document but are absent from that program-level list, so they stay
- * accessory. `bulgarian-split-squat` is no longer seeded (removed from
- * the active program by the restructure) — its continued Set membership
- * is inert, not stale, since the role guard below iterates present
- * items only.
+ * D7 — seven primaries. Unchanged by the 13 Aug Full Body Restructure
+ * itself (six-question bundle Q5: role is not reclassified), but revised
+ * the same evening by the Session C Shoulder Press Amendment:
+ * `overhead-press` replaces `dumbbell-shoulder-press` in this set — role
+ * travels with the slot on a replacement (shipped precedent `0dccd7d`),
+ * not from the coach's block-qualified "primary … for Session C"
+ * language, which alone would read accessory (same register as
+ * `barbell-hip-thrust`/`barbell-curl`, both correctly excluded below).
+ * `bent-over-row` and `romanian-deadlift` were Doc 2 §10's explicit "New
+ * primary benchmarks" list (12 Aug); `barbell-hip-thrust`, `goblet-squat`
+ * and `barbell-curl` each carry block-qualified "primary" language in
+ * their own coach document but are absent from that program-level list,
+ * so they stay accessory. `bulgarian-split-squat` is no longer seeded
+ * (removed from the active program by the restructure) — its continued
+ * Set membership is inert, not stale, since the role guard below iterates
+ * present items only.
  */
 const PRIMARY_EXERCISE_IDS = new Set([
   'incline-dumbbell-press',
@@ -274,7 +286,7 @@ const PRIMARY_EXERCISE_IDS = new Set([
   'bent-over-row',
   'bulgarian-split-squat',
   'romanian-deadlift',
-  'dumbbell-shoulder-press',
+  'overhead-press',
 ])
 
 /**
@@ -295,12 +307,25 @@ const SINGLE_IMPLEMENT_EXERCISE_IDS = new Set([
 ])
 
 /**
- * The four barbell prescriptions — total-weight convention (Amendment
+ * The five barbell prescriptions — total-weight convention (Amendment
  * A.2), routed to `achievableLoads(...).barbell`, never the dumbbell
  * lists. A per-side transcription slip on any of these fails the
- * buildability guard below instead of shipping quietly.
+ * buildability guard below instead of shipping quietly. `overhead-press`
+ * joined this set with the Session C Shoulder Press Amendment (13 Aug
+ * evening) — omitting it is self-catching here (11.75/13.75/15.75 sit on
+ * neither the bilateral nor single-implement list), unlike the calf-raise
+ * case above where the guard was blind; see that negative control's own
+ * comment on `mesocycle2-fullbody-hipext-shoulder/overhead-press`'s test
+ * below for the failure mode this set membership actually guards
+ * against: a per-side transcription slip (2/3/4), not omission.
  */
-const BARBELL_EXERCISE_IDS = new Set(['bent-over-row', 'romanian-deadlift', 'barbell-hip-thrust', 'barbell-curl'])
+const BARBELL_EXERCISE_IDS = new Set([
+  'bent-over-row',
+  'romanian-deadlift',
+  'barbell-hip-thrust',
+  'barbell-curl',
+  'overhead-press',
+])
 
 describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + Mesocycle 2 migration)', () => {
   it('trainingWeekdays and dates match spec §3', () => {

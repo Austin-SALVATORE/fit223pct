@@ -658,6 +658,9 @@
           "name": "Full Body C",
           "focus": "Hip Extension & Shoulder Emphasis",
           "exercise": {
+            "overhead-press": {
+              "note": "Strict press — no leg drive"
+            },
             "standing-calf-raise": {
               "note": "Skipping never invalidates Session C — do not substitute another lower-body movement"
             }

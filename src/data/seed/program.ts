@@ -520,15 +520,26 @@ export const seedProgram: Program = {
  * (a total-weight list), so a per-side transcription slip fails the
  * suite rather than shipping quietly.
  *
- * **Role (main/accessory) is unchanged by this restructure** — the
- * restructure moves and re-times prescriptions, it does not reclassify
- * any of them (six-question bundle, Q5). The seven primaries remain
+ * **Role (main/accessory) is unchanged by the 13 Aug restructure itself**
+ * — moving and re-timing prescriptions does not reclassify them
+ * (six-question bundle, Q5) — **but the same-evening Session C Shoulder
+ * Press Amendment revises one membership**: `overhead-press` replaces
+ * `dumbbell-shoulder-press` in the `main` slot it occupied ("a
+ * REPLACEMENT, not an additional exercise" — role travels with the slot
+ * on a replacement, shipped precedent `0dccd7d`'s `romanian-deadlift` for
+ * `dumbbell-rdl`), even though the coach's own "primary … for Session C"
+ * language about it is the identical block-qualified register that keeps
+ * `barbell-hip-thrust` and `barbell-curl` accessory — the primacy-
+ * language test was built for movements added to accessory slots, not
+ * implement swaps in an existing main slot. The seven primaries remain
  * `ladder()`'s default `'main'`: incline-dumbbell-press,
  * dumbbell-bench-press, single-arm-db-row, bent-over-row,
  * bulgarian-split-squat (no longer seeded — the guard iterates present
  * items, so its continued Set membership is inert, not stale),
- * romanian-deadlift, dumbbell-shoulder-press. Every other movement
- * across Sessions A-C is `role: 'accessory'`, including
+ * romanian-deadlift, overhead-press. `dumbbell-shoulder-press` keeps its
+ * Library entry and history, and remains prescribed in phase-1-home — it
+ * is a removal from this one session, not a retirement. Every other
+ * movement across Sessions A-C is `role: 'accessory'`, including
  * `barbell-hip-thrust`, `goblet-squat` and `barbell-curl` — each of
  * these three, plus the coach's new "primary knee-dominant / squat-
  * pattern movement for Session A" language about goblet-squat, is
@@ -539,9 +550,11 @@ export const seedProgram: Program = {
  * does not imply `role: 'main'`, and technique-gated progression
  * (`dumbbell-lateral-raise`, `rear-delt-fly`) does not imply
  * `role: 'accessory'` either; the two must never be inferred from one
- * another. A per-prescription progression-policy field is a named
- * prerequisite for a later feature (`~/.claude/plans/load-setup-ux.md`
- * §0.1b) and is deliberately not built here.
+ * another — the LOAD-FIRST tag on `overhead-press` contributes nothing to
+ * its role either, despite sitting right next to the role line. A
+ * per-prescription progression-policy field is a named prerequisite for a
+ * later feature (`~/.claude/plans/load-setup-ux.md` §0.1b) and is
+ * deliberately not built here.
  *
  * **The `bent-over-row` rehearsal set is dropped** (six-question bundle,
  * Q3) — it was prescribed when bent-over-row opened its old session as
@@ -808,15 +821,27 @@ export const mesocycle2Build: Program = {
           DUMBBELL_STEP_KG,
           { restSeconds: 90, role: 'accessory' },
         ),
+        // Session C Shoulder Press Amendment, 13 Aug 2026 evening —
+        // replaces dumbbell-shoulder-press ("a REPLACEMENT, not an
+        // additional exercise"; dumbbell-shoulder-press keeps its Library
+        // entry and history, and stays prescribed in phase-1-home).
+        // `role` omitted → ladder()'s default 'main': role travels with
+        // the slot on a replacement (shipped precedent 0dccd7d, romanian-
+        // deadlift for dumbbell-rdl), not from the coach's block-qualified
+        // "primary … for Session C" language, which alone would read
+        // accessory (same register as barbell-hip-thrust/barbell-curl).
+        // The LOAD-FIRST tag contributes nothing to this either — Q5 rules
+        // out inferring role from progression policy in either direction.
         ladder(
-          'dumbbell-shoulder-press',
+          'overhead-press',
           [
-            { weightKg: 8, reps: 12 },
-            { weightKg: 10, reps: 10 },
-            { weightKg: 12, reps: 8 },
+            { weightKg: 11.75, reps: 12 },
+            { weightKg: 13.75, reps: 10 },
+            { weightKg: 15.75, reps: 8 },
           ],
-          BILATERAL_MAX_KG,
+          BARBELL_MAX_KG,
           DUMBBELL_STEP_KG,
+          { restSeconds: 120, note: 'Strict press — no leg drive' },
         ),
         // Use one dumbbell, both hands — spec's single-implement
         // instruction. Reps/rest changed from the 12 Aug seed (was
@@ -847,29 +872,19 @@ export const mesocycle2Build: Program = {
           DUMBBELL_STEP_KG,
           { restSeconds: 75, role: 'accessory' },
         ),
-        // Reps rise across sets by coach design, not a gap.
-        // load-not-the-lever once complete. Rest changed from the 12 Aug
-        // seed (was 45) — six-question bundle §3.4.
-        ladder(
-          'bicycle-crunch',
-          [
-            { weightKg: null, reps: 16 },
-            { weightKg: null, reps: 20 },
-            { weightKg: null, reps: 24 },
-          ],
-          null,
-          null,
-          { restSeconds: 60, role: 'accessory' },
-        ),
-        // Optional seventh accessory (Session C calf-raise ruling, 13
-        // Aug): "Use one dumbbell" moves this to the single-implement
-        // ladder (was BILATERAL_MAX_KG) — the buildability guard is blind
-        // to the move at 12/14/16 kg, since those loads sit on both
-        // lists; see mesocycle2Build.conformance.test.ts's 22 kg negative
-        // control. Skipping never invalidates Session C completion and is
-        // never replaced with another lower-body movement — carried as
-        // this item's own note plus its three locale keys, and nothing
-        // more (no completion gate reads item count).
+        // Sixth accessory (Session C Shoulder Press Amendment, 13 Aug
+        // evening — "Session C remains" 6. Standing Calf Raise / 7.
+        // Bicycle Crunch, inverting the Calf-Raise Ruling from earlier the
+        // same day; latest text wins, flagged to the coach as an FYI, not
+        // a blocker). "Use one dumbbell" moves this to the single-
+        // implement ladder (was BILATERAL_MAX_KG) — the buildability
+        // guard is blind to the move at 12/14/16 kg, since those loads
+        // sit on both lists; see mesocycle2Build.conformance.test.ts's
+        // 22 kg negative control. Skipping never invalidates Session C
+        // completion and is never replaced with another lower-body
+        // movement — carried as this item's own note plus its three
+        // locale keys, and nothing more (no completion gate reads item
+        // count).
         ladder(
           'standing-calf-raise',
           [
@@ -884,6 +899,20 @@ export const mesocycle2Build: Program = {
             role: 'accessory',
             note: 'Skipping never invalidates Session C — do not substitute another lower-body movement',
           },
+        ),
+        // Reps rise across sets by coach design, not a gap.
+        // load-not-the-lever once complete. Rest changed from the 12 Aug
+        // seed (was 45) — six-question bundle §3.4.
+        ladder(
+          'bicycle-crunch',
+          [
+            { weightKg: null, reps: 16 },
+            { weightKg: null, reps: 20 },
+            { weightKg: null, reps: 24 },
+          ],
+          null,
+          null,
+          { restSeconds: 60, role: 'accessory' },
         ),
       ],
     },
