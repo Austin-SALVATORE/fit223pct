@@ -673,8 +673,8 @@
               "detail": "20 min, après la musculation — 0-2 min de transition facile avant, jusqu'à 3 min de pédalage facile après (environ 25 min au total)"
             },
             "1": {
-              "label": "Étirements poitrine et dos",
-              "detail": "Étirement des pectoraux au mur, étirement du grand dorsal, étirement croisé de l'épaule — 30 sec par côté, une série, environ 3-4 min au total"
+              "label": "Étirements Corps entier A",
+              "detail": "Étirement des quadriceps (debout ou avec appui), étirement des pectoraux au mur, étirement du grand dorsal — 30 sec par côté, une série, environ 3-4 min au total"
             }
           }
         },
@@ -703,8 +703,8 @@
               "detail": "20 min, après la musculation — 0-2 min de transition facile avant, jusqu'à 3 min de pédalage facile après (environ 25 min au total)"
             },
             "1": {
-              "label": "Étirements jambes et gainage",
-              "detail": "Étirement des quadriceps (debout ou avec appui), étirement des ischio-jambiers, étirement des fléchisseurs de hanche, étirement des fessiers en chiffre quatre — 30 sec par côté, une série, environ 4-5 min au total"
+              "label": "Étirements Corps entier B",
+              "detail": "Étirement des ischio-jambiers, étirement des fléchisseurs de hanche, étirement croisé de l'épaule — 30 sec par côté, une série, environ 3-4 min au total"
             }
           }
         },
@@ -733,8 +733,8 @@
               "detail": "20 min, après la musculation — 0-2 min de transition facile avant, jusqu'à 3 min de pédalage facile après (environ 25 min au total)"
             },
             "1": {
-              "label": "Étirements épaules et bras",
-              "detail": "Étirement croisé de l'épaule, étirement des triceps au-dessus de la tête, étirement biceps/pectoraux au mur — 30 sec par côté, une série, environ 3-4 min au total"
+              "label": "Étirements Corps entier C",
+              "detail": "Étirement des fessiers en chiffre quatre, étirement croisé de l'épaule, étirement des triceps au-dessus de la tête — 30 sec par côté, une série, environ 3-4 min au total"
             }
           }
         },

@@ -898,17 +898,26 @@ export const mesocycle2Build: Program = {
 
     **Weekdays 1/3/5 (training)** — the 20 min post-lift ride (§12,
     unchanged from 6 Aug) plus a second item, the session-specific
-    cooldown/stretch sequence (Phase 3 of the 13 Aug Full Body Restructure
-    transcription plan rewrites this to the coach's new session-specific
-    blocks — six-question bundle Q6 — landing in its own commit, same
-    push). Plain text, no `routineId`: none of the six named stretches
-    has a routine step id yet (same reasoning phase-1-home's own
-    recovery-day stretching already documents below). Label names the
-    session (matching the coach's own "Session A/B/C — … Stretching"
-    headers) rather than a shared generic label, precedent-style with
-    phase-1-home's post-ride stretch item — one item, detail lists the
-    full sequence. Coach ruling: "Do not turn post-workout stretching into
-    another workout" — one round each, no progression, no logging.
+    cooldown/stretch sequence. **Rewritten 13 Aug 2026** for the Full Body
+    Restructure — the coach's six-question bundle (Q6) replaces the old
+    body-part-named stretch blocks wholesale ("Do NOT simply rename …
+    while retaining them blindly"), so all three blocks below are new
+    content, not renamed old ones. Plain text, no `routineId`: each new
+    block contains at least one stretch with no routine step id yet
+    (`lat stretch`, `cross-body shoulder stretch`, `overhead triceps
+    stretch`) and `ActivityItem` carries one `routineId` per whole item,
+    so no block maps cleanly onto a routine — the recovery-day catalogue
+    (`routines.ts`'s `recovery-stretch-v1`) does carry step ids for some
+    of the *other* named stretches (`wall-chest-stretch`,
+    `standing-hamstring-stretch`, `standing-quadriceps-stretch`,
+    `half-kneeling-hip-flexor-stretch`, `figure-four-glute-stretch`), but
+    that is the eight-step recovery-day routine, a different item, never
+    linked here. Label names the session (matching the coach's own
+    "Full Body A/B/C — … Stretch" headers) rather than a shared generic
+    label, precedent-style with phase-1-home's post-ride stretch item —
+    one item, detail lists the full sequence. Coach ruling: "Do not turn
+    post-workout stretching into another workout" — one round each, no
+    progression, no logging.
 
     **Weekdays 2/4/6 (recovery)** — the coach's cardio structure is now
     exactly "3 × post-strength Zone 2 (20 min) + 1 × dedicated Zone 2
@@ -946,9 +955,9 @@ export const mesocycle2Build: Program = {
           recordable: 'ride',
         },
         {
-          label: 'Chest & Back Stretching',
+          label: 'Full Body A Stretching',
           detail:
-            'Wall chest stretch, lat stretch, cross-body shoulder stretch — 30 sec/side, one round, about 3-4 min total',
+            'Standing or assisted quad stretch, wall chest stretch, lat stretch — 30 sec/side, one round, about 3-4 min total',
         },
       ],
     },
@@ -977,9 +986,9 @@ export const mesocycle2Build: Program = {
           recordable: 'ride',
         },
         {
-          label: 'Legs & Core Stretching',
+          label: 'Full Body B Stretching',
           detail:
-            'Standing or supported quad stretch, hamstring stretch, hip flexor stretch, figure-four glute stretch — 30 sec/side, one round, about 4-5 min total',
+            'Hamstring stretch, hip flexor stretch, cross-body shoulder stretch — 30 sec/side, one round, about 3-4 min total',
         },
       ],
     },
@@ -1004,9 +1013,9 @@ export const mesocycle2Build: Program = {
           recordable: 'ride',
         },
         {
-          label: 'Shoulders & Arms Stretching',
+          label: 'Full Body C Stretching',
           detail:
-            'Cross-body shoulder stretch, overhead triceps stretch, biceps/chest wall stretch — 30 sec/side, one round, about 3-4 min total',
+            'Figure-four glute stretch, cross-body shoulder stretch, overhead triceps stretch — 30 sec/side, one round, about 3-4 min total',
         },
       ],
     },

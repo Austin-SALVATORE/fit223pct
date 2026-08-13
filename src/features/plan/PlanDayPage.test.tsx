@@ -427,11 +427,11 @@ describe('PlanDayPage states', () => {
       expect(screen.getByText(/20 min, after lifting/)).toBeInTheDocument()
 
       // Second item — the stretching prescription, currently invisible.
-      // Content is rewritten in Phase 3 of the transcription plan (own
-      // commit, same push) — still the old body-part-named block here.
-      expect(screen.getByText('Chest & Back Stretching')).toBeInTheDocument()
+      // Content rewritten 13 Aug 2026 (Full Body Restructure, Q6) —
+      // session-specific, not the old body-part-named block.
+      expect(screen.getByText('Full Body A Stretching')).toBeInTheDocument()
       expect(
-        screen.getByText(/Wall chest stretch, lat stretch, cross-body shoulder stretch/),
+        screen.getByText(/Standing or assisted quad stretch, wall chest stretch, lat stretch/),
       ).toBeInTheDocument()
     })
   })
