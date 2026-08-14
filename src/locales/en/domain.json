@@ -43,6 +43,12 @@
     "baselines": "Baselines set. Everything from here is progress.",
     "consistent": "Consistent work at the same numbers — that is what compounds."
   },
+  "schedule": {
+    "postponeBlockedNotTrainingDay": "This isn't a scheduled training day.",
+    "postponeBlockedAlreadyShifted": "A session has already been postponed this week.",
+    "postponeBlockedWeekEnd": "Postponing would push training past this week.",
+    "postponeBlockedProgramEnd": "Postponing would push training past this phase's end."
+  },
   "trends": {
     "firstWeekInProgress": "Your first week is still in progress — check back once a few days have passed.",
     "noScheduledSessions": "No scheduled sessions have fallen in this window yet.",

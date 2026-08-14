@@ -41,6 +41,12 @@
     "baselines": "基准数据已建立。从现在开始，一切都是进步。",
     "consistent": "同样的数字，稳定地练——这才是长期积累的关键。"
   },
+  "schedule": {
+    "postponeBlockedNotTrainingDay": "今天不是安排好的训练日。",
+    "postponeBlockedAlreadyShifted": "这周已经推迟过一次训练了。",
+    "postponeBlockedWeekEnd": "推迟会超出本周范围。",
+    "postponeBlockedProgramEnd": "推迟会超出这个阶段的结束日期。"
+  },
   "trends": {
     "firstWeekInProgress": "你的第一周还在进行中——过几天再回来看看。",
     "noScheduledSessions": "这段时间内还没有安排的训练。",

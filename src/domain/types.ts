@@ -488,6 +488,33 @@ export interface EquipmentProfile {
   confirmedAt?: string | null
 }
 
+/**
+ * An athlete-initiated postpone of one training day within its own ISO
+ * week (docs from the postpone-day plan, §3.1). One record, not an array
+ * — v1 permits at most one shift per ISO week, so a stale record whose
+ * `weekStart` doesn't match the week being resolved is inert by
+ * construction and needs no pruning job. A new postpone in a later week
+ * simply overwrites this one.
+ *
+ * Lives on `UserSettings` rather than `Program` (which is unconditionally
+ * re-put by `seedDatabase()` on every boot — see `src/data/seed/index.ts`
+ * — so a Program-stored shift would be silently erased at next launch)
+ * and rather than a new Dexie table (the settings store's `'id'`-only
+ * index means an optional field here produces no index diff, so no
+ * version bump is needed at all — `db.ts`'s "Dexie diffs index
+ * declarations between versions, not object contents").
+ */
+export interface ScheduleShift {
+  programId: string
+  /** ISO Monday date key of the week this shift applies to. */
+  weekStart: string
+  /** The originally-scheduled training date that was postponed. */
+  fromDate: string
+  /** Whole days moved. v1 only ever writes 1 — multi-day postpone is out of scope for v1. */
+  days: number
+  createdAt: string
+}
+
 export interface UserSettings {
   id: 'user'
   name: string
@@ -591,4 +618,12 @@ export interface UserSettings {
    * site of the field that first established it).
    */
   equipment?: EquipmentProfile | null
+
+  /**
+   * The athlete's one active postpone, if any, this ISO week. Absent
+   * means no shift — every pre-existing record reads correctly with no
+   * migration, since the settings store's index is `'id'` only (see
+   * `ScheduleShift`'s own doc).
+   */
+  scheduleShift?: ScheduleShift | null
 }

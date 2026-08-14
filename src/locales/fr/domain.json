@@ -43,6 +43,12 @@
     "baselines": "Bases posées. À partir de maintenant, tout est progrès.",
     "consistent": "Un travail régulier aux mêmes chiffres — c'est ça qui paie sur la durée."
   },
+  "schedule": {
+    "postponeBlockedNotTrainingDay": "Ce n'est pas un jour d'entraînement prévu.",
+    "postponeBlockedAlreadyShifted": "Une séance a déjà été reportée cette semaine.",
+    "postponeBlockedWeekEnd": "Reporter ferait dépasser la semaine.",
+    "postponeBlockedProgramEnd": "Reporter dépasserait la fin de cette phase."
+  },
   "trends": {
     "firstWeekInProgress": "Ta première semaine est encore en cours — reviens dans quelques jours.",
     "noScheduledSessions": "Aucune séance prévue ne s'est encore produite sur cette période.",
