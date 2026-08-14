@@ -94,18 +94,21 @@ export function consistencyTrend(
     }
   }
 
-  // Only completions that land on a scheduled day count toward the rate —
-  // an extra unscheduled session is real effort, but it isn't "more of the
-  // schedule than the schedule has," so it must never push the rate past
-  // 1. It simply doesn't move this number either way.
-  const completedCount = workouts.filter(
-    (w) =>
-      w.programId === program.id &&
-      w.completedAt !== null &&
-      w.date >= windowStartKey &&
-      w.date <= windowEndKey &&
-      program.trainingWeekdays.includes(isoWeekday(parseDateKey(w.date))),
+  // Every completion in the window counts, on any date — a weekday filter
+  // here silently punished exactly the affordances that let an athlete
+  // train on an unscheduled day without losing credit for it: postponing
+  // a session (postpone-day plan §5 R3) and starting one early
+  // (`TodayPage.tsx`'s early-start affordance) both land the completion
+  // on a weekday the filter didn't recognize, so the rate read as if the
+  // session had never happened. Clamped instead of filtered: it must
+  // never push the rate past 1 — extra unscheduled effort is real, but
+  // it isn't "more of the schedule than the schedule has" — and the
+  // clamp gets that invariant from the type of computation rather than
+  // from a weekday condition that excludes real completions.
+  const completed = workouts.filter(
+    (w) => w.programId === program.id && w.completedAt !== null && w.date >= windowStartKey && w.date <= windowEndKey,
   ).length
+  const completedCount = Math.min(completed, scheduledCount)
 
   return {
     status: 'ok',

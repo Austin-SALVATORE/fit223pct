@@ -108,6 +108,39 @@ describe('consistencyTrend', () => {
       expect(trend.rate).toBeLessThanOrEqual(1)
     }
   })
+
+  /**
+   * Postpone-day plan §5 R3 / Phase 4 — a weekday filter on the
+   * completion count used to punish exactly the affordances that let an
+   * athlete train on an unscheduled day without losing credit: a
+   * postponed session counted as scheduled-and-not-done even though
+   * every scheduled session that week was actually completed. Fixed by
+   * dropping the weekday condition and clamping the raw count to
+   * `scheduledCount` instead (`trends.ts`), which keeps the "never past
+   * 1" invariant this file's own control above already pins.
+   *
+   * Control: reintroducing `program.trainingWeekdays.includes(...)` into
+   * the completed-workout filter makes this go red — `completedCount`
+   * drops to 2 and `rate` to 2/3.
+   */
+  it('counts a postponed session completed on an unscheduled day toward the rate, not against it', () => {
+    // Window: Mon 06 – Fri 10 (three scheduled days). Mon and Wed
+    // completed on schedule; Friday's session postponed and completed
+    // Saturday 11th instead — every scheduled session for the week was
+    // still done, just not on Friday's own date.
+    const workouts = [
+      workout('2026-07-06', 'goblet-squat', 14, 10), // Mon, scheduled
+      workout('2026-07-08', 'goblet-squat', 14, 10), // Wed, scheduled
+      workout('2026-07-11', 'goblet-squat', 14, 10), // Sat — Friday's session, postponed
+    ]
+    const trend = consistencyTrend(program, workouts, new Date(2026, 6, 12, 9, 0, 0)) // Sunday 12th
+    expect(trend.status).toBe('ok')
+    if (trend.status === 'ok') {
+      expect(trend.scheduledCount).toBe(3)
+      expect(trend.completedCount).toBe(3)
+      expect(trend.rate).toBe(1)
+    }
+  })
 })
 
 describe('strengthTrend', () => {
