@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { projectSchedule, resolveDayPlan } from './schedule'
-import type { ActivityTemplate, Program, SessionTemplate, Workout } from './types'
+import type { ActivityTemplate, Program, ScheduleShift, SessionTemplate, Workout } from './types'
 
 const sessionA: SessionTemplate = {
   id: 'A',
@@ -256,6 +256,77 @@ describe('resolveDayPlan — weekday-pinned scheduling', () => {
       expect(plan.daysUntilStart).toBe(3)
       expect(plan.firstSession.id).toBe('B')
     }
+  })
+})
+
+/**
+ * Postpone-day plan §8.3 (resolveDayPlan half — the projectSchedule half
+ * lives in Phase 3's own describe block below). Week of Mon 27 Jul 2026:
+ * Mon 27 / Wed 29 / Fri 31, all inside `program`'s own [21 Jul, 9 Aug]
+ * range — postponing Fri 31 → Sat 1 Aug.
+ */
+describe('resolveDayPlan — postpone shift', () => {
+  const rideActivity: ActivityTemplate = {
+    kind: 'recovery',
+    title: 'Zone 2 ride',
+    items: [{ label: 'Zone 2 ride', detail: '20 min after lifting', recordable: 'ride' }],
+  }
+  const shiftableProgram: Program = {
+    ...program,
+    weekdayActivities: { 5: rideActivity },
+  }
+  const fridayToSaturday: ScheduleShift = {
+    programId: program.id,
+    weekStart: '2026-07-27',
+    fromDate: '2026-07-31',
+    days: 1,
+    createdAt: '2026-07-31T18:00:00.000Z',
+  }
+
+  it('vacates the postponed day: rest, activity suppressed, postponedTo set, no next-session preview', () => {
+    const plan = resolveDayPlan(shiftableProgram, new Date(2026, 6, 31), 5, fridayToSaturday)
+    expect(plan.kind).toBe('rest')
+    if (plan.kind === 'rest') {
+      expect(plan.activity).toBeNull()
+      expect(plan.postponedTo).toBe('2026-08-01')
+      expect(plan.nextSession).toBeNull()
+      expect(plan.nextDate).toBeNull()
+    }
+  })
+
+  it('the receiving day is training, with activityWeekday/shiftedFrom naming the source day, and the shifted-in activity object', () => {
+    const plan = resolveDayPlan(shiftableProgram, new Date(2026, 7, 1), 5, fridayToSaturday)
+    expect(plan.kind).toBe('training')
+    if (plan.kind === 'training') {
+      expect(plan.activityWeekday).toBe(5)
+      expect(plan.shiftedFrom).toBe('2026-07-31')
+      expect(plan.activity).toEqual(rideActivity)
+    }
+  })
+
+  it('identity is untouched: the session for Saturday-with-shift === the session for Friday-without-shift, for the same completedCount', () => {
+    const withoutShift = resolveDayPlan(program, new Date(2026, 6, 31), 5)
+    const withShift = resolveDayPlan(program, new Date(2026, 7, 1), 5, fridayToSaturday)
+    expect(withoutShift.kind).toBe('training')
+    expect(withShift.kind).toBe('training')
+    if (withoutShift.kind === 'training' && withShift.kind === 'training') {
+      expect(withShift.session).toBe(withoutShift.session)
+    }
+  })
+
+  it('an ordinary unshifted training day carries shiftedFrom: null and its own weekday', () => {
+    const plan = resolveDayPlan(shiftableProgram, new Date(2026, 6, 29), 4, fridayToSaturday) // Wed 29 Jul
+    expect(plan.kind).toBe('training')
+    if (plan.kind === 'training') {
+      expect(plan.shiftedFrom).toBeNull()
+      expect(plan.activityWeekday).toBe(3)
+    }
+  })
+
+  it('a shift belonging to a different week is inert — resolveDayPlan reads as if unshifted', () => {
+    const plan = resolveDayPlan(program, new Date(2026, 6, 22), 0, fridayToSaturday) // Wed 22 Jul — a different week
+    expect(plan.kind).toBe('training')
+    if (plan.kind === 'training') expect(plan.shiftedFrom).toBeNull()
   })
 })
 

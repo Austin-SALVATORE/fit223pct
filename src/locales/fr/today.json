@@ -12,7 +12,17 @@
     "lowStreak_other": "{{count}} jours bas d'affilée maintenant — faire de ce jour un jour de repos est un choix tout à fait valable. Ta séance t'attendra.",
     "activationHeading": "Avant de commencer",
     "rideHeading": "Aussi aujourd'hui",
-    "warmupHeading": "Échauffement"
+    "warmupHeading": "Échauffement",
+    "shiftedFrom": "Déplacée depuis le {{date}}"
+  },
+  "postpone": {
+    "action": "Reporter la séance d'aujourd'hui"
+  },
+  "postponed": {
+    "eyebrow": "Reportée",
+    "title": "Déplacée au {{date}}",
+    "subtitle": "Rien n'est perdu — ta séance t'attend là-bas, exactement comme prévu.",
+    "undo": "Annuler — la garder aujourd'hui"
   },
   "warmup": {
     "cycleLine": "Vélo facile · {{minutes}} min",

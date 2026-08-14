@@ -12,7 +12,17 @@
     "lowStreak_other": "{{count}} low days in a row now — making this a rest day is a completely fine choice. Your session will wait for you.",
     "activationHeading": "Before you start",
     "rideHeading": "Also today",
-    "warmupHeading": "Warm-up"
+    "warmupHeading": "Warm-up",
+    "shiftedFrom": "Moved from {{date}}"
+  },
+  "postpone": {
+    "action": "Postpone today's session"
+  },
+  "postponed": {
+    "eyebrow": "Postponed",
+    "title": "Moved to {{date}}",
+    "subtitle": "Nothing was lost — your session is waiting there, exactly as planned.",
+    "undo": "Undo — keep it today"
   },
   "warmup": {
     "cycleLine": "Easy cycling · {{minutes}} min",

@@ -6,6 +6,7 @@ import type {
   DistributiveOmit,
   Exercise,
   Program,
+  ScheduleShift,
   UserSettings,
   Workout,
 } from '@/domain/types'
@@ -260,5 +261,10 @@ export const settingsRepo = {
   /** Persists that a given week's review has been shown — it never reappears after this. */
   markWeeklyReviewSeen(weekStart: string): Promise<void> {
     return settingsRepo.update({ lastSeenWeeklyReviewWeekStart: weekStart })
+  },
+
+  /** Writes the athlete's one active postpone, or clears it (undo). Replaces whatever shift was previously stored — v1 permits at most one. */
+  setScheduleShift(shift: ScheduleShift | null): Promise<void> {
+    return settingsRepo.update({ scheduleShift: shift })
   },
 }

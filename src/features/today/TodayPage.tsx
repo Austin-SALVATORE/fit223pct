@@ -17,7 +17,7 @@ import { warmupById } from '@/data/seed/warmups'
 import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readiness'
 import { applyReadiness } from '@/domain/adjustments'
 import { buildWeeklyReview, reviewIsUnseen, type WeeklyReview } from '@/domain/weeklyReview'
-import { formatLongDate, isoWeekday, toDateKey, type IsoWeekday } from '@/lib/dates'
+import { formatLongDate, isoWeekday, parseDateKey, toDateKey, type IsoWeekday } from '@/lib/dates'
 import { useActivityKindLabel } from '@/lib/activityKindLabel'
 import { useFocusOnChange } from '@/lib/useFocusOnChange'
 import { useLocale } from '@/i18n/useLocale'
@@ -37,6 +37,7 @@ import type {
   CheckIn,
   Exercise,
   Program,
+  ScheduleShift,
   SessionTemplate,
   Workout,
 } from '@/domain/types'
@@ -48,6 +49,7 @@ import { ActivationSection } from './ActivationSection'
 import { TrainingDayRide } from './TrainingDayRide'
 import { DoneTodayActivities } from './DoneTodayActivities'
 import { WarmupSection } from './WarmupSection'
+import { PostponeButton } from './PostponeButton'
 
 /** Never rendered — see InProgress's Rules-of-Hooks comment. */
 const EMPTY_SESSION: SessionTemplate = { id: '', name: '', focus: '', items: [] }
@@ -84,6 +86,8 @@ interface TodayData {
   /** The successor program, if the current one has already ended or is about to (final-rest-day-lookahead.md §4 Phase 1b). */
   nextProgram: Program | undefined
   nextProgramCompletedCount: number
+  /** The athlete's one active postpone this ISO week, if any (postpone-day plan §3). */
+  scheduleShift: ScheduleShift | null
 }
 
 export function TodayPage() {
@@ -136,6 +140,7 @@ export function TodayPage() {
       todayActivityRecords,
       nextProgram,
       nextProgramCompletedCount,
+      scheduleShift: settings?.scheduleShift ?? null,
     }
   }, [todayKey])
 
@@ -176,6 +181,7 @@ function TodayBody({
     todayActivityRecords,
     nextProgram,
     nextProgramCompletedCount,
+    scheduleShift,
   } = data
   // Decided once, at this component instance's first render, and never
   // re-derived — marking the review "seen" writes to settings, which would
@@ -234,6 +240,7 @@ function TodayBody({
           todayActivityRecords={todayActivityRecords}
           nextProgram={nextProgram}
           nextProgramCompletedCount={nextProgramCompletedCount}
+          scheduleShift={scheduleShift}
         />
       ) : (
         <NoProgram checkInCard={checkInCard} />
@@ -264,6 +271,7 @@ function PlannedDay({
   todayActivityRecords,
   nextProgram,
   nextProgramCompletedCount,
+  scheduleShift,
 }: {
   program: Program
   completedCount: number
@@ -276,13 +284,14 @@ function PlannedDay({
   todayActivityRecords: ActivityRecord[]
   nextProgram: Program | undefined
   nextProgramCompletedCount: number
+  scheduleShift: ScheduleShift | null
 }) {
   const { t } = useTranslation('today')
   const programName = useProgramName(program)
   // Unconditional (Rules of Hooks) — useProgramName already guards `id
   // === ''`, so EMPTY_PROGRAM is safe when there is no successor.
   const nextProgramName = useProgramName(nextProgram ?? EMPTY_PROGRAM)
-  const plan = resolveDayPlan(program, today, completedCount)
+  const plan = resolveDayPlan(program, today, completedCount, scheduleShift)
   const eased = readiness.tier === 'easier'
   const rideRecord = todayActivityRecords.find((r) => r.kind === 'ride')
   const activationRecord = todayActivityRecords.find((r) => r.kind === 'activation')
@@ -339,17 +348,23 @@ function PlannedDay({
           session={plan.session}
           exerciseById={exerciseById}
           todayKey={todayKey}
-          today={today}
           readiness={readiness}
           rideRecord={rideRecord}
           activationRecord={activationRecord}
           checkInCard={checkInCard}
           activity={plan.activity}
           activation={plan.activation}
+          activityWeekday={plan.activityWeekday}
+          shiftedFrom={plan.shiftedFrom}
+          scheduleShift={scheduleShift}
         />
       )}
 
-      {plan.kind === 'rest' && plan.nextSession !== null && (
+      {plan.kind === 'rest' && plan.postponedTo !== null && (
+        <PostponedDay postponedTo={plan.postponedTo} checkInCard={checkInCard} />
+      )}
+
+      {plan.kind === 'rest' && plan.postponedTo === null && plan.nextSession !== null && (
         <UnscheduledDay
           program={program}
           session={plan.nextSession}
@@ -398,6 +413,7 @@ function PlannedDay({
       */}
       {plan.kind === 'rest' &&
         plan.nextSession === null &&
+        plan.postponedTo === null &&
         (nextPhasePlan && nextPhasePlan.kind === 'upcoming' && nextProgram ? (
           <UnscheduledDay
             program={nextProgram}
@@ -482,11 +498,13 @@ function TrainingDay({
   session,
   exerciseById,
   todayKey,
-  today,
   readiness,
   checkInCard,
   activity,
   activation,
+  activityWeekday,
+  shiftedFrom,
+  scheduleShift,
   rideRecord,
   activationRecord,
 }: {
@@ -494,13 +512,18 @@ function TrainingDay({
   session: SessionTemplate
   exerciseById: Map<string, Exercise>
   todayKey: string
-  today: Date
   readiness: Readiness
   checkInCard: ReactNode
   /** Post-strength cardio for this weekday, display only (docs/design/ActivityPrescriptionPhaseA.md §1). */
   activity: ActivityTemplate | null
   /** The one preparation round, shown before the session on every training day (§2). */
   activation: ActivityTemplate | null
+  /** The weekday whose locale key `activity` resolves under — the source weekday when this session was shifted in (postpone-day plan §5 R1), never today's own weekday. */
+  activityWeekday: IsoWeekday
+  /** Source date this session was postponed from, when a shift moved it here; null for an ordinary unshifted training day. */
+  shiftedFrom: string | null
+  /** The athlete's one active postpone this ISO week, if any — what `PostponeButton` checks for "already shifted". */
+  scheduleShift: ScheduleShift | null
   /** Today's ride record, if any (coach spec v2.11 §3) — undefined until logged. */
   rideRecord: ActivityRecord | undefined
   /** Today's activation record, if any. */
@@ -508,6 +531,7 @@ function TrainingDay({
 }) {
   const { t } = useTranslation('today')
   const { t: tCommon } = useTranslation('common')
+  const locale = useLocale()
   const sessionName = useSessionName(program.id, session, program.origin)
   const sessionFocus = useSessionFocus(program.id, session, program.origin)
   const adjusted = applyReadiness(session, readiness)
@@ -546,6 +570,12 @@ function TrainingDay({
             : t('trainingDay.readySubtitle')
         }
       />
+      {/* States what's happening (postpone-day plan §9) — a postponed session's receiving day names the day it moved from. */}
+      {shiftedFrom !== null && (
+        <p className="mt-1 text-sm text-ink-tertiary">
+          {t('trainingDay.shiftedFrom', { date: formatLongDate(parseDateKey(shiftedFrom), locale) })}
+        </p>
+      )}
       {checkInCard}
       <StartButton
         program={program}
@@ -571,11 +601,63 @@ function TrainingDay({
         <TrainingDayRide
           program={program}
           activity={activity}
-          weekday={isoWeekday(today)}
+          weekday={activityWeekday}
           heading={t('trainingDay.rideHeading')}
           todayKey={todayKey}
           existing={rideRecord}
         />
+      )}
+      <PostponeButton program={program} todayKey={todayKey} existingShift={scheduleShift} />
+    </>
+  )
+}
+
+/**
+ * The vacated day a postpone moved a session away from — a rest hero
+ * that states plainly what happened, never language implying a mistake
+ * (postpone-day plan §9: "moved to Saturday", not "skipped"). No session
+ * preview and no start button: starting today would offer exactly the
+ * same session Saturday will (rotation preserves identity — §1), but the
+ * UI's whole point is to agree with the athlete's own decision that
+ * today isn't the day, so nothing here should invite otherwise.
+ */
+function PostponedDay({
+  postponedTo,
+  checkInCard,
+}: {
+  postponedTo: string
+  checkInCard: ReactNode
+}) {
+  const { t } = useTranslation('today')
+  const locale = useLocale()
+  // Undo must vanish once a workout exists on the shifted date — undoing
+  // then would silently rewrite a day already trained (§8.6). `undefined`
+  // covers both "still loading" and "genuinely nothing there yet"; a
+  // vanishingly rare loading-frame flash is an acceptable cost for
+  // reusing the same live-query pattern the rest of this page uses.
+  const shiftedWorkout = useLiveQuery(() => workoutRepo.getByDate(postponedTo), [postponedTo])
+  const canUndo = shiftedWorkout === undefined
+
+  async function undo() {
+    await settingsRepo.setScheduleShift(null)
+  }
+
+  return (
+    <>
+      <Hero
+        eyebrow={t('postponed.eyebrow')}
+        title={t('postponed.title', { date: formatLongDate(parseDateKey(postponedTo), locale) })}
+        subtitle={t('postponed.subtitle')}
+      />
+      {checkInCard}
+      {canUndo && (
+        <button
+          type="button"
+          onClick={() => void undo()}
+          className="mt-6 w-full rounded-card border border-border py-3.5 text-center text-base font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
+        >
+          {t('postponed.undo')}
+        </button>
       )}
     </>
   )
