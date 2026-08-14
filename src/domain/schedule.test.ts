@@ -485,6 +485,66 @@ describe('projectSchedule', () => {
 })
 
 /**
+ * Postpone-day plan §8.3 (projectSchedule half). Same week as the
+ * `resolveDayPlan — postpone shift` block above: Mon 27 / Wed 29 / Fri 31
+ * Jul 2026, postponing Fri 31 → Sat 1 Aug. "Today" is Thu 30 Jul — the
+ * day right before the vacated Friday — so Saturday is the very next
+ * future training date the walk encounters, isolating the
+ * `completedCount + 0` / `+ 1` claim from any earlier-in-the-week
+ * futureIndex bookkeeping.
+ */
+describe('projectSchedule — postpone shift', () => {
+  const rideActivity: ActivityTemplate = {
+    kind: 'recovery',
+    title: 'Zone 2 ride',
+    items: [{ label: 'Zone 2 ride' }],
+  }
+  const shiftableProgram: Program = { ...program, weekdayActivities: { 5: rideActivity } }
+  const fridayToSaturday: ScheduleShift = {
+    programId: program.id,
+    weekStart: '2026-07-27',
+    fromDate: '2026-07-31',
+    days: 1,
+    createdAt: '2026-07-31T18:00:00.000Z',
+  }
+
+  it('Saturday is the next future training date and gets completedCount + 0; the next Monday gets +1', () => {
+    const days = projectSchedule(program, [], new Date(2026, 6, 30), fridayToSaturday) // Thu 30 Jul
+    const saturday = byDate(days, '2026-08-01')
+    expect(saturday.isTrainingDay).toBe(true)
+    expect(saturday.session?.id).toBe('A')
+    expect(saturday.projected).toBe(true)
+
+    const monday = byDate(days, '2026-08-03')
+    expect(monday.session?.id).toBe('B')
+  })
+
+  it('the vacated Friday reads as not-a-training-day, with postponedTo set and activity suppressed', () => {
+    const days = projectSchedule(shiftableProgram, [], new Date(2026, 6, 30), fridayToSaturday)
+    const friday = byDate(days, '2026-07-31')
+    expect(friday.isTrainingDay).toBe(false)
+    expect(friday.session).toBeNull()
+    expect(friday.activity).toBeNull()
+    expect(friday.postponedTo).toBe('2026-08-01')
+  })
+
+  it('the receiving Saturday carries the shifted-in activity and names its source', () => {
+    const days = projectSchedule(shiftableProgram, [], new Date(2026, 6, 30), fridayToSaturday)
+    const saturday = byDate(days, '2026-08-01')
+    expect(saturday.activity).toEqual(rideActivity)
+    expect(saturday.activityWeekday).toBe(5)
+    expect(saturday.shiftedFrom).toBe('2026-07-31')
+  })
+
+  it('a date outside the shifted week is unaffected — no shiftedFrom/postponedTo leak into the next week', () => {
+    const days = projectSchedule(program, [], new Date(2026, 6, 30), fridayToSaturday)
+    const nextMonday = byDate(days, '2026-08-03')
+    expect(nextMonday.shiftedFrom).toBeNull()
+    expect(nextMonday.postponedTo).toBeNull()
+  })
+})
+
+/**
  * The `:196` fallback used to hardcode `workout: null, session: null` for
  * every past scheduled day with no *completed* workout — discarding a
  * workout that was started and had sets logged but never finished. That

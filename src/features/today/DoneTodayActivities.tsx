@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
-import { isoWeekday } from '@/lib/dates'
-import type { ActivityRecord, Program } from '@/domain/types'
+import type { IsoWeekday } from '@/lib/dates'
+import type { ActivityRecord, ActivityTemplate, Program } from '@/domain/types'
 import { ActivationSection } from './ActivationSection'
 import { TrainingDayRide } from './TrainingDayRide'
 
@@ -15,28 +15,32 @@ import { TrainingDayRide } from './TrainingDayRide'
  * M2 first live session, 10 Aug).
  *
  * Reuses `TrainingDayRide`/`ActivationSection` verbatim rather than
- * building parallel markup. What triggers them differs from a training
- * day's own branch: `weekdayActivities`/`morningActivation` are read
- * directly off `program` for today's weekday, not through
- * `resolveDayPlan` — this stays out of domain scheduling by design
- * (architecture.md), and a workout only exists for a day that was a
- * training day, so this is the same activity `resolveDayPlan` would
- * have surfaced.
+ * building parallel markup. `activity`/`activityWeekday` arrive already
+ * resolved by the caller (`resolveActivityForDate`, postpone-day plan
+ * §5 R2) rather than read directly off `program` for today's own
+ * weekday — reading `program.weekdayActivities?.[isoWeekday(today)]`
+ * here used to bypass `resolveDayPlan`'s shift resolution entirely, so
+ * a completed session on a postponed-in Saturday would show Saturday's
+ * own recovery block ("Complete rest is a fine choice too") instead of
+ * the post-strength ride the athlete is meant to log — surfacing only
+ * *after* completion, with nobody watching. `morningActivation` still
+ * reads straight off `program`: it's one program-level round, not
+ * weekday-keyed, so no shift can touch it.
  */
 export function DoneTodayActivities({
   program,
-  today,
+  activity,
+  activityWeekday,
   todayKey,
   todayActivityRecords,
 }: {
   program: Program
-  today: Date
+  activity: ActivityTemplate | null
+  activityWeekday: IsoWeekday
   todayKey: string
   todayActivityRecords: ActivityRecord[]
 }) {
   const { t } = useTranslation('today')
-  const weekday = isoWeekday(today)
-  const activity = program.weekdayActivities?.[weekday] ?? null
   const activation = program.morningActivation ?? null
   const rideRecord = todayActivityRecords.find((r) => r.kind === 'ride')
   const activationRecord = todayActivityRecords.find((r) => r.kind === 'activation')
@@ -58,7 +62,7 @@ export function DoneTodayActivities({
         <TrainingDayRide
           program={program}
           activity={activity}
-          weekday={weekday}
+          weekday={activityWeekday}
           heading={t('trainingDay.rideHeading')}
           todayKey={todayKey}
           existing={rideRecord}

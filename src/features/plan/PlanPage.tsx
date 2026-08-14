@@ -1,7 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router'
-import { programRepo, workoutRepo } from '@/data/repositories'
+import { programRepo, settingsRepo, workoutRepo } from '@/data/repositories'
 import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
 import { addDays, dateFormattingLocale, isoWeekday, parseDateKey, toDateKey } from '@/lib/dates'
@@ -60,7 +60,7 @@ export function PlanPage() {
   const selectedProgramId = searchParams.get('program')
 
   const data = useLiveQuery(async () => {
-    const [programs, activeProgram, workouts] = await Promise.all([
+    const [programs, activeProgram, workouts, settings] = await Promise.all([
       programRepo.getAll(),
       programRepo.getActive(todayKey),
       // getAll(), not getCompleted() — an abandoned day (completedAt still
@@ -69,8 +69,9 @@ export function PlanPage() {
       // discarded as skipped. getCompleted()'s filter would exclude it
       // before projectSchedule ever sees it.
       workoutRepo.getAll(),
+      settingsRepo.get(),
     ])
-    return { programs, activeProgram, workouts }
+    return { programs, activeProgram, workouts, scheduleShift: settings?.scheduleShift ?? null }
   }, [todayKey])
 
   // Root stays a <div> in both states — see LibraryPage for why.
@@ -82,7 +83,7 @@ export function PlanPage() {
     )
   }
 
-  const { programs, activeProgram, workouts } = data
+  const { programs, activeProgram, workouts, scheduleShift } = data
 
   if (programs.length === 0) {
     return (
@@ -110,7 +111,7 @@ export function PlanPage() {
     })
   }
 
-  const days = projectSchedule(program, workouts, today)
+  const days = projectSchedule(program, workouts, today, scheduleShift)
   const hasProjectedDays = days.some((d) => d.projected)
   const weeks = groupByWeek(days)
 
@@ -173,12 +174,20 @@ function DayRow({
   // so hook order stays stable across day states.
   const resolvedSessionName = useSessionName(programId, day.session ?? EMPTY_SESSION, programOrigin)
   const sessionName = day.session ? resolvedSessionName : t('sessionFallback')
+  // The weekday whose locale key this content resolves under — the
+  // *source* weekday when a postpone shifted this day's session in,
+  // never this row's own calendar weekday (postpone-day plan §5 R1).
   const localizedActivity = useLocalizedActivity(
     programId,
-    isoWeekday(parseDateKey(day.date)),
+    day.activityWeekday,
     day.activity ?? EMPTY_ACTIVITY,
     programOrigin,
   )
+  const shiftedFromSuffix = day.shiftedFrom !== null ? (
+    <span className="block text-ink-tertiary">
+      {t('day.shiftedFrom', { date: formatShortDate(day.shiftedFrom, locale) })}
+    </span>
+  ) : null
 
   // A training day's own activity (post-strength cardio, display only)
   // is not mutually exclusive with its session (docs/design/
@@ -204,8 +213,15 @@ function DayRow({
           {label} <span className="text-ink-tertiary">· {tCommon('nav.today')}</span>
         </span>
         <span className="shrink-0 text-right text-sm text-ink-secondary">
-          {day.session ? resolvedSessionName : (day.activity ? localizedActivity.title : t('restFallback'))}
+          {day.session
+            ? resolvedSessionName
+            : day.postponedTo !== null
+              ? t('day.postponed', { date: formatShortDate(day.postponedTo, locale) })
+              : day.activity
+                ? localizedActivity.title
+                : t('restFallback')}
           {activitySuffix}
+          {day.session && shiftedFromSuffix}
         </span>
       </GroupedRow>
     )
@@ -258,6 +274,7 @@ function DayRow({
           {resolvedSessionName}
           {day.projected && <span className="text-ink-tertiary"> · {t('projectedBadge')}</span>}
           {activitySuffix}
+          {shiftedFromSuffix}
         </span>
       </GroupedRow>
     )
@@ -271,6 +288,21 @@ function DayRow({
       <GroupedRow to={dayHref}>
         <span className="text-ink-secondary">{label}</span>
         <span className="shrink-0 text-sm text-ink-tertiary">{localizedActivity.title}</span>
+      </GroupedRow>
+    )
+  }
+
+  // The day a postpone moved this session away from — session/activity
+  // are both null (§2.4: this day's own post-strength content would be a
+  // false prescription with no strength here), so it would otherwise
+  // fall to the bare dash below. States what happened instead.
+  if (day.postponedTo !== null) {
+    return (
+      <GroupedRow to={dayHref}>
+        <span className="text-ink-secondary">{label}</span>
+        <span className="shrink-0 text-sm text-ink-tertiary">
+          {t('day.postponed', { date: formatShortDate(day.postponedTo, locale) })}
+        </span>
       </GroupedRow>
     )
   }

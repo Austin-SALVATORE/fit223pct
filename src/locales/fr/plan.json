@@ -12,6 +12,10 @@
   "noSessionAriaLabel": "Aucune séance",
   "ongoing": "en cours",
   "rotationLine": "{{rotationList}} alternent dans l'ordre où tu les termines.",
+  "day": {
+    "postponed": "Reportée au {{date}}",
+    "shiftedFrom": "Déplacée depuis le {{date}}"
+  },
   "dayDetail": {
     "nothingLogged": "Rien n'a été enregistré ce jour-là — la séance a été décalée, rien n'a été perdu.",
     "nothingLoggedPinned": "Rien n'a été enregistré ce jour-là — rien n'a été perdu. Ce jour de la semaine propose de nouveau la même séance la prochaine fois.",

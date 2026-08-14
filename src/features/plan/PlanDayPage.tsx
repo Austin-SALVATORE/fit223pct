@@ -1,10 +1,10 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useParams, useSearchParams } from 'react-router'
-import { exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
+import { exerciseRepo, programRepo, settingsRepo, workoutRepo } from '@/data/repositories'
 import { projectSchedule, type ScheduleDay } from '@/domain/schedule'
 import { summarizeWorkout } from '@/domain/workout'
-import { formatLongDate, isoWeekday, parseDateKey, toDateKey, type IsoWeekday } from '@/lib/dates'
+import { formatLongDate, parseDateKey, toDateKey, type IsoWeekday } from '@/lib/dates'
 import { useActivityKindLabel } from '@/lib/activityKindLabel'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { useLocalizedActivation, useLocalizedActivity, useSessionName } from '@/i18n/seedProgram'
@@ -34,16 +34,17 @@ export function PlanDayPage() {
 
   const data = useLiveQuery(async () => {
     if (!validDate || !date) return null
-    const [program, exercises, workouts] = await Promise.all([
+    const [program, exercises, workouts, settings] = await Promise.all([
       programRepo.getActive(date),
       exerciseRepo.getAll(),
       // getAll(), not getCompleted() — see PlanPage.tsx's identical
       // comment: an abandoned day must reach projectSchedule to be
       // carried as attempted rather than discarded as skipped.
       workoutRepo.getAll(),
+      settingsRepo.get(),
     ])
     if (!program) return { day: null }
-    const days = projectSchedule(program, workouts, new Date())
+    const days = projectSchedule(program, workouts, new Date(), settings?.scheduleShift ?? null)
     return {
       day: days.find((d) => d.date === date) ?? null,
       exerciseById: new Map(exercises.map((e) => [e.id, e])),
@@ -98,7 +99,10 @@ function DayDetailBody({
 }) {
   const { t } = useTranslation('plan')
 
-  const weekday = isoWeekday(parseDateKey(date))
+  // The weekday whose locale key `day.activity` resolves under — the
+  // source weekday when a postpone shifted this day's session in, never
+  // this page's own calendar weekday (postpone-day plan §5 R1).
+  const weekday = day.activityWeekday
 
   if (day.workout && day.workout.completedAt !== null) {
     return (

@@ -17,6 +17,7 @@ import { warmupById } from '@/data/seed/warmups'
 import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readiness'
 import { applyReadiness } from '@/domain/adjustments'
 import { buildWeeklyReview, reviewIsUnseen, type WeeklyReview } from '@/domain/weeklyReview'
+import { resolveActivityForDate } from '@/domain/scheduleShift'
 import { formatLongDate, isoWeekday, parseDateKey, toDateKey, type IsoWeekday } from '@/lib/dates'
 import { useActivityKindLabel } from '@/lib/activityKindLabel'
 import { useFocusOnChange } from '@/lib/useFocusOnChange'
@@ -220,7 +221,7 @@ function TodayBody({
           {program && (
             <DoneTodayActivities
               program={program}
-              today={today}
+              {...resolveActivityForDate(program, todayKey, scheduleShift)}
               todayKey={todayKey}
               todayActivityRecords={todayActivityRecords}
             />

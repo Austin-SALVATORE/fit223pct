@@ -120,4 +120,31 @@ describe('buildWeeklyReview', () => {
     const review = buildWeeklyReview(program, workouts, new Date(2026, 6, 13, 9, 0, 0))
     expect(review?.completedCount).toBe(1)
   })
+
+  /**
+   * Postpone-day plan §8.5 — `buildWeeklyReview` takes no shift parameter
+   * at all, and this is what proves it doesn't need one: `scheduledCount`
+   * walks the calendar week purely off `program.trainingWeekdays` (no
+   * shift can move a training weekday across the ISO week boundary —
+   * §8.1 test 5), and the completed-workout filter (`:60-66`) has no
+   * weekday condition, only a date range. So a session postponed from
+   * Friday to Saturday and completed there counts exactly as it would
+   * have on Friday — same scheduledCount, same completedCount.
+   */
+  it('counts a completion on a postponed-to date exactly as it would on the original date', () => {
+    const onScheduleDate = buildWeeklyReview(
+      program,
+      [workout('2026-07-06'), workout('2026-07-08'), workout('2026-07-10')], // Mon/Wed/Fri, on schedule
+      new Date(2026, 6, 13, 9, 0, 0),
+    )
+    const onPostponedDate = buildWeeklyReview(
+      program,
+      [workout('2026-07-06'), workout('2026-07-08'), workout('2026-07-11')], // Fri's session completed Saturday
+      new Date(2026, 6, 13, 9, 0, 0),
+    )
+    expect(onPostponedDate?.scheduledCount).toBe(onScheduleDate?.scheduledCount)
+    expect(onPostponedDate?.completedCount).toBe(onScheduleDate?.completedCount)
+    expect(onPostponedDate?.scheduledCount).toBe(3)
+    expect(onPostponedDate?.completedCount).toBe(3)
+  })
 })

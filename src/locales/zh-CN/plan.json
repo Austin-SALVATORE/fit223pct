@@ -11,6 +11,10 @@
   "noSessionAriaLabel": "没有训练",
   "ongoing": "进行中",
   "rotationLine": "{{rotationList}}按完成顺序交替。",
+  "day": {
+    "postponed": "已推迟到 {{date}}",
+    "shiftedFrom": "从 {{date}} 移来"
+  },
   "dayDetail": {
     "nothingLogged": "这天没有记录任何内容——训练顺延，没有丢失任何进度。",
     "nothingLoggedPinned": "这天没有记录任何内容——没有丢失任何进度。下次到这个星期几时，还是同一个训练课。",

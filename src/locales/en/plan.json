@@ -12,6 +12,10 @@
   "noSessionAriaLabel": "No session",
   "ongoing": "ongoing",
   "rotationLine": "{{rotationList}} alternate in the order you complete them.",
+  "day": {
+    "postponed": "Postponed to {{date}}",
+    "shiftedFrom": "Moved from {{date}}"
+  },
   "dayDetail": {
     "nothingLogged": "Nothing was logged this day — the session shifted forward, nothing was lost.",
     "nothingLoggedPinned": "Nothing was logged this day — nothing was lost. This weekday still offers the same session next time.",
