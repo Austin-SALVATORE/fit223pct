@@ -468,6 +468,24 @@
     },
     "bodyweight-hip-hinge": {
       "name": "Bodyweight hip hinge"
+    },
+    "dumbbell-squeeze-press": {
+      "name": "Dumbbell squeeze press",
+      "cues": [
+        "Flat bench, press two dumbbells together",
+        "Keep continuous inward pressure between the dumbbells",
+        "Controlled 2–3 s eccentric",
+        "Chest contraction and control take priority over load"
+      ]
+    },
+    "reverse-lunge": {
+      "name": "Dumbbell reverse lunge",
+      "cues": [
+        "Standard floor-level reverse lunge, no deficit",
+        "Front foot fully planted, moderate-to-slightly-long rear step",
+        "Slight forward torso lean is fine, allow normal knee travel",
+        "Drive through the front leg — don't push off the rear leg"
+      ]
     }
   },
   "program": {
@@ -656,13 +674,16 @@
         },
         "mesocycle2-fullbody-hipext-shoulder": {
           "name": "Full Body C",
-          "focus": "Hip Extension & Shoulder Emphasis",
+          "focus": "Lower Body & Glute Emphasis",
           "exercise": {
             "overhead-press": {
               "note": "Strict press — no leg drive"
             },
-            "standing-calf-raise": {
-              "note": "Skipping never invalidates Session C — do not substitute another lower-body movement"
+            "dumbbell-squeeze-press": {
+              "note": "Stop about 2 reps short of failure."
+            },
+            "reverse-lunge": {
+              "note": "Stop with about 2–3 good reps still possible on each side."
             }
           }
         }

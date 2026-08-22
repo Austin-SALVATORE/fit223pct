@@ -460,6 +460,24 @@
     },
     "bodyweight-hip-hinge": {
       "name": "自重髋铰链"
+    },
+    "dumbbell-squeeze-press": {
+      "name": "哑铃夹胸卧推",
+      "cues": [
+        "平躺卧推凳，双手哑铃相对推压",
+        "两只哑铃之间保持持续的向内挤压力",
+        "有控制地下降，持续2-3秒",
+        "胸部收缩和动作控制优先于负重"
+      ]
+    },
+    "reverse-lunge": {
+      "name": "哑铃后退弓步",
+      "cues": [
+        "标准地面反向弓步，不使用增距垫",
+        "前脚全脚掌着地，后跨步幅适中偏大",
+        "躯干可自然略微前倾，膝盖正常前移",
+        "主要用前腿发力站起——不要借助后腿蹬地"
+      ]
     }
   },
   "program": {
@@ -648,13 +666,16 @@
         },
         "mesocycle2-fullbody-hipext-shoulder": {
           "name": "全身训练C",
-          "focus": "髋伸展与肩部强化",
+          "focus": "下肢与臀部强化",
           "exercise": {
             "overhead-press": {
               "note": "严格推举——不借助腿部发力"
             },
-            "standing-calf-raise": {
-              "note": "跳过不会影响C日的完成——不要用其他下肢动作代替。"
+            "dumbbell-squeeze-press": {
+              "note": "每组做到距力竭还剩大约2次时停止。"
+            },
+            "reverse-lunge": {
+              "note": "每侧还能做大约2-3个标准动作时停止。"
             }
           }
         }

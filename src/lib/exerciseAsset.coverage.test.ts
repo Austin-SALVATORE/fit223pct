@@ -41,8 +41,12 @@ import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
  * previous entry (hamstring-walkout/dumbbell-pullover landed 6 Aug and
  * were removed) — this docblock was stale, still describing that
  * refill.
+ *
+ * 22 Aug amendment promotion: `dumbbell-squeeze-press` has no art yet,
+ * added here. `reverse-lunge` is not listed — its art already resolves
+ * (manifest entry, 6 frames), landed ahead of this Library promotion.
  */
-const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber'])
+const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber', 'dumbbell-squeeze-press'])
 
 describe('exercise asset coverage', () => {
   it.each(seedExercises.map((e) => e.id))('%s resolves an asset or is in KNOWN_MISSING', (id) => {

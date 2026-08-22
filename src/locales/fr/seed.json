@@ -468,6 +468,24 @@
     },
     "bodyweight-hip-hinge": {
       "name": "Charnière de hanche au poids du corps"
+    },
+    "dumbbell-squeeze-press": {
+      "name": "Développé serré à l'haltère",
+      "cues": [
+        "Banc plat, presse les deux haltères l'un contre l'autre",
+        "Maintiens une pression continue entre les haltères",
+        "Descente contrôlée sur 2 à 3 secondes",
+        "La contraction et le contrôle priment sur la charge"
+      ]
+    },
+    "reverse-lunge": {
+      "name": "Fente arrière à l'haltère",
+      "cues": [
+        "Fente arrière classique au sol, sans plateforme surélevée",
+        "Pied avant bien à plat, pas arrière modéré à assez long",
+        "Une légère inclinaison du buste vers l'avant est normale, laisse le genou avancer naturellement",
+        "Pousse principalement avec la jambe avant — ne t'aide pas de la jambe arrière"
+      ]
     }
   },
   "program": {
@@ -656,13 +674,16 @@
         },
         "mesocycle2-fullbody-hipext-shoulder": {
           "name": "Corps entier C",
-          "focus": "Accent extension de hanche et épaules",
+          "focus": "Accent bas du corps et fessiers",
           "exercise": {
             "overhead-press": {
               "note": "Développé strict — sans élan des jambes"
             },
-            "standing-calf-raise": {
-              "note": "Peut être passé sans invalider la séance C — ne le remplace pas par un autre mouvement du bas du corps"
+            "dumbbell-squeeze-press": {
+              "note": "Arrête-toi à environ 2 répétitions de l'échec."
+            },
+            "reverse-lunge": {
+              "note": "Arrête-toi quand il reste encore 2 à 3 bonnes répétitions possibles de chaque côté."
             }
           }
         }

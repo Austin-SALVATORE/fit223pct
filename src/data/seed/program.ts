@@ -613,6 +613,25 @@ export const seedProgram: Program = {
  * per the owner's ruling. Rest values given as a range in the spec
  * ("45-60 sec", "after both sides") are recorded in each prescription's
  * own `note`, since `restSeconds` is a single number.
+ *
+ * **22 Aug 2026 amendment** (spec-archive `Full-Body-Amendment-2026-08-22.md`
+ * / `...-Follow-up-Rulings-2026-08-22.md`) — two Session C slot
+ * replacements, net exercise count unchanged (coach's own constraint,
+ * "do not add extra exercises to compensate for removals"):
+ * `dumbbell-pullover` → `dumbbell-squeeze-press`, `standing-calf-raise` →
+ * `reverse-lunge`. Both new prescriptions are rep-range, double
+ * progression (coach: "NOT pyramid"), fixed starting loads and rest
+ * (follow-up ruling closed the spec's own "begin conservatively" /
+ * "60-90 s" ranges to single values): squeeze press 3×10-15 from 8 kg,
+ * rest 75 s; reverse lunge 3×8-12 **per side**, two dumbbells (bilateral
+ * — follow-up ruling #3 rules out the single-dumbbell/goblet
+ * configuration), from 6 kg, rest 105 s. RIR is prose-only in each
+ * prescription's `note` (follow-up ruling #1 — not restored to schema,
+ * tracking or progression, per the standing v3-purge/22 Jul invariant).
+ * Session C's `focus` changes to "Lower Body & Glute Emphasis" (follow-up
+ * ruling #5); its `name` ("Full Body C") and order are unchanged. Both
+ * retired exercises keep their Library entries and history — this is a
+ * program-slot edit, not a Library removal.
  */
 export const mesocycle2Build: Program = {
   id: 'mesocycle-2-build',
@@ -796,12 +815,13 @@ export const mesocycle2Build: Program = {
         ),
       ],
     },
-    // Session C - Full Body / Hip Extension + Shoulder Emphasis (13 Aug
-    // restructure).
+    // Session C - Full Body / Lower Body & Glute Emphasis (13 Aug
+    // restructure; focus relabelled by the 22 Aug amendment below —
+    // still a Full Body session, the label describes emphasis only).
     {
       id: 'mesocycle2-fullbody-hipext-shoulder',
       name: 'Full Body C',
-      focus: 'Hip Extension & Shoulder Emphasis',
+      focus: 'Lower Body & Glute Emphasis',
       // Six-question bundle Q1, 13 Aug 2026 — concrete ramp loads, not
       // deferred to Load Setup.
       warmupId: 'mesocycle2-fullbody-hipext-shoulder-warmup-v1',
@@ -843,20 +863,17 @@ export const mesocycle2Build: Program = {
           DUMBBELL_STEP_KG,
           { restSeconds: 120, note: 'Strict press — no leg drive' },
         ),
-        // Use one dumbbell, both hands — spec's single-implement
-        // instruction. Reps/rest changed from the 12 Aug seed (was
-        // 15/12/10, rest 75) — six-question bundle §3.2/§3.4.
-        ladder(
-          'dumbbell-pullover',
-          [
-            { weightKg: 10, reps: 12 },
-            { weightKg: 12, reps: 10 },
-            { weightKg: 14, reps: 8 },
-          ],
-          SINGLE_IMPLEMENT_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { restSeconds: 90, role: 'accessory' },
-        ),
+        // 22 Aug amendment: replaces dumbbell-pullover ("the athlete does
+        // not want this movement retained"). Bilateral pair (two
+        // dumbbells pressed together), not single-implement — follow-up
+        // ruling #2/#4: start 8 kg, rest 75 s. RIR is prose-only (ruling
+        // #1) — coach's exact wording, "Stop about 2 reps short of
+        // failure."
+        reps('dumbbell-squeeze-press', 3, 10, 15, { start: 8, max: BILATERAL_MAX_KG, step: DUMBBELL_STEP_KG }, {
+          restSeconds: 75,
+          role: 'accessory',
+          note: 'Stop about 2 reps short of failure.',
+        }),
         // Rep-range, not a ladder — the spec's own text ("3 working sets /
         // 10-15 reps / Bodyweight") is a rep-range verbatim. Rest changed
         // from the 12 Aug seed (was 75) — six-question bundle §3.4.
@@ -872,34 +889,20 @@ export const mesocycle2Build: Program = {
           DUMBBELL_STEP_KG,
           { restSeconds: 75, role: 'accessory' },
         ),
-        // Sixth accessory (Session C Shoulder Press Amendment, 13 Aug
-        // evening — "Session C remains" 6. Standing Calf Raise / 7.
-        // Bicycle Crunch, inverting the Calf-Raise Ruling from earlier the
-        // same day; latest text wins, flagged to the coach as an FYI, not
-        // a blocker). "Use one dumbbell" moves this to the single-
-        // implement ladder (was BILATERAL_MAX_KG) — the buildability
-        // guard is blind to the move at 12/14/16 kg, since those loads
-        // sit on both lists; see mesocycle2Build.conformance.test.ts's
-        // 22 kg negative control. Skipping never invalidates Session C
-        // completion and is never replaced with another lower-body
-        // movement — carried as this item's own note plus its three
-        // locale keys, and nothing more (no completion gate reads item
-        // count).
-        ladder(
-          'standing-calf-raise',
-          [
-            { weightKg: 12, reps: 20 },
-            { weightKg: 14, reps: 15 },
-            { weightKg: 16, reps: 12 },
-          ],
-          SINGLE_IMPLEMENT_MAX_KG,
-          DUMBBELL_STEP_KG,
-          {
-            restSeconds: 60,
-            role: 'accessory',
-            note: 'Skipping never invalidates Session C — do not substitute another lower-body movement',
-          },
-        ),
+        // 22 Aug amendment: replaces standing-calf-raise. Deliberately not
+        // the retired bulgarian-split-squat prescription (coach's own
+        // distinction) — floor-level, no deficit, TWO dumbbells (bilateral
+        // — follow-up ruling #3 rules out the single-dumbbell/goblet
+        // configuration). Per side (follow-up ruling #2/#4: start 6 kg,
+        // rest 105 s). RIR is prose-only (ruling #1) — coach's exact
+        // wording, "Stop with about 2–3 good reps still possible on each
+        // side."
+        reps('reverse-lunge', 3, 8, 12, { start: 6, max: BILATERAL_MAX_KG, step: DUMBBELL_STEP_KG }, {
+          perSide: true,
+          restSeconds: 105,
+          role: 'accessory',
+          note: 'Stop with about 2–3 good reps still possible on each side.',
+        }),
         // Reps rise across sets by coach design, not a gap.
         // load-not-the-lever once complete. Rest changed from the 12 Aug
         // seed (was 45) — six-question bundle §3.4.

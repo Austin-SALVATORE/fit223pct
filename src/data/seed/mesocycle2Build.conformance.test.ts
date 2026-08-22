@@ -51,6 +51,12 @@ interface ExpectedLadderPrescription {
  * Restructure is the first (§3.3 of the transcription plan; the row
  * assertion below used to cast every item to `LadderPrescription`
  * unconditionally, which this union replaces).
+ *
+ * Weight fields/`perSide` added by the 22 Aug amendment (first *loaded*
+ * rep-ranges the seed carries — `incline-push-up`'s own fields are all
+ * `null`/`false`, which the assertion below still exercises via the
+ * `?? null`/`?? false` defaults): `dumbbell-squeeze-press` and
+ * `reverse-lunge`, both bilateral-pair dumbbell prescriptions.
  */
 interface ExpectedRepRangePrescription {
   exerciseId: string
@@ -58,6 +64,10 @@ interface ExpectedRepRangePrescription {
   sets: number
   restSeconds: number
   role?: 'main' | 'accessory'
+  perSide?: boolean
+  startWeightKg?: number | null
+  maxWeightKg?: number | null
+  weightStepKg?: number | null
 }
 
 type ExpectedPrescription = ExpectedLadderPrescription | ExpectedRepRangePrescription
@@ -209,14 +219,16 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       restSeconds: 120,
     },
     {
-      exerciseId: 'dumbbell-pullover',
-      setPlan: [
-        { weightKg: 10, reps: 12 },
-        { weightKg: 12, reps: 10 },
-        { weightKg: 14, reps: 8 },
-      ],
-      restSeconds: 90,
+      // 22 Aug amendment: replaces dumbbell-pullover. Bilateral pair
+      // (two dumbbells, not single-implement) — follow-up rulings #2/#4.
+      exerciseId: 'dumbbell-squeeze-press',
+      range: { min: 10, max: 15 },
+      sets: 3,
+      restSeconds: 75,
       role: 'accessory',
+      startWeightKg: 8,
+      maxWeightKg: 20,
+      weightStepKg: 2,
     },
     {
       exerciseId: 'incline-push-up',
@@ -235,18 +247,19 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       restSeconds: 75,
       role: 'accessory',
     },
-    // Items 6/7 swapped by the same amendment ("Session C remains" 6.
-    // Standing Calf Raise / 7. Bicycle Crunch, inverting the Calf-Raise
-    // Ruling from earlier the same day — latest text wins).
     {
-      exerciseId: 'standing-calf-raise',
-      setPlan: [
-        { weightKg: 12, reps: 20 },
-        { weightKg: 14, reps: 15 },
-        { weightKg: 16, reps: 12 },
-      ],
-      restSeconds: 60,
+      // 22 Aug amendment: replaces standing-calf-raise. TWO dumbbells
+      // (bilateral — follow-up ruling #3 rules out single-dumbbell/
+      // goblet), per side.
+      exerciseId: 'reverse-lunge',
+      range: { min: 8, max: 12 },
+      sets: 3,
+      restSeconds: 105,
       role: 'accessory',
+      perSide: true,
+      startWeightKg: 6,
+      maxWeightKg: 20,
+      weightStepKg: 2,
     },
     {
       exerciseId: 'bicycle-crunch',
@@ -296,14 +309,22 @@ const PRIMARY_EXERCISE_IDS = new Set([
  * `dumbbell-rowboat` left the active program in the 13 Aug restructure;
  * `standing-calf-raise` joined this list the same day (Session C
  * calf-raise ruling: "Use one dumbbell").
+ *
+ * `dumbbell-pullover` and `standing-calf-raise` are no longer seeded (the
+ * 22 Aug amendment replaced both in Session C) — their continued Set
+ * membership is inert, not stale, same as `bulgarian-split-squat` in
+ * `PRIMARY_EXERCISE_IDS` above: the buildability guard below iterates
+ * present items only. Their replacements, `dumbbell-squeeze-press` and
+ * `reverse-lunge`, do NOT join this set — both are coach-ruled bilateral
+ * (two dumbbells), not single-implement (follow-up rulings #2/#3).
  */
 const SINGLE_IMPLEMENT_EXERCISE_IDS = new Set([
   'goblet-squat', // Session A, "Use one dumbbell"
   'overhead-triceps-extension', // Session A, "Use one dumbbell, both hands"
   'single-arm-db-row', // Session B, "Use one dumbbell"
   'russian-twist', // Session B, "ONE dumbbell held with BOTH hands"
-  'dumbbell-pullover', // Session C, "Use one dumbbell"
-  'standing-calf-raise', // Session C, "Use one dumbbell" (calf-raise ruling, 13 Aug)
+  'dumbbell-pullover', // Session C (retired 22 Aug), "Use one dumbbell"
+  'standing-calf-raise', // Session C (retired 22 Aug), "Use one dumbbell" (calf-raise ruling, 13 Aug)
 ])
 
 /**
@@ -369,6 +390,18 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
             const repRange = actual as RepRangePrescription
             expect(repRange.range, `${session.id}/${expected.exerciseId} range`).toEqual(expected.range)
             expect(repRange.sets, `${session.id}/${expected.exerciseId} sets`).toBe(expected.sets)
+            expect(repRange.perSide, `${session.id}/${expected.exerciseId} perSide`).toBe(
+              expected.perSide ?? false,
+            )
+            expect(repRange.startWeightKg, `${session.id}/${expected.exerciseId} startWeightKg`).toBe(
+              expected.startWeightKg ?? null,
+            )
+            expect(repRange.maxWeightKg, `${session.id}/${expected.exerciseId} maxWeightKg`).toBe(
+              expected.maxWeightKg ?? null,
+            )
+            expect(repRange.weightStepKg, `${session.id}/${expected.exerciseId} weightStepKg`).toBe(
+              expected.weightStepKg ?? null,
+            )
             expect(
               repRange.setPlan,
               `${session.id}/${expected.exerciseId} setPlan should be undefined (rep-range)`,
@@ -390,6 +423,16 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
    * total-weight `barbell` list (D1) —
    * a per-side transcription slip on a barbell exercise fails here
    * rather than shipping quietly (A.2).
+   *
+   * Extended by the 22 Aug amendment to see loaded *rep-ranges* too — the
+   * seed's first ones (`dumbbell-squeeze-press`, `reverse-lunge`), both
+   * bilateral. Previously this guard skipped every rep-range prescription
+   * outright (`item.setPlan === undefined` meant "nothing to check" when
+   * every rep-range in the seed was bodyweight); that is no longer true,
+   * so a loaded rep-range's `startWeightKg` is now checked the same way a
+   * ladder rung is. `maxWeightKg`/`weightStepKg` are not independently
+   * checked here — they gate the runtime Stepper (`SetScreen`), not
+   * buildability, and are covered by the conformance rows above.
    */
   it('every loaded rung is a member of the appropriate verified achievable-load list (§2)', () => {
     const { bilateral, singleImplement, barbell } = achievableLoads(NEW_PROFILE)
@@ -399,13 +442,19 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
     const unbuildable: string[] = []
     for (const session of mesocycle2Build.sessions) {
       for (const item of session.items) {
-        if (item.setPlan === undefined) continue
-        const ladder = item as LadderPrescription
         const list = BARBELL_EXERCISE_IDS.has(item.exerciseId)
           ? barbellSet
           : SINGLE_IMPLEMENT_EXERCISE_IDS.has(item.exerciseId)
             ? singleSet
             : bilateralSet
+        if (item.setPlan === undefined) {
+          const repRange = item as RepRangePrescription
+          if (repRange.startWeightKg !== null && !list.has(repRange.startWeightKg)) {
+            unbuildable.push(`${session.id}/${item.exerciseId}: start ${repRange.startWeightKg} kg`)
+          }
+          continue
+        }
+        const ladder = item as LadderPrescription
         for (const rung of ladder.setPlan) {
           if (rung.weightKg === null) continue
           if (!list.has(rung.weightKg)) {
@@ -434,7 +483,18 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
     const stale: string[] = []
     for (const session of mesocycle2Build.sessions) {
       for (const item of session.items) {
-        if (item.setPlan === undefined) continue
+        if (item.setPlan === undefined) {
+          // 22 Aug amendment: loaded rep-ranges are checked the same way,
+          // same reasoning as the buildability guard above.
+          const repRange = item as RepRangePrescription
+          if (repRange.startWeightKg !== null) {
+            const cents = Math.round(repRange.startWeightKg * 100) % 100
+            if (cents === 20 || cents === 70) {
+              stale.push(`${session.id}/${item.exerciseId}: start ${repRange.startWeightKg} kg`)
+            }
+          }
+          continue
+        }
         const ladder = item as LadderPrescription
         for (const rung of ladder.setPlan) {
           if (rung.weightKg === null) continue

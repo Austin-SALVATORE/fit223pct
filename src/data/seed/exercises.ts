@@ -220,8 +220,10 @@ export const seedExercises: Exercise[] = [
     muscles: ['chest', 'shoulders'],
     equipment: ['dumbbell', 'bench'],
     // §17: "Dumbbell Fly | Dumbbell squeeze press or push-up" — squeeze
-    // press has no Library id, so only the resolvable half is kept.
-    substitutionIds: ['push-up'],
+    // press now has a Library id (22 Aug amendment promotion below), so
+    // both halves of the coach's original pairing resolve, linked in both
+    // directions.
+    substitutionIds: ['push-up', 'dumbbell-squeeze-press'],
     isUnilateral: false,
   },
   {
@@ -475,5 +477,37 @@ export const seedExercises: Exercise[] = [
     // named no substitute for this warm-up movement.
     substitutionIds: [],
     isUnilateral: false,
+  },
+  // 22 Aug 2026 amendment — two Session C Library promotions
+  // (Full-Body-Amendment-2026-08-22.md / Full-Body-Amendment-Follow-up-
+  // Rulings-2026-08-22.md). Pullover → squeeze press and calf raise →
+  // reverse lunge are prescription-slot replacements only; both retired
+  // exercises keep their own Library entries and history above.
+  {
+    id: 'dumbbell-squeeze-press',
+    // Coach's own execution intent: "Chest contraction and control take
+    // priority over load" — chest-led press, elbows staying close rather
+    // than flaring, hence triceps rather than shoulders as the secondary.
+    muscles: ['chest', 'triceps'],
+    equipment: ['dumbbell', 'bench'],
+    // §22 Aug amendment: dumbbell-fly's original pairing, linked both
+    // directions (lead ruling).
+    substitutionIds: ['dumbbell-fly'],
+    isUnilateral: false,
+  },
+  {
+    id: 'reverse-lunge',
+    // Coach's own purpose list: quad + glute-max stimulus, unilateral
+    // loading — same classification as bulgarian-split-squat/split-squat
+    // (MuscleGroup has no adductor/glute-medius token, per this file's
+    // standing convention of mapping to the closest enum members).
+    // Deliberately not the bulgarian-split-squat prescription (coach:
+    // "this is deliberately NOT the previous Bulgarian Split Squat
+    // prescription") — floor-level, no bench/deficit platform, so
+    // equipment is dumbbell only, and no substitute is coach-named.
+    muscles: ['quads', 'glutes'],
+    equipment: ['dumbbell'],
+    substitutionIds: [],
+    isUnilateral: true,
   },
 ]
