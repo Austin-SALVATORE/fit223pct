@@ -64,6 +64,23 @@ describe('shiftedTrainingDates', () => {
     expect(map.get('2026-08-15')).toBe('2026-08-14')
   })
 
+  /**
+   * Measured 14 Aug 2026 (claim-verifier finding): this test's name claims
+   * it isolates `isShiftApplicable`'s weekStart check, but it doesn't —
+   * it's doubly defended. `fromDate` ('2026-08-14') can never be a
+   * training date of the *queried* week ('2026-08-17's week is
+   * 17/19/21), so `isShiftMechanicallyValid`'s own `trainingDates.includes
+   * (fromDate)` check would reject this fixture on its own even if
+   * `isShiftApplicable`'s weekStart comparison were deleted entirely —
+   * this test cannot tell the two guards apart. What actually isolates
+   * the applicability predicate is test 9's `foreignWeek` case above
+   * (R4 control): there `fromDate` ('2026-08-14') genuinely IS a training
+   * date of the *queried* week ('2026-08-10'), so only the weekStart
+   * mismatch defends it — if `isShiftApplicable` were broken, test 9
+   * would go red; this test would not. Left in place as a real (if
+   * redundant) assertion of next-week isolation's outcome, not deleted
+   * — but the isolation claim belongs to test 9, not here.
+   */
   it('4. next-week isolation: the same stored shift resolved against a later week returns the unshifted map, key-for-key', () => {
     const unshifted = shiftedTrainingDates(program, '2026-08-17', shift())
     expect([...unshifted.entries()]).toEqual([

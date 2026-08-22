@@ -19,8 +19,11 @@ import type { Routine } from '@/domain/routine'
  * ids are the exception — spelling follows the Library's convention (no
  * digits, no apostrophes), hence `figure-four-` and `childs-pose`.
  *
- * Still not reachable in the product: no activity item carries a `routineId`
- * until the art batch lands, so nobody meets an illustration-less routine.
+ * Reachable in the product: several weekday activity items in both seeded
+ * programs (phase-1-home and mesocycle2Build) carry
+ * `routineId: 'recovery-stretch-v1'`, and `ActivityItemList` resolves it to
+ * a tappable link that `RoutinePlayer` reads from the route to drive guided
+ * playback.
  *
  * Note on duration, because the spec's own arithmetic differs: the coach
  * computes one lead-in per *stretch* (8 × 8 s = 64 s). The player issues one
