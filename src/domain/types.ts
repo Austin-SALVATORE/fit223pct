@@ -626,4 +626,30 @@ export interface UserSettings {
    * `ScheduleShift`'s own doc).
    */
   scheduleShift?: ScheduleShift | null
+
+  /**
+   * ISO date the athlete activated Morning Posture Reset. The
+   * higher-level athlete-state gate (coach doc 23 §11, 27 Aug 2026) —
+   * the current thoracic/rib issue is represented here, NOT by writing
+   * an `unavailable` record every day. The gate is temporary and must
+   * not redefine the routine as rehabilitation (doc 23 §8/§11: no
+   * symptom questionnaire, no pain score, no medical readiness logic —
+   * product semantics are simply "Enable Morning Posture Reset — OFF /
+   * ON"). Absent means never activated — never defaulted, same contract
+   * as `profileConfirmedAt`/`equipment.confirmedAt` above. A date, not a
+   * boolean: a boolean cannot distinguish "never turned on" from "turned
+   * off again", and records nothing about when.
+   *
+   * Deliberately NOT on `Program` — doc 23 §10: the module survives
+   * every mesocycle boundary, and `seedDatabase()` unconditionally
+   * re-puts every `Program` on every boot while writing `UserSettings`
+   * only when absent (`src/data/seed/index.ts`), so a Program-stored
+   * flag would be silently erased at next launch. Same reasoning
+   * `ScheduleShift`'s own doc states for the field above.
+   *
+   * Not indexed, so no Dexie version — the version schema declares
+   * indexes, not fields (`db.ts`'s v2 comment: "Dexie diffs index
+   * declarations between versions, not object contents").
+   */
+  morningPostureResetActivatedAt?: string | null
 }
