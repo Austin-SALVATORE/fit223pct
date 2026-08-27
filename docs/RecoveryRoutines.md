@@ -54,6 +54,45 @@ delivers.
      no double sessions, no punishment for a missed day, and no
      progression from consecutive days.
 
+     **This permission is granted and unexercised. Morning Posture
+     Reset v1 stores none of it** — not completion, not skip, not
+     unavailable. The only thing v1 writes is a single athlete-state
+     activation flag, which is not a per-day fact. Recorded here
+     because a reader of the bullet above, on its own, would
+     reasonably conclude that storage shipped. It did not.
+
+     How it collapsed, in one line each: the coach's own 27 Aug
+     refinement forbade surfacing history that no decision consumes,
+     and completion has no such decision; ordinary skipped days are
+     not to be persisted at all; and the current rib gate is the
+     activation flag rather than a daily `unavailable` record, with
+     daily-unavailable defined as a *post-activation* concept and so
+     out of v1 by construction.
+
+## A stated bound on the no-tracking guards
+
+`routineNoTracking.guard.test.ts` walks an **outbound** module closure
+rooted at `RoutinePlayer` and never enumerates importers. A completion
+write *requested* by the player and *performed* by a component above it
+is therefore invisible to it, and `routineNoTracking.write.test.tsx`
+renders the player bare, so an optional callback is `undefined` in that
+render and cannot fire. Both guards go green.
+
+The guard's own failure message promises such a violation would be
+"visible in the diff, at review time". That is the weak fallback, not
+the guarantee — and it is the same weakness `RoutinePlayer.tsx`'s
+end-screen docblock already names on the display side ("writes nothing
+and imports nothing, so both no-tracking guards pass while it is exactly
+the tracking affordance the owner ruled out"). This is that hole on the
+write side.
+
+Nothing has exploited it. It is written down because an overstated
+guarantee is worse than a stated bound: the next person to read the
+guard's message will otherwise believe the ruling is enforced more
+strongly than it is. Measured 27 Aug 2026 by re-running the guard's own
+graph builder — the player reaches 11 files and no write layer, while
+`App.tsx` reaches 99 including both write modules.
+
    **Why this is written down rather than left to the code.** The
    guard's own failure message quotes ruling 1 verbatim at whoever
    trips it. A narrowing that lives only in a conversation leaves the
