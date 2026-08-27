@@ -77,6 +77,36 @@ and the whole team keeps reaching for it until it is written down.
   clear" would be silent, the negative control belongs to a *different*
   role than the author — whoever wrote it already believes it works.
 
+- **Prescribing a negative control is itself a claim about the code, and
+  needs the same grounding as any other.** The rule above governs a guard
+  someone *wrote*. This one governs a control someone *specified* — a
+  plan, a brief, a review comment saying "break X and watch it go red."
+  That sentence asserts that a specific mutation reproduces a specific
+  defect, which is a claim about how the code actually behaves, and it
+  can be wrong in exactly the way a `file:line` citation can be wrong.
+
+  When it is wrong the failure is silent and expensive: the implementer
+  runs the prescribed mutation, sees green, and the natural reading is
+  "no defect here" rather than "this control cannot see the subject."
+  The control was the thing that was supposed to catch a wrong belief,
+  so nothing downstream is looking any more.
+
+  So ground the mutation before prescribing it — trace the branch it is
+  meant to reach — and when you receive one, treat a green result as a
+  question rather than an answer. (27 Aug: a plan justified a
+  branch-independent design by naming a specific branch, then prescribed
+  a control derived from that wrong mechanism. `programRepo.getActive`
+  falls back to the most recent *past* program, so the gate the control
+  removed was never `undefined` and the test stayed green. The dev
+  refused to accept the pass, found a mutation that genuinely reproduced
+  the coupling, and kept **both** attempts in the test's docblock — the
+  discarded one is the more instructive half, because it shows the next
+  reader why the obvious control fails.)
+
+  This catch is earlier and cheaper than the one above: a bad control
+  costs a wrong belief at specification time, before anyone has written
+  the guard it was meant to validate.
+
 - **Ignored and generated files are invisible to git, so git cannot
   answer questions about them.** `public/assets/exercises/*/reference.png`
   is gitignored (`.gitignore:34`) — the authoring source is untracked
