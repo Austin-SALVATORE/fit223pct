@@ -10,5 +10,11 @@
     "description": "Un fichier daté avec chaque programme, séance et suivi — la sauvegarde manuelle d'une application local-first.",
     "exportButton": "Exporter toutes les données",
     "saved": "Sauvegarde enregistrée."
+  },
+  "postureReset": {
+    "description": "Ajoute une courte routine quotidienne sur Aujourd'hui, distincte de ton programme d'entraînement.",
+    "toggleLabel": "Activer la Routine Posturale du Matin",
+    "on": "Activé",
+    "off": "Désactivé"
   }
 }

@@ -10,5 +10,11 @@
     "description": "One dated file with every program, workout, and check-in — the manual backup story for a local-first app.",
     "exportButton": "Export all data",
     "saved": "Backup saved."
+  },
+  "postureReset": {
+    "description": "Adds a short daily routine to Today, separate from your training program.",
+    "toggleLabel": "Enable Morning Posture Reset",
+    "on": "On",
+    "off": "Off"
   }
 }

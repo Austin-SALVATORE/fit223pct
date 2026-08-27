@@ -13,6 +13,7 @@ import { CARD_SECTION } from '@/ui/cardSection'
 import { ProfileCard } from '@/features/profile/ProfileCard'
 import { BaselineCard } from '@/features/profile/BaselineCard'
 import { TodayMeasurementCard } from '@/features/checkin/TodayMeasurementCard'
+import { PostureResetToggle } from './PostureResetToggle'
 import type { SupportedLocale } from '@/domain/types'
 
 type ExportState = { status: 'idle' } | { status: 'done'; message: string }
@@ -76,6 +77,11 @@ export function SettingsPage() {
       {/* Renders nothing until the profile is confirmed — a baseline computed
           before the user was asked would show the seeded height as theirs. */}
       <BaselineCard />
+
+      {/* The one settings surface that writes `morningPostureResetActivatedAt`
+          (plan §8 Phase 4) — the athlete's own manual OFF/ON gate, no
+          injury language anywhere in this UI (§5.3, coach ruling). */}
+      <PostureResetToggle />
 
       <section className={CARD_SECTION} aria-label={t('language.sectionLabel')}>
         <h2 className="eyebrow">{t('language.heading')}</h2>
