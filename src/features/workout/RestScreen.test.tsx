@@ -269,7 +269,7 @@ describe('the concept disclosure', () => {
     renderRest({ exerciseChanged: true, position: { exerciseIndex: 4, setIndex: 0 } })
 
     expect(await screen.findByText('Dead bug')).toBeInTheDocument()
-    expect(screen.getByText(/Lower back gently pressed into the floor/)).toBeInTheDocument()
+    expect(screen.getByText(/Keep your ribs and pelvis controlled as you move/)).toBeInTheDocument()
     // Only +30s and Skip remain — no disclosure trigger.
     expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual(['+30s', 'Skip'])
   })
