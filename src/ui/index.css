@@ -92,6 +92,22 @@
   }
 }
 
+/*
+ * Same ring as `focus-inset`, drawn on a *visual child* instead of the
+ * focusable element itself — for a control whose tap target is enlarged
+ * past its visual shape (Morning Posture Reset switch, 27 Aug), where
+ * `focus-inset` on the interactive element would draw a rectangle around
+ * the square tap target rather than hugging the rounded shape the user
+ * actually sees. Pair with `group` on the ancestor that receives focus;
+ * this utility goes on the visually-shaped descendant.
+ */
+@utility group-focus-inset {
+  :where(.group):focus-visible & {
+    outline: 2px solid var(--color-amber);
+    outline-offset: -2px;
+  }
+}
+
 @utility eyebrow {
   font-size: 0.75rem;
   font-weight: 600;

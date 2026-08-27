@@ -133,6 +133,8 @@ describe('no control in Settings falls below 44px', () => {
     // control, for the same reason this file's opening docblock names —
     // an unrelated sibling's floor must not be able to satisfy this.
     const source = read('src/features/settings/PostureResetToggle.tsx')
-    expect(source).toContain('relative flex h-11 w-12 shrink-0 items-center justify-center focus-inset')
+    expect(source).toContain(
+      'group relative flex h-11 w-12 shrink-0 items-center justify-center outline-none',
+    )
   })
 })

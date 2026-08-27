@@ -61,7 +61,7 @@ export function PostureResetToggle() {
             aria-checked={active}
             aria-labelledby={labelId}
             onClick={() => void toggle()}
-            className="relative flex h-11 w-12 shrink-0 items-center justify-center focus-inset"
+            className="group relative flex h-11 w-12 shrink-0 items-center justify-center outline-none"
           >
             {/*
               The 48×28 pill is the visual switch; the button itself is
@@ -69,10 +69,20 @@ export function PostureResetToggle() {
               growing the pill (owner-reported defect, 27 Aug — measured
               28px with no guard reaching this file, see
               touchTargets.test.tsx's Settings block).
+
+              The focus ring moved to this pill on purpose, not left on
+              the button — `focus-inset` on the (now square, unrounded)
+              44×48 button drew a rectangle around the pill with visible
+              dark gaps at all four corners, measured and screenshotted
+              after the touch-target fix. `group-focus-inset` (index.css)
+              draws the same ring on this element instead, gated on the
+              *button's* `:focus-visible` via the `group` class above —
+              the ring now hugs what the athlete actually sees, not the
+              invisible hit box around it.
             */}
             <span
               aria-hidden="true"
-              className={`relative h-7 w-12 rounded-full border transition-colors ${
+              className={`group-focus-inset relative h-7 w-12 rounded-full border transition-colors ${
                 active ? 'border-amber bg-amber' : 'border-border bg-raised'
               }`}
             >
