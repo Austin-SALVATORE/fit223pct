@@ -123,3 +123,14 @@ Chinese, per this glossary's header.
 | fly (movement class) | **飞鸟** | Strongest precedent in the corpus |
 | row (movement class) | **划船** | |
 | tempo | **节奏** | Prescription notes were already translated this way pre-batch (unlike French, which keeps "Tempo N-N-N" untranslated by deliberate exception) |
+
+## Morning Posture Reset — unit vocabulary
+
+**Status: ruled by Austin 2026-08-27. Authored BEFORE any locale string
+was written, deliberately — see the French glossary's note for the
+reasoning; it applies identically here.**
+
+| English | Chinese | Notes |
+|---|---|---|
+| round (unit of the posture routine) | **轮** | *Not* 组. The coach excluded "sets" for this module by name, and 组 is exactly the word a translator reaches for. 轮 is unambiguous beside 次 (times) and 组 (sets). |
+| breath / breathing cycle | **呼吸**（cycle: **呼吸周期**） | The coach's own wording is "5 controlled breathing cycles" inside a round — keep the two units distinct so a round is not described in the same word as its contents. |

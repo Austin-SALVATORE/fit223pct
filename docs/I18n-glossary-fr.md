@@ -136,3 +136,21 @@ this glossary.
 | row — cable/machine | **tirage** | Same split, other side |
 | shoulders roll forward | **les épaules s'enroulent vers l'avant** | Judgment call, not corpus-attested — flagged at review, approved as written |
 | tempo notation (« Tempo 3-1-1 ») | **keep as written, untranslated** | Established French gym usage; forcing « Rythme 3-1-1 » would be worse French to satisfy a byte-comparison script. Deliberate exception to the zero-byte-identical rule. |
+
+## Morning Posture Reset — unit vocabulary
+
+**Status: ruled by Austin 2026-08-27. Authored BEFORE any locale string
+was written, deliberately — see the note below.**
+
+| English | French | Notes |
+|---|---|---|
+| round (unit of the posture routine) | **tour** | *Not* « série ». The coach excluded "sets" for this module by name, and « série » is exactly the word a translator reaches for. « Tour » is the ordinary French word for a repeated round and carries no training-load connotation. |
+| breath / breathing cycle | **respiration** (cycle: **cycle respiratoire**) | The coach's own wording is "5 controlled breathing cycles" inside a round — keep the two units distinct so a round is not described in the same word as its contents. |
+
+**Why this section was written before the translation, not after.**
+The natural translation of "rounds" is « séries », which is the one word
+this module may not use. A guard can only assert that the *chosen* term
+is present — asserting that wrong terms are absent catches only the
+wrong terms someone thought of, and goes green on the ones they did
+not. So the term had to be decided first, in writing, or the guard
+would have pinned whatever was typed rather than what was ruled.
