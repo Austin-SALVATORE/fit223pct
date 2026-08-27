@@ -4563,6 +4563,30 @@
       "dc143aba89"
     ]
   },
+  "wall-angel": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1914,
+      822
+    ],
+    "frameSizes": [
+      [
+        536,
+        822
+      ],
+      [
+        555,
+        822
+      ]
+    ],
+    "referenceHash": "d7e4036001",
+    "thumbnailHash": "54d0ad911b",
+    "frameHashes": [
+      "5ab6904bc3",
+      "8e2b37287b"
+    ]
+  },
   "wall-calf-stretch": {
     "frameCount": 2,
     "thumbnailFrame": 2,

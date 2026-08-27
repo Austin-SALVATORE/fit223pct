@@ -50,13 +50,25 @@ import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
  *
  * Morning Posture Reset Phase 1 (27 Aug, content-only —
  * `~/.claude/plans/morning-posture-reset.md` §6/§8): `wall-angel` and
- * `ninety-ninety-breathing` are new Library entries with no art yet, added
- * here. Art lands in Phase 6, gated on the same style-block confirmation
- * as every other batch, in the same commit as the manifest update and
- * removal from both `KNOWN_MISSING` lists (`.claude/rules/release-
- * choreography.md`).
+ * `ninety-ninety-breathing` were added here as new Library entries with no
+ * art yet. Phase 6 landed `wall-angel`'s art the same day (3 attempts: true-
+ * profile occlusion fix, then a range-of-motion fix, then a wall-contact
+ * fix — clean on the third, removed from this list in the same commit as
+ * its manifest entry, per release-choreography.md).
+ *
+ * `ninety-ninety-breathing` stays listed — **hard negative, not merely
+ * incomplete**: 3 generation attempts across 2 materially different
+ * correction strategies (an explicit anti-bridge prohibition, then a
+ * geometry anchored to the shipped `dead-bug` precedent) all produced the
+ * identical defect — hips lifted into a hip-thrust/glute-bridge silhouette
+ * instead of the prescribed flat-supine, only-calves-elevated position.
+ * Same shape as `bicycle-crunch`/`mountain-climber`'s alternating-limb
+ * collapse: a class of pose the current image route cannot reliably
+ * produce, not a prompt-wording gap. Open owner decision on an alternate
+ * image model per those two ids' precedent; do not re-attempt this id on
+ * the current route without a materially new strategy.
  */
-const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber', 'wall-angel', 'ninety-ninety-breathing'])
+const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber', 'ninety-ninety-breathing'])
 
 describe('exercise asset coverage', () => {
   it.each(seedExercises.map((e) => e.id))('%s resolves an asset or is in KNOWN_MISSING', (id) => {

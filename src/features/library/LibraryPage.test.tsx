@@ -45,7 +45,13 @@ describe('Settings entry', () => {
 // `reverse-lunge`, promoted the same day, was never listed — its art
 // already resolved. `wall-angel` and `ninety-ninety-breathing` joined 27
 // Aug (Morning Posture Reset Phase 1, content-only — art is Phase 6).
-const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber', 'wall-angel', 'ninety-ninety-breathing'])
+// `wall-angel` landed its art the same day (Phase 6, 3rd attempt clean)
+// and is removed here in the same commit, per this comment's own rule.
+// `ninety-ninety-breathing` stays listed — hard negative, 3 rejected
+// attempts, same failure shape as bicycle-crunch/mountain-climber
+// (`exerciseAsset.coverage.test.ts`'s own KNOWN_MISSING docblock has the
+// full account).
+const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber', 'ninety-ninety-breathing'])
 
 describe('Every seeded exercise actually reaches the page', () => {
   /**
