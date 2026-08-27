@@ -47,11 +47,11 @@ describe('Settings entry', () => {
 // Aug (Morning Posture Reset Phase 1, content-only — art is Phase 6).
 // `wall-angel` landed its art the same day (Phase 6, 3rd attempt clean)
 // and is removed here in the same commit, per this comment's own rule.
-// `ninety-ninety-breathing` stays listed — hard negative, 3 rejected
-// attempts, same failure shape as bicycle-crunch/mountain-climber
-// (`exerciseAsset.coverage.test.ts`'s own KNOWN_MISSING docblock has the
-// full account).
-const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber', 'ninety-ninety-breathing'])
+// `ninety-ninety-breathing` shipped later the same day (4th attempt, after
+// a renderer swap plus removing a competing action cue) and is removed here
+// in the same commit too — `exerciseAsset.coverage.test.ts`'s own
+// KNOWN_MISSING docblock has the full account.
+const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber'])
 
 describe('Every seeded exercise actually reaches the page', () => {
   /**

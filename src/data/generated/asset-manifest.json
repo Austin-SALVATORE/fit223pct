@@ -2974,6 +2974,30 @@
       "9c1adba923"
     ]
   },
+  "ninety-ninety-breathing": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        909,
+        822
+      ],
+      [
+        909,
+        822
+      ]
+    ],
+    "referenceHash": "4445a298ef",
+    "thumbnailHash": "0880595522",
+    "frameHashes": [
+      "7293fdd3a6",
+      "384df44769"
+    ]
+  },
   "ninety-ninety-hip-switch": {
     "frameCount": 3,
     "thumbnailFrame": 2,

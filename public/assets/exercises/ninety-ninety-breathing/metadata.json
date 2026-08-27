@@ -1,0 +1,32 @@
+{
+  "exerciseId": "ninety-ninety-breathing",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1913,
+      822
+    ],
+    "frameSizes": [
+      [
+        909,
+        822
+      ],
+      [
+        909,
+        822
+      ]
+    ],
+    "referenceHash": "4445a298ef",
+    "thumbnailHash": "0880595522",
+    "frameHashes": [
+      "7293fdd3a6",
+      "384df44769"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

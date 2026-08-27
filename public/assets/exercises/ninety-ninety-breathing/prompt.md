@@ -7,7 +7,7 @@
 | Camera | `floor-side` |
 | Frames | 2 |
 | Equipment | Bodyweight + low bench — she lies supine on the ground with her lower legs (calves) resting flat on the bench pad, hips and knees each near 90 degrees |
-| Status | `hard-negative — do not re-attempt without a new strategy` |
+| Status | `shipped — attempt 1/2 of the gpt-image-2 corrective pass, 27 Aug` |
 
 > Style-block gate (answered 27 Aug): `dead-bug`/`glute-bridge` prove a
 > genuinely supine bodyweight figure renders correctly; `hip-thrust` and the
@@ -17,24 +17,42 @@
 > explicitly rather than assumed, per the wall lineage's rule that contact
 > is always stated, never assumed.
 >
-> **Hard negative, 27 Aug — 3 attempts, all rejected, all the same defect.**
-> Every attempt rendered her hips lifted into a hip-thrust/glute-bridge
+> **Renderer note — read before re-running this prompt.** The shipped
+> `reference.png` was NOT produced by this pipeline's default route. It was
+> rendered with the Responses API `image_generation` tool's `model` field
+> set by hand to `gpt-image-2` (Sol kept as the orchestrator), a parameter
+> `scripts/generate-via-sol.mjs` does not expose and has never set — every
+> other asset in this library used the tool's unstated default (evidence
+> suggests `gpt-image-1`-generation, never confirmed). Running
+> `generate-via-sol.mjs` against this prompt as it stands will NOT reproduce
+> this image; it will render on the default model, which failed this exact
+> pose 4/4 times (see history below). Reproducing this asset requires the
+> same explicit `model: 'gpt-image-2'` override, not currently wired into
+> any committed script.
+>
+> **History — 4 failed attempts, then the fix, 27 Aug.** The first 3
+> attempts (default renderer) and a 4th (gpt-image-2, but with the frame-1
+> wording below) all rendered her hips lifted into a hip-thrust/glute-bridge
 > silhouette instead of the prescribed flat-supine, only-calves-elevated
-> position, despite two materially different correction strategies between
-> attempts: attempt 2 added an explicit, capitalized anti-bridge prohibition
-> ("hips and lower back stay flat on the ground... never lifted... NOT a hip
-> thrust or glute bridge") — no change. Attempt 3 replaced that with a
-> concrete geometric anchor to the shipped `dead-bug` starting position
-> ("use the SAME lying-down hip and knee geometry as dead-bug's starting
-> position... the ONLY difference is the shins continue to rest on a bench")
-> — still identical defect. The committed `reference.png` in this directory
-> (gitignored, not shipped) is attempt 3, kept as evidence, not source for
-> conversion — it was never run through `convert-assets.mjs` and carries no
-> manifest entry. Same failure shape as `bicycle-crunch`/`mountain-climber`'s
-> alternating-limb collapse: a pose class the current image route cannot
-> reliably produce. Left in `KNOWN_MISSING`
-> (`src/lib/exerciseAsset.coverage.test.ts`) pending the same open owner
-> decision on an alternate image model those two ids are waiting on.
+> position — this held across a capitalized anti-bridge prohibition
+> (attempt 2), a concrete geometric anchor to `dead-bug`'s starting position
+> (attempt 3), and a renderer swap alone (attempt 4), so the flatness
+> wording itself was not the defect. **Root cause, found by comparing the
+> two frames of the gpt-image-2 attempt against each other**: frame 1 alone
+> additionally described an action — "one hand is lightly guiding a
+> shin/ankle into place on the pad" — that frame 2 never had. A reaching
+> hand in an otherwise-supine pose appears to override the flatness
+> instruction regardless of how forcefully that instruction is stated
+> elsewhere; frame 2, with no such action, rendered correctly every time.
+> The fix (this prompt, attempt 1 of a 2-attempt cap) removed the action
+> rather than strengthening the wording again: both frames now use frame
+> 2's already-proven hand position (flat on the ribs from the start) and
+> leg position (calves already settled on the bench), differentiated only
+> by breath phase. Passed clean on the first try. **Lesson for the next
+> supine or floor pose in this library: audit every distinct action a
+> frame's prose describes for whether it independently cues an unwanted
+> pose archetype — restating the target position harder does not neutralize
+> a competing action cue.**
 
 ## Prompt
 
@@ -115,15 +133,19 @@ short distance beyond her hips, at ordinary bench-seat height — roughly the
 height of her own shin length above the ground. There is no dumbbell, band,
 wall, or any other equipment in the image.
 
-CRITICAL, explicit anti-bridge instruction (do not assume — state it): her
-torso, from the back of her head down through her shoulder blades, spine,
-and all the way to her hips and glutes, lies COMPLETELY FLAT AND STRAIGHT
-along the ground, like someone lying flat on a yoga mat to rest — it is a
-single flat line with NO arch, NO incline, and NO ramp shape rising up
-toward her feet. Her hips are at the exact same low height above the ground
-as the back of her head. This is NOT a hip thrust or glute bridge, and her
-silhouette must NOT read as one: her hips, glutes and lower back are NEVER
-lifted, raised, or bridged into the air, in either frame.
+CRITICAL, explicit anti-bridge instruction (do not assume — state it, and it
+applies IDENTICALLY to BOTH frames with zero exception): her torso, from the
+back of her head down through her shoulder blades, spine, and all the way to
+her hips and glutes, lies COMPLETELY FLAT AND STRAIGHT along the ground, like
+someone lying flat on a yoga mat to rest — it is a single flat line with NO
+arch, NO incline, and NO ramp shape rising up toward her feet. Her hips are
+at the exact same low height above the ground as the back of her head, and
+her buttocks and lower back stay in continuous contact with the ground. This
+is NOT a hip thrust or glute bridge, and her silhouette must NOT read as one:
+her hips, glutes and lower back are NEVER lifted, raised, or bridged into the
+air, in either frame — not even slightly, not even in a frame described as
+"beginning" or "starting" the hold. There is no moment in this movement where
+her hips rise off the ground; the hold begins and stays flat throughout.
 
 Use the SAME lying-down hip and knee geometry as the dead-bug exercise's
 starting position — hips and knees each bent to roughly 90 degrees, thighs
@@ -134,13 +156,33 @@ starting position is that here her shins, instead of floating in the air,
 continue that same horizontal line a little further out to rest flat on top
 of the bench. The bench is positioned at exactly the height and distance
 needed to meet her shins where they naturally are in that dead-bug-style
-position — her hips do not move or lift to reach it.
+position — her hips do not move or lift to reach it, and her legs do not
+reposition at any point between frame 1 and frame 2: both calves are already
+resting on the bench, in the identical place, in BOTH frames.
 If her hips or lower back are off the ground, or her body forms an arched
-bridge shape, that is WRONG — redraw it with the torso flat as described.
+bridge shape in EITHER frame, that is WRONG — redraw it with the torso flat
+as described.
+
+CRITICAL, explicit hand-position instruction (do not assume — state it, and
+it applies IDENTICALLY to BOTH frames): both of her hands rest lightly flat
+on her lower ribs and upper belly in BOTH frames — this is the ONLY hand
+position used anywhere in this image. No hand ever reaches down toward her
+knee, shin, ankle, or the bench in either frame. No hand ever rests on the
+ground at her side. There is no frame in this image where she is adjusting,
+guiding, or touching her legs or the bench with her hands — her legs are
+already resting on the bench, fully settled, in both frames, and her hands
+are already on her ribs, fully settled, in both frames. The two frames are
+the SAME hold, at two different points in one slow breath cycle — they are
+NOT an "adjusting into position" frame followed by a "settled" frame.
+
 Number of frames: 2, evenly spaced left to right.
 Both figures lie on the same shared invisible ground line as each other, at
 exactly identical scale and spacing, each with her calves resting on her own
-copy of the bench.
+copy of the bench in the identical position and each with her hands already
+resting on her ribs in the identical position — legs and hands do NOT move,
+reposition, or change contact point between frame 1 and frame 2. The ONLY
+things that change between the two frames are her breath phase (chest/belly
+rise and fall) and her mouth/expression.
 
 CRITICAL, explicit contact instruction (do not assume — state it): her
 calves are in DIRECT, CONTINUOUS PHYSICAL CONTACT with the top of the
@@ -155,44 +197,52 @@ extend a short distance past the bench's far edge so both feet remain fully
 visible, relaxed, toes softly pointing, not gripping or flexing.
 
 Frames:
-1. Settling in. Lying flat on her back in the dead-bug-style starting
-   geometry — her ENTIRE TORSO FLAT ON THE GROUND FROM HEAD TO HIPS, no
-   arch, no incline, hips at the same low height as her head, head resting
-   down with a long neck. Hips and knees bent, thighs vertical, shins
-   horizontal, in the process of settling her lower legs onto the bench
-   pad — one hand is lightly guiding a shin/ankle into place on the pad
-   while the other arm rests on the ground at her side, torso still relaxed
-   and not yet consciously braced.
+1. Beginning the hold, first slow breath in. The exact same flat-supine
+   position as frame 2 — her ENTIRE TORSO FLAT ON THE GROUND FROM HEAD TO
+   HIPS, no arch, no incline, hips at the same low height as her head, head
+   resting down with a long neck. Both calves already rest flat along the
+   top of the bench pad with the contact described above, hips and knees
+   each at roughly 90 degrees, thighs vertical — identical leg position to
+   frame 2. Both hands already rest lightly flat on her lower ribs and upper
+   belly — identical hand position to frame 2, not reaching toward her legs
+   or the bench. Mouth closed, gently drawing her first slow breath in,
+   ribcage beginning to expand softly under her hands, calm and settled
+   expression, eyes open.
 2. Full hold, mid-exhale. The same flat supine position — her ENTIRE TORSO
    STILL FLAT ON THE GROUND FROM HEAD TO HIPS, exactly as in frame 1, hips
    at the same low height as her head, no arch, no bridge, no incline. Both
    calves rest flat along the top of the bench pad with the contact
    described above, hips and knees each at roughly 90 degrees, thighs
-   vertical. Both hands now rest lightly flat on her lower ribs and upper
-   belly, gently monitoring the breath. The ribcage reads visibly settled
-   and drawn down rather than flared or lifted, a light natural belly rise
-   under the hands, lips softly parted mid slow exhale, eyes open, calm
-   and focused expression.
+   vertical — identical leg position to frame 1. Both hands rest lightly
+   flat on her lower ribs and upper belly, in the SAME position as frame 1,
+   gently monitoring the breath. The ribcage reads visibly settled and drawn
+   down rather than flared or lifted, a light natural belly rise under the
+   hands, lips softly parted mid slow exhale, eyes open, calm and focused
+   expression.
 
 TECHNIQUE — must be correct in every frame:
 - Her calves stay in direct contact with the bench pad's top surface along
   their full length in both frames — no gap, no magenta strip visible
-  between calf and pad.
+  between calf and pad. Legs do not move or reposition between frames.
 - Hips and knees each stay bent at roughly 90 degrees, thighs vertical, in
   both frames — the bench height is fixed, it does not change between
   frames.
 - Her entire torso, from the back of her head to her hips, stays FLAT ON
-  THE GROUND in a single straight line with no arch or incline, in both
-  frames — her hips are never lifted, raised, or bridged into the air. This
-  is a supine floor position, the same lying-flat torso as the dead-bug
-  exercise, not a hip thrust or glute bridge — only her lower legs are
-  elevated, resting on the bench.
-- Frame 1 and frame 2 must read as a clearly different pair at a glance:
-  frame 1 shows one hand still adjusting a shin onto the bench with the
-  other arm down at her side; frame 2 shows both hands resting flat on the
-  ribs/belly with the legs already fully settled.
-- In frame 2 the ribcage reads settled and drawn down, not flared upward,
-  and the mouth is softly open mid-exhale rather than closed and neutral.
+  THE GROUND in a single straight line with no arch or incline, in BOTH
+  frames without exception — her hips are never lifted, raised, or bridged
+  into the air in either frame, including frame 1. This is a supine floor
+  position, the same lying-flat torso as the dead-bug exercise, not a hip
+  thrust or glute bridge — only her lower legs are elevated, resting on the
+  bench.
+- Both hands rest flat on her lower ribs/belly in BOTH frames — identical
+  hand position in both frames. No hand reaches toward her legs, knees, or
+  the bench in either frame.
+- Frame 1 and frame 2 must still read as a clearly different pair at a
+  glance, but ONLY via breath phase and expression, never via a body,
+  hand, or leg position change: frame 1 shows the first breath in with the
+  mouth closed and the chest just beginning to expand; frame 2 shows a
+  deeper mid-exhale moment with the mouth softly parted and the ribcage
+  visibly drawn down.
 - Both feet remain fully visible past the bench's far edge, relaxed, in
   both frames.
 - The bench renders as a single low, matte black padded bench on a simple
@@ -206,14 +256,13 @@ TECHNIQUE — must be correct in every frame:
       and pad, in both frames
 - [ ] Hips and knees each read at roughly 90 degrees, thighs vertical, in
       both frames, on a bench of fixed, unchanging height
-- [ ] Frame 1 clearly reads as still settling (one hand adjusting a shin,
-      other arm at her side); frame 2 clearly reads as a fully settled hold
-      with both hands resting on the ribs/belly — a genuine hand/limb
-      configuration change, not a subtle tilt
-- [ ] Frame 2's ribcage reads settled/drawn down, not flared, with lips
-      softly parted mid-exhale
-- [ ] Lower back rests naturally on the ground — no aggressive flattening
-      or arching in either frame
+- [ ] Both hands rest flat on the ribs/belly in both frames — identical
+      hand position throughout, never reaching toward the legs or bench
+- [ ] Frame 1 and frame 2 differ only by breath phase and expression (mouth
+      closed vs. softly parted, chest beginning to expand vs. ribcage drawn
+      down) — no change in hand, leg, or torso position between frames
+- [ ] Lower back and hips rest flat on the ground in BOTH frames, including
+      frame 1 — no arch, no incline, no bridge, at any point
 - [ ] Both feet fully visible past the bench's far edge in both frames
 - [ ] No wall, dumbbell, band, or any other equipment anywhere in the image
 - [ ] Same face, hair, wardrobe, and body proportions in both frames

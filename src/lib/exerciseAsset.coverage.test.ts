@@ -56,19 +56,20 @@ import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
  * fix — clean on the third, removed from this list in the same commit as
  * its manifest entry, per release-choreography.md).
  *
- * `ninety-ninety-breathing` stays listed — **hard negative, not merely
- * incomplete**: 3 generation attempts across 2 materially different
- * correction strategies (an explicit anti-bridge prohibition, then a
- * geometry anchored to the shipped `dead-bug` precedent) all produced the
- * identical defect — hips lifted into a hip-thrust/glute-bridge silhouette
- * instead of the prescribed flat-supine, only-calves-elevated position.
- * Same shape as `bicycle-crunch`/`mountain-climber`'s alternating-limb
- * collapse: a class of pose the current image route cannot reliably
- * produce, not a prompt-wording gap. Open owner decision on an alternate
- * image model per those two ids' precedent; do not re-attempt this id on
- * the current route without a materially new strategy.
+ * `ninety-ninety-breathing` shipped later the same day, removed from this
+ * list: 4 straight attempts (3 default-renderer, 1 on a `gpt-image-2`
+ * renderer swap) produced an identical hip-thrust/glute-bridge defect
+ * regardless of wording strength, until comparing that gpt-image-2 attempt's
+ * two frames against each other found the actual cause — frame 1 alone
+ * described a hand reaching to guide a shin into place, and that one action
+ * overrode the flatness instruction no matter how forcefully it was stated.
+ * Removing the action (not strengthening the wording again) passed clean on
+ * the first retry. See `public/assets/exercises/ninety-ninety-breathing/
+ * prompt.md` for the full account and the renderer caveat: this asset was
+ * NOT produced by this pipeline's default route and re-running
+ * `generate-via-sol.mjs` will not reproduce it.
  */
-const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber', 'ninety-ninety-breathing'])
+const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber'])
 
 describe('exercise asset coverage', () => {
   it.each(seedExercises.map((e) => e.id))('%s resolves an asset or is in KNOWN_MISSING', (id) => {
