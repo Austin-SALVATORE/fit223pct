@@ -7,11 +7,17 @@ import type { DailyRoutineStep } from '@/domain/dailyRoutine'
 /**
  * One Morning Posture Reset row — `ExerciseThumbnail` + `useExerciseName` +
  * a units line, wrapped in a `Link` to `/library/<id>` with `origin` router
- * state (plan §3.6). Deliberately re-derives `WarmupSection.tsx`'s row
- * markup (`rowLinkClassName`) rather than importing it — that file was not
- * in this phase's stated scope, so this duplicates a small, stable class
- * string instead of an unscoped edit to an unrelated component. Flagged in
- * the phase report; happy to extract a shared primitive if preferred.
+ * state (plan §3.6). Re-derives `WarmupSection.tsx`'s row markup
+ * (`rowLinkClassName`) rather than importing it — **deliberately not
+ * shared, not merely out of scope** (architect's reasoning). The two row
+ * types look alike today by inheritance, not by requirement: three
+ * warm-up rows appear only on training days and are strength-side content;
+ * six morning rows appear every day and are program-independent by design
+ * (plan §1.7). Extracting a shared helper now would put the morning list's
+ * own future divergence on the strength side's helper, where this module
+ * is meant to change nothing (Layer 2's whole point). **Revisit only on a
+ * third consumer, or a ruling that the two lists must render identically**
+ * — either is a real reason; visual coincidence between two is not.
  *
  * Always `{ from: 'today' }` — Morning Posture Reset renders only on Today
  * in v1 (no Plan-page preview exists for it), so there is no second origin
