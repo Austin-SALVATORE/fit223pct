@@ -40,9 +40,11 @@ describe('Settings entry', () => {
 // bodyweight-hip-hinge landed its own audited-FIT batch the same day, so
 // neither is one of them; remove an id here in the same commit that
 // removes it from KNOWN_MISSING. `dumbbell-squeeze-press` joined the same
-// day as the 22 Aug amendment promotion (no art yet); `reverse-lunge`,
-// promoted the same day, is not listed — its art already resolves.
-const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber', 'dumbbell-squeeze-press'])
+// day as the 22 Aug amendment promotion (no art yet), then landed its own
+// audited batch the same day and was removed from this list;
+// `reverse-lunge`, promoted the same day, was never listed — its art
+// already resolved.
+const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber'])
 
 describe('Every seeded exercise actually reaches the page', () => {
   /**

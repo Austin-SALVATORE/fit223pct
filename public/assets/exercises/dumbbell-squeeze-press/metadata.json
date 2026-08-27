@@ -1,0 +1,42 @@
+{
+  "exerciseId": "dumbbell-squeeze-press",
+  "version": 1,
+  "media": {
+    "frameCount": 4,
+    "thumbnailFrame": 3,
+    "referenceSize": [
+      1919,
+      820
+    ],
+    "frameSizes": [
+      [
+        507,
+        820
+      ],
+      [
+        490,
+        820
+      ],
+      [
+        461,
+        820
+      ],
+      [
+        455,
+        820
+      ]
+    ],
+    "referenceHash": "ad8d95189f",
+    "thumbnailHash": "3b325ab16a",
+    "frameHashes": [
+      "43ccf69606",
+      "715a62ac75",
+      "f60c5ee61b",
+      "b8d86f4c21"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}
