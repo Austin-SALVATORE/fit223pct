@@ -33,6 +33,37 @@ delivers.
    ruling most likely to be eroded later by a well-meaning "wouldn't
    it be nice to see consistency". It would not be nice. Skipping
    stays free.
+
+   **Narrowed twice since, both times deliberately, both times by the
+   owner.** The ruling still holds in full for *this* routine — the
+   guided recovery stretch writes nothing, and
+   `routineNoTracking.guard.test.ts` keeps enforcing that by building a
+   module graph from `RoutinePlayer` and failing if `db.ts` or
+   `repositories.ts` is transitively reachable, dynamic imports
+   included.
+
+   - **11 Aug**, post-workout stretching on *training days* may record
+     completed / skipped / unresolved, as an activity-history fact with
+     no guilt, penalties, readiness effect, or compliance meaning.
+     (Ruled; **not implemented** as of 27 Aug — no field, no repo, no
+     Dexie version behind it.)
+   - **27 Aug**, **Morning Posture Reset** may store completed /
+     skipped / unavailable. Scope is that module only. The coach's
+     amendment requires the three states and independently forbids
+     every mechanism that would turn them into a streak: no catch-up,
+     no double sessions, no punishment for a missed day, and no
+     progression from consecutive days.
+
+   **Why this is written down rather than left to the code.** The
+   guard's own failure message quotes ruling 1 verbatim at whoever
+   trips it. A narrowing that lives only in a conversation leaves the
+   next reader holding a test that contradicts a document, and the
+   honest-looking move at that moment — weaken the guard to match the
+   new feature — is exactly what the ruling exists to prevent. The
+   guard is not the ruling; it is the enforcement of the ruling *for
+   the routine it names*. Extending storage to a new module is an
+   owner decision, recorded here with its date and its scope. Doing it
+   by editing the guard is not.
 2. **Stretching only this milestone.** Mobility, foam rolling and
    walking stay as text. Prove the pattern before multiplying the art
    batch and the coach's authoring load.
