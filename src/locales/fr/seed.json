@@ -401,7 +401,13 @@
       }
     },
     "bird-dog": {
-      "name": "Bird dog"
+      "name": "Bird dog",
+      "cues": [
+        "Le bras et la jambe opposés s'étendent ensemble",
+        "Garde le bassin de niveau",
+        "Évite l'extension du bas du dos et la rotation du tronc",
+        "La hauteur des membres passe après la stabilité du tronc"
+      ]
     },
     "hammer-curl": {
       "name": "Curl marteau"
@@ -413,13 +419,25 @@
       "name": "Pompe scapulaire"
     },
     "wall-slide": {
-      "name": "Glissé mural"
+      "name": "Glissé mural",
+      "cues": [
+        "Maintiens une position contrôlée de la cage thoracique",
+        "Ne fais pas saillir les côtes ni n'étends le bas du dos pour gagner de l'amplitude à l'épaule",
+        "Laisse les omoplates tourner naturellement vers le haut",
+        "Ne force pas les épaules vers le bas et l'arrière"
+      ]
     },
     "bodyweight-squat": {
       "name": "Squat au poids du corps"
     },
     "glute-bridge": {
-      "name": "Pont fessier"
+      "name": "Pont fessier",
+      "cues": [
+        "Établis le contrôle abdominal et pelvien avant de lever",
+        "Étends les hanches principalement grâce aux fessiers",
+        "Ne cherche pas plus de hauteur en cambrant excessivement le bas du dos",
+        "Contraction contrôlée de 2 secondes en haut"
+      ]
     },
     "dumbbell-rowboat": {
       "name": "Rowing bateau à l'haltère",
@@ -485,6 +503,26 @@
         "Pied avant bien à plat, pas arrière modéré à assez long",
         "Une légère inclinaison du buste vers l'avant est normale, laisse le genou avancer naturellement",
         "Pousse principalement avec la jambe avant — ne t'aide pas de la jambe arrière"
+      ]
+    },
+    "wall-angel": {
+      "name": "Ange mural",
+      "cues": [
+        "Contrôle scapulaire et thoracique à faible charge",
+        "Maintiens le contrôle de la cage thoracique et du bassin",
+        "N'utilise qu'une amplitude d'épaule confortable",
+        "Ne force pas les bras contre le mur au détriment de la position de la colonne"
+      ]
+    },
+    "ninety-ninety-breathing": {
+      "name": "Respiration 90/90",
+      "cues": [
+        "Position allongée sur le dos",
+        "Jambes surélevées, posées sur un banc ou une chaise, hanches et genoux proches de 90°",
+        "Établis une légère tension abdominale",
+        "Laisse les côtes se relâcher plutôt que de s'ouvrir vers le haut",
+        "Légère rétroversion du bassin — n'aplatis pas agressivement le bas du dos",
+        "Expire lentement, environ 5 à 6 secondes"
       ]
     }
   },

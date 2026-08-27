@@ -43,8 +43,9 @@ describe('Settings entry', () => {
 // day as the 22 Aug amendment promotion (no art yet), then landed its own
 // audited batch the same day and was removed from this list;
 // `reverse-lunge`, promoted the same day, was never listed — its art
-// already resolved.
-const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber'])
+// already resolved. `wall-angel` and `ninety-ninety-breathing` joined 27
+// Aug (Morning Posture Reset Phase 1, content-only — art is Phase 6).
+const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber', 'wall-angel', 'ninety-ninety-breathing'])
 
 describe('Every seeded exercise actually reaches the page', () => {
   /**

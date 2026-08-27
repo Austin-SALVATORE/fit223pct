@@ -510,4 +510,37 @@ export const seedExercises: Exercise[] = [
     substitutionIds: [],
     isUnilateral: true,
   },
+  // 27 Aug 2026 — Morning Posture Reset, Phase 1 (Library promotion only —
+  // `~/.claude/plans/morning-posture-reset.md` §6, §8). Content only: no
+  // domain vehicle, no settings field, no Today wiring in this phase.
+  // Audit (§6.1): dead-bug/bird-dog/glute-bridge/wall-slide already exist
+  // and are reused; half-kneeling-hip-flexor-stretch stays a routine step,
+  // never promoted (program-content.md forbids it). These two are
+  // genuinely missing.
+  {
+    id: 'wall-angel',
+    // Coach's 19th §3 WALL ANGEL bullets — same classification as
+    // wall-slide, its nearest shipped analogue (plan §6.3).
+    muscles: ['shoulders', 'back'],
+    equipment: ['bodyweight'],
+    substitutionIds: ['wall-slide'],
+    isUnilateral: false,
+  },
+  {
+    id: 'ninety-ninety-breathing',
+    // MuscleGroup has no diaphragm/respiratory/motor-control token — the
+    // richer classification (breathing/motor-control drill, not a strength
+    // movement) lives in the locale-keyed cues, not a widened enum (plan
+    // §6.4, `SetVariant`'s own "widening this enum is a coach decision"
+    // convention). `['core','chest']` was rejected: "chest" would claim
+    // pectoral training the coach is not prescribing and would misfile the
+    // entry under the Library's chest group.
+    muscles: ['core'],
+    // `bench` (existing token) — coach's 19th §3 requires "lower legs
+    // supported on a bench/chair"; bodyweight-only would misstate what the
+    // movement needs.
+    equipment: ['bodyweight', 'bench'],
+    substitutionIds: [],
+    isUnilateral: false,
+  },
 ]

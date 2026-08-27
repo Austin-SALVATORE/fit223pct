@@ -401,7 +401,13 @@
       }
     },
     "bird-dog": {
-      "name": "Bird dog"
+      "name": "Bird dog",
+      "cues": [
+        "Opposite arm and leg extend together",
+        "Keep the pelvis level",
+        "Avoid lumbar extension and trunk rotation",
+        "Limb height is secondary to trunk stability"
+      ]
     },
     "hammer-curl": {
       "name": "Hammer curl"
@@ -413,13 +419,25 @@
       "name": "Scapular push-up"
     },
     "wall-slide": {
-      "name": "Wall slide"
+      "name": "Wall slide",
+      "cues": [
+        "Maintain a controlled ribcage position",
+        "Don't flare the ribs or extend the lumbar spine to reach extra shoulder ROM",
+        "Allow natural scapular upward rotation",
+        "Don't force the shoulders down and back"
+      ]
     },
     "bodyweight-squat": {
       "name": "Bodyweight squat"
     },
     "glute-bridge": {
-      "name": "Glute bridge"
+      "name": "Glute bridge",
+      "cues": [
+        "Establish abdominal and pelvic control before lifting",
+        "Extend the hips primarily through the glutes",
+        "Don't reach for extra height by hyperextending the lumbar spine",
+        "Controlled 2-second contraction at the top"
+      ]
     },
     "dumbbell-rowboat": {
       "name": "Dumbbell rowboat",
@@ -485,6 +503,26 @@
         "Front foot fully planted, moderate-to-slightly-long rear step",
         "Slight forward torso lean is fine, allow normal knee travel",
         "Drive through the front leg — don't push off the rear leg"
+      ]
+    },
+    "wall-angel": {
+      "name": "Wall angel",
+      "cues": [
+        "Low-load scapular and thoracic control",
+        "Maintain ribcage and pelvic control throughout",
+        "Use only a comfortable range of shoulder motion",
+        "Don't force the arms against the wall at the expense of spinal position"
+      ]
+    },
+    "ninety-ninety-breathing": {
+      "name": "90/90 breathing",
+      "cues": [
+        "Supine position",
+        "Lower legs supported on a bench or chair, hips and knees near 90°",
+        "Establish gentle abdominal tension",
+        "Allow the ribs to settle rather than flare upward",
+        "Gentle posterior pelvic-control cue — don't aggressively flatten the lumbar spine",
+        "Slow exhale, about 5–6 seconds"
       ]
     }
   },

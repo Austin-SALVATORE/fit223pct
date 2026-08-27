@@ -47,8 +47,16 @@ import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
  * from this list. `reverse-lunge` was never listed — its art already
  * resolved (manifest entry, 6 frames), landed ahead of this Library
  * promotion.
+ *
+ * Morning Posture Reset Phase 1 (27 Aug, content-only —
+ * `~/.claude/plans/morning-posture-reset.md` §6/§8): `wall-angel` and
+ * `ninety-ninety-breathing` are new Library entries with no art yet, added
+ * here. Art lands in Phase 6, gated on the same style-block confirmation
+ * as every other batch, in the same commit as the manifest update and
+ * removal from both `KNOWN_MISSING` lists (`.claude/rules/release-
+ * choreography.md`).
  */
-const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber'])
+const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber', 'wall-angel', 'ninety-ninety-breathing'])
 
 describe('exercise asset coverage', () => {
   it.each(seedExercises.map((e) => e.id))('%s resolves an asset or is in KNOWN_MISSING', (id) => {
