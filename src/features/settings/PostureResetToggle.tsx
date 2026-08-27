@@ -61,16 +61,48 @@ export function PostureResetToggle() {
             aria-checked={active}
             aria-labelledby={labelId}
             onClick={() => void toggle()}
-            className={`relative h-7 w-12 shrink-0 rounded-full border transition-colors focus-inset ${
-              active ? 'border-amber bg-amber' : 'border-border bg-raised'
-            }`}
+            className="relative flex h-11 w-12 shrink-0 items-center justify-center focus-inset"
           >
+            {/*
+              The 48×28 pill is the visual switch; the button itself is
+              44px tall so the tap target clears the floor without
+              growing the pill (owner-reported defect, 27 Aug — measured
+              28px with no guard reaching this file, see
+              touchTargets.test.tsx's Settings block).
+            */}
             <span
               aria-hidden="true"
-              className={`absolute top-0.5 h-5 w-5 rounded-full bg-surface shadow transition-transform ${
-                active ? 'translate-x-[22px]' : 'translate-x-0.5'
+              className={`relative h-7 w-12 rounded-full border transition-colors ${
+                active ? 'border-amber bg-amber' : 'border-border bg-raised'
               }`}
-            />
+            >
+              {/*
+                `left-0.5` is an explicit anchor, not a default the browser
+                is left to resolve — the prior version set no `left`/
+                `right`/`inset`, so its horizontal rest position fell back
+                to CSS's static-position algorithm, which this codebase
+                never authored and which measured ~23px from the left
+                (nowhere near centred), sending the ON-state knob 18px
+                outside the track (owner-reported: "some bug of display,
+                especially when it is on"). `left-0.5` + `translate-x-0`
+                (OFF) / `translate-x-[22px]` (ON) keeps the same 3px inset
+                on both resting sides — OFF's left inset equals ON's right
+                inset, verified against the pill's own box model: track
+                48px, 1px border each side, 20px knob, 2px anchor, 22px
+                travel → 3px left (OFF) and 3px right (ON), both inside
+                the track. Vertical centring uses the `inset-y-0 my-auto`
+                auto-margin trick instead of a hand-computed `top` value,
+                so it stays centred regardless of the track's border width
+                — immune to the same class of error, not just fixed for
+                today's numbers.
+              */}
+              <span
+                aria-hidden="true"
+                className={`absolute inset-y-0 left-0.5 my-auto h-5 w-5 rounded-full bg-surface shadow transition-transform ${
+                  active ? 'translate-x-[22px]' : 'translate-x-0'
+                }`}
+              />
+            </span>
           </button>
         </div>
       </div>

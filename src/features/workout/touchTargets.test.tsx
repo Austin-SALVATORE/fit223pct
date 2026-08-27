@@ -74,3 +74,65 @@ describe('no control in Workout Mode falls below 44px', () => {
     expect(source).toContain('flex items-center justify-center gap-2')
   })
 })
+
+/**
+ * The 44px floor, extended to Settings (27 Aug — owner-reported, QA
+ * measured `PostureResetToggle`'s switch at 28px). This guard's reach was
+ * exactly `FILES` above, five Workout Mode files; `PostureResetToggle.tsx`
+ * was never in it, so the floor above never looked at this control —
+ * `.claude/rules/verification.md`'s "a touch-target test satisfied by a
+ * sibling's correct sizing" happening again in a different shape: not a
+ * sibling passing for it, but the guard's own scope silently not reaching
+ * it at all.
+ *
+ * Own describe block, own `FILES`/pattern lists — deliberately not merged
+ * into the Workout Mode arrays above, whose patterns describe Workout
+ * Mode's own five controls and would match nothing here.
+ *
+ * **What this can and cannot catch, stated plainly rather than implied.**
+ * This is static analysis over class strings — jsdom has no layout engine
+ * (this file's own opening docblock). It can catch a missing size class,
+ * which is exactly what regressed here (the switch button carried `h-7`
+ * with no 44px wrapper). It could **not** have caught the owner's other
+ * two findings — the knob rendering 18px outside the track when ON, and
+ * the knob resting on the wrong side when OFF — because those are
+ * geometry (an unauthored CSS static-position fallback), not a missing
+ * class, and no source-text pattern distinguishes "positioned correctly"
+ * from "positioned by an unintended browser default". Catching that class
+ * of defect needs a layout-capable check (a real or headless-browser
+ * measurement, `measurements.json`'s own method) — proposed, not built
+ * here, and not claimed to be covered by this guard.
+ *
+ * **Made to fail on purpose.** The sizing fix (`h-11 w-12` on the switch
+ * button, `PostureResetToggle.tsx`) was reverted to the pre-fix shape
+ * (`relative h-7 w-12 shrink-0 rounded-full border transition-colors
+ * focus-inset` directly on the button, no wrapper), the suite was run
+ * with `-t 'no control in Settings'`, and both assertions below went red
+ * — quoted in the phase report — before the fix was restored.
+ */
+const UNDERSIZED_SETTINGS: { pattern: RegExp; was: string }[] = [
+  {
+    pattern: /relative h-7 w-12 shrink-0 rounded-full border transition-colors focus-inset/,
+    was: '28px switch (Morning Posture Reset toggle)',
+  },
+]
+
+const SETTINGS_FILES = ['src/features/settings/PostureResetToggle.tsx']
+
+describe('no control in Settings falls below 44px', () => {
+  it.each(SETTINGS_FILES)('%s carries none of the undersized patterns', (file) => {
+    const source = read(file)
+    const found = UNDERSIZED_SETTINGS.filter(({ pattern }) => pattern.test(source)).map((u) => u.was)
+    expect(found, `${file} still has a control under the 44px floor`).toEqual([])
+  })
+
+  it('the switch button itself carries the 44px floor, not just its visual pill', () => {
+    // Positive half, same reason as the Workout Mode block's own: the
+    // negative check above would also pass if the button were deleted.
+    // A precise literal string, not a windowed search around the
+    // control, for the same reason this file's opening docblock names —
+    // an unrelated sibling's floor must not be able to satisfy this.
+    const source = read('src/features/settings/PostureResetToggle.tsx')
+    expect(source).toContain('relative flex h-11 w-12 shrink-0 items-center justify-center focus-inset')
+  })
+})
