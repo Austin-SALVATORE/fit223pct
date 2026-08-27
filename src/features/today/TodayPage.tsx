@@ -13,6 +13,7 @@ import {
 } from '@/data/repositories'
 import { resolveDayPlan } from '@/domain/schedule'
 import { createWorkout, summarizeWorkout } from '@/domain/workout'
+import { postureResetIsActive } from '@/domain/postureReset'
 import { warmupById } from '@/data/seed/warmups'
 import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readiness'
 import { applyReadiness } from '@/domain/adjustments'
@@ -51,6 +52,7 @@ import { TrainingDayRide } from './TrainingDayRide'
 import { DoneTodayActivities } from './DoneTodayActivities'
 import { WarmupSection } from './WarmupSection'
 import { PostponeButton } from './PostponeButton'
+import { MorningSection } from '@/features/morning/MorningSection'
 
 /** Never rendered — see InProgress's Rules-of-Hooks comment. */
 const EMPTY_SESSION: SessionTemplate = { id: '', name: '', focus: '', items: [] }
@@ -89,6 +91,14 @@ interface TodayData {
   nextProgramCompletedCount: number
   /** The athlete's one active postpone this ISO week, if any (postpone-day plan §3). */
   scheduleShift: ScheduleShift | null
+  /**
+   * Whether Morning Posture Reset is on (`postureResetIsActive`, plan §3.5)
+   * — a single boolean, not the raw settings record, since nothing else on
+   * this page needs the rest of `UserSettings`. Read once here rather than
+   * inside `TodayBody`/`MorningSection`, matching how every other flag on
+   * this page is derived once at the query boundary.
+   */
+  postureResetActive: boolean
 }
 
 export function TodayPage() {
@@ -142,6 +152,7 @@ export function TodayPage() {
       nextProgram,
       nextProgramCompletedCount,
       scheduleShift: settings?.scheduleShift ?? null,
+      postureResetActive: postureResetIsActive(settings),
     }
   }, [todayKey])
 
@@ -183,6 +194,7 @@ function TodayBody({
     nextProgram,
     nextProgramCompletedCount,
     scheduleShift,
+    postureResetActive,
   } = data
   // Decided once, at this component instance's first render, and never
   // re-derived — marking the review "seen" writes to settings, which would
@@ -209,6 +221,17 @@ function TodayBody({
   return (
     <>
       {showWeeklyReview && weeklyReview && <WeeklyReviewCard review={weeklyReview} />}
+
+      {/*
+        Rendered once, above the four-way branch — the only placement
+        structurally immune to the branch-vanishing defect this file's own
+        DoneTodayActivities exists to patch (10 Aug; §3.1/§3.2 of the plan).
+        Reads only settings, no program argument, so it survives every
+        branch — upcoming, ended, no-program, a postpone-vacated day, and
+        every mesocycle boundary (plan §1.7) — with no change to
+        schedule.ts.
+      */}
+      {postureResetActive && <MorningSection />}
 
       {activeWorkout ? (
         <>

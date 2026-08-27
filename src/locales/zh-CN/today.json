@@ -29,6 +29,15 @@
     "rampWeightRepsDumbbell": "每只哑铃 {{weight}} kg × {{reps}}",
     "rampWeightRepsBarbell": "杠铃总重 {{weight}} kg × {{reps}}"
   },
+  "morning": {
+    "heading": "晨间",
+    "name": "晨间体态重置",
+    "descriptor": "~10 分钟 · 活动度与动作控制",
+    "roundsReps_other": "{{count}} 轮 × {{reps}} 次",
+    "roundsRepsRange_other": "{{count}} 轮 × {{reps}}–{{repsMax}} 次",
+    "roundsLabel_other": "{{count}} 轮",
+    "breathingInstruction": "完成5次有控制的呼吸。每次缓慢呼气大约6秒。"
+  },
   "noProgram": "还没有设置训练计划。你的下一阶段会显示在这里。",
   "plannedDay": {
     "startsIn_other": "{{count}} 天后开始",

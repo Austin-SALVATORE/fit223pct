@@ -31,6 +31,18 @@
     "rampWeightRepsDumbbell": "{{weight}} kg per dumbbell × {{reps}}",
     "rampWeightRepsBarbell": "{{weight}} kg total × {{reps}}"
   },
+  "morning": {
+    "heading": "Morning",
+    "name": "Morning Posture Reset",
+    "descriptor": "~10 min · Mobility & Motor Control",
+    "roundsReps_one": "{{count}} round × {{reps}}",
+    "roundsReps_other": "{{count}} rounds × {{reps}}",
+    "roundsRepsRange_one": "{{count}} round × {{reps}}–{{repsMax}}",
+    "roundsRepsRange_other": "{{count}} rounds × {{reps}}–{{repsMax}}",
+    "roundsLabel_one": "{{count}} round",
+    "roundsLabel_other": "{{count}} rounds",
+    "breathingInstruction": "Complete 5 controlled breaths. Exhale slowly for about 6 seconds each time."
+  },
   "noProgram": "No training program is set up yet. Your next phase will appear here.",
   "plannedDay": {
     "startsIn_one": "Starts tomorrow",
