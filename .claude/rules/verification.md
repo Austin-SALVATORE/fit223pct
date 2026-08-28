@@ -93,6 +93,22 @@ and the whole team keeps reaching for it until it is written down.
   code. (28 Aug: 11 of 11 default flags were false positives, 8 of them this
   shape.)
 
+- **A focus ring's colour is animated, so sampling it immediately reads a
+  transitional frame.** `transition-colors` in this project's Tailwind setup
+  animates `outline-color` — not only the `color`/`background-color`/
+  `border-color` set you would assume — so after a focus event the ring
+  interpolates from ink toward `--color-amber` over roughly 150-200ms. Read it
+  at t=0 and you get `rgb(242,237,230)`; read it at t≥200ms and you get
+  `rgb(217,160,72)`, exactly `#d9a048`, stable thereafter.
+
+  Two agents hit this independently on the same day and one concluded the app
+  had a colour defect. It does not. **Sample a computed style after a settle
+  delay, and check a second consumer** — a value that is wrong in one place and
+  right in another is a property of the element; a value that is wrong
+  everywhere and settles correctly everywhere is a property of your timing.
+  (28 Aug: investigated, closed as an artifact; independently re-reported as a
+  defect hours later; closed again with the interpolation curve measured.)
+
 - **A guard is not evidence until it has been made to fail on purpose.**
   A test written for a bug and never seen red is indistinguishable from
   a test that checks nothing, and it is worse than no test because it
