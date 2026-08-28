@@ -41,6 +41,7 @@
     "roundsRepsRange_other": "{{count}} tours × {{reps}}–{{repsMax}}",
     "roundsLabel_one": "{{count}} tour",
     "roundsLabel_other": "{{count}} tours",
+    "holdPerRep": "{{seconds}} s de maintien par répétition",
     "breathingInstruction": "Effectue 5 respirations contrôlées. Expire lentement pendant environ 6 secondes à chaque fois."
   },
   "noProgram": "Aucun programme d'entraînement n'est encore configuré. Ta prochaine phase apparaîtra ici.",

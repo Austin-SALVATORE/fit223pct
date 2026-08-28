@@ -39,6 +39,27 @@
  * `seed/dailyRoutines.ts`'s own docblock for the dependency this
  * creates and why the design is immune to its collapse.
  *
+ * **`holdSecondsPerRep?` does not reopen the "no seconds anywhere"
+ * exclusion above.** Coach follow-up ruling (28 Aug 2026): the Glute
+ * Bridge's 2-second top hold is *dose*, not universal technique, and was
+ * removed from the shared Library cue for exactly that reason
+ * (`exercises.gluteBridgeCue.test.ts` guards the leak back into Full
+ * Body C's warm-up, which links to the same cue page). The dose has to
+ * live somewhere, and `rounds`/`reps`/`repsMax` are already schema
+ * numbers for this module's doses — this is one more. The exclusion
+ * above forbids seconds as the *unit of the dose* — `EffortMode:
+ * 'seconds'` (`domain/types.ts`), which is what opens a route to
+ * `ExercisePrescription`. This field leaves the dose at `rounds: 2,
+ * reps: 10` and qualifies each rep; `ExercisePrescription` has no
+ * counterpart field, so this moves the type *away* from that conversion,
+ * not toward it. Precedent: `routine.ts`'s `RoutineStep.holdSeconds`
+ * already carries a per-step seconds number in a display-only schema,
+ * under the identical "defined by what it lacks" docblock argument this
+ * file makes. Not named `holdSeconds` — `RoutineStep.holdSeconds` is the
+ * *whole step's* duration and `routineOverview` sums it; a same-named
+ * field meaning "held within each rep" would read as summable and is
+ * not.
+ *
  * **`repsMax?` exists to carry the Wall Slide dose, which the coach has
  * settled at `2 × 8–10`** — not a speculative field (contrast the
  * rejected `level` field — doc 23 §3 forbids widening the progression-
@@ -70,7 +91,15 @@
  * never written to Dexie, same as `warmups.ts`/`routines.ts`.
  */
 export type DailyRoutineStep =
-  | { kind: 'movement'; exerciseId: string; rounds: number; reps: number; repsMax?: number; perSide?: boolean }
+  | {
+      kind: 'movement'
+      exerciseId: string
+      rounds: number
+      reps: number
+      repsMax?: number
+      perSide?: boolean
+      holdSecondsPerRep?: number
+    }
   | { kind: 'breathing'; exerciseId: string; rounds: number; breaths: number }
 
 export interface DailyRoutine {

@@ -26,7 +26,7 @@ import type { DailyRoutineStep } from '@/domain/dailyRoutine'
 const EXPECTED: DailyRoutineStep[] = [
   { kind: 'breathing', exerciseId: 'ninety-ninety-breathing', rounds: 2, breaths: 5 },
   { kind: 'movement', exerciseId: 'dead-bug', rounds: 2, reps: 6, perSide: true },
-  { kind: 'movement', exerciseId: 'glute-bridge', rounds: 2, reps: 10 },
+  { kind: 'movement', exerciseId: 'glute-bridge', rounds: 2, reps: 10, holdSecondsPerRep: 2 },
   { kind: 'movement', exerciseId: 'bird-dog', rounds: 2, reps: 6, perSide: true },
   { kind: 'movement', exerciseId: 'wall-slide', rounds: 2, reps: 8, repsMax: 10 },
 ]

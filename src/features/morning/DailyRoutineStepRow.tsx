@@ -48,10 +48,17 @@ function MovementDetail({ step }: { step: Extract<DailyRoutineStep, { kind: 'mov
   const key = step.repsMax !== undefined ? 'morning.roundsRepsRange' : 'morning.roundsReps'
   const suffix = step.perSide ? t('sessionPreview.perSideSuffix') : ''
   return (
-    <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
-      {t(key, { count: step.rounds, reps: step.reps, repsMax: step.repsMax })}
-      {suffix}
-    </p>
+    <>
+      <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
+        {t(key, { count: step.rounds, reps: step.reps, repsMax: step.repsMax })}
+        {suffix}
+      </p>
+      {step.holdSecondsPerRep !== undefined ? (
+        <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
+          {t('morning.holdPerRep', { seconds: step.holdSecondsPerRep })}
+        </p>
+      ) : null}
+    </>
   )
 }
 

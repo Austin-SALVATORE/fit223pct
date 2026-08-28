@@ -64,7 +64,10 @@ export const seedDailyRoutines: readonly DailyRoutine[] = [
     steps: [
       { kind: 'breathing', exerciseId: 'ninety-ninety-breathing', rounds: 2, breaths: 5 },
       { kind: 'movement', exerciseId: 'dead-bug', rounds: 2, reps: 6, perSide: true },
-      { kind: 'movement', exerciseId: 'glute-bridge', rounds: 2, reps: 10 },
+      // 2-second top hold is dose, not technique (coach follow-up ruling,
+      // 28 Aug 2026) — see domain/dailyRoutine.ts's own docblock for why
+      // this does not reopen the "no seconds anywhere" exclusion.
+      { kind: 'movement', exerciseId: 'glute-bridge', rounds: 2, reps: 10, holdSecondsPerRep: 2 },
       { kind: 'movement', exerciseId: 'bird-dog', rounds: 2, reps: 6, perSide: true },
       // Settled at 2 × 8–10 — see this file's own docblock. repsMax is
       // permanent, not provisional.
