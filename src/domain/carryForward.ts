@@ -118,7 +118,7 @@ function buildSetPlan(authored: ExercisePrescription, previous: WorkoutExercise)
     if (skipped.has(index)) return rung
     const logged = loggedByIndex.get(index)
     if (logged === undefined) return rung
-    return carriedRung(authored.mode, rung, logged, gatesLoad)
+    return carriedRung(authored.mode, rung, logged, gatesLoad, rung.weightKg)
   })
 
   /**
@@ -128,27 +128,51 @@ function buildSetPlan(authored: ExercisePrescription, previous: WorkoutExercise)
    * working sets; athlete performs and logs 4 complete working sets; next
    * exposure: 4 working sets. This supersedes the earlier statement that a
    * custom added set cannot affect progression" (see `types.ts`'s
-   * `LoggedSet.custom` docblock for the superseded original). No authored
-   * rung exists for a custom slot, so there is nothing to fall back to and
-   * nothing for `gatesLoad` to prefer — its own logged weight is the only
-   * value available. That combination (a technique-gated lift with a
-   * custom added set) is not one the coach's ruling addresses; flagged
-   * here rather than assumed.
+   * `LoggedSet.custom` docblock for the superseded original).
+   *
+   * **Load fallback correction — lead ruling, 28 Aug 2026, not the
+   * coach's words.** The first version of this function used the custom
+   * set's own logged weight as its `gatesLoad` fallback, on the reasoning
+   * that no authored rung exists for a slot that was never prescribed.
+   * That inverts the technique-gate: "choosing a heavier dumbbell does NOT
+   * automatically establish that heavier load as the next prescription;
+   * the authored load remains authoritative until deliberately changed by
+   * the coach/programme" does not carve out an exception for a *new* set
+   * — it is a blanket rule about this lift's load, and a custom set is
+   * still this lift. Concretely: authored 6×15 → 6×12, athlete adds a
+   * 4th set at 8 kg — the original code would have carried 8 kg into next
+   * week's prescription on a lift the coach specifically ruled must never
+   * gain load except by his own decision. Fixed to fall back to the
+   * *last authored rung's* weight (`startWeightKg` when the authored
+   * prescription has no `setPlan` — `authoredSetPlan` already synthesizes
+   * that uniformly, so no extra branch is needed here) — applying the
+   * coach's rule rather than extending it, since the authored load stays
+   * authoritative either way. Set count and reps still carry normally;
+   * only the added rung's weight is pinned.
    */
+  const lastAuthoredRung = authoredRungs.at(-1) ?? null
   const customRungs = previous.sets
     .filter((s) => s.setIndex >= authored.sets && !skipped.has(s.setIndex))
     .sort((a, b) => a.setIndex - b.setIndex)
-    .map((logged) => carriedRung(authored.mode, null, logged, gatesLoad))
+    .map((logged) => carriedRung(authored.mode, null, logged, gatesLoad, lastAuthoredRung?.weightKg ?? null))
 
   return [...prescribedRungs, ...customRungs]
 }
 
-/** One rung's carried value — the only place this file reads a `LoggedSet`. */
+/**
+ * One rung's carried value — the only place this file reads a `LoggedSet`.
+ * `loadFallbackWeightKg` is the weight a `gatesLoad` exercise pins to
+ * instead of the logged weight — the calling rung's own authored weight
+ * for a prescribed level, the last authored rung's weight for an added
+ * custom one (see `buildSetPlan`'s docblock on the custom-set case for
+ * why it is not simply the logged weight).
+ */
 function carriedRung(
   mode: EffortMode,
   authoredRung: SetTarget | null,
   logged: LoggedSet,
   gatesLoad: boolean,
+  loadFallbackWeightKg: number | null,
 ): SetTarget {
   // The defect class this guards against has shipped once already
   // (`mesocycle2Build.conformance.test.ts`, "the seeded plank actually
@@ -165,9 +189,9 @@ function carriedRung(
    * heavier load as the next prescription; the authored load remains
    * authoritative until deliberately changed by the coach/programme." Reps
    * and set count still carry normally for these two — only `weightKg` is
-   * pinned to the authored rung.
+   * pinned, to `loadFallbackWeightKg`, never to what was logged.
    */
-  const weightKg = gatesLoad ? (authoredRung?.weightKg ?? logged.weightKg) : logged.weightKg
+  const weightKg = gatesLoad ? loadFallbackWeightKg : logged.weightKg
 
   return authoredRung?.variantKey === undefined
     ? { weightKg, reps }
@@ -218,8 +242,10 @@ export function isLoadCarryForwardExcluded(exerciseId: string): boolean {
  * An exposure is complete when every prescribed level (index
  * `0..exercise.prescription.sets - 1`) is accounted for — logged or
  * explicitly skipped — and at least one is logged. Custom slots
- * (`setIndex >= prescription.sets`) are not part of this check; they are
- * never prescribed, so there is nothing for them to be "unaccounted for".
+ * (`setIndex >= prescription.sets`) are not part of this check. An
+ * offered-but-unused custom slot is not a gap in the prescription, because
+ * the prescription never asked for it — only prescribed levels can be
+ * "unaccounted for".
  *
  * **This is our reading of the coach's rule (c), not his words — flagged
  * as a ruling, not a fact.** He drew a sharp line between two things that

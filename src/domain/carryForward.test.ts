@@ -190,6 +190,26 @@ describe('carryForwardPrescription', () => {
     expect(isLoadCarryForwardExcluded('goblet-squat')).toBe(false)
   })
 
+  it('a technique-gated lift with an added, completed custom set pins the new rung to the LAST AUTHORED rung — never the logged weight, even when logged heavier than any authored rung (lead ruling, 28 Aug 2026, applying the coach\'s technique-gate rather than extending it — the earlier version of this code carried the logged weight here, which was the bypass the gate exists to close)', () => {
+    const authored = ladderPrescription({
+      exerciseId: 'rear-delt-fly',
+      sets: 2,
+      setPlan: [
+        { weightKg: 6, reps: 15 },
+        { weightKg: 8, reps: 12 },
+      ],
+    })
+    const previous = exposure(
+      authored,
+      [loggedSet(0, 6, 15), loggedSet(1, 8, 12), loggedSet(2, 12, 10, null, true)], // 12 kg logged — heavier than the last authored rung's 8
+      { customSlots: 1 },
+    )
+
+    const result = carryForwardPrescription(authored, previous) as LadderPrescription
+    expect(result.sets).toBe(3)
+    expect(result.setPlan[2]).toEqual({ weightKg: 8, reps: 10 }) // pinned to the last authored rung's weight (8), not the logged 12
+  })
+
   it('a rep-range authored prescription (no setPlan) still carries per-set, becoming a setPlan on first exposure — the ladder/rep-range collapse the ruling asks for', () => {
     const authored = repRangePrescription()
     const previous = exposure(authored, [loggedSet(0, 12, 12), loggedSet(1, 12, 11), loggedSet(2, 12, 14)])
