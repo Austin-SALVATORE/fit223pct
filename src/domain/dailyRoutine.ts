@@ -39,25 +39,25 @@
  * `seed/dailyRoutines.ts`'s own docblock for the dependency this
  * creates and why the design is immune to its collapse.
  *
- * **`repsMax?` exists solely to make the blocked Wall Slide dose a
- * one-line change**, and it is not a speculative field (contrast the
+ * **`repsMax?` exists to carry the Wall Slide dose, which the coach has
+ * settled at `2 × 8–10`** — not a speculative field (contrast the
  * rejected `level` field — doc 23 §3 forbids widening the progression-
- * token vocabulary for this feature). Doc 23 states the dose two ways
+ * token vocabulary for this feature). Doc 23 stated the dose two ways
  * in the same document — `2 × 10` (§3, graduation criteria) and
- * `2 × 8–10` (FINAL V1 PRESCRIPTION) — and one of the two live
- * candidate answers requires a range. See `seed/dailyRoutines.ts` for
- * which is currently carried and its provisional-not-settled marker.
- * **If the coach settles on `2 × 10`, delete this field in the same
- * change** — `warmup.ts`'s `cycle.minutes` is the precedent: a range
- * shape one careless edit from reintroducing a retired concept must not
- * survive once the question closes.
+ * `2 × 8–10` (FINAL V1 PRESCRIPTION) — and a follow-up ruling settled
+ * the contradiction in favour of the range: "Final prescription: Wall
+ * Slide 2 × 8–10 … Remove the provisional marker. 2 × 8–10 governs."
+ * **This field is now permanent and load-bearing, not provisional** —
+ * the range is the shipped prescription, and there is no remaining
+ * condition under which it should be deleted. See
+ * `seed/dailyRoutines.ts` for the carried value.
  *
  * **One optional field, not two `optional` steps.** The half-kneeling
  * hip-flexor stretch — the only member of an earlier `hold` kind and an
  * `optional` flag — is out of v1 entirely (doc 23 §8: must not be
  * promoted into the Library, and must not be used to force a
  * guided-player architecture). Both are deleted rather than left
- * unused; all six remaining movements are prescribed, so there is
+ * unused; all five remaining movements are prescribed, so there is
  * nothing left for either to mark.
  *
  * **No pointer from `Program`.** `warmupId` and `routineId` both hang

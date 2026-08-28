@@ -1,7 +1,7 @@
 import { MORNING_POSTURE_RESET_ID, type DailyRoutine } from '@/domain/dailyRoutine'
 
 /**
- * The Morning Posture Reset catalogue — six movements, transcribed
+ * The Morning Posture Reset catalogue — five movements, transcribed
  * verbatim from the FINAL V1 PRESCRIPTION section of the coach's
  * consolidated ruling (doc 23, "Morning Posture Reset consolidated
  * rulings, all 11 questions", 27 Aug 2026 — governs over every earlier
@@ -30,19 +30,19 @@ import { MORNING_POSTURE_RESET_ID, type DailyRoutine } from '@/domain/dailyRouti
  * Control" duplicate of Glute Bridge and a posture-specific duplicate
  * of Wall Slide; both reuse the existing entry, dose and purpose only).
  *
- * **Wall Slide's dose is PROVISIONAL, not settled** (plan §9.6). Doc 23
- * contradicts itself — §3's graduation criteria says `2 × 10`, but its
- * own FINAL V1 PRESCRIPTION section says `2 × 8–10` — and its
- * precedence rule ("where this conflicts with earlier draft wording,
- * THIS MESSAGE governs") orders *documents*, not sections within one,
- * so it cannot settle the contradiction. `2 × 8–10` is carried here
- * because the FINAL V1 PRESCRIPTION section is the one whose job is to
- * state the prescription — a structural reason, not a preference — and
- * the lead is asking the coach directly. **If he rules `2 × 10`, delete
- * this row's `repsMax` in the same change** (`dailyRoutine.ts`'s own
- * note on why the field exists at all).
+ * **Wall Slide's dose is settled at `2 × 8–10`.** Doc 23 contradicted
+ * itself — §3's graduation criteria said `2 × 10`, its own FINAL V1
+ * PRESCRIPTION section said `2 × 8–10` — and its precedence rule
+ * ("where this conflicts with earlier draft wording, THIS MESSAGE
+ * governs") orders *documents*, not sections within one, so it could
+ * not settle the contradiction on its own. The coach settled it
+ * directly in a follow-up ruling: "Final prescription: Wall Slide
+ * 2 × 8–10. […] Remove the provisional marker. 2 × 8–10 governs."
+ * `repsMax: 10` is therefore permanent and load-bearing, not a
+ * placeholder — see `dailyRoutine.ts`'s own note on why the field
+ * exists at all.
  *
- * **Dead Bug and Bird Dog are `perSide`; Glute Bridge and Wall Angel are
+ * **Dead Bug and Bird Dog are `perSide`; Glute Bridge and Wall Slide are
  * not** — doc 23's own notation (`2 × 6/side` vs `2 × 10`), transcribed
  * exactly, not inferred from `isUnilateral` on the Library entry (Glute
  * Bridge and Wall Slide are bilateral movements dosed as a plain rep
@@ -66,10 +66,9 @@ export const seedDailyRoutines: readonly DailyRoutine[] = [
       { kind: 'movement', exerciseId: 'dead-bug', rounds: 2, reps: 6, perSide: true },
       { kind: 'movement', exerciseId: 'glute-bridge', rounds: 2, reps: 10 },
       { kind: 'movement', exerciseId: 'bird-dog', rounds: 2, reps: 6, perSide: true },
-      // PROVISIONAL — see this file's own docblock. Carries the FINAL V1
-      // PRESCRIPTION section's `2 × 8–10`, not §3's `2 × 10`.
+      // Settled at 2 × 8–10 — see this file's own docblock. repsMax is
+      // permanent, not provisional.
       { kind: 'movement', exerciseId: 'wall-slide', rounds: 2, reps: 8, repsMax: 10 },
-      { kind: 'movement', exerciseId: 'wall-angel', rounds: 2, reps: 10 },
     ],
   },
 ]

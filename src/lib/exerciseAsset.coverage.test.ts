@@ -11,7 +11,7 @@ import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
  * later generation batch lands an asset for one of these, remove it from
  * this list in the same reviewed commit.
  *
- * Was empty as of d0b4fbb (112/112 Library exercises covered — dumbbell-rdl,
+ * Was empty as of d0b4fbb (57/57 Library exercises covered — dumbbell-rdl,
  * the last gap from the Home equipment-tier batch, landed with the
  * full-catalogue chroma-key regeneration). This stays in place as
  * infrastructure, not dead code: it refills the moment a Library

@@ -17,10 +17,11 @@ import type { DailyRoutineStep } from '@/domain/dailyRoutine'
  * for: comparing the seed against a copy of the seed would pass on a
  * shared transcription mistake.
  *
- * Wall Slide's `repsMax: 10` is PROVISIONAL (plan §9.6, `dailyRoutines.ts`'s
- * own docblock) — this test pins the currently-carried value, not a
- * settled one. It will need updating in the same commit that resolves
- * the coach's contradiction, whichever way it goes.
+ * Wall Slide's `repsMax: 10` is settled at `2 × 8–10` — the coach's
+ * follow-up ruling resolved doc 23's internal contradiction directly
+ * ("Final prescription: Wall Slide 2 × 8–10 … Remove the provisional
+ * marker. 2 × 8–10 governs.", `dailyRoutines.ts`'s own docblock). This
+ * test pins the shipped value.
  */
 const EXPECTED: DailyRoutineStep[] = [
   { kind: 'breathing', exerciseId: 'ninety-ninety-breathing', rounds: 2, breaths: 5 },
@@ -28,7 +29,6 @@ const EXPECTED: DailyRoutineStep[] = [
   { kind: 'movement', exerciseId: 'glute-bridge', rounds: 2, reps: 10 },
   { kind: 'movement', exerciseId: 'bird-dog', rounds: 2, reps: 6, perSide: true },
   { kind: 'movement', exerciseId: 'wall-slide', rounds: 2, reps: 8, repsMax: 10 },
-  { kind: 'movement', exerciseId: 'wall-angel', rounds: 2, reps: 10 },
 ]
 
 describe('seedDailyRoutines — Morning Posture Reset catalogue conformance (doc 23, 27 Aug 2026)', () => {
@@ -36,7 +36,7 @@ describe('seedDailyRoutines — Morning Posture Reset catalogue conformance (doc
     expect(seedDailyRoutines.map((r) => r.id)).toEqual([MORNING_POSTURE_RESET_ID])
   })
 
-  it('matches the FINAL V1 PRESCRIPTION exactly — six steps, in order', () => {
+  it('matches the FINAL V1 PRESCRIPTION exactly — five steps, in order', () => {
     const routine = dailyRoutineById(MORNING_POSTURE_RESET_ID)
     expect(routine, 'MORNING_POSTURE_RESET_ID does not resolve').toBeDefined()
     expect(routine!.steps).toEqual(EXPECTED)
@@ -61,11 +61,17 @@ describe('seedDailyRoutines — Morning Posture Reset catalogue conformance (doc
    * deleted the `hold` kind and the `optional` flag from the type
    * entirely (`domain/dailyRoutine.ts`), so this is a compile-time
    * guarantee already — this test is the runtime record of *why* seven
-   * became six, not a check that could fail independently of the type.
+   * became six.
+   *
+   * Six then became five for a different reason: the coach ruled Wall
+   * Angel out of v1 as redundant with Wall Slide — "Wall Slide is the
+   * one to KEEP" — not omitted for scope like the hip-flexor stretch.
+   * Wall Angel's Library entry, cues and art are untouched and stay;
+   * only its place in this routine is gone.
    */
-  it('carries exactly six steps — the optional seventh (hip-flexor stretch) is not in v1', () => {
+  it('carries exactly five steps — the hip-flexor stretch was never in v1, and Wall Angel has been removed as redundant with Wall Slide', () => {
     const routine = dailyRoutineById(MORNING_POSTURE_RESET_ID)!
-    expect(routine.steps).toHaveLength(6)
+    expect(routine.steps).toHaveLength(5)
   })
 })
 

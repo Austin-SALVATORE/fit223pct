@@ -12,7 +12,7 @@ import type { DailyRoutineStep } from '@/domain/dailyRoutine'
  * shared, not merely out of scope** (architect's reasoning). The two row
  * types look alike today by inheritance, not by requirement: three
  * warm-up rows appear only on training days and are strength-side content;
- * six morning rows appear every day and are program-independent by design
+ * five morning rows appear every day and are program-independent by design
  * (plan §1.7). Extracting a shared helper now would put the morning list's
  * own future divergence on the strength side's helper, where this module
  * is meant to change nothing (Layer 2's whole point). **Revisit only on a
