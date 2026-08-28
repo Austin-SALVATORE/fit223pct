@@ -78,7 +78,9 @@ function BreathingDetail({ step }: { step: Extract<DailyRoutineStep, { kind: 'br
       <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
         {t('morning.roundsLabel', { count: step.rounds })}
       </p>
-      <p className="mt-0.5 text-sm leading-relaxed text-ink-secondary">{t('morning.breathingInstruction')}</p>
+      <p className="mt-0.5 text-sm leading-relaxed text-ink-secondary">
+        {t('morning.breathingInstruction', { count: step.breaths })}
+      </p>
     </>
   )
 }

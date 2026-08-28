@@ -37,7 +37,7 @@
     "roundsRepsRange_other": "{{count}} 轮 × {{reps}}–{{repsMax}} 次",
     "roundsLabel_other": "{{count}} 轮",
     "holdPerRep": "每次保持 {{seconds}} 秒",
-    "breathingInstruction": "完成5次有控制的呼吸。每次缓慢呼气大约6秒。"
+    "breathingInstruction_other": "完成{{count}}次有控制的呼吸。每次缓慢呼气大约6秒。"
   },
   "noProgram": "还没有设置训练计划。你的下一阶段会显示在这里。",
   "plannedDay": {

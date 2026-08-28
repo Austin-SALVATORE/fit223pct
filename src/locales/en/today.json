@@ -42,7 +42,8 @@
     "roundsLabel_one": "{{count}} round",
     "roundsLabel_other": "{{count}} rounds",
     "holdPerRep": "{{seconds}} s hold each rep",
-    "breathingInstruction": "Complete 5 controlled breaths. Exhale slowly for about 6 seconds each time."
+    "breathingInstruction_one": "Complete {{count}} controlled breath. Exhale slowly for about 6 seconds each time.",
+    "breathingInstruction_other": "Complete {{count}} controlled breaths. Exhale slowly for about 6 seconds each time."
   },
   "noProgram": "No training program is set up yet. Your next phase will appear here.",
   "plannedDay": {
