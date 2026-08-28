@@ -632,6 +632,29 @@ export const seedProgram: Program = {
  * ruling #5); its `name` ("Full Body C") and order are unchanged. Both
  * retired exercises keep their Library entries and history — this is a
  * program-slot edit, not a Library removal.
+ *
+ * **28 Aug 2026 amendment — Volume Amendment.** Coach-authored, explicit
+ * values, transcribed exactly (`.claude/rules/program-content.md`,
+ * Amendment scope). Every existing three-rung ladder across Sessions A-C
+ * gains a fourth rung at the coach's stated weight×reps; three
+ * rep-range accessories (`dumbbell-squeeze-press`, `incline-push-up`,
+ * `reverse-lunge`) gain a fourth set at their existing load/rep range,
+ * no load or rep-range change. **`romanian-deadlift` is explicitly
+ * unchanged** — the coach's own instruction, since it already carries
+ * four rungs from the 12 Aug equipment upgrade; no fifth rung is added.
+ * **`dumbbell-lateral-raise` and `rear-delt-fly` are the one deliberate
+ * exception to "add a new top weight": their fourth rung repeats the
+ * established 6 kg third-rung load at 8 reps rather than stepping to
+ * 8 kg** — the coach's explicit ruling that the existing technique gate
+ * on these two movements remains authoritative, and the amendment adds
+ * volume at 6 kg rather than using it to bypass that gate ("Do NOT
+ * increase this rung to 8 kg"). No load or rep-range changes elsewhere
+ * in the program are part of this amendment; warm-ups, Morning Posture
+ * Reset, Zone 2 cardio and Romanian Deadlift are untouched. Every new
+ * load was verified buildable from the current hardware
+ * (`achievableLoads(NEW_PROFILE)`) and at or under its ceiling
+ * (`BILATERAL_MAX_KG` 20 / `SINGLE_IMPLEMENT_MAX_KG` 38 /
+ * `BARBELL_MAX_KG` 43.75) before transcription.
  */
 export const mesocycle2Build: Program = {
   id: 'mesocycle-2-build',
@@ -667,6 +690,7 @@ export const mesocycle2Build: Program = {
             { weightKg: 14, reps: 12 },
             { weightKg: 16, reps: 10 },
             { weightKg: 18, reps: 8 },
+            { weightKg: 20, reps: 6 },
           ],
           SINGLE_IMPLEMENT_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -678,6 +702,7 @@ export const mesocycle2Build: Program = {
             { weightKg: 10, reps: 12 },
             { weightKg: 12, reps: 10 },
             { weightKg: 14, reps: 8 },
+            { weightKg: 16, reps: 6 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -690,16 +715,22 @@ export const mesocycle2Build: Program = {
             { weightKg: 17.75, reps: 12 },
             { weightKg: 21.75, reps: 10 },
             { weightKg: 25.75, reps: 8 },
+            { weightKg: 29.75, reps: 6 },
           ],
           BARBELL_MAX_KG,
           DUMBBELL_STEP_KG,
         ),
+        // Volume amendment fourth rung stays at the established 6 kg load
+        // — the existing technique gate remains authoritative, and the
+        // amendment adds volume rather than using it to bypass the load
+        // gate (coach ruling, explicit "do NOT increase this rung to 8 kg").
         ladder(
           'dumbbell-lateral-raise',
           [
             { weightKg: 4, reps: 15 },
             { weightKg: 6, reps: 12 },
             { weightKg: 6, reps: 10 },
+            { weightKg: 6, reps: 8 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -713,6 +744,7 @@ export const mesocycle2Build: Program = {
             { weightKg: 10, reps: 12 },
             { weightKg: 12, reps: 10 },
             { weightKg: 14, reps: 8 },
+            { weightKg: 16, reps: 6 },
           ],
           SINGLE_IMPLEMENT_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -726,6 +758,7 @@ export const mesocycle2Build: Program = {
             { weightKg: null, reps: 40 },
             { weightKg: null, reps: 50 },
             { weightKg: null, reps: 60 },
+            { weightKg: null, reps: 70 },
           ],
           null,
           null,
@@ -762,6 +795,7 @@ export const mesocycle2Build: Program = {
             { weightKg: 10, reps: 12 },
             { weightKg: 12, reps: 10 },
             { weightKg: 14, reps: 8 },
+            { weightKg: 16, reps: 6 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -773,17 +807,23 @@ export const mesocycle2Build: Program = {
             { weightKg: 10, reps: 12 },
             { weightKg: 12, reps: 10 },
             { weightKg: 14, reps: 8 },
+            { weightKg: 16, reps: 6 },
           ],
           SINGLE_IMPLEMENT_MAX_KG,
           DUMBBELL_STEP_KG,
           { perSide: true, restSeconds: 90, note: 'Rest after both sides' },
         ),
+        // Volume amendment fourth rung stays at the established 6 kg load
+        // — the existing technique gate remains authoritative, and the
+        // amendment adds volume rather than using it to bypass the load
+        // gate (coach ruling, explicit "do NOT increase this rung to 8 kg").
         ladder(
           'rear-delt-fly',
           [
             { weightKg: 4, reps: 15 },
             { weightKg: 6, reps: 12 },
             { weightKg: 6, reps: 10 },
+            { weightKg: 6, reps: 8 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -795,6 +835,7 @@ export const mesocycle2Build: Program = {
             { weightKg: 15.75, reps: 12 },
             { weightKg: 17.75, reps: 10 },
             { weightKg: 19.75, reps: 8 },
+            { weightKg: 21.75, reps: 6 },
           ],
           BARBELL_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -808,6 +849,7 @@ export const mesocycle2Build: Program = {
             { weightKg: 6, reps: 16 },
             { weightKg: 8, reps: 14 },
             { weightKg: 10, reps: 12 },
+            { weightKg: 12, reps: 10 },
           ],
           SINGLE_IMPLEMENT_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -836,6 +878,7 @@ export const mesocycle2Build: Program = {
             { weightKg: 27.75, reps: 12 },
             { weightKg: 31.75, reps: 10 },
             { weightKg: 35.75, reps: 8 },
+            { weightKg: 39.75, reps: 6 },
           ],
           BARBELL_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -858,6 +901,7 @@ export const mesocycle2Build: Program = {
             { weightKg: 11.75, reps: 12 },
             { weightKg: 13.75, reps: 10 },
             { weightKg: 15.75, reps: 8 },
+            { weightKg: 17.75, reps: 6 },
           ],
           BARBELL_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -869,7 +913,8 @@ export const mesocycle2Build: Program = {
         // ruling #2/#4: start 8 kg, rest 75 s. RIR is prose-only (ruling
         // #1) — coach's exact wording, "Stop about 2 reps short of
         // failure."
-        reps('dumbbell-squeeze-press', 3, 10, 15, { start: 8, max: BILATERAL_MAX_KG, step: DUMBBELL_STEP_KG }, {
+        // Volume amendment: set count only, 3 → 4 (load/rep range unchanged).
+        reps('dumbbell-squeeze-press', 4, 10, 15, { start: 8, max: BILATERAL_MAX_KG, step: DUMBBELL_STEP_KG }, {
           restSeconds: 75,
           role: 'accessory',
           note: 'Stop about 2 reps short of failure.',
@@ -877,13 +922,15 @@ export const mesocycle2Build: Program = {
         // Rep-range, not a ladder — the spec's own text ("3 working sets /
         // 10-15 reps / Bodyweight") is a rep-range verbatim. Rest changed
         // from the 12 Aug seed (was 75) — six-question bundle §3.4.
-        reps('incline-push-up', 3, 10, 15, bodyweight, { restSeconds: 60, role: 'accessory' }),
+        // Volume amendment: set count only, 3 → 4.
+        reps('incline-push-up', 4, 10, 15, bodyweight, { restSeconds: 60, role: 'accessory' }),
         ladder(
           'hammer-curl',
           [
             { weightKg: 8, reps: 12 },
             { weightKg: 10, reps: 10 },
             { weightKg: 12, reps: 8 },
+            { weightKg: 14, reps: 6 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
@@ -897,7 +944,8 @@ export const mesocycle2Build: Program = {
         // rest 105 s). RIR is prose-only (ruling #1) — coach's exact
         // wording, "Stop with about 2–3 good reps still possible on each
         // side."
-        reps('reverse-lunge', 3, 8, 12, { start: 6, max: BILATERAL_MAX_KG, step: DUMBBELL_STEP_KG }, {
+        // Volume amendment: set count only, 3 → 4.
+        reps('reverse-lunge', 4, 8, 12, { start: 6, max: BILATERAL_MAX_KG, step: DUMBBELL_STEP_KG }, {
           perSide: true,
           restSeconds: 105,
           role: 'accessory',
@@ -912,6 +960,7 @@ export const mesocycle2Build: Program = {
             { weightKg: null, reps: 16 },
             { weightKg: null, reps: 20 },
             { weightKg: null, reps: 24 },
+            { weightKg: null, reps: 28 },
           ],
           null,
           null,

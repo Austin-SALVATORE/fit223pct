@@ -114,11 +114,12 @@ describe('mesocycle2Build scheduling — mid-mesocycle continuity (owner require
     expect(session.items).toHaveLength(6)
     const squat = session.items[0]
     // 13 Aug Full Body Restructure: Session A now opens with goblet-squat,
-    // not incline-dumbbell-press — the top rung (18) is goblet-squat's
-    // own, a coincidence with the pre-restructure incline-press top rung,
+    // not incline-dumbbell-press — the top rung is goblet-squat's own,
     // not evidence this assertion still describes the old exercise.
+    // 28 Aug 2026 volume amendment added a fourth rung (20 kg × 6), so
+    // the top rung moved from 18 to 20.
     expect(squat.exerciseId).toBe('goblet-squat')
-    expect((squat as LadderPrescription).setPlan.at(-1)?.weightKg).toBe(18)
+    expect((squat as LadderPrescription).setPlan.at(-1)?.weightKg).toBe(20)
     const exerciseIds = session.items.map((i) => i.exerciseId)
     expect(exerciseIds).toContain('bent-over-row')
     expect(exerciseIds).toContain('plank')

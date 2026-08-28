@@ -75,59 +75,76 @@ type ExpectedPrescription = ExpectedLadderPrescription | ExpectedRepRangePrescri
 const EXPECTED: Record<string, ExpectedPrescription[]> = {
   'mesocycle2-fullbody-squat': [
     {
+      // Volume amendment (28 Aug 2026): fourth rung 20 kg × 6.
       exerciseId: 'goblet-squat',
       setPlan: [
         { weightKg: 14, reps: 12 },
         { weightKg: 16, reps: 10 },
         { weightKg: 18, reps: 8 },
+        { weightKg: 20, reps: 6 },
       ],
       restSeconds: 90,
       role: 'accessory',
     },
     {
+      // Volume amendment (28 Aug 2026): fourth rung 16 kg × 6.
       exerciseId: 'incline-dumbbell-press',
       setPlan: [
         { weightKg: 10, reps: 12 },
         { weightKg: 12, reps: 10 },
         { weightKg: 14, reps: 8 },
+        { weightKg: 16, reps: 6 },
       ],
       restSeconds: 120,
     },
     {
+      // Volume amendment (28 Aug 2026): fourth rung 29.75 kg × 6 (total
+      // load including the bar).
       exerciseId: 'bent-over-row',
       setPlan: [
         { weightKg: 17.75, reps: 12 },
         { weightKg: 21.75, reps: 10 },
         { weightKg: 25.75, reps: 8 },
+        { weightKg: 29.75, reps: 6 },
       ],
       restSeconds: 120,
     },
     {
+      // Volume amendment (28 Aug 2026): fourth rung is 6 kg × 8 — the
+      // established third-rung load, NOT 8 kg. Coach's explicit
+      // instruction: the technique gate on this movement remains
+      // authoritative; the amendment adds volume at the existing load
+      // rather than using it to bypass the load gate.
       exerciseId: 'dumbbell-lateral-raise',
       setPlan: [
         { weightKg: 4, reps: 15 },
         { weightKg: 6, reps: 12 },
         { weightKg: 6, reps: 10 },
+        { weightKg: 6, reps: 8 },
       ],
       restSeconds: 60,
       role: 'accessory',
     },
     {
+      // Volume amendment (28 Aug 2026): fourth rung 16 kg × 6.
       exerciseId: 'overhead-triceps-extension',
       setPlan: [
         { weightKg: 10, reps: 12 },
         { weightKg: 12, reps: 10 },
         { weightKg: 14, reps: 8 },
+        { weightKg: 16, reps: 6 },
       ],
       restSeconds: 75,
       role: 'accessory',
     },
     {
+      // Volume amendment (28 Aug 2026): fourth rung 70 seconds.
       exerciseId: 'plank',
       setPlan: [
         { weightKg: null, reps: 40 },
         { weightKg: null, reps: 50 },
         { weightKg: null, reps: 60 },
+        { weightKg: null, reps: 70 },
       ],
       restSeconds: 60,
       mode: 'seconds',
@@ -136,6 +153,8 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
   ],
   'mesocycle2-fullbody-hinge': [
     {
+      // Volume amendment (28 Aug 2026): explicitly UNCHANGED — already
+      // four rungs from the 12 Aug equipment upgrade, no fifth rung.
       exerciseId: 'romanian-deadlift',
       setPlan: [
         { weightKg: 23.75, reps: 12 },
@@ -146,50 +165,65 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       restSeconds: 120,
     },
     {
+      // Volume amendment (28 Aug 2026): fourth rung 16 kg × 6.
       exerciseId: 'dumbbell-bench-press',
       setPlan: [
         { weightKg: 10, reps: 12 },
         { weightKg: 12, reps: 10 },
         { weightKg: 14, reps: 8 },
+        { weightKg: 16, reps: 6 },
       ],
       restSeconds: 120,
     },
     {
+      // Volume amendment (28 Aug 2026): fourth rung 16 kg × 6, per side.
       exerciseId: 'single-arm-db-row',
       setPlan: [
         { weightKg: 10, reps: 12 },
         { weightKg: 12, reps: 10 },
         { weightKg: 14, reps: 8 },
+        { weightKg: 16, reps: 6 },
       ],
       restSeconds: 90,
       perSide: true,
     },
     {
+      // Volume amendment (28 Aug 2026): fourth rung is 6 kg × 8 — the
+      // established third-rung load, NOT 8 kg. Coach's explicit
+      // instruction: the technique gate on this movement remains
+      // authoritative; the amendment adds volume at the existing load
+      // rather than using it to bypass the load gate.
       exerciseId: 'rear-delt-fly',
       setPlan: [
         { weightKg: 4, reps: 15 },
         { weightKg: 6, reps: 12 },
         { weightKg: 6, reps: 10 },
+        { weightKg: 6, reps: 8 },
       ],
       restSeconds: 60,
       role: 'accessory',
     },
     {
+      // Volume amendment (28 Aug 2026): fourth rung 21.75 kg × 6 (total
+      // load including the bar).
       exerciseId: 'barbell-curl',
       setPlan: [
         { weightKg: 15.75, reps: 12 },
         { weightKg: 17.75, reps: 10 },
         { weightKg: 19.75, reps: 8 },
+        { weightKg: 21.75, reps: 6 },
       ],
       restSeconds: 75,
       role: 'accessory',
     },
     {
+      // Volume amendment (28 Aug 2026): fourth rung 12 kg × 10.
       exerciseId: 'russian-twist',
       setPlan: [
         { weightKg: 6, reps: 16 },
         { weightKg: 8, reps: 14 },
         { weightKg: 10, reps: 12 },
+        { weightKg: 12, reps: 10 },
       ],
       restSeconds: 60,
       role: 'accessory',
@@ -197,11 +231,14 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
   ],
   'mesocycle2-fullbody-hipext-shoulder': [
     {
+      // Volume amendment (28 Aug 2026): fourth rung 39.75 kg × 6 (total
+      // load including the bar).
       exerciseId: 'barbell-hip-thrust',
       setPlan: [
         { weightKg: 27.75, reps: 12 },
         { weightKg: 31.75, reps: 10 },
         { weightKg: 35.75, reps: 8 },
+        { weightKg: 39.75, reps: 6 },
       ],
       restSeconds: 90,
       role: 'accessory',
@@ -209,21 +246,26 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
     {
       // Session C Shoulder Press Amendment, 13 Aug 2026 evening —
       // replaces dumbbell-shoulder-press; role omitted → defaults 'main'
-      // (role travels with the slot on a replacement).
+      // (role travels with the slot on a replacement). Volume amendment
+      // (28 Aug 2026): fourth rung 17.75 kg × 6 (total load including
+      // the bar).
       exerciseId: 'overhead-press',
       setPlan: [
         { weightKg: 11.75, reps: 12 },
         { weightKg: 13.75, reps: 10 },
         { weightKg: 15.75, reps: 8 },
+        { weightKg: 17.75, reps: 6 },
       ],
       restSeconds: 120,
     },
     {
       // 22 Aug amendment: replaces dumbbell-pullover. Bilateral pair
       // (two dumbbells, not single-implement) — follow-up rulings #2/#4.
+      // Volume amendment (28 Aug 2026): set count only, 3 → 4; load and
+      // rep range unchanged.
       exerciseId: 'dumbbell-squeeze-press',
       range: { min: 10, max: 15 },
-      sets: 3,
+      sets: 4,
       restSeconds: 75,
       role: 'accessory',
       startWeightKg: 8,
@@ -231,18 +273,21 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       weightStepKg: 2,
     },
     {
+      // Volume amendment (28 Aug 2026): set count only, 3 → 4.
       exerciseId: 'incline-push-up',
       range: { min: 10, max: 15 },
-      sets: 3,
+      sets: 4,
       restSeconds: 60,
       role: 'accessory',
     },
     {
+      // Volume amendment (28 Aug 2026): fourth rung 14 kg × 6.
       exerciseId: 'hammer-curl',
       setPlan: [
         { weightKg: 8, reps: 12 },
         { weightKg: 10, reps: 10 },
         { weightKg: 12, reps: 8 },
+        { weightKg: 14, reps: 6 },
       ],
       restSeconds: 75,
       role: 'accessory',
@@ -250,10 +295,11 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
     {
       // 22 Aug amendment: replaces standing-calf-raise. TWO dumbbells
       // (bilateral — follow-up ruling #3 rules out single-dumbbell/
-      // goblet), per side.
+      // goblet), per side. Volume amendment (28 Aug 2026): set count
+      // only, 3 → 4; load and rep range unchanged.
       exerciseId: 'reverse-lunge',
       range: { min: 8, max: 12 },
-      sets: 3,
+      sets: 4,
       restSeconds: 105,
       role: 'accessory',
       perSide: true,
@@ -262,11 +308,13 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       weightStepKg: 2,
     },
     {
+      // Volume amendment (28 Aug 2026): fourth rung 28 reps.
       exerciseId: 'bicycle-crunch',
       setPlan: [
         { weightKg: null, reps: 16 },
         { weightKg: null, reps: 20 },
         { weightKg: null, reps: 24 },
+        { weightKg: null, reps: 28 },
       ],
       restSeconds: 60,
       role: 'accessory',
@@ -522,14 +570,15 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
   })
 
   /**
-   * §D8: a timed hold, not a rep Pyramid — 40s/50s/60s, never reps.
+   * §D8: a timed hold, not a rep Pyramid — 40s/50s/60s/70s, never reps.
    * Retargeted from `side-plank` (12 Aug 2026 equipment upgrade) to
    * `plank` in Session B's old Core block, and retargeted again (13 Aug
    * Full Body Restructure — plank moves Session B → Session A) to keep
    * proving a timed hold can complete — the only test in the suite that
-   * does. `plank` is not per-side, unlike side-plank.
+   * does. `plank` is not per-side, unlike side-plank. Extended to a
+   * fourth rung (70 sec) by the 28 Aug 2026 volume amendment.
    */
-  it('plank is a three-level timed hold, 40/50/60 sec, never reps', () => {
+  it('plank is a four-level timed hold, 40/50/60/70 sec, never reps', () => {
     const sessionA = mesocycle2Build.sessions.find((s) => s.id === 'mesocycle2-fullbody-squat')!
     const plank = sessionA.items.find((i) => i.exerciseId === 'plank') as LadderPrescription
 
@@ -539,6 +588,7 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
       { weightKg: null, reps: 40 },
       { weightKg: null, reps: 50 },
       { weightKg: null, reps: 60 },
+      { weightKg: null, reps: 70 },
     ])
   })
 
