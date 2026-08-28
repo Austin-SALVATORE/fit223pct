@@ -137,7 +137,13 @@ export function PlanPage() {
       {weeks.map((week) => {
         const weekLabel = t('weekOf', { weekStart: formatShortDate(week.weekStart, locale) })
         return (
-          <section key={week.weekStart} className="mt-6" aria-label={weekLabel}>
+          // A12 (docs/review-backlog.md, re-measured 30 Jul "STILL
+          // OPEN"): this wrapper used to carry its own aria-label,
+          // duplicating GroupedList's own aria-label={weekLabel} below
+          // — a second, redundant named region with no heading of its
+          // own to point aria-labelledby at, so the section's name is
+          // simply dropped; the list stays the one named element.
+          <section key={week.weekStart} className="mt-6">
             <GroupedList label={weekLabel}>
               {week.days.map((day) => (
                 <DayRow

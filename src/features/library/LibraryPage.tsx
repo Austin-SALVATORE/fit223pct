@@ -55,9 +55,19 @@ export function LibraryPage() {
       <Heading />
       {grouped.map((group) => {
         const groupLabel = t(group.labelKey)
+        // A12 (docs/review-backlog.md, re-measured 30 Jul "STILL OPEN"):
+        // this section used to carry its own aria-label alongside an
+        // <h2> calling the exact same t() — two independently authored
+        // copies of one string. aria-labelledby ties the region's name
+        // to the heading directly, matching the shipped MeasurementCard
+        // precedent. group.key is stable and unique per group, so it
+        // doubles as the heading id without a useId() per iteration.
+        const groupHeadingId = `library-group-${group.key}-heading`
         return (
-          <section key={group.key} className="mt-8" aria-label={groupLabel}>
-            <h2 className="eyebrow">{groupLabel}</h2>
+          <section key={group.key} className="mt-8" aria-labelledby={groupHeadingId}>
+            <h2 id={groupHeadingId} className="eyebrow">
+              {groupLabel}
+            </h2>
             <div className="mt-3">
               <GroupedList>
                 {group.exercises.map((exercise) => (

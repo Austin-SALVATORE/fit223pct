@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
@@ -16,6 +17,14 @@ import { WaistCard } from './WaistCard'
 export function ProgressPage() {
   const { t } = useTranslation('progress')
   const todayKey = toDateKey(new Date())
+  // A12 (docs/review-backlog.md, re-measured 30 Jul "STILL OPEN"): each
+  // section used to carry its own hand-authored `aria-label` alongside
+  // an `<h2>` calling the exact same t() — two independently authored
+  // copies of one string. aria-labelledby ties the region's name to the
+  // heading directly, matching the shipped MeasurementCard precedent.
+  const consistencyHeadingId = useId()
+  const strengthHeadingId = useId()
+  const waistHeadingId = useId()
 
   const data = useLiveQuery(async () => {
     const [program, exercises, completed, checkins] = await Promise.all([
@@ -66,16 +75,20 @@ export function ProgressPage() {
     <div>
       <Heading />
 
-      <section className="mt-8" aria-label={t('consistency.sectionLabel')}>
-        <h2 className="eyebrow">{t('consistency.sectionLabel')}</h2>
+      <section className="mt-8" aria-labelledby={consistencyHeadingId}>
+        <h2 id={consistencyHeadingId} className="eyebrow">
+          {t('consistency.sectionLabel')}
+        </h2>
         <div className="mt-3">
           <ConsistencyCard trend={consistency} />
         </div>
       </section>
 
       {mainExerciseIds.length > 0 && (
-        <section className="mt-8" aria-label={t('strength.sectionLabel')}>
-          <h2 className="eyebrow">{t('strength.sectionLabel')}</h2>
+        <section className="mt-8" aria-labelledby={strengthHeadingId}>
+          <h2 id={strengthHeadingId} className="eyebrow">
+            {t('strength.sectionLabel')}
+          </h2>
 
           {withHistory.length === 0 ? (
             <div className="mt-3 rounded-card border border-border bg-surface p-5">
@@ -132,8 +145,10 @@ export function ProgressPage() {
         </section>
       )}
 
-      <section className="mt-8" aria-label={t('waist.sectionLabel')}>
-        <h2 className="eyebrow">{t('waist.sectionLabel')}</h2>
+      <section className="mt-8" aria-labelledby={waistHeadingId}>
+        <h2 id={waistHeadingId} className="eyebrow">
+          {t('waist.sectionLabel')}
+        </h2>
         <div className="mt-3">
           <WaistCard trend={waist} />
         </div>
