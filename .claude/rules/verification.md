@@ -63,6 +63,36 @@ and the whole team keeps reaching for it until it is written down.
   would fail, you have not measured anything. Change *instrument*, not
   *effort*: a different tool, a different layer, or a deliberate break.
 
+- **A locale key can be referenced from inside another locale file, where no
+  source-code search will ever find it.** i18next resolves `$t(...)` inside a
+  *value*: `domain:readiness.drivers.one` is literally
+  `"$t(domain:readiness.signal.{{signal}})"`, so the whole
+  `domain:readiness.signal.*` family is live and is referenced from **no `.ts`
+  or `.tsx` file at all**. Any audit that greps source for a key — the obvious
+  instrument, and the one everyone reaches for — reports those keys as dead.
+
+  Two further shapes defeat call-site scanning here, and with the above they
+  accounted for ~150 false positives in a single audit: a key held in a variable
+  or array before reaching `t()` (`SIGNAL_ROWS`'s `labelKey`, then
+  `t(labelKey)`); and the **message-descriptor two-hop** that `architecture.md`
+  mandates — domain builds `{ key: 'domain:progression.start' }` as a literal
+  and a *different* file calls `t(descriptor.key)` with a variable. That
+  indirection is a design rule here, so it covers essentially the entire
+  `domain:*` and `plan:import:*` namespaces.
+
+  So **search the locale JSONs themselves before deleting a key**, not only the
+  source, and treat "this key is unused" as a hypothesis until all three routes
+  are excluded. (28 Aug: an audit flagged ~150 unused keys; two were real. The
+  auditor found the `$t()` route only after being misled by it mid-audit.)
+
+- **A dead-code tool's entry-point model decides what it calls dead.** `knip`
+  follows the Vite app bundle, so everything under `scripts/` — the owner's CLI
+  asset pipeline, invoked as `node scripts/convert-assets.mjs` — is unreachable
+  by construction and reported as unused, along with any dependency only those
+  scripts use. That is a finding about the tool's configuration, not about the
+  code. (28 Aug: 11 of 11 default flags were false positives, 8 of them this
+  shape.)
+
 - **A guard is not evidence until it has been made to fail on purpose.**
   A test written for a bug and never seen red is indistinguishable from
   a test that checks nothing, and it is worse than no test because it
