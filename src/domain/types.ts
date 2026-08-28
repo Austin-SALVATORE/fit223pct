@@ -265,9 +265,19 @@ export interface LoggedSet {
   completedAt: string
   /**
    * Session-only extra set opened by `Add Set` (coach spec §4). Never a
-   * Pyramid level — does not satisfy a rung, does not trigger load or
-   * variation progression. Storage only for now: nothing writes this yet,
-   * the set-screen controls that produce it land separately.
+   * Pyramid level — does not satisfy a rung.
+   *
+   * **Superseded in part, 28 Aug 2026 coach ruling.** This originally also
+   * said "does not trigger load or variation progression" in full. That
+   * survives for *load*: a completed custom set never independently
+   * triggers an additional automatic load increase beyond what was logged
+   * (`domain/carryForward.ts`'s `carriedRung`). But for *set count* the
+   * ruling overrides the original statement directly: "prescribed 3
+   * working sets; athlete performs and logs 4 complete working sets; next
+   * exposure: 4 working sets. This supersedes the earlier statement that a
+   * custom added set cannot affect progression." So a completed custom set
+   * DOES become a permanent working set at the next exposure — see
+   * `carryForward.ts`'s `buildSetPlan` for the mechanism.
    */
   custom?: true
 }

@@ -370,6 +370,31 @@ export function previousExposureFor(
   programId: string,
   exerciseId: string,
 ): WorkoutExercise | null {
+  return scopedExposuresFor(workouts, programId, exerciseId)[0] ?? null
+}
+
+/**
+ * The programme-scoped, completed exposures to this exercise, most-recent
+ * first (`date`, then `completedAt` as tie-break) — the shared ordering
+ * primitive behind `previousExposureFor` above and `carryForward.ts`'s
+ * `mostRecentCompleteExposureFor`.
+ *
+ * **Exported for `carryForward.ts` only, not a second display API.**
+ * `previousExposureFor` takes this list's first element; carry-forward's
+ * completeness search needs to walk past the first if it isn't a complete
+ * exposure (coach ruling, "use the most recent COMPLETE exposure… session
+ * completion alone is insufficient"), which a function returning a single
+ * `WorkoutExercise | null` cannot do. One scoped-and-ordered definition,
+ * two predicates over it, rather than two copies of the sort that could
+ * silently drift apart. See `previousExposureFor`'s own docblock for why
+ * this is program-scoped at all, and `previousSetsFor` above for the
+ * unscoped display equivalent this is not a replacement for.
+ */
+export function scopedExposuresFor(
+  workouts: readonly Workout[],
+  programId: string,
+  exerciseId: string,
+): WorkoutExercise[] {
   const candidates = workouts
     .filter((w) => w.completedAt !== null && w.programId === programId)
     .sort((a, b) => {
@@ -378,11 +403,9 @@ export function previousExposureFor(
       return (b.completedAt ?? '').localeCompare(a.completedAt ?? '')
     })
 
-  for (const workout of candidates) {
-    const exercise = workout.exercises.find((e) => e.exerciseId === exerciseId && e.sets.length > 0)
-    if (exercise) return exercise
-  }
-  return null
+  return candidates
+    .map((workout) => workout.exercises.find((e) => e.exerciseId === exerciseId && e.sets.length > 0))
+    .filter((exercise): exercise is WorkoutExercise => exercise !== undefined)
 }
 
 /**
