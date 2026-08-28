@@ -47,27 +47,32 @@ delivers.
      no guilt, penalties, readiness effect, or compliance meaning.
      (Ruled; **not implemented** as of 27 Aug — no field, no repo, no
      Dexie version behind it.)
-   - **27 Aug**, **Morning Posture Reset** may store completed /
-     skipped / unavailable. Scope is that module only. The coach's
-     amendment requires the three states and independently forbids
-     every mechanism that would turn them into a streak: no catch-up,
-     no double sessions, no punishment for a missed day, and no
-     progression from consecutive days.
+   - **27 Aug**, **Morning Posture Reset** was granted permission to
+     store completed / skipped / unavailable, scoped to that module.
+     **That permission was REVOKED by the coach on 28 Aug and is no
+     longer part of the specification.**
 
-     **This permission is granted and unexercised. Morning Posture
-     Reset v1 stores none of it** — not completion, not skip, not
-     unavailable. The only thing v1 writes is a single athlete-state
-     activation flag, which is not a per-day fact. Recorded here
-     because a reader of the bullet above, on its own, would
-     reasonably conclude that storage shipped. It did not.
+     The revoking ruling is explicit and deliberate: *"NO per-day state
+     is persisted"* — not completed, not skipped, not unavailable, not
+     partially completed, not any equivalent daily status. The earlier
+     wording *"that state may be persisted where appropriate"* is
+     superseded and must not be cited as live permission. The only
+     persisted state is the athlete-level module activation flag, which
+     is not a per-day fact.
 
-     How it collapsed, in one line each: the coach's own 27 Aug
-     refinement forbade surfacing history that no decision consumes,
-     and completion has no such decision; ordinary skipped days are
-     not to be persisted at all; and the current rib gate is the
-     activation flag rather than a daily `unavailable` record, with
-     daily-unavailable defined as a *post-activation* concept and so
-     out of v1 by construction.
+     The coach's stated reason for revoking rather than leaving it
+     dormant: *"Do not preserve an unused permission in the
+     architecture today."* If a future product need gives `unavailable`
+     a concrete decision-improving use, it returns as a **new feature
+     decision**, reviewed on its own merits, not as a permission
+     quietly inherited from a superseded document.
+
+     Recorded at this length because between 27 and 28 Aug this file
+     said the opposite, and a reader who found the old bullet alone
+     would reasonably conclude that a daily-state feature was approved
+     and merely unbuilt. It is not approved. Nothing about the shipped
+     code changed — v1 stored none of it either way — so this is a
+     change to what is *permitted*, not to what exists.
 
 ## A stated bound on the no-tracking guards
 
