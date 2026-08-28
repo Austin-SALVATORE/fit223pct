@@ -6,6 +6,7 @@ import {
   hasVerifiedLoadList,
   logSet,
   plannedSetIndices,
+  previousExposureFor,
   previousSetsFor,
   progressionHistoryFor,
   repairPositionCompleteWorkout,
@@ -393,6 +394,64 @@ describe('previousSetsFor', () => {
 
   it('returns an empty list for a never-performed exercise', () => {
     expect(previousSetsFor([makeWorkout()], 'overhead-press')).toEqual([])
+  })
+})
+
+/**
+ * Progression carry-forward, Phase 1 (`~/.claude/plans/
+ * progression-carry-forward.md` §4/§8) — the program-scoped sibling of
+ * `previousSetsFor` above. Its own docblock states why it exists rather
+ * than scoping `previousSetsFor` itself.
+ */
+describe('previousExposureFor', () => {
+  it('returns null with no history at all', () => {
+    expect(previousExposureFor([], 'phase-1-home', 'goblet-squat')).toBeNull()
+  })
+
+  it('ignores an incomplete (in-progress) workout', () => {
+    const inProgress = logSet(makeWorkout(), 0, set(9, 12), 0)
+    expect(inProgress.completedAt).toBeNull()
+    expect(previousExposureFor([inProgress], 'phase-1-home', 'goblet-squat')).toBeNull()
+  })
+
+  it("ignores a different program's workout — goblet-squat is prescribed in both phase-1-home and mesocycle-2-build", () => {
+    const otherProgram: Workout = {
+      ...logSet(makeWorkout(), 0, set(9, 12), 0),
+      id: 'w-other-program',
+      programId: 'mesocycle-2-build',
+      completedAt: '2026-07-20T19:00:00.000Z',
+    }
+    expect(previousExposureFor([otherProgram], 'phase-1-home', 'goblet-squat')).toBeNull()
+  })
+
+  it('picks the later of two same-day exposures, by completedAt tie-break', () => {
+    const earlier: Workout = {
+      ...logSet(makeWorkout(), 0, set(9, 12), 0),
+      id: 'w-earlier',
+      date: '2026-07-22',
+      completedAt: '2026-07-22T09:00:00.000Z',
+    }
+    const later: Workout = {
+      ...logSet(makeWorkout(), 0, set(11, 14), 0),
+      id: 'w-later',
+      date: '2026-07-22',
+      completedAt: '2026-07-22T19:00:00.000Z',
+    }
+    // Deliberately passed in the "wrong" array order — earlier first — so
+    // this can only pass by actually comparing completedAt, not by
+    // coincidentally returning the last array element.
+    const exposure = previousExposureFor([earlier, later], 'phase-1-home', 'goblet-squat')
+    expect(exposure?.sets[0].reps).toBe(11)
+  })
+
+  it('returns the whole WorkoutExercise, including prescription and skippedLevels — not just the sets', () => {
+    let workout = logSet(makeWorkout(), 0, set(9, 12), 0)
+    workout = skipPrescribedLevel(workout, 0, 1)
+    workout = { ...workout, id: 'w-full', completedAt: '2026-07-22T19:00:00.000Z' }
+
+    const exposure = previousExposureFor([workout], 'phase-1-home', 'goblet-squat')
+    expect(exposure?.prescription.exerciseId).toBe('goblet-squat')
+    expect(exposure?.skippedLevels).toEqual([1])
   })
 })
 

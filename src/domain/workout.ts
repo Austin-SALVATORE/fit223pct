@@ -323,6 +323,69 @@ export function previousSetsFor(
 }
 
 /**
+ * The most recent **completed exposure** to this exercise, scoped to a
+ * single program — the whole `WorkoutExercise`, not just its sets, so a
+ * caller needing `prescription`, `skippedLevels` or `customSlots`
+ * (carry-forward, `domain/carryForward.ts`) does not have to re-derive
+ * them from a bare `LoggedSet[]`.
+ *
+ * **Program-scoped, unlike `previousSetsFor` above — deliberately, not an
+ * oversight.** The repo has solved this exact problem once already:
+ * `variationLadder.ts`'s `completeCeilingExposures` filters on
+ * `w.programId === programId` because several ceiling lifts (e.g.
+ * `incline-dumbbell-press`) appear in more than one seeded program at
+ * different ceilings, and an unscoped count "would credit the athlete
+ * with exposures earned under a different program's pyramid and
+ * over-advance by weeks on day one" (that function's own docblock,
+ * measured). The same overlap is real here: `goblet-squat` is prescribed
+ * in both `phase-1-home` and `mesocycle-2-build` at different weights.
+ * Under carry-forward this stops being a display nuance and becomes the
+ * mechanism, so it has to be scoped from birth, not patched later.
+ *
+ * **`previousSetsFor` is deliberately left unscoped and untouched** — see
+ * its own docblock. It feeds `<LastTime>`'s display of what was actually
+ * lifted, "real information the athlete is entitled to regardless", and
+ * `highlights.ts`'s retrospective "what made this workout different from
+ * last time", where cross-program history is legitimate. Scoping it would
+ * alter two shipped surfaces for no gain; this function exists instead of
+ * changing that one.
+ *
+ * **Sorted `date`, then `completedAt` as tie-break** — not `completedAt`
+ * alone. `previousSetsFor` sorts on `date` only, so two same-day completed
+ * workouts currently tie-break on `Array.prototype.sort`'s stability over
+ * an effectively arbitrary input order (`workoutRepo.getCompleted()` is an
+ * unordered table scan). `completedAt` is wall-clock — `undoLastSet`'s own
+ * docblock warns it can be reordered by a device clock change, and
+ * `repairPositionCompleteWorkout` can backdate it to a logged set's own
+ * timestamp — so it breaks the tie honestly without becoming the primary
+ * key. Date stays primary because the calendar day is this domain's unit
+ * everywhere else (`Workout.date`, `closeStaleWorkouts`).
+ *
+ * Requires `completedAt !== null` on the workout and `sets.length > 0` on
+ * the matched exercise, same as `previousSetsFor` — an in-progress workout
+ * or an exercise nothing was logged for is not an exposure.
+ */
+export function previousExposureFor(
+  workouts: readonly Workout[],
+  programId: string,
+  exerciseId: string,
+): WorkoutExercise | null {
+  const candidates = workouts
+    .filter((w) => w.completedAt !== null && w.programId === programId)
+    .sort((a, b) => {
+      const byDate = b.date.localeCompare(a.date)
+      if (byDate !== 0) return byDate
+      return (b.completedAt ?? '').localeCompare(a.completedAt ?? '')
+    })
+
+  for (const workout of candidates) {
+    const exercise = workout.exercises.find((e) => e.exerciseId === exerciseId && e.sets.length > 0)
+    if (exercise) return exercise
+  }
+  return null
+}
+
+/**
  * True only once the athlete has confirmed their actual dumbbell hardware
  * (coach spec v2.16 §4). Absent profile, or a profile nobody has confirmed
  * yet, is exactly the same as no profile — "values happen to be present"
