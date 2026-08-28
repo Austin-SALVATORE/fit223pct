@@ -76,21 +76,27 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
   }
 
   if (!expanded) {
+    // The heading is a sibling of the button, never its descendant
+    // (docs/review-backlog.md A9, re-measured 30 Jul "STILL OPEN").
+    // Nesting <h2> inside <button> absorbs the heading's text into the
+    // button's accessible name and drops it from screen-reader heading
+    // navigation entirely — the heading exists in the DOM but is
+    // unreachable as one.
     return (
-      <button
-        type="button"
-        onClick={() => setEditing(true)}
-        className={`${CARD_SECTION} flex w-full items-baseline justify-between gap-4 text-left`}
-      >
-        <div className="min-w-0">
-          <h2 className="eyebrow">{t('measurement.heading')}</h2>
+      <div className={CARD_SECTION}>
+        <h2 className="eyebrow">{t('measurement.heading')}</h2>
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          className="flex w-full items-baseline justify-between gap-4 text-left"
+        >
           <p className="mt-2 text-ink" data-numeric>
             {checkIn!.weightKg} kg · {checkIn!.waistCm} cm
             {checkIn!.bodyFatPercent != null && ` · ${checkIn!.bodyFatPercent}%`}
           </p>
-        </div>
-        <span className="shrink-0 text-sm text-ink-tertiary">{tCommon('edit')}</span>
-      </button>
+          <span className="shrink-0 text-sm text-ink-tertiary">{tCommon('edit')}</span>
+        </button>
+      </div>
     )
   }
 

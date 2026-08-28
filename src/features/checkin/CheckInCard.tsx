@@ -105,8 +105,7 @@ export function CheckInCard({ dateKey, checkIn, readiness, locked = false }: Che
           </div>
         </>
       ) : (
-        <CollapsedRow ref={collapsedRef} locked={locked} onEdit={() => setEditing(true)}>
-          <h2 className="eyebrow">{t('heading')}</h2>
+        <CollapsedRow ref={collapsedRef} locked={locked} heading={t('heading')} onEdit={() => setEditing(true)}>
           <p className="mt-2 text-ink">
             {locked && !complete ? t('notRecorded') : tierPhrase}
           </p>
@@ -117,14 +116,27 @@ export function CheckInCard({ dateKey, checkIn, readiness, locked = false }: Che
   )
 }
 
+/**
+ * The heading is a sibling of the interactive control, never its
+ * descendant (docs/review-backlog.md A9, re-measured 30 Jul "STILL
+ * OPEN"). Nesting `<h2>` inside `<button>` absorbs the heading's text
+ * into the button's accessible name and drops it from screen-reader
+ * heading navigation entirely — the heading exists in the DOM but is
+ * unreachable as one. Only the value/edit line stays inside the
+ * button; A2's focus-on-collapse behaviour (`useFocusOnChange`) still
+ * announces the tier via the button's own accessible name, which
+ * doesn't depend on the heading text.
+ */
 function CollapsedRow({
   locked,
   onEdit,
+  heading,
   children,
   ref,
 }: {
   locked: boolean
   onEdit: () => void
+  heading: string
   children: ReactNode
   /** Focus target for the expanded→collapsed transition — see CheckInCard's collapsedRef. */
   ref?: Ref<HTMLButtonElement>
@@ -135,22 +147,28 @@ function CollapsedRow({
   // transition, so it needs no focus target.
   if (locked) {
     return (
-      <div className="flex w-full items-baseline justify-between gap-4">
-        <div className="min-w-0">{children}</div>
-        <span className="shrink-0 text-sm text-ink-tertiary">{t('locked')}</span>
+      <div>
+        <h2 className="eyebrow">{heading}</h2>
+        <div className="flex w-full items-baseline justify-between gap-4">
+          <div className="min-w-0">{children}</div>
+          <span className="shrink-0 text-sm text-ink-tertiary">{t('locked')}</span>
+        </div>
       </div>
     )
   }
   return (
-    <button
-      ref={ref}
-      type="button"
-      onClick={onEdit}
-      className="flex w-full items-baseline justify-between gap-4 text-left"
-    >
-      <div className="min-w-0">{children}</div>
-      <span className="shrink-0 text-sm text-ink-tertiary">{tCommon('edit')}</span>
-    </button>
+    <div>
+      <h2 className="eyebrow">{heading}</h2>
+      <button
+        ref={ref}
+        type="button"
+        onClick={onEdit}
+        className="flex w-full items-baseline justify-between gap-4 text-left"
+      >
+        <div className="min-w-0">{children}</div>
+        <span className="shrink-0 text-sm text-ink-tertiary">{tCommon('edit')}</span>
+      </button>
+    </div>
   )
 }
 
