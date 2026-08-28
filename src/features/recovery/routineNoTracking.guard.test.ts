@@ -24,6 +24,31 @@ import { describe, expect, it } from 'vitest'
  * `import()` call expressions, and any dynamic import inside the guarded
  * subtree whose specifier is not a string literal fails the test —
  * unresolvable means uncleared, and uncleared must be loud.
+ *
+ * **Type-only imports are erased, so they are not runtime coupling.** A
+ * fully `import type { … }` / `export type { … }` clause produces zero
+ * runtime JavaScript — it can never let this module *execute* anything on
+ * the far side, so it is skipped deliberately. Fix mirrored from
+ * `morningIndependence.moduleGraph.guard.test.ts`, which found this exact
+ * false positive first: without the check, a type-only import of a
+ * forbidden module fails the guard as though it were real coupling. A
+ * *mixed* clause (`import { type A, b } from '...'`) still carries a real
+ * value (`b`), so only a wholly-type-only clause is skipped —
+ * `importClause.isTypeOnly` / the export declaration's own `isTypeOnly`,
+ * never a per-specifier check, which would incorrectly skip the mixed case
+ * too. Two guards, one notion of "import" — see that file's docblock for
+ * why drift here would be a bug.
+ *
+ * Proved three ways in `RoutinePlayer.tsx`, then reverted (mutate, observe,
+ * revert — see verification.md); `git diff` was byte-clean afterward:
+ * 1. `import type { Fit223Database } from '@/data/db'` → guard stayed
+ *    GREEN (the false positive this fixes; `db.ts` has no other exported
+ *    type, so the class name doubles as the type-only target).
+ * 2. `import { db } from '@/data/db'` → guard went RED, reporting
+ *    `['src/data/db.ts']`.
+ * 3. `import { type Fit223Database, db } from '@/data/db'` (mixed clause)
+ *    → guard went RED, same report — only wholly-erased clauses are
+ *    skipped, not any clause containing a type.
  */
 
 const REPO_ROOT = path.resolve(import.meta.dirname, '../../..')
@@ -67,11 +92,20 @@ function buildGraph(entry: string): Graph {
     if (!file) return
 
     const walk = (node: ts.Node): void => {
-      // Static: import / export-from.
+      // Static: import / export-from. A fully `import type { … }` /
+      // `export type { … }` declaration is erased at compile time and
+      // carries no runtime coupling — skipped deliberately, per-clause
+      // rather than per-specifier so a mixed clause still counts.
+      const isTypeOnly = ts.isImportDeclaration(node)
+        ? (node.importClause?.isTypeOnly ?? false)
+        : ts.isExportDeclaration(node)
+          ? node.isTypeOnly
+          : false
       if (
         (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
         node.moduleSpecifier &&
-        ts.isStringLiteral(node.moduleSpecifier)
+        ts.isStringLiteral(node.moduleSpecifier) &&
+        !isTypeOnly
       ) {
         const next = resolve(node.moduleSpecifier.text, file.fileName)
         if (next) visit(next)
