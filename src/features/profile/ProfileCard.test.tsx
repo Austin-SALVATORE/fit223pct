@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { settingsRepo, checkinRepo } from '@/data/repositories'
-import { ProfileCard } from './ProfileCard'
+import { ProfileCard, PROFILE_ANCHOR_ID } from './ProfileCard'
 
 /**
  * The profile surface, and specifically the thing it exists to fix: the
@@ -372,7 +372,7 @@ describe('the form has one label style and one alignment', () => {
   it('leaves no control centred inside the form', async () => {
     await openForm()
 
-    const card = document.querySelector('section#profile')
+    const card = document.querySelector(`section#${PROFILE_ANCHOR_ID}`)
     // Layout containers only. A round StepButton centres its own glyph, and
     // Stepper's button row centres −/value/+ vertically — both intrinsic to
     // the control rather than decisions about where a field sits, so matching

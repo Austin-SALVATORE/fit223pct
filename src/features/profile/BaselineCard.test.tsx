@@ -4,6 +4,7 @@ import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { checkinRepo, settingsRepo } from '@/data/repositories'
 import { BaselineCard } from './BaselineCard'
+import { PROFILE_ANCHOR_ID } from './ProfileCard'
 
 /**
  * The milestone's visible output, and the two things it must never do:
@@ -124,7 +125,7 @@ describe('maintenance is never attributed to an activity level the user did not 
     render(<BaselineCard />)
 
     const link = await screen.findByRole('link', { name: 'Choose your activity level' })
-    expect(link).toHaveAttribute('href', '#profile')
+    expect(link).toHaveAttribute('href', `#${PROFILE_ANCHOR_ID}`)
   })
 
   it('shows that band alone, with its label, once one is stated', async () => {

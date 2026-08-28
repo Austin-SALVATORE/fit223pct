@@ -12,6 +12,7 @@ import { weightGoalProgress, type GoalProgress } from '@/domain/goals'
 import { weightTrend } from '@/domain/trends'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { CARD_SECTION } from '@/ui/cardSection'
+import { PROFILE_ANCHOR_ID } from './ProfileCard'
 
 /**
  * The energy baseline and goal distance — the milestone's visible output.
@@ -158,7 +159,7 @@ function AllBands({ ree }: { ree: number }) {
         would stop being a deliberate act.
       */}
       <a
-        href="#profile"
+        href={`#${PROFILE_ANCHOR_ID}`}
         className="mt-3 inline-block rounded-full border border-border px-4 py-2 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
       >
         {t('baseline.choosePal')}
