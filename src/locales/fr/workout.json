@@ -104,7 +104,7 @@
     "topWeightReps": "{{reps}} × {{weight}} kg",
     "topSeconds": "{{seconds}}s de maintien",
     "topReps": "{{reps}} reps",
-    "topSetLine": "{{countPhrase}} · top {{detail}}",
+    "topSetLine": "{{countPhrase}} · meilleure série {{detail}}",
     "customCount_one": "{{count}} série ajoutée",
     "customCount_other": "{{count}} séries ajoutées",
     "skippedCount_one": "{{count}} palier passé",
