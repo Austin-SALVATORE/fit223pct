@@ -160,12 +160,16 @@ describe('carryForwardPrescription', () => {
     ])
   })
 
-  it('a skipped level survives at authored values, not deleted and not zeroed', () => {
-    const authored = ladderPrescription()
-    const previous = exposure(authored, [loggedSet(0, 14, 12), loggedSet(2, 18, 8)], { skippedLevels: [1] })
+  it("a skipped level survives at authored values while the other two carry over-performance — the coach's own worked example, confirmed 28 Aug 2026 (his four named failure modes: the skip must not permanently remove the middle set, must not make it inherit zero, must not disqualify the exposure, and must not force the system to ignore valid performance from the other two)", () => {
+    const authored = ladderPrescription() // 14×12 / 16×10 / 18×8
+    const previous = exposure(authored, [loggedSet(0, 16, 13), loggedSet(2, 20, 9)], { skippedLevels: [1] })
 
     const result = carryForwardPrescription(authored, previous) as LadderPrescription
-    expect(result.setPlan[1]).toEqual({ weightKg: 16, reps: 10 }) // authored rung 1, untouched
+    expect(result.setPlan).toEqual([
+      { weightKg: 16, reps: 13 }, // over-performed, carries
+      { weightKg: 16, reps: 10 }, // skipped — authored rung 1, untouched: not zero, not deleted, not inherited
+      { weightKg: 20, reps: 9 }, // over-performed, carries — the skip did not disqualify the exposure
+    ])
     expect(result.setPlan).toHaveLength(3)
   })
 

@@ -247,17 +247,26 @@ export function isLoadCarryForwardExcluded(exerciseId: string): boolean {
  * the prescription never asked for it — only prescribed levels can be
  * "unaccounted for".
  *
- * **This is our reading of the coach's rule (c), not his words — flagged
- * as a ruling, not a fact.** He drew a sharp line between two things that
- * look similar in the data: a *skipped* level is "temporary
- * under-performance, not programme deletion" — a recorded decision. A
- * *partially logged* exercise is the absence of a decision: "3 prescribed
- * sets, 2 sets logged, session completed" must not "silently become a
- * permanent 2-set prescription." So a skip is information and a gap is
- * not — an exposure with a deliberate skip is complete; an exposure with
- * an unaccounted-for level is not. Put to the coach for confirmation
- * alongside this ruling; if he corrects it, this is the one predicate that
- * changes.
+ * **Confirmed by the coach, 28 Aug 2026 — this is his ruling, not an
+ * inference.** Originally implemented as our own reading of rule (c) and
+ * flagged as such; put to him and returned "CONFIRMED. The implemented
+ * interpretation is correct," with "No predicate change is required." His
+ * own formulation, crisper than the original docblock and worth quoting
+ * directly:
+ *
+ * > Explicit skip = information.
+ * > Missing entry = absence of information.
+ * > But information about not performing a set is not evidence for
+ * > deleting that set from the future prescription.
+ *
+ * He also settled the edge this predicate's second clause exists for —
+ * every prescribed level explicitly skipped, nothing logged at all:
+ * "that exercise exposure is NOT complete for carry-forward purposes. The
+ * skips remain historical truth if the app records them, but they
+ * establish no new prescription baseline. This is why the requirement 'at
+ * least one level must contain a valid completed log' should remain." See
+ * the "false when every prescribed level is skipped and none is logged"
+ * test below for the case this rules out.
  */
 export function isCompleteExposure(exercise: WorkoutExercise): boolean {
   const prescribedCount = exercise.prescription.sets
