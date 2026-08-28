@@ -422,8 +422,8 @@
     "wall-slide": {
       "name": "Glissé mural",
       "cues": [
-        "Maintiens une position contrôlée de la cage thoracique",
-        "Ne fais pas saillir les côtes ni n'étends le bas du dos pour gagner de l'amplitude à l'épaule",
+        "Maintiens un contrôle confortable de la cage thoracique, sans faire saillir les côtes",
+        "Ne cherche pas plus d'amplitude à l'épaule en cambrant excessivement le bas du dos",
         "Laisse les omoplates tourner naturellement vers le haut",
         "Ne force pas les épaules vers le bas et l'arrière"
       ]
@@ -436,7 +436,8 @@
       "cues": [
         "Établis le contrôle abdominal et pelvien avant de lever",
         "Étends les hanches principalement grâce aux fessiers",
-        "Ne cherche pas plus de hauteur en cambrant excessivement le bas du dos"
+        "Ne cherche pas plus de hauteur en cambrant excessivement le bas du dos",
+        "Maintiens une position pelvienne contrôlée pendant tout le mouvement"
       ]
     },
     "dumbbell-rowboat": {

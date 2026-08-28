@@ -422,8 +422,8 @@
     "wall-slide": {
       "name": "Wall slide",
       "cues": [
-        "Maintain a controlled ribcage position",
-        "Don't flare the ribs or extend the lumbar spine to reach extra shoulder ROM",
+        "Maintain comfortable ribcage control without flaring the ribs",
+        "Avoid gaining extra shoulder ROM through excessive lumbar extension",
         "Allow natural scapular upward rotation",
         "Don't force the shoulders down and back"
       ]
@@ -436,7 +436,8 @@
       "cues": [
         "Establish abdominal and pelvic control before lifting",
         "Extend the hips primarily through the glutes",
-        "Don't reach for extra height by hyperextending the lumbar spine"
+        "Don't reach for extra height by hyperextending the lumbar spine",
+        "Maintain a controlled pelvic position throughout the movement"
       ]
     },
     "dumbbell-rowboat": {
