@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { mesocycle2Build } from './program'
 import { seedExercises } from './exercises'
-import { suggestLadderProgression } from '@/domain/progression'
+import { carryForwardPrescription } from '@/domain/carryForward'
 import { achievableLoads } from '@/domain/equipment'
 // Fixture flip to NEW_PROFILE (plan §2 Phase 1's sequencing constraint) —
 // landed together with the rung rewrite it depends on. Imported from the
@@ -9,7 +9,7 @@ import { achievableLoads } from '@/domain/equipment'
 // test-importing-a-test doubled equipment.test.ts's entire describe/it
 // tree as a side effect (12 Aug claim-verification finding).
 import { NEW_PROFILE } from '@/domain/equipment.fixtures'
-import type { LadderPrescription, LoggedSet, RepRangePrescription, SetVariant } from '@/domain/types'
+import type { LadderPrescription, LoggedSet, RepRangePrescription, SetVariant, WorkoutExercise } from '@/domain/types'
 
 /**
  * docs/design/Mesocycle2Implementation.md §12.2 — "Spec conformance,
@@ -596,16 +596,22 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
    * Found by an independent numeric read-back of this program against the
    * original 11 Aug spec, outside what the assertions above check: the
    * seeded prescription was a seconds-mode ladder, the repo's first, and
-   * `suggestLadderProgression`'s completion gate used to read
+   * `suggestLadderProgression`'s (deleted) completion gate used to read
    * `LoggedSet.reps` unconditionally — `SetScreen` logs a timed hold into
-   * `seconds`, never `reps`, so the check was `0 >= 40` forever. Fixed in
-   * progression.ts to read through `effortOf`, which already existed for
-   * exactly this branch. Retargeted to `plank` (12 Aug 2026), then again
-   * to Session A's `plank` (13 Aug restructure) to keep proving the fix
-   * against real seeded data, not just a synthetic fixture — the
-   * mechanism plank exercises is unchanged by either move.
+   * `seconds`, never `reps`, so the check was `0 >= 40` forever.
+   *
+   * **Re-grounded for carry-forward, 28 Aug 2026 (Phase 3,
+   * `~/.claude/plans/progression-carry-forward.md`).** The old engine and
+   * its `'load-not-the-lever'` classification are gone with
+   * `progression.ts`, but the underlying hazard — seconds-mode effort must
+   * be read from `seconds`, not `reps` — applies equally to carry-forward
+   * (`carryForward.ts`'s `carriedRung`, already guarded and negative-
+   * controlled in `carryForward.test.ts` against a synthetic fixture).
+   * This test keeps that guard pointed at the **real seeded** `plank`,
+   * which is what this file exists for — a synthetic fixture cannot catch
+   * a transcription mistake in the actual program.
    */
-  it('the seeded plank actually reaches load-not-the-lever from a perfect seconds log', () => {
+  it('the seeded plank carries seconds, not reps, from a perfect timed log', () => {
     const sessionA = mesocycle2Build.sessions.find((s) => s.id === 'mesocycle2-fullbody-squat')!
     const plank = sessionA.items.find((i) => i.exerciseId === 'plank') as LadderPrescription
 
@@ -616,9 +622,12 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
       seconds: rung.reps,
       completedAt: '2026-08-10T09:00:00.000Z',
     }))
+    const previous: WorkoutExercise = { exerciseId: plank.exerciseId, prescription: plank, sets: perfectLog }
 
-    const result = suggestLadderProgression(plank, perfectLog)
-    expect(result.type).toBe('load-not-the-lever')
+    const carried = carryForwardPrescription(plank, previous) as LadderPrescription
+    // If this read `reps` instead of `seconds`, every carried duration
+    // would be 0, not the perfect log's own durations.
+    expect(carried.setPlan.map((rung) => rung.reps)).toEqual(plank.setPlan.map((rung) => rung.reps))
   })
 
   /**
@@ -741,54 +750,29 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
   })
 
   /**
-   * §10 "Load-ceiling progression", `~/.claude/plans/variation-ladder.md`
-   * D6 — the variation ladder writes its derived tempo label onto every
-   * rung of a ceiling pyramid at runtime (`withCeilingVariation`). None of
-   * the weighted M2 ladders carries an authored per-rung variant, but a
-   * future coach edit could add one silently, and the failure would be
-   * the app *erasing a coach-authored label* in favour of a derived one.
-   * This is the guard: if a ceiling pyramid ever gains an authored
-   * variant, the suite goes red and the question routes to the coach —
-   * reconciling two variation systems on one pyramid is a coaching
-   * decision, not an engineering one (D6's own rejected alternatives:
-   * merging silently, or silently skipping, both hide the conflict
-   * instead of surfacing it). Unchanged by the 12 Aug 2026 equipment
-   * upgrade — still load-bearing, still asserts the same thing.
+   * §10 "Load-ceiling progression", D6 — **retired, 28 Aug 2026 (Phase 3,
+   * `~/.claude/plans/progression-carry-forward.md`, coach's Q2 ruling)**.
+   * This guarded a conflict between two *automatic* systems:
+   * `withCeilingVariation` writing a derived tempo label onto every rung
+   * of a ceiling pyramid, and a future coach-authored `variantKey` on the
+   * same pyramid. The coach ruled the automatic pathway retired outright
+   * — "RETIRE the automatic load-ceiling tempo ladder from progression...
+   * normal → slow → slow-pause must not automatically occur merely
+   * because the athlete reaches an equipment ceiling" — while explicitly
+   * preserving authored tempo content: "Do not delete tempo
+   * capability/content from the app if other content uses it. Delete/
+   * bypass this automatic progression pathway only."
    *
-   * **Not the same as** `dumbbell-lateral-raise`/`rear-delt-fly`
-   * repeating 6 kg across their last two sets (C2/C3, doc 1 — "do NOT
-   * force an 8 kg lateral raise"): 6 kg sits nowhere near
-   * `BILATERAL_MAX_KG` (20), so neither ladder is "at ceiling" under this
-   * test's own definition, and the repeat carries no `variantKey`
-   * either way. The real conflict (§0.4/D5) only fires once the
-   * equipment gate opens — flagged to the coach, not this guard's to
-   * catch.
-   *
-   * "At ceiling" is asked of the same engine the load path uses
-   * (`suggestLadderProgression`, D5) against a synthetic perfect log —
-   * same construction as the plank conformance test above — rather than
-   * re-deriving the ceiling condition by hand, so this test cannot
-   * silently drift from what the engine actually decides.
+   * `variationLadder.ts` (the automatic pathway) is deleted with it. The
+   * conflict this test caught is now structurally impossible — nothing
+   * derives or writes a `variantKey` at runtime any more, so there is
+   * nothing left to erase a coach-authored one. Checked before deleting,
+   * per the ruling's preservation clause: no prescription in this seed
+   * currently carries an authored `variantKey` (`grep -rn variantKey
+   * src/data/seed/*.ts` finds none outside this file's own — now removed
+   * — machinery), so nothing was silently lost. `SetVariant`, `variantKey`
+   * on `SetTarget`, and their rendering path (`SetScreen`/`RestScreen`,
+   * `common:setVariant.*`) are all untouched and keep working for a
+   * future authored variant.
    */
-  it('no at-ceiling pyramid carries an authored per-rung variant (D6)', () => {
-    const conflicts: string[] = []
-    for (const session of mesocycle2Build.sessions) {
-      for (const item of session.items) {
-        if (item.setPlan === undefined) continue
-        const ladder = item as LadderPrescription
-        const perfectLog: LoggedSet[] = ladder.setPlan.map((rung, setIndex) => ({
-          setIndex,
-          weightKg: rung.weightKg,
-          reps: ladder.mode === 'seconds' ? null : rung.reps,
-          seconds: ladder.mode === 'seconds' ? rung.reps : null,
-          completedAt: '2026-08-10T09:00:00.000Z',
-        }))
-        const atCeiling = suggestLadderProgression(ladder, perfectLog).type === 'at-equipment-max'
-        if (!atCeiling) continue
-        const authored = ladder.setPlan.some((rung) => rung.variantKey !== undefined)
-        if (authored) conflicts.push(`${session.id}/${ladder.exerciseId}`)
-      }
-    }
-    expect(conflicts).toEqual([])
-  })
 })

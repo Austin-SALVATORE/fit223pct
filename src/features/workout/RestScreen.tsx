@@ -9,11 +9,10 @@ import {
   useExerciseTeachingConcept,
 } from '@/i18n/seedExercise'
 import { nextSetTarget, type NextSetTarget } from '@/domain/nextSetTarget'
-import { hasVerifiedLoadList, plannedSetIndices, progressionHistoryFor, type WorkoutPosition } from '@/domain/workout'
-import { withCeilingVariation } from '@/domain/variationLadder'
+import { carryForwardPrescription, mostRecentCompleteExposureFor } from '@/domain/carryForward'
+import { plannedSetIndices, type WorkoutPosition } from '@/domain/workout'
 import { exerciseAsset, exerciseAssetThumbnailFrame } from '@/lib/exerciseAsset'
-import type { ReadinessTier } from '@/domain/readiness'
-import type { Exercise, ExercisePrescription, UserSettings, Workout } from '@/domain/types'
+import type { Exercise, ExercisePrescription, Workout } from '@/domain/types'
 
 interface RestScreenProps {
   endsAt: number
@@ -25,15 +24,6 @@ interface RestScreenProps {
   exerciseById: Map<string, Exercise>
   /** Completed workouts — needed to resolve the next exercise's own history, which is not what `WorkoutPage` computed `previousSets` for (that's the exercise just finished). */
   completed: readonly Workout[]
-  /**
-   * Gates the engine's cross-session history (coach spec v2.16 §4,
-   * `equipment-aware-progression.md` AMENDMENT A) — `progressionHistoryFor`
-   * returns no history at all while the athlete's dumbbell hardware is
-   * unverified, so this screen's number falls back to the coach's own
-   * prescription instead of computed arithmetic.
-   */
-  settings: UserSettings | undefined
-  readinessTier?: ReadinessTier
   onDone: () => void
 }
 
@@ -45,8 +35,6 @@ export function RestScreen({
   position,
   exerciseById,
   completed,
-  settings,
-  readinessTier,
   onDone,
 }: RestScreenProps) {
   const { t } = useTranslation('workout')
@@ -78,32 +66,21 @@ export function RestScreen({
    * screen that recomputed from the prescription would show the ladder rung
    * while the set screen offers the weight you just lifted — the user loads
    * one number and is then offered another. See `nextSetTarget`'s module doc.
+   *
+   * Progression replacement (28 Aug 2026, Phase 3) — carry-forward runs
+   * ungated (coach's Q4(a): it echoes a logged load, computes nothing), so
+   * this resolves the *next* exercise's own carried prescription exactly
+   * the way `WorkoutPage` resolves the current one — see
+   * `domain/carryForward.ts`'s own docblock for why no `UserSettings`
+   * enters this at all.
    */
-  const previousSets = progressionHistoryFor(settings, completed, nextWorkoutExercise.exerciseId)
-  /**
-   * §10 "Load-ceiling progression" (`~/.claude/plans/variation-ladder.md`
-   * Phase C) — reads the *same already-gated* history the load engine
-   * above reads (`hasVerifiedLoadList`, not a second gate check), so the
-   * tempo ladder ships inert while the equipment profile is unverified
-   * and switches itself on the moment it isn't, with no code change on
-   * that day (OQ1, ruled gated, 7 Aug). `readinessTier` passes straight
-   * through to the same `suggestLadderProgression` call the load path
-   * uses internally, so the two can never disagree about whether today
-   * counts as "at ceiling."
-   */
-  const prescription = withCeilingVariation(
-    nextWorkoutExercise.prescription,
-    hasVerifiedLoadList(settings) ? completed : [],
+  const previousExposure = mostRecentCompleteExposureFor(
+    completed,
     workout.programId,
-    readinessTier,
+    nextWorkoutExercise.exerciseId,
   )
-  const target = nextSetTarget(
-    prescription,
-    nextWorkoutExercise.sets,
-    previousSets,
-    position.setIndex,
-    readinessTier,
-  )
+  const prescription = carryForwardPrescription(nextWorkoutExercise.prescription, previousExposure)
+  const target = nextSetTarget(prescription, nextWorkoutExercise.sets, position.setIndex)
 
   // Session-aware, coach spec §4 — a skipped level is never counted, an
   // opened custom slot is, same plannedSetIndices SetScreen's own counter
@@ -362,14 +339,13 @@ function NewExerciseCaption({
   // A ladder's number already is the exact target — no range to show. Only
   // rep-range work has a range wider than the single value on screen.
   const showRange = !prescription.setPlan
-  const showMax = target.progressionType === 'at-equipment-max'
-  // A different pill for a different reason not to advance — never both at
-  // once. See SetScreen's TargetCaption for the full reasoning; reused here
-  // rather than re-derived so the two screens cannot disagree.
-  const showLoadNotTheLever = target.progressionType === 'load-not-the-lever'
   const showPerSide = prescription.perSide
 
-  if (!showRange && !showMax && !showLoadNotTheLever && !target.variantKey && !showPerSide) return null
+  // MAX / TECHNIQUE pills removed, 28 Aug 2026 (Phase 3) — see SetScreen's
+  // TargetCaption for the full reasoning; both read `progressionType`,
+  // which no longer exists now that carry-forward computes nothing to
+  // classify.
+  if (!showRange && !target.variantKey && !showPerSide) return null
 
   return (
     <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-tertiary">
@@ -379,16 +355,6 @@ function NewExerciseCaption({
             min: prescription.range?.min,
             max: prescription.range?.max,
           })}
-        </span>
-      )}
-      {showMax && (
-        <span className="rounded-full border border-amber px-2 py-0.5 text-xs font-semibold text-amber">
-          {t('setScreen.atMax')}
-        </span>
-      )}
-      {showLoadNotTheLever && (
-        <span className="rounded-full border border-border px-2 py-0.5 text-xs font-semibold text-ink-secondary">
-          {t('setScreen.loadNotTheLever')}
         </span>
       )}
       {/* See SetScreen's TargetCaption for the full reasoning — reused

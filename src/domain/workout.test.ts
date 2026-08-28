@@ -8,7 +8,6 @@ import {
   plannedSetIndices,
   previousExposureFor,
   previousSetsFor,
-  progressionHistoryFor,
   repairPositionCompleteWorkout,
   skipPrescribedLevel,
   summarizeWorkout,
@@ -16,15 +15,8 @@ import {
   undoLastSet,
   workoutPosition,
 } from './workout'
-import { suggestLadderProgression } from './progression'
-import type {
-  LadderPrescription,
-  LoggedSet,
-  RepRangePrescription,
-  SessionTemplate,
-  UserSettings,
-  Workout,
-} from './types'
+import { isCompleteExposure } from './carryForward'
+import type { LoggedSet, RepRangePrescription, SessionTemplate, UserSettings, Workout } from './types'
 
 function prescription(
   exerciseId: string,
@@ -192,14 +184,19 @@ describe('logSet', () => {
 
     expect(workout.exercises[0].sets.map((s) => s.setIndex).sort()).toEqual([1, 2])
 
-    const gate = suggestLadderProgression(
-      ladderSession.items[0] as LadderPrescription,
-      workout.exercises[0].sets,
-    )
-    // Level 0 was never logged (its index is 1..2, not 0) — the pyramid
-    // stays incomplete, exactly §4's "make the canonical Pyramid
-    // incomplete for progression purposes".
-    expect(gate.type).toBe('repeat')
+    /**
+     * Re-grounded for carry-forward, 28 Aug 2026 (Phase 3) — this used to
+     * assert `suggestLadderProgression` (deleted) read the exposure as
+     * `'repeat'` because level 0 was never logged. Under the new
+     * completeness model (`carryForward.ts`'s `isCompleteExposure`) a
+     * *skip* is a recorded decision, not an unsatisfied rung — level 0
+     * being cleanly skipped (never silently satisfied by the custom set
+     * landing at its index — that is this test's actual regression) is
+     * exactly what makes this exposure complete: level 0 is accounted for
+     * (skipped), level 1 is logged, and the custom slot at index 2 is
+     * beyond the prescribed range so it cannot corrupt either reading.
+     */
+    expect(isCompleteExposure(workout.exercises[0])).toBe(true)
   })
 })
 
@@ -470,6 +467,13 @@ function settings(overrides: Partial<UserSettings> = {}): UserSettings {
  * equipment-aware-progression.md`, AMENDMENT A) — coach spec v2.16 §4:
  * "must not calculate the next or previous load automatically" until the
  * athlete's dumbbell hardware is verified.
+ *
+ * **`progressionHistoryFor` (the function this gated) is deleted, 28 Aug
+ * 2026 (Phase 3, progression carry-forward)** — carry-forward runs
+ * ungated per the coach's Q4(a), so this predicate has no current caller.
+ * Kept anyway, and still tested: `hasVerifiedLoadList`'s own docblock
+ * explains why it is a reserved gate for a future load-*generating*
+ * mechanism, not dead code.
  */
 describe('hasVerifiedLoadList', () => {
   it('is false with no settings record at all', () => {
@@ -488,29 +492,5 @@ describe('hasVerifiedLoadList', () => {
     expect(
       hasVerifiedLoadList(settings({ equipment: { handleKg: 2, confirmedAt: '2026-08-07' } })),
     ).toBe(true)
-  })
-})
-
-describe('progressionHistoryFor', () => {
-  const older: Workout = {
-    ...logSet(makeWorkout(), 0, set(9, 12), 0),
-    id: 'w-old',
-    date: '2026-07-20',
-    completedAt: '2026-07-20T19:00:00.000Z',
-  }
-
-  it('returns real history once the equipment profile is confirmed — the same result previousSetsFor would give', () => {
-    const confirmed = settings({ equipment: { handleKg: 2, confirmedAt: '2026-08-07' } })
-    expect(progressionHistoryFor(confirmed, [older], 'goblet-squat')).toEqual(
-      previousSetsFor([older], 'goblet-squat'),
-    )
-  })
-
-  it('returns empty history — never the real sets — when unconfirmed, even though the workout exists', () => {
-    expect(progressionHistoryFor(settings(), [older], 'goblet-squat')).toEqual([])
-  })
-
-  it('returns empty history with no settings record at all', () => {
-    expect(progressionHistoryFor(undefined, [older], 'goblet-squat')).toEqual([])
   })
 })

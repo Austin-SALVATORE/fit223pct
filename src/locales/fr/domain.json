@@ -18,15 +18,6 @@
     "ladderTopSet": "On saute la série la plus lourde aujourd'hui — $t({{driversKey}}).",
     "volume": "Un set en moins sur les accessoires aujourd'hui — $t({{driversKey}})."
   },
-  "progression": {
-    "start": "Première séance — pars de la charge prescrite et maîtrise l'amplitude complète.",
-    "addReps": "Même charge — ajoute une répétition à ta série la plus faible.",
-    "consolidateEasier": "Tu as mérité plus de charge, mais pas aujourd'hui — même charge, garde ce saut pour un jour plus frais.",
-    "addTechnique": "La charge est au maximum pour cette configuration — progresse avec un tempo excentrique plus lent, une pause, ou plus d'amplitude.",
-    "increaseLoad": "Chaque série a atteint le haut de l'amplitude — il est temps d'augmenter la charge.",
-    "atEquipmentMax": "Chaque palier est au maximum pour cette configuration — maintiens l'échelle et maîtrise les répétitions.",
-    "loadNotTheLever": "Cet exercice ne progresse pas par la charge — avance par l'amplitude, le tempo ou le levier."
-  },
   "highlight": {
     "first": "Première fois",
     "load": "+{{delta, number}} kg",

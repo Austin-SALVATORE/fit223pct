@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { nextSetTarget } from './nextSetTarget'
-import type { LadderPrescription, LoggedSet, RepRangePrescription, SetTarget } from './types'
+import type { LadderPrescription, LoggedSet, RepRangePrescription } from './types'
 
 /**
  * **The correctness trap this function exists to close.** The set screen
@@ -8,6 +8,18 @@ import type { LadderPrescription, LoggedSet, RepRangePrescription, SetTarget } f
  * prescription would show the ladder rung instead. The user reads one number,
  * loads it, and is then offered another. Both screens now render from here, so
  * they cannot disagree by construction rather than by care.
+ *
+ * **Rewritten for Phase 3 of `~/.claude/plans/progression-carry-forward.md`
+ * (28 Aug 2026).** `nextSetTarget` no longer takes `previousSets` or
+ * `readinessTier` — see `nextSetTarget.ts`'s own docblock for why: the
+ * `prescription` passed in is now expected to already be the *carried* one,
+ * and there is no engine left inside this function for readiness to gate.
+ * Tests that only made sense against the deleted two-engine dispatch
+ * (`progressionType`, equipment-ceiling gating, the Yellow-day truncation
+ * fix) are gone with it — `carryForward.test.ts` covers the equivalent
+ * ground for carry-forward itself, and `adjustments.test.ts` covers eased-day
+ * truncation, which this function never touched directly even before this
+ * rewrite (it only ever read whatever `setPlan` it was handed).
  */
 
 const repRange: RepRangePrescription = {
@@ -50,19 +62,14 @@ function set(overrides: Partial<LoggedSet> = {}): LoggedSet {
 
 describe('a ladder always offers its prescribed rung', () => {
   /**
-   * **This inverts an earlier assertion, and the inversion is the fix.** The
-   * old test asserted the carried weight beat the rung — captured accurately
-   * from code that was already wrong. A ladder ascends by design, so letting
-   * the last logged set win meant the pyramid never climbed and the owner had
-   * been raising every load by hand since M8.
-   *
-   * Owner ruling: the app presents the coach's prescription and never
-   * silently rewrites it from an earlier deviation.
+   * Owner ruling, 31 Jul: the app presents the coach's prescription (here,
+   * the already-carried one) and never silently rewrites it from an
+   * earlier-in-session deviation.
    */
   it('offers rung N for set N even after a deviating set', () => {
     // The user could only manage 12.5 where the rung asked more. Set 3 still
     // offers its own rung — not 12.5, and not a step from it.
-    const target = nextSetTarget(ladder, [set({ weightKg: 12.5, reps: 10 })], [], 2, 'steady')
+    const target = nextSetTarget(ladder, [set({ weightKg: 12.5, reps: 10 })], 2)
 
     expect(target.weightKg).toBe(25)
     expect(target.reps).toBe(8)
@@ -73,21 +80,20 @@ describe('a ladder always offers its prescribed rung', () => {
     // A consumer branching on this must not read 'carried' as "same exercise,
     // later set" — for a ladder there is no such state.
     for (const setIndex of [0, 1, 2]) {
-      const target = nextSetTarget(ladder, [set({ weightKg: 99, reps: 99 })], [], setIndex, 'steady')
+      const target = nextSetTarget(ladder, [set({ weightKg: 99, reps: 99 })], setIndex)
       expect(target.source, `set ${setIndex + 1}`).toBe('rung')
     }
   })
 
   it('applies the rule to reps as well as weight', () => {
-    // Effort carried too, with the same defect: set 2 offered set 1's reps.
-    const target = nextSetTarget(ladder, [set({ weightKg: 20, reps: 12 })], [], 1, 'steady')
+    const target = nextSetTarget(ladder, [set({ weightKg: 20, reps: 12 })], 1)
 
     expect(target.reps).toBe(10)
     expect(target.weightKg).toBe(22.5)
   })
 
   it('falls back to the rung when nothing has been logged this session', () => {
-    const target = nextSetTarget(ladder, [], [], 1, 'steady')
+    const target = nextSetTarget(ladder, [], 1)
 
     expect(target.weightKg).toBe(22.5)
     expect(target.reps).toBe(10)
@@ -99,19 +105,19 @@ describe('a ladder always offers its prescribed rung', () => {
     // same weight across every set, so continuing at the weight just used is
     // right there — and a future reader tightening the ladder fix must not
     // take this with it.
-    const target = nextSetTarget(repRange, [set({ weightKg: 18, reps: 10 })], [], 1, 'steady')
+    const target = nextSetTarget(repRange, [set({ weightKg: 18, reps: 10 })], 1)
 
     expect(target.weightKg).toBe(18)
     expect(target.reps).toBe(10)
     expect(target.source).toBe('carried')
   })
 
-  it('falls back to the suggestion for a rep-range prescription', () => {
-    const target = nextSetTarget(repRange, [], [], 0, 'steady')
+  it('reads the authored prescription verbatim for a genuinely first-ever exposure (no carry-forward history, nothing logged this session)', () => {
+    const target = nextSetTarget(repRange, [], 0)
 
     expect(target.weightKg).toBe(16)
     expect(target.reps).toBe(8)
-    expect(target.source).toBe('suggestion')
+    expect(target.source).toBe('authored')
   })
 })
 
@@ -123,17 +129,15 @@ describe('a ladder always offers its prescribed rung', () => {
  */
 describe('a custom slot on a ladder carries, never offers a rung', () => {
   it('inherits the most recently logged set in this session', () => {
-    const target = nextSetTarget(ladder, [set({ weightKg: 12.5, reps: 9 })], [], 3, 'steady')
+    const target = nextSetTarget(ladder, [set({ weightKg: 12.5, reps: 9 })], 3)
 
     expect(target.weightKg).toBe(12.5)
     expect(target.reps).toBe(9)
     expect(target.source).toBe('carried')
-    // Never the pyramid's own progression state — a custom set isn't part of it.
-    expect(target.progressionType).toBeNull()
   })
 
   it('falls back to the first prescribed level when nothing has been logged yet this session', () => {
-    const target = nextSetTarget(ladder, [], [], 3, 'steady')
+    const target = nextSetTarget(ladder, [], 3)
 
     expect(target.weightKg).toBe(20) // ladder.setPlan[0].weightKg
     expect(target.reps).toBe(12) // ladder.setPlan[0].reps
@@ -144,21 +148,21 @@ describe('a custom slot on a ladder carries, never offers a rung', () => {
       ...ladder,
       setPlan: ladder.setPlan.map((rung) => ({ ...rung, variantKey: 'slow' as const })),
     }
-    const target = nextSetTarget(withVariant, [set({ weightKg: 12.5, reps: 9 })], [], 3, 'steady')
+    const target = nextSetTarget(withVariant, [set({ weightKg: 12.5, reps: 9 })], 3)
     expect(target.variantKey).toBeUndefined()
   })
 })
 
 describe('every prescription shape resolves', () => {
   it('reports reps and no seconds in reps mode', () => {
-    const target = nextSetTarget(repRange, [], [], 0, 'steady')
+    const target = nextSetTarget(repRange, [], 0)
     expect(target.reps).toBe(8)
     expect(target.seconds).toBeNull()
   })
 
   it('reports seconds and no reps in seconds mode', () => {
     const timed: RepRangePrescription = { ...repRange, mode: 'seconds', range: { min: 30, max: 45 } }
-    const target = nextSetTarget(timed, [], [], 0, 'steady')
+    const target = nextSetTarget(timed, [], 0)
 
     expect(target.seconds).toBe(30)
     expect(target.reps).toBeNull()
@@ -166,13 +170,7 @@ describe('every prescription shape resolves', () => {
 
   it('carries seconds, not reps, when a timed set was logged', () => {
     const timed: RepRangePrescription = { ...repRange, mode: 'seconds', range: { min: 30, max: 45 } }
-    const target = nextSetTarget(
-      timed,
-      [set({ seconds: 40, reps: null, weightKg: null })],
-      [],
-      1,
-      'steady',
-    )
+    const target = nextSetTarget(timed, [set({ seconds: 40, reps: null, weightKg: null })], 1)
 
     expect(target.seconds).toBe(40)
     expect(target.reps).toBeNull()
@@ -183,20 +181,14 @@ describe('every prescription shape resolves', () => {
     // in this case, so a fabricated 0 would put a weight stepper on screen for
     // a push-up.
     const bodyweight: RepRangePrescription = { ...repRange, startWeightKg: null, maxWeightKg: null }
-    const target = nextSetTarget(bodyweight, [], [], 0, 'steady')
+    const target = nextSetTarget(bodyweight, [], 0)
 
     expect(target.weightKg).toBeNull()
   })
 
   it('keeps the weight null when an unloaded set is carried', () => {
     const bodyweight: RepRangePrescription = { ...repRange, startWeightKg: null, maxWeightKg: null }
-    const target = nextSetTarget(
-      bodyweight,
-      [set({ weightKg: null, reps: 12 })],
-      [],
-      1,
-      'steady',
-    )
+    const target = nextSetTarget(bodyweight, [set({ weightKg: null, reps: 12 })], 1)
 
     expect(target.weightKg).toBeNull()
     expect(target.reps).toBe(12)
@@ -205,108 +197,34 @@ describe('every prescription shape resolves', () => {
 
 describe('the delta is against the set just done, and never zero', () => {
   it('is null when nothing has been logged this session', () => {
-    expect(nextSetTarget(ladder, [], [], 0, 'steady').delta).toBeNull()
+    expect(nextSetTarget(ladder, [], 0).delta).toBeNull()
   })
 
   it('is null when the carried set matches the target exactly', () => {
     // "↑ +0 kg" is noise, and the absence is what the UI branches on.
-    const target = nextSetTarget(ladder, [set({ weightKg: 22.5, reps: 10 })], [], 1, 'steady')
+    const target = nextSetTarget(ladder, [set({ weightKg: 22.5, reps: 10 })], 1)
     expect(target.delta).toBeNull()
   })
 
   it('reports a rep change with no weight change', () => {
-    const target = nextSetTarget(
-      repRange,
-      [set({ weightKg: 16, reps: 8 })],
-      [],
-      1,
-      'steady',
-    )
+    const target = nextSetTarget(repRange, [set({ weightKg: 16, reps: 8 })], 1)
 
     // Carrying keeps 16 kg and 8 reps, so nothing moved.
     expect(target.delta).toBeNull()
   })
 })
 
-describe('the engine classification survives, so MAX is distinguishable', () => {
-  /**
-   * Re-anchored (7 Aug, `~/.claude/plans/equipment-aware-progression.md`
-   * AMENDMENT A) — the four sites below used to pass real cross-session
-   * history and assert the arithmetic it produces. Production no longer
-   * does that: `progressionHistoryFor` (`domain/workout.ts`) returns no
-   * history at all while the athlete's equipment is unverified, so this
-   * is the history `nextSetTarget` actually receives — `[]`, not a
-   * populated `previous` array. The classification/arithmetic rule these
-   * tests documented is not lost — `progression.test.ts` covers
-   * `suggestProgression`/`suggestLadderProgression` directly, unaffected
-   * by this gate, since it never touches equipment settings at all.
-   */
-  it('an equipment ceiling from history never reaches an unverified profile — the gate offers the authored rung instead', () => {
-    // Every rung hit its target last time and the top rung is at the
-    // ceiling — but with no history reaching the engine, that fact is
-    // invisible here. Offers rung 1, unadvanced, same as a fresh ladder.
-    const atMax: LadderPrescription = { ...ladder, maxWeightKg: 25 }
-
-    const target = nextSetTarget(atMax, [], [], 0, 'steady')
-    expect(target.progressionType).toBeNull()
-    expect(target.weightKg).toBe(atMax.setPlan[0].weightKg)
-  })
-
-  it('carries the rep-range engine type through — gated, so this is the coach\'s own prescription, not computed arithmetic', () => {
-    const target = nextSetTarget(repRange, [], [], 0, 'steady')
-
-    expect(target.progressionType).toBe('start')
-    expect(target.weightKg).toBe(repRange.startWeightKg)
-  })
-
-  it('an easier day has nothing to defer with no history — same start weight either way, for a different reason', () => {
-    // Coincidence worth being explicit about: repRange.startWeightKg is
-    // 16, the same number the old "consolidate" path asserted — but the
-    // type below proves this is the gated 'start' branch, not readiness
-    // deferring an advance that never happened.
-    const target = nextSetTarget(repRange, [], [], 0, 'easier')
-
-    expect(target.progressionType).toBe('start')
-    expect(target.weightKg).toBe(16)
-  })
-})
-
 describe('it returns data, never prose', () => {
   it('carries no string that could be a sentence', () => {
-    // Domain purity: the UI words this from `source` and `progressionType`.
-    // A reason string here would be an English sentence in the domain layer.
-    const target = nextSetTarget(repRange, [set()], [], 1, 'steady')
+    // Domain purity: the UI words this from `source`. A reason string here
+    // would be an English sentence in the domain layer.
+    const target = nextSetTarget(repRange, [set()], 1)
 
     for (const [key, value] of Object.entries(target)) {
       if (typeof value === 'string') {
         expect(value, `${key} looks like prose`).not.toMatch(/\s/)
       }
     }
-  })
-})
-
-describe('a ladder that advances reads as an increased load', () => {
-  /**
-   * Re-anchored (7 Aug, `equipment-aware-progression.md` AMENDMENT A) —
-   * same reason as the block above: `progressionHistoryFor` never lets a
-   * populated `previous` reach here while equipment is unverified, so a
-   * fully-advanced ladder from history is not what production actually
-   * offers today. The advance→`increase-load` mapping itself is still
-   * real and still covered — `progression.test.ts`'s own
-   * `suggestLadderProgression` "advances" test — this file just no
-   * longer duplicates that coverage against a scenario that can't
-   * currently reach the athlete.
-   */
-  it('with no history reaching the engine, offers the authored rung — the gate, not a repeat it earned', () => {
-    const target = nextSetTarget(ladder, [], [], 0, 'steady')
-
-    expect(target.progressionType).toBeNull()
-    expect(target.weightKg).toBe(ladder.setPlan[0].weightKg)
-  })
-
-  it('reports nothing to caption when the ladder repeats', () => {
-    const previous: LoggedSet[] = [set({ setIndex: 0, weightKg: 20, reps: 8 })]
-    expect(nextSetTarget(ladder, [], previous, 0, 'steady').progressionType).toBeNull()
   })
 })
 
@@ -320,7 +238,7 @@ describe('what prescribed still distinguishes, now that ladders never carry', ()
    */
   it('coincides with the offered value for a ladder, always', () => {
     for (const setIndex of [0, 1, 2]) {
-      const target = nextSetTarget(ladder, [set({ weightKg: 99, reps: 99 })], [], setIndex, 'steady')
+      const target = nextSetTarget(ladder, [set({ weightKg: 99, reps: 99 })], setIndex)
       expect(target.prescribed.weightKg, `set ${setIndex + 1}`).toBe(target.weightKg)
       expect(target.prescribed.reps, `set ${setIndex + 1}`).toBe(target.reps)
     }
@@ -330,7 +248,7 @@ describe('what prescribed still distinguishes, now that ladders never carry', ()
     // Where the field earns its place: rep-range carrying means "what you were
     // told" and "what you are offered" are genuinely different numbers, and a
     // caption that wants the prescription cannot read the offered value.
-    const target = nextSetTarget(repRange, [set({ weightKg: 18, reps: 10 })], [], 1, 'steady')
+    const target = nextSetTarget(repRange, [set({ weightKg: 18, reps: 10 })], 1)
 
     expect(target.weightKg).toBe(18)
     expect(target.prescribed.weightKg).toBe(16)
@@ -339,134 +257,9 @@ describe('what prescribed still distinguishes, now that ladders never carry', ()
 })
 
 /**
- * The Yellow-day defect, docs/design/Mesocycle2Implementation.md §2.1/§4/
- * §12.1. `applyReadiness` (adjustments.ts) truncates a ladder's top rung
- * *before* `suggestLadderProgression` ever sees it, so the completion gate
- * only checks the rungs that survived truncation — it cannot see that the
- * removed rung is the one actually missed last week. The athlete who
- * missed the top rung (the single most likely reason to be on an eased day
- * this week) was being offered an *advance* on their worst day.
- *
- * **This has to be an end-to-end test through `nextSetTarget`, not just a
- * unit test on `suggestLadderProgression`.** The actual defect was a
- * missing argument at the call site (`nextSetTarget.ts:112` was not
- * forwarding `readinessTier`) — a domain-only test that constructs its own
- * call to `suggestLadderProgression` would stay green even if that call
- * site regressed. Negative control: comment out the third argument at
- * `nextSetTarget.ts:112` and both tests below must go red.
- */
-describe('the Yellow-day fix — an eased day defers, never inflates, an offered ladder', () => {
-  it("matches the plan's own cited example — Shoulder Press 6/8/10, rungs 1-2 complete, rung 3 missed last week: an eased day offers [6, 8], never [8, 10]", () => {
-    // The eased prescription itself, as applyReadiness would have produced
-    // it — top rung already dropped before nextSetTarget ever runs.
-    const shoulderPress: LadderPrescription = {
-      exerciseId: 'dumbbell-shoulder-press',
-      sets: 2,
-      mode: 'reps',
-      setPlan: [
-        { weightKg: 6, reps: 12 },
-        { weightKg: 8, reps: 10 },
-      ],
-      restSeconds: 90,
-      perSide: false,
-      maxWeightKg: 15,
-      weightStepKg: 2,
-    }
-    // Last week's full, untruncated 3-rung ladder: rungs 1-2 met their reps,
-    // rung 3 (10kg x 8) fell short.
-    const previousSets: LoggedSet[] = [
-      set({ setIndex: 0, weightKg: 6, reps: 12 }),
-      set({ setIndex: 1, weightKg: 8, reps: 10 }),
-      set({ setIndex: 2, weightKg: 10, reps: 6 }),
-    ]
-
-    const rung1 = nextSetTarget(shoulderPress, [], previousSets, 0, 'easier')
-    const rung2 = nextSetTarget(shoulderPress, [], previousSets, 1, 'easier')
-
-    expect([rung1.weightKg, rung2.weightKg]).toEqual([6, 8])
-    expect([rung1.weightKg, rung2.weightKg]).not.toEqual([8, 10])
-    expect([rung1.reps, rung2.reps]).toEqual([12, 10])
-  })
-
-  /**
-   * Table-drives the fix over every weighted pyramid named in the plan's
-   * §2.1 sweep — the same measurement that found 7 of 14 inflating,
-   * converted from a scratchpad script into a standing guard.
-   *
-   * **Weights are cited from §2.1's own published table; reps are not** —
-   * the plan's table records weights only, and the Mesocycle 2 Build
-   * program itself is not seeded yet (item 8/9 of the same plan, a
-   * separate, later batch). Inventing real coach-authored rep counts here
-   * would be asserting training content nobody has verified; a fixed
-   * descending pattern is scaffolding to drive the mechanism, not a claim
-   * about the coach's actual prescription. The real per-exercise
-   * conformance test (§12.2) belongs with the seed that supplies real reps.
-   *
-   * `maxWeightKg: 999` is deliberate, not an oversight: production's real
-   * 15kg ceiling happens to mask 3 of the four 4-rung pyramids here (§2.1),
-   * which is what makes the defect dangerous rather than reassuring. This
-   * sweep exists to prove the mechanism itself, independent of whichever
-   * pyramids the ceiling happens to protect this tier.
-   */
-  it('table-drives the fix over every weighted pyramid in §2.1, for every rung count present (2, 3 and 4)', () => {
-    const pyramids: { name: string; weights: number[] }[] = [
-      { name: 'A1 Incline DB Bench Press', weights: [10, 12, 14, 15] },
-      { name: 'A2 Single-arm DB Row', weights: [10, 12, 14, 15] },
-      { name: 'A3 Dumbbell Fly', weights: [4, 6] },
-      { name: 'A4 Chest-supported Row', weights: [10, 12] },
-      { name: 'A6 DB Lateral Raise (Mon)', weights: [6, 8] },
-      { name: 'B1 Bulgarian Split Squat', weights: [8, 10, 12] },
-      { name: 'B2 DB Romanian Deadlift', weights: [10, 12, 14, 15] },
-      { name: 'B4 Standing Calf Raise', weights: [8, 10, 12] },
-      { name: 'B6 Dumbbell Pullover', weights: [8, 10] },
-      { name: 'C1 DB Shoulder Press', weights: [6, 8, 10] },
-      { name: 'C2 DB Lateral Raise (Fri)', weights: [4, 6, 8] },
-      { name: 'C3 Rear Delt Fly', weights: [4, 6, 8] },
-      { name: 'C4 Dumbbell Curl', weights: [8, 10, 12] },
-      { name: 'C5 OH Triceps Extension', weights: [10, 12, 14] },
-    ]
-    const illustrativeReps = [12, 10, 8, 6] // descending, scaffolding only — see note above
-
-    for (const { name, weights } of pyramids) {
-      const authoredReps = illustrativeReps.slice(0, weights.length)
-      const authored: SetTarget[] = weights.map((weightKg, i) => ({ weightKg, reps: authoredReps[i] }))
-      const truncated = authored.slice(0, -1)
-      const prescription: LadderPrescription = {
-        exerciseId: name,
-        sets: truncated.length,
-        mode: 'reps',
-        setPlan: truncated,
-        restSeconds: 90,
-        perSide: false,
-        maxWeightKg: 999,
-        weightStepKg: 2,
-      }
-      // Last week's full, untruncated ladder: every rung but the top met
-      // its reps; the top rung — the one truncation just removed — fell
-      // short by 2.
-      const previousSets: LoggedSet[] = authored.map((rung, i) =>
-        set({
-          setIndex: i,
-          weightKg: rung.weightKg,
-          reps: i === authored.length - 1 ? rung.reps - 2 : rung.reps,
-        }),
-      )
-
-      for (let setIndex = 0; setIndex < truncated.length; setIndex++) {
-        const target = nextSetTarget(prescription, [], previousSets, setIndex, 'easier')
-        expect(target.weightKg, `${name} rung ${setIndex + 1}`).toBe(truncated[setIndex].weightKg)
-        expect(target.reps, `${name} rung ${setIndex + 1}`).toBe(truncated[setIndex].reps)
-      }
-    }
-  })
-})
-
-/**
- * docs/design/Mesocycle2Implementation.md §6.1 — `SetTarget.variantKey`
- * has to reach the UI through this exact function, the same reason
- * `prescribed` and `progressionType` are exposed here rather than
- * recomputed by a screen: two screens calling `suggestLadderProgression`
- * independently could resolve two different variants for the same rung.
+ * `variantKey` is read straight off the offered rung — `prescribed` and
+ * `source` are exposed here rather than recomputed by a screen, so two
+ * screens cannot resolve two different variants for the same rung.
  */
 describe('variantKey — how a rung differs from the default form', () => {
   const withVariants: LadderPrescription = {
@@ -484,15 +277,31 @@ describe('variantKey — how a rung differs from the default form', () => {
   }
 
   it("surfaces the offered rung's own variantKey, not the first rung's", () => {
-    const rung1 = nextSetTarget(withVariants, [], [], 0)
-    const rung2 = nextSetTarget(withVariants, [], [], 1)
+    const rung1 = nextSetTarget(withVariants, [], 0)
+    const rung2 = nextSetTarget(withVariants, [], 1)
 
     expect(rung1.variantKey).toBe('normal')
     expect(rung2.variantKey).toBe('slow')
   })
 
   it('is undefined for a ladder whose rungs carry no variant — most rungs vary only by load', () => {
-    const target = nextSetTarget(ladder, [], [], 0)
+    const target = nextSetTarget(ladder, [], 0)
     expect(target.variantKey).toBeUndefined()
+  })
+
+  /**
+   * The point of carry-forward preserving `variantKey` (`carryForward.ts`'s
+   * `carriedRung`) is exactly so this keeps working with zero special-casing
+   * here — a coach-authored tempo rung, once carried forward by
+   * `carryForwardPrescription`, is indistinguishable from a freshly-authored
+   * one by the time it reaches this function.
+   */
+  it('surfaces a variantKey that survived carry-forward, indistinguishable from a freshly-authored one', () => {
+    const carried: LadderPrescription = {
+      ...withVariants,
+      setPlan: withVariants.setPlan.map((rung) => ({ ...rung })), // as if returned by carryForwardPrescription
+    }
+    const target = nextSetTarget(carried, [], 1)
+    expect(target.variantKey).toBe('slow')
   })
 })

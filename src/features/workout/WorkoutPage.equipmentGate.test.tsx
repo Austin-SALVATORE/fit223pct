@@ -10,19 +10,25 @@ import { WorkoutPage } from './WorkoutPage'
 import type { RepRangePrescription, SessionTemplate } from '@/domain/types'
 
 /**
- * Equipment-aware progression, Phase 1 (`~/.claude/plans/
- * equipment-aware-progression.md`, AMENDMENT A) — coach spec v2.16 §4:
- * "must not calculate the next or previous load automatically" until the
- * athlete's dumbbell hardware is verified. QA traced arithmetic
- * progression to four live surfaces reachable on Monday's first screen;
- * this is T3, the plan's own named guard, for the sharpest of them — the
- * SetScreen stepper's pre-filled weight, which is what the athlete loads
- * before ever logging anything.
+ * **The clearest single-assertion proof the progression model changed**
+ * (28 Aug 2026, Phase 3 of `~/.claude/plans/progression-carry-forward.md`).
+ * This test originally guarded coach spec v2.16 §4's equipment gate
+ * (Phase 1, `equipment-aware-progression.md` AMENDMENT A): confirming the
+ * athlete's dumbbell hardware opened arithmetic progression, and the
+ * scenario below — startWeightKg 16, weightStepKg 2, a prior session that
+ * topped every set — used to prove the gate really did open onto a
+ * computed `16 + 2 = 18` once confirmed.
  *
- * A rep-range prescription, not a ladder — the plan's own T3 wording
- * ("a test must go red showing 18 where the coach wrote 16") describes
- * this exact scenario: startWeightKg 16, weightStepKg 2, a prior session
- * that topped every set, and increase-load's 16 + 2 = 18.
+ * **Under carry-forward there is no arithmetic to gate.** The coach's Q4(a)
+ * ruling: carry-forward echoes a load the athlete already lifted and
+ * computes nothing, so `equipment.confirmedAt` is not consulted for it at
+ * all (`domain/carryForward.ts`'s own docblock — the absent settings
+ * parameter is the structural proof). The athlete logged **16 kg**, so 16
+ * kg is what carry-forward offers next time — never 18, confirmed or not.
+ * The second test below is the flip: it used to assert 18 once confirmed
+ * and now asserts confirming equipment makes **no difference at all**,
+ * which is exactly the guard against silently reintroducing a
+ * settings-aware path around carry-forward.
  */
 
 const repRange: RepRangePrescription = {
@@ -96,8 +102,8 @@ function renderWorkout() {
   )
 }
 
-describe('the stepper pre-fill is gated on a verified equipment profile', () => {
-  it('offers the coach\'s own 16 kg, never the computed 18, while equipment is unverified', async () => {
+describe('the stepper pre-fill echoes what was logged, never a computed step, regardless of equipment confirmation', () => {
+  it('offers the athlete\'s own logged 16 kg, never a computed 18, with no equipment profile confirmed', async () => {
     await seedToppedOutPriorSession()
     renderWorkout()
 
@@ -105,11 +111,12 @@ describe('the stepper pre-fill is gated on a verified equipment profile', () => 
     expect(screen.queryByLabelText('Weight')).not.toHaveTextContent('18')
   })
 
-  it('offers the computed 18 once the equipment profile is confirmed — the rule still holds when the gate is open', async () => {
+  it('still offers 16 kg, never 18, once the equipment profile is confirmed — carry-forward is not settings-aware', async () => {
     await settingsRepo.update({ equipment: { confirmedAt: '2026-08-01' } })
     await seedToppedOutPriorSession()
     renderWorkout()
 
-    expect(await screen.findByLabelText('Weight')).toHaveTextContent('18')
+    expect(await screen.findByLabelText('Weight')).toHaveTextContent('16')
+    expect(screen.queryByLabelText('Weight')).not.toHaveTextContent('18')
   })
 })

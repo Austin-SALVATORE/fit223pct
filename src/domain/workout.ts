@@ -414,33 +414,24 @@ export function scopedExposuresFor(
  * yet, is exactly the same as no profile — "values happen to be present"
  * and "the athlete verified them" are different things, same contract as
  * `profileConfirmedAt` (`types.ts`'s `UserSettings`).
+ *
+ * **No call sites in `src/**` as of 28 Aug 2026 (Phase 3, progression
+ * carry-forward) — kept deliberately, not dead code.** This function used to
+ * gate `progressionHistoryFor` (deleted alongside `progression.ts`'s two
+ * engines), which fed the arithmetic engines this coach ruling retires.
+ * Carry-forward replaces them and runs **ungated**: the coach's Q4(a)
+ * ruling is that it echoes a load already physically lifted and computes
+ * nothing, so `equipment.confirmedAt` has nothing to protect there.
+ *
+ * But he also asked the distinction to be structural: *"equipment.confirmedAt
+ * remains required for any future mechanism that GENERATES a different load
+ * from the one actually demonstrated."* This predicate is that mechanism's
+ * reserved gate — the one a future contributor reaches for the moment they
+ * add arithmetic that proposes a value nobody logged. Deleting it would
+ * leave that future addition with no gate to find.
  */
 export function hasVerifiedLoadList(settings: UserSettings | undefined): boolean {
   return settings?.equipment?.confirmedAt != null
-}
-
-/**
- * The progression engine's own history — never the display's. Empty
- * whenever `hasVerifiedLoadList` is false, so `suggestProgression` /
- * `suggestLadderProgression` fall onto their own well-tested "no history"
- * path and offer the coach's own prescription verbatim, instead of
- * arithmetic computed from a load the athlete may not be able to set (§4:
- * "must not calculate the next or previous load automatically" until the
- * hardware list is verified).
- *
- * **Not the same call site as `previousSetsFor`.** `previousSetsFor` feeds
- * `<LastTime>`'s display of what was actually lifted — real information the
- * athlete is entitled to regardless of whether their equipment is
- * verified — and must keep returning real history. This function is for
- * the engine argument only.
- */
-export function progressionHistoryFor(
-  settings: UserSettings | undefined,
-  workouts: readonly Workout[],
-  exerciseId: string,
-): LoggedSet[] {
-  if (!hasVerifiedLoadList(settings)) return []
-  return previousSetsFor(workouts, exerciseId)
 }
 
 function updateExercise(

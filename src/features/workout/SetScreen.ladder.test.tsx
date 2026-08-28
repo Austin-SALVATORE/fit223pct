@@ -4,7 +4,6 @@ import { MemoryRouter, Route, Routes } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { seedProgram } from '@/data/seed/program'
-import { settingsRepo } from '@/data/repositories'
 import { createWorkout, completeWorkout, logSet } from '@/domain/workout'
 import { WorkoutPage } from './WorkoutPage'
 import type { LadderPrescription, SessionTemplate } from '@/domain/types'
@@ -43,23 +42,7 @@ beforeAll(async () => {
 
 afterEach(async () => {
   await db.workouts.clear()
-  await settingsRepo.update({ equipment: undefined })
 })
-
-/**
- * Equipment-aware progression, Phase 1 (`~/.claude/plans/
- * equipment-aware-progression.md`, AMENDMENT A) — cross-session history
- * only reaches the progression engine once the athlete's dumbbell
- * hardware is verified (coach spec v2.16 §4). The three tests below
- * construct a *prior completed* workout specifically to exercise
- * classification (advance / at-equipment-max / load-not-the-lever)
- * against that history, so they call this first — otherwise the gate
- * (correctly) offers the un-advanced rung 1 instead, same as a fresh
- * ladder with no history at all.
- */
-async function confirmEquipment() {
-  await settingsRepo.update({ equipment: { confirmedAt: '2026-08-01' } })
-}
 
 function renderWorkout() {
   return render(
@@ -108,8 +91,22 @@ describe('SetScreen ladder rendering', () => {
     expect(await screen.findByText('Rung 2 of 3 · 10 kg × 10')).toBeInTheDocument()
   })
 
-  it('pre-fills the next rung stepped up when every rung was completed last time', async () => {
-    await confirmEquipment()
+  /**
+   * Progression replacement, Phase 3 (28 Aug 2026, `~/.claude/plans/
+   * progression-carry-forward.md`) — replaces "pre-fills the next rung
+   * stepped up when every rung was completed last time". The old engine
+   * added `weightStepKg` on top of a fully-completed ladder; carry-forward
+   * does no such arithmetic — it echoes exactly what was logged. Rung 0 is
+   * logged 2 kg *heavier* than authored here specifically so the assertion
+   * can't pass by coincidence (an exact-match log would look the same
+   * whether or not carrying actually happened).
+   */
+  it('pre-fills the next rung with exactly what was logged last time, not a stepped-up value', async () => {
+    // Every prescribed level must be logged (or skipped) for carry-forward
+    // to treat this as a *complete* exposure at all — see
+    // `carryForward.ts`'s `isCompleteExposure`. Only rung 0 deviates from
+    // authored (8 -> 10 kg); rungs 1-2 are logged exactly as authored so
+    // the exposure is complete without changing what those two prove.
     const priorCompleted = completeWorkout(
       [0, 1, 2].reduce(
         (w, i) =>
@@ -117,7 +114,7 @@ describe('SetScreen ladder rendering', () => {
             w,
             0,
             {
-              weightKg: ladder.setPlan[i].weightKg,
+              weightKg: i === 0 ? 10 : ladder.setPlan[i].weightKg, // authored rung 0 is 8 kg
               reps: ladder.setPlan[i].reps,
               seconds: null,
               completedAt: '2026-07-20T09:05:00.000Z',
@@ -146,78 +143,23 @@ describe('SetScreen ladder rendering', () => {
     await db.workouts.put(active)
 
     renderWorkout()
+    // Echoes the logged 10 kg, not the authored 8 and not an engine-stepped
+    // 10 (which would coincide here — the point is this number comes from
+    // the log, not arithmetic; the seconds-mode and technique-gate tests
+    // elsewhere prove the "not arithmetic" half where the two would diverge).
     expect(await screen.findByText('Rung 1 of 3 · 10 kg × 12')).toBeInTheDocument()
     expect(screen.getByLabelText('Weight')).toHaveTextContent('10')
   })
 
-  it('shows at-equipment-max messaging and holds the ladder when the top rung cannot take another step', async () => {
-    await confirmEquipment()
-    // Top rung caps at 12 kg here (vs. 14 kg in the other tests) — stepping
-    // by weightStepKg (2) would land at 14, over this ceiling, so a fully
-    // completed ladder must hold rather than advance.
-    const cappedSession: SessionTemplate = {
-      ...ladderSession,
-      items: [{ ...ladder, maxWeightKg: 12 }],
-    }
-
-    const priorCompleted = completeWorkout(
-      [0, 1, 2].reduce(
-        (w, i) =>
-          logSet(
-            w,
-            0,
-            {
-              weightKg: ladder.setPlan[i].weightKg,
-              reps: ladder.setPlan[i].reps,
-              seconds: null,
-              completedAt: '2026-07-20T09:05:00.000Z',
-            },
-            i,
-          ),
-        createWorkout({
-          id: 'test-ladder-cap-prior',
-          programId: seedProgram.id,
-          session: cappedSession,
-          date: '2026-07-20',
-          startedAt: '2026-07-20T09:00:00.000Z',
-        }),
-      ),
-      '2026-07-20T09:40:00.000Z',
-    )
-    await db.workouts.put(priorCompleted)
-
-    const active = createWorkout({
-      id: 'test-ladder-cap-active',
-      programId: seedProgram.id,
-      session: cappedSession,
-      date: '2026-07-23',
-      startedAt: '2026-07-23T09:00:00.000Z',
-    })
-    await db.workouts.put(active)
-
-    renderWorkout()
-    expect(await screen.findByText('Rung 1 of 3 · 8 kg × 12')).toBeInTheDocument()
-    // The ceiling is now marked by a MAX pill in the caption rather than by a
-    // sentence. The *explanation* moves to the rest screen (design §1.2:
-    // education only during rest); what stays here is the state itself, which
-    // must not read as a failure to progress — that is the whole reason the
-    // engine distinguishes at-equipment-max from a repeat.
-    expect(screen.getByText('MAX')).toBeInTheDocument()
-    expect(
-      screen.queryByText('Every rung is maxed for this setup — hold the ladder and own the reps.'),
-    ).toBeNull()
-  })
-
   /**
-   * docs/design/Mesocycle2Implementation.md §6/§12.4. A null-weight ladder
-   * (bodyweight) was never limited by load in the first place, so it must
-   * get its own caption rather than the MAX pill above — the MAX pill
-   * asserts an equipment ceiling that doesn't exist for a push-up. This is
-   * the both-directions half of the previous test: without it, a caption
-   * that fired for *both* states would pass while checking nothing.
+   * QA-found (12 Aug 2026): `TargetCaption` used to build "– kg × N" for a
+   * null-weight ladder — a false weight claim, same defect class as the
+   * already-fixed `SessionPreview` formatter. Re-grounded for Phase 3: no
+   * longer needs prior history or a MAX/TECHNIQUE pill to exercise (both
+   * retired with `progression.ts`) — the caption-format defect was always
+   * about a fresh render, not about which classification fired.
    */
-  it('shows load-not-the-lever messaging, never MAX, for a bodyweight ladder with nothing left to add load to', async () => {
-    await confirmEquipment()
+  it('renders a null-weight (bodyweight) ladder rung without a false "kg" claim or a dash', async () => {
     // 'push-up' isn't in the Library yet (Mesocycle 2's Build program,
     // not this batch) — goblet-squat's own id is reused here purely as a
     // resolvable Library entry; the prescription's null weights are what
@@ -242,32 +184,6 @@ describe('SetScreen ladder rendering', () => {
       items: [bodyweightLadder],
     }
 
-    const priorCompleted = completeWorkout(
-      [0, 1].reduce(
-        (w, i) =>
-          logSet(
-            w,
-            0,
-            {
-              weightKg: null,
-              reps: bodyweightLadder.setPlan[i].reps,
-              seconds: null,
-              completedAt: '2026-07-20T09:05:00.000Z',
-            },
-            i,
-          ),
-        createWorkout({
-          id: 'test-bodyweight-prior',
-          programId: seedProgram.id,
-          session: bodyweightSession,
-          date: '2026-07-20',
-          startedAt: '2026-07-20T09:00:00.000Z',
-        }),
-      ),
-      '2026-07-20T09:40:00.000Z',
-    )
-    await db.workouts.put(priorCompleted)
-
     const active = createWorkout({
       id: 'test-bodyweight-active',
       programId: seedProgram.id,
@@ -279,15 +195,6 @@ describe('SetScreen ladder rendering', () => {
 
     renderWorkout()
     await screen.findByLabelText('Reps')
-    expect(screen.getByText('TECHNIQUE')).toBeInTheDocument()
-    expect(screen.queryByText('MAX')).toBeNull()
-    expect(
-      screen.queryByText('Every rung is maxed for this setup — hold the ladder and own the reps.'),
-    ).toBeNull()
-    // QA-found (12 Aug 2026): TargetCaption used to build "– kg × N" for a
-    // null-weight ladder — a false weight claim, same defect class as the
-    // already-fixed SessionPreview formatter, but a second independent
-    // formatter this file's own test never asserted a caption string for.
     expect(screen.getByText('Rung 1 of 2 · 12 reps')).toBeInTheDocument()
     expect(screen.queryByText(/kg/)).toBeNull()
     expect(screen.queryByText(/–/)).toBeNull()

@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import { seedExercises } from '@/data/seed/exercises'
 import { seedProgram } from '@/data/seed/program'
 import { completeWorkout, createWorkout, logSet } from '@/domain/workout'
-import type { LoggedSet, UserSettings, Workout } from '@/domain/types'
+import type { LoggedSet, Workout } from '@/domain/types'
 import { RestScreen } from './RestScreen'
 
 /**
@@ -63,7 +63,6 @@ function renderRest(overrides: Partial<React.ComponentProps<typeof RestScreen>> 
       position={{ exerciseIndex: 0, setIndex: 1 }}
       exerciseById={exerciseById}
       completed={[]}
-      settings={undefined}
       onDone={() => {}}
       {...overrides}
     />,
@@ -331,25 +330,19 @@ describe('touch targets and structure', () => {
 })
 
 /**
- * Equipment-aware progression, Phase 1 (`~/.claude/plans/
- * equipment-aware-progression.md`, AMENDMENT A) — surfaces 3 and 4 of
- * QA's four, the rest-screen hero number and its delta chip both read
- * from the same `target` this screen resolves at `:72`. rear-delt-fly
- * (the real seed's own chest-back item 3) starts at 5 kg, steps by 2 —
- * topped out last time, ungated arithmetic would offer 7.
+ * Progression replacement, Phase 3 (28 Aug 2026, `~/.claude/plans/
+ * progression-carry-forward.md`) — replaces the old "gated on a verified
+ * equipment profile" describe block. That gate (`hasVerifiedLoadList`) no
+ * longer reaches this screen at all — `RestScreen` takes no `settings`
+ * prop any more, and carry-forward runs ungated per the coach's Q4(a). The
+ * hazard this block now proves end to end is different and still real:
+ * rear-delt-fly is technique-gated (12 Aug 2026 ruling,
+ * `carryForward.ts`'s `isLoadCarryForwardExcluded`) — a heavier logged
+ * weight must never become next exposure's offered weight, no gate
+ * involved, just the exclusion itself. Reps still carry.
  */
-function confirmedSettings(): UserSettings {
-  return {
-    id: 'user',
-    name: 'Test',
-    weeklyGoal: 3,
-    lastSeenWeeklyReviewWeekStart: null,
-    equipment: { confirmedAt: '2026-08-01' },
-  }
-}
-
-describe('the rest-screen hero number is gated on a verified equipment profile', () => {
-  function toppedOutPrior(): Workout {
+describe('rear-delt-fly (technique-gated) always echoes the coach\'s own load, never a heavier logged one', () => {
+  function toppedOutHeavierThanAuthored(): Workout {
     let prior = createWorkout({
       id: 'prior-rear-delt-fly',
       programId: seedProgram.id,
@@ -357,31 +350,22 @@ describe('the rest-screen hero number is gated on a verified equipment profile',
       date: '2026-07-18',
       startedAt: '2026-07-18T09:00:00.000Z',
     })
-    prior = logSet(prior, 3, { weightKg: 5, reps: 15, seconds: null, completedAt: '2026-07-18T09:05:00.000Z' }, 0)
-    prior = logSet(prior, 3, { weightKg: 5, reps: 15, seconds: null, completedAt: '2026-07-18T09:07:00.000Z' }, 1)
+    // Logged 7 kg — heavier than the coach's authored 5 kg. Exactly the
+    // scenario the 12 Aug ruling exists to prevent from becoming next
+    // week's prescription.
+    prior = logSet(prior, 3, { weightKg: 7, reps: 15, seconds: null, completedAt: '2026-07-18T09:05:00.000Z' }, 0)
+    prior = logSet(prior, 3, { weightKg: 7, reps: 15, seconds: null, completedAt: '2026-07-18T09:07:00.000Z' }, 1)
     return completeWorkout(prior, '2026-07-18T09:40:00.000Z')
   }
 
-  it('offers the coach\'s own 5 kg, never the computed 7, while equipment is unverified', () => {
+  it("offers the coach's own 5 kg, never the logged 7 kg — reps still carry to 15", () => {
     renderRest({
       workout: baseWorkout,
       position: { exerciseIndex: 3, setIndex: 0 },
-      completed: [toppedOutPrior()],
-      settings: undefined,
+      completed: [toppedOutHeavierThanAuthored()],
     })
 
-    expect(screen.getByText(/5 kg × 12/)).toBeInTheDocument()
-    expect(screen.queryByText(/7 kg × 12/)).toBeNull()
-  })
-
-  it('offers the computed 7 once the equipment profile is confirmed — the rule still holds when the gate is open', () => {
-    renderRest({
-      workout: baseWorkout,
-      position: { exerciseIndex: 3, setIndex: 0 },
-      completed: [toppedOutPrior()],
-      settings: confirmedSettings(),
-    })
-
-    expect(screen.getByText(/7 kg × 12/)).toBeInTheDocument()
+    expect(screen.getByText(/5 kg × 15/)).toBeInTheDocument()
+    expect(screen.queryByText(/7 kg/)).toBeNull()
   })
 })

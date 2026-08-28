@@ -3,15 +3,13 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { exerciseRepo, programRepo, settingsRepo, workoutRepo } from '@/data/repositories'
+import { exerciseRepo, programRepo, workoutRepo } from '@/data/repositories'
 import {
   addCustomSlot,
   completeWorkout,
-  hasVerifiedLoadList,
   logSet,
   plannedSetIndices,
   previousSetsFor,
-  progressionHistoryFor,
   skipPrescribedLevel,
   swapExercise,
   undoCustomSlot,
@@ -19,7 +17,7 @@ import {
   undoSkip,
   workoutPosition,
 } from '@/domain/workout'
-import { withCeilingVariation } from '@/domain/variationLadder'
+import { carryForwardPrescription, mostRecentCompleteExposureFor } from '@/domain/carryForward'
 import { PRODUCT_NAME } from '@/lib/brand'
 import type { LoggedSet, Workout, WorkoutExercise } from '@/domain/types'
 import { SessionSheet } from './SessionSheet'
@@ -66,11 +64,10 @@ export function WorkoutPage() {
   }, [i18n.language, tCommon])
 
   const data = useLiveQuery(async () => {
-    const [workout, exercises, completed, settings] = await Promise.all([
+    const [workout, exercises, completed] = await Promise.all([
       workoutRepo.getActive(),
       exerciseRepo.getAll(),
       workoutRepo.getCompleted(),
-      settingsRepo.get(),
     ])
     // Only origin is needed here (note resolution) — the rest of the
     // program record isn't; Workout is already the source of truth for
@@ -80,7 +77,6 @@ export function WorkoutPage() {
       workout,
       exerciseById: new Map(exercises.map((e) => [e.id, e])),
       completed,
-      settings,
       programOrigin: program?.origin,
     }
   }, [])
@@ -89,7 +85,7 @@ export function WorkoutPage() {
   const [finished, setFinished] = useState<Workout | null>(null)
 
   if (!data) return null
-  const { workout, exerciseById, completed, settings, programOrigin } = data
+  const { workout, exerciseById, completed, programOrigin } = data
 
   if (phase.kind === 'summary' && finished) {
     return <SessionSummary workout={finished} exerciseById={exerciseById} history={completed} />
@@ -117,31 +113,30 @@ export function WorkoutPage() {
   const exercise = exerciseById.get(workoutExercise.exerciseId)
   if (!exercise) return null
 
-  // `previousSets` feeds SetScreen's <LastTime> display only; the engine
-  // gets its own, gated history (progressionHistory) — see SetScreen.tsx's
-  // prop doc for why these must not be the same value.
+  // `previousSets` feeds SetScreen's <LastTime> display only — real
+  // information the athlete is entitled to regardless of carry-forward.
   const previousSets = previousSetsFor(completed, workoutExercise.exerciseId)
-  const progressionHistory = progressionHistoryFor(settings, completed, workoutExercise.exerciseId)
   /**
-   * §10 "Load-ceiling progression" (`~/.claude/plans/variation-ladder.md`
-   * Phase C) — reads the *same already-gated* history the load engine
-   * above reads (`hasVerifiedLoadList`, not a second gate check), so the
-   * tempo ladder ships inert while the equipment profile is unverified
-   * and switches itself on the moment it isn't, with no code change on
-   * that day (OQ1, ruled gated, 7 Aug). Wraps `workoutExercise` rather
-   * than replacing it everywhere: `handleLog`/`handleRemoveSet`/
-   * `canAddSet` below read the *authored* prescription (rest duration,
-   * custom-slot counting), not the display-only tempo-transformed one —
-   * only SetScreen's own target resolution needs the derived label.
+   * Progression replacement (28 Aug 2026 coach ruling, Phase 3 of
+   * `~/.claude/plans/progression-carry-forward.md`) — carry-forward runs
+   * **ungated**, per the coach's Q4(a): it echoes a load the athlete has
+   * already lifted and computes nothing, so `equipment.confirmedAt` is not
+   * consulted here (that gate remains reserved, structurally, for any
+   * future mechanism that *proposes* a load rather than echoing one —
+   * `carryForwardPrescription`'s own docblock, `domain/carryForward.ts`).
+   * Wraps `workoutExercise` rather than replacing it everywhere:
+   * `handleLog`/`handleRemoveSet`/`canAddSet` below read the *authored*
+   * prescription (rest duration, custom-slot counting), not the
+   * carried-forward one — only SetScreen's own target resolution needs it.
    */
-  const workoutExerciseWithVariation: WorkoutExercise = {
+  const previousExposure = mostRecentCompleteExposureFor(
+    completed,
+    workout.programId,
+    workoutExercise.exerciseId,
+  )
+  const carriedWorkoutExercise: WorkoutExercise = {
     ...workoutExercise,
-    prescription: withCeilingVariation(
-      workoutExercise.prescription,
-      hasVerifiedLoadList(settings) ? completed : [],
-      workout.programId,
-      workout.readiness?.tier,
-    ),
+    prescription: carryForwardPrescription(workoutExercise.prescription, previousExposure),
   }
 
   async function handleLog(set: Omit<LoggedSet, 'setIndex'>) {
@@ -391,19 +386,15 @@ export function WorkoutPage() {
               position={position}
               exerciseById={exerciseById}
               completed={completed}
-              settings={settings}
-              readinessTier={workout.readiness?.tier}
               onDone={() => setPhase({ kind: 'logging' })}
             />
           ) : (
             <SetScreen
-              workoutExercise={workoutExerciseWithVariation}
+              workoutExercise={carriedWorkoutExercise}
               exercise={exercise}
               setIndex={position.setIndex}
               previousSets={previousSets}
-              progressionHistory={progressionHistory}
               exerciseById={exerciseById}
-              readinessTier={workout.readiness?.tier}
               programId={workout.programId}
               programOrigin={programOrigin}
               sessionId={workout.sessionTemplateId}

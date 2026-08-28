@@ -4,7 +4,7 @@
  * text only in the UI layer (see `src/i18n/useTranslatedMessage.ts`).
  */
 export interface MessageDescriptor {
-  /** Namespace-qualified key, e.g. 'domain:progression.start' */
+  /** Namespace-qualified key, e.g. 'domain:readiness.drivers.none' */
   key: string
   params?: Record<string, string | number>
 }

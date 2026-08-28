@@ -9,7 +9,6 @@ import { nextSetTarget } from '@/domain/nextSetTarget'
 import { plannedSetIndices } from '@/domain/workout'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { usePrescriptionNote } from '@/i18n/seedProgram'
-import type { ReadinessTier } from '@/domain/readiness'
 import type { Exercise, LoggedSet, Program, WorkoutExercise } from '@/domain/types'
 import { exerciseAsset, exerciseAssetThumbnailFrame } from '@/lib/exerciseAsset'
 import type { NextSetTarget } from '@/domain/nextSetTarget'
@@ -23,19 +22,7 @@ interface SetScreenProps {
   setIndex: number
   /** Feeds `<LastTime>` only — what the athlete actually lifted, real information regardless of equipment verification. */
   previousSets: readonly LoggedSet[]
-  /**
-   * Feeds the progression engine only (`nextSetTarget`) — gated by
-   * `progressionHistoryFor` (coach spec v2.16 §4,
-   * `equipment-aware-progression.md` AMENDMENT A): empty whenever the
-   * athlete's dumbbell hardware is unverified, so the stepper pre-fills
-   * the coach's own prescription instead of computed arithmetic.
-   * Deliberately not the same prop as `previousSets` above — `LastTime`
-   * and the engine have different needs and must not share one value,
-   * or gating the engine would also blank the display.
-   */
-  progressionHistory: readonly LoggedSet[]
   exerciseById: Map<string, Exercise>
-  readinessTier?: ReadinessTier
   programId: string
   /** 'imported' skips locale-key resolution entirely — see i18n/seedProgram.ts */
   programOrigin?: Program['origin']
@@ -61,9 +48,7 @@ export function SetScreen({
   exercise,
   setIndex,
   previousSets,
-  progressionHistory,
   exerciseById,
-  readinessTier,
   programId,
   programOrigin,
   sessionId,
@@ -83,9 +68,10 @@ export function SetScreen({
   const [confirmingSkip, setConfirmingSkip] = useState(false)
   /*
     The progression *reason* is no longer read here — it moves to the rest
-    screen, where education belongs ("education only during rest"), and its
-    68px of French prose is what buys the illustration its room. What stays on
-    this screen is the actionable residue: the delta chip in the caption.
+    screen, where education belongs ("education only during rest"). Under
+    carry-forward there is no computed reason any more (28 Aug 2026, Phase
+    3) — the offered numbers are exactly what was last logged, echoed, not
+    decided — so there is no residue left to caption here either.
   */
 
   /**
@@ -94,14 +80,13 @@ export function SetScreen({
    * prescription would show the ladder rung while this screen offers the
    * weight you just lifted, and the user would load the wrong one. See
    * `nextSetTarget`.
+   *
+   * `prescription` is already the carried-forward one — `workoutExercise`
+   * arrives from `WorkoutPage` with carry-forward already applied
+   * (`domain/carryForward.ts`), so this call only ever reads it, never
+   * computes from history itself.
    */
-  const target = nextSetTarget(
-    prescription,
-    workoutExercise.sets,
-    progressionHistory,
-    setIndex,
-    readinessTier,
-  )
+  const target = nextSetTarget(prescription, workoutExercise.sets, setIndex)
 
   const [weightKg, setWeightKg] = useState(target.weightKg)
   const [effort, setEffort] = useState(
@@ -492,41 +477,26 @@ function TargetCaption({
     <p id={id} className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-ink-tertiary">
       <span>{targetText}</span>
       {/*
-        MAX rather than an up-arrow at the ceiling. That state is the reason
-        the engine distinguishes it, and it must not read as a failure to
-        progress — the ladder is holding because the equipment cannot go
-        higher, which is information, not a shortfall.
+        MAX / TECHNIQUE / "+2 kg" pills removed, 28 Aug 2026 (Phase 3,
+        `~/.claude/plans/progression-carry-forward.md`) — all three read
+        `NextSetTarget.progressionType`, the deleted engine's own
+        decision-classification vocabulary (`progression.ts`, deleted this
+        same batch). Under carry-forward there is no decision to classify:
+        the offered numbers are exactly what was last logged, echoed, never
+        computed — "MAX" has nothing to contrast with, and neither does a
+        "+2 kg" that no arithmetic produced. See `nextSetTarget.ts`'s own
+        docblock.
       */}
-      {target.progressionType === 'at-equipment-max' && (
-        <span className="rounded-full border border-amber px-2 py-0.5 text-xs font-semibold text-amber">
-          {t('setScreen.atMax')}
-        </span>
-      )}
-      {/*
-        A different pill for a different reason not to advance — never both
-        at once, the engine reports one or the other. A null-weight ladder
-        (bodyweight) was never limited by load, so the MAX pill above would
-        assert an equipment ceiling that doesn't exist for this movement.
-        §10's manual bodyweight model (range, then tempo, then pause, then
-        leverage, then load) is what the athlete progresses through instead.
-      */}
-      {target.progressionType === 'load-not-the-lever' && (
-        <span className="rounded-full border border-border px-2 py-0.5 text-xs font-semibold text-ink-secondary">
-          {t('setScreen.loadNotTheLever')}
-        </span>
-      )}
-      {target.progressionType === 'increase-load' && target.weightKg !== null && (
-        <span className="text-amber">
-          {t('setScreen.deltaHeavier', { delta: formatDelta(prescription) })}
-        </span>
-      )}
       {/*
         How this rung differs from the default form, when the coach
         prescribed one — e.g. "Bodyweight slow" for level 2 of a push-up
         ladder whose level 1 is plain bodyweight. Closed vocabulary, never
         prose (docs/design/Mesocycle2Implementation.md §6.1); shared across
         every exercise via common:setVariant rather than a key per level
-        per exercise.
+        per exercise. Carry-forward preserves an authored `variantKey` onto
+        the carried rung (`carryForward.ts`'s `carriedRung`), so this keeps
+        rendering unchanged — see the coach's Q2 ruling, tempo content
+        survives retiring the automatic tempo-progression pathway.
       */}
       {target.variantKey && (
         <span className="rounded-full border border-border px-2 py-0.5 text-xs">
@@ -540,11 +510,6 @@ function TargetCaption({
       )}
     </p>
   )
-}
-
-/** The step the engine just took — the actionable residue of the reason sentence. */
-function formatDelta(prescription: ExercisePrescription): number {
-  return prescription.weightStepKg ?? 1
 }
 
 function effortValue(set: LoggedSet, mode: 'reps' | 'seconds'): number {

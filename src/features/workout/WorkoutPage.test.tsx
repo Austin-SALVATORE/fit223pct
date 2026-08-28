@@ -216,7 +216,7 @@ describe('the offered numbers come from one place', () => {
     const workout = await workoutRepo.getActive()
     if (!workout) throw new Error('expected an active workout')
     const workoutExercise = workout.exercises[0]
-    const target = nextSetTarget(workoutExercise.prescription, workoutExercise.sets, [], 1)
+    const target = nextSetTarget(workoutExercise.prescription, workoutExercise.sets, 1)
 
     // Goblet squat is a ladder, so every set reports its own rung — the
     // logged 14 kg does not carry forward (31 Jul ruling). What this test
