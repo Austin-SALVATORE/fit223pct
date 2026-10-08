@@ -400,7 +400,9 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
   it('trainingWeekdays and dates match spec §3', () => {
     expect(mesocycle2Build.trainingWeekdays).toEqual([1, 3, 5])
     expect(mesocycle2Build.startDate).toBe('2026-08-10')
-    expect(mesocycle2Build.endDate).toBe('2026-09-06')
+    // endDate extended 6 Sep -> 31 Dec 2026 by owner ruling, 8 Oct 2026
+    // (extension after China travel); same program id and prescriptions.
+    expect(mesocycle2Build.endDate).toBe('2026-12-31')
     expect(mesocycle2Build.schedulingMode).toBe('rotation')
   })
 

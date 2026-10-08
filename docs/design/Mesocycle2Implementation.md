@@ -19,6 +19,9 @@
 > deload is dated 14–20 Sep, which the owner has since superseded — the
 > block must now end **6 September** because they fly on the 7th, and
 > how the two removed weeks are absorbed is an open coach question.
+>
+> **8 Oct 2026:** the block was later extended to **31 Dec 2026** by owner
+> ruling (same program id and prescriptions).
 
 **Authority:** `Mesocycle-2-Home-Progressive-Coach-Spec-v2.5.md` (624 lines,
 md5 `dc452ff3666422726a33a7e277855a3f`), read in full. Where this plan and

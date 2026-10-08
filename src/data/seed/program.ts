@@ -662,7 +662,7 @@ export const mesocycle2Build: Program = {
   origin: 'seed',
   phase: 2,
   startDate: '2026-08-10',
-  endDate: '2026-09-06',
+  endDate: '2026-12-31',
   trainingWeekdays: [1, 3, 5],
   schedulingMode: 'rotation',
   // Sequential: identity follows completed count, not the calendar

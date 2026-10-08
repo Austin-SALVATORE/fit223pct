@@ -102,6 +102,10 @@ retired before it shipped: the coach's Mesocycle 2 continues at the same
 treats programs as data, so this remains a content change, not a code
 change — only the content itself moved.
 
+The block now runs through 31 Dec 2026 by owner ruling of 8 Oct 2026: same
+program id, same prescriptions, and carry-forward continues from the last
+completed exposure.
+
 Scheduling is **rotation**, not weekday-pinned (coach ruling, 7 Aug,
 `~/.claude/plans/m2-rotation-switch.md`) — session identity follows how
 many sessions have actually been completed, not the calendar; the

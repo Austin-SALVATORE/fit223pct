@@ -53,7 +53,7 @@ import type { CheckIn, UserSettings, Workout } from '@/domain/types'
 
 const PROGRAM = mesocycle2Build
 // Monday 17 Aug 2026 — inside mesocycle2Build's active window
-// (2026-08-10 to 2026-09-06), a Monday so the seven-day walk crosses a
+// (2026-08-10 to 2026-12-31, extended 8 Oct), a Monday so the seven-day walk crosses a
 // full training/rest cycle. Also inside the buildWeeklyReview window this
 // date resolves to (Sun 2026-08-10 – Sat 2026-08-16 is the *previous*
 // week from Monday 17's own perspective — see WEEKLY_REVIEW_POISON_DATE).

@@ -163,7 +163,7 @@ describe('renders on every DayPlan kind, and a postpone-vacated day', () => {
   })
 
   it('an ended day — past the fallback-resolved program\'s own endDate, no successor (see this file\'s own docblock correction to plan §1.7)', async () => {
-    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 8, 7, 9, 0, 0) }) // 7 Sep 2026
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2027, 0, 4, 9, 0, 0) }) // 4 Jan 2027, past the 31 Dec 2026 end
     await seedDatabase()
     await activatePostureReset()
     renderApp()
@@ -196,7 +196,8 @@ describe('renders on every DayPlan kind, and a postpone-vacated day', () => {
 /**
  * Layer 5 — the mesocycle-boundary guard (plan §7.3c). The coach's
  * persistence directive (§1.7, doc 23 §10 — "Mesocycle 2 ending on 6
- * September must NOT remove or reset it") made checkable on the date it
+ * September (since extended to 31 December by owner ruling, 8 Oct 2026; the
+ * fixtures now sit at 4 Jan 2027) must NOT remove or reset it") made checkable on the date it
  * matters. Exercises the same real branch as the "ended day" test above —
  * see this file's own docblock for the correction to §1.7's stated
  * mechanism — but this test's purpose is the persistence claim
@@ -208,7 +209,7 @@ describe('renders on every DayPlan kind, and a postpone-vacated day', () => {
  * literally proposes gating on `program` instead of settings
  * (`{program && postureResetActive && <MorningSection />}`). Tried that
  * first: it stayed green, because — per this file's own docblock
- * correction — `program` is never `undefined` at 2026-09-07 with the real
+ * correction — `program` is never `undefined` at 2027-01-04 (originally 2026-09-07, before the 8 Oct extension to 31 Dec) with the real
  * seed; `getActive`'s fallback hands back the stale, ended
  * `mesocycle2Build` itself. A `program &&` gate cannot fail here, so it is
  * not actually a negative control for this scenario — a "clean" run of it
@@ -224,8 +225,8 @@ describe('renders on every DayPlan kind, and a postpone-vacated day', () => {
  * quoted verbatim in the phase report.
  */
 describe('Layer 5 — mesocycle boundary', () => {
-  it('renders 2026-09-07, past Mesocycle 2\'s endDate, with no successor program active', async () => {
-    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 8, 7, 9, 0, 0) })
+  it('renders 2027-01-04, past Mesocycle 2\'s endDate, with no successor program active', async () => {
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date(2027, 0, 4, 9, 0, 0) })
     await seedDatabase()
     await activatePostureReset()
     renderApp()
