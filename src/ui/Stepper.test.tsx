@@ -421,6 +421,37 @@ describe('the displayed separator matches the one the user types', () => {
   })
 })
 
+describe('editing does not drift a value the display rounds (F5)', () => {
+  // The bar is 7.75 kg, so every barbell load ends in .75. The display shows
+  // one decimal (17.8), and the edit draft used to be seeded from that string,
+  // so Edit-then-Enter committed 17.8 !== 17.75 and every edit drifted the
+  // owner's real load by 0.05 kg.
+  it('seeds the edit field with the full stored precision, not the display rounding', async () => {
+    renderStepper({ value: 17.75, step: 2, min: 0 })
+
+    const input = await startTyping()
+    expect(input).toHaveValue('17.75')
+  })
+
+  it('opening the field and committing unchanged writes nothing', async () => {
+    const { onChange } = renderStepper({ value: 17.75, step: 2, min: 0 })
+
+    const input = await startTyping()
+    await userEvent.type(input, '{Enter}')
+
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('keeps the French decimal comma at full precision', async () => {
+    await i18n.changeLanguage('fr')
+    renderStepper({ value: 17.75, step: 2, min: 0 })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Modifier Weight' }))
+    expect(screen.getByRole('textbox', { name: 'Weight' })).toHaveValue('17,75')
+    await i18n.changeLanguage('en')
+  })
+})
+
 describe('a sustained hold does not flood the live region (A10)', () => {
   /**
    * The backlog recorded this at the old fixed 140ms — ~7 announcements/sec —

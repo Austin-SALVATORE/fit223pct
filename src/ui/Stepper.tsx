@@ -48,6 +48,15 @@ const HOLD_MIN_INTERVAL_MS = 60
  */
 const ANNOUNCE_DEBOUNCE_MS = 300
 
+/**
+ * The edit field is seeded at the precision the value is *stored* at (`round`
+ * below keeps two decimals), not the one-decimal display. Seeding from the
+ * display string made Edit-then-Enter commit the rounded figure: a 17.75 kg
+ * barbell load (the bar is 7.75) became 17.8 on every edit — a 0.05 kg drift
+ * in real data (F5, 20 Oct).
+ */
+const EDIT_FRACTION_DIGITS = 2
+
 function intervalForTick(tick: number): number {
   if (tick < HOLD_RAMP_AFTER_TICKS) return HOLD_INTERVAL_MS
   const shortened = HOLD_INTERVAL_MS - (tick - HOLD_RAMP_AFTER_TICKS + 1) * HOLD_RAMP_STEP_MS
@@ -311,7 +320,7 @@ export function Stepper({
           <button
             type="button"
             aria-label={t('stepper.edit', { label })}
-            onClick={() => setDraft(value === null ? '' : formatNumber(value, i18n.language))}
+            onClick={() => setDraft(value === null ? '' : formatNumber(value, i18n.language, EDIT_FRACTION_DIGITS))}
             className="rounded-card px-1 transition-colors hover:bg-raised"
           >
             {/*
@@ -433,10 +442,10 @@ function clamp(value: number, min: number, max?: number): number {
  * French decimal comma — two meanings, one glyph, in the same control.
  */
 /** Locale-aware, tabular-friendly number formatting — shared with the rest screen's hero numbers so a value never renders differently on the two screens that must not disagree (see `nextSetTarget`). */
-export function formatNumber(value: number, locale: string): string {
+export function formatNumber(value: number, locale: string, maxFractionDigits = 1): string {
   return new Intl.NumberFormat(locale, {
     minimumFractionDigits: Number.isInteger(value) ? 0 : 1,
-    maximumFractionDigits: 1,
+    maximumFractionDigits: maxFractionDigits,
     useGrouping: false,
   }).format(value)
 }
