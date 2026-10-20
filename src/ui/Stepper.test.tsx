@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import i18n from '@/i18n/i18next'
-import { Stepper } from './Stepper'
+import { Stepper, formatNumber } from './Stepper'
 
 /**
  * Direct numeric entry. Owner-reported: reaching 82.5 from a 70 default at
@@ -449,6 +449,32 @@ describe('editing does not drift a value the display rounds (F5)', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Modifier Weight' }))
     expect(screen.getByRole('textbox', { name: 'Weight' })).toHaveValue('17,75')
     await i18n.changeLanguage('en')
+  })
+})
+
+describe('the display shows the stored number, not a rounding of it (F5b)', () => {
+  // The owner loads plates. 17.75 kg (bar 7.75 + plates) was shown as "17.8",
+  // so the figure on screen was not the load on the bar.
+  it.each([
+    ['en', 17.75, '17.75'],
+    ['fr', 17.75, '17,75'],
+    ['en', 17.5, '17.5'],
+    ['en', 18, '18'],
+    ['fr', 82.5, '82,5'],
+  ])('%s: %s reads %s', async (locale, value, text) => {
+    await i18n.changeLanguage(locale)
+    renderStepper({ value, step: 2, min: 0 })
+
+    expect(screen.getByLabelText('Weight')).toHaveTextContent(text)
+    expect(screen.getByLabelText('Weight').textContent).not.toMatch(/17[.,]8/)
+    await i18n.changeLanguage('en')
+  })
+
+  it('formatNumber trims trailing zeros and keeps up to two decimals', () => {
+    expect(formatNumber(17.75, 'en')).toBe('17.75')
+    expect(formatNumber(17.5, 'en')).toBe('17.5')
+    expect(formatNumber(18, 'en')).toBe('18')
+    expect(formatNumber(17.75, 'fr')).toBe('17,75')
   })
 })
 

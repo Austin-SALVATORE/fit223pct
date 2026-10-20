@@ -72,7 +72,7 @@ i18next
 
 // Locale-aware decimals (French uses a comma separator) for `{{delta, number}}`.
 i18next.services.formatter?.add('number', (value: number, lng?: string) =>
-  new Intl.NumberFormat(lng, { maximumFractionDigits: 1 }).format(value),
+  new Intl.NumberFormat(lng, { maximumFractionDigits: 2 }).format(value),
 )
 
 export default i18next
