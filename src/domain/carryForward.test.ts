@@ -228,6 +228,42 @@ describe('carryForwardPrescription', () => {
   })
 })
 
+describe('carryForwardPrescription — a null logged load must not erase a loaded rung', () => {
+  // Owner report 20 Oct: "in a movement I can no more change the kg". A logged
+  // `weightKg: null` (the exercise was bodyweight/unloaded when last performed)
+  // was copied verbatim onto the rung, and SetScreen renders the weight
+  // Stepper only when the target weight is non-null — so the control vanished,
+  // and the next exposure (also logged null) re-carried the null forever.
+  it('keeps the authored rung weight when the logged set carried no load', () => {
+    const authored = ladderPrescription()
+    const previous = exposure(authored, [loggedSet(0, null, 12), loggedSet(1, null, 10), loggedSet(2, null, 8)])
+
+    const result = carryForwardPrescription(authored, previous) as LadderPrescription
+    expect(result.setPlan.map((r) => r.weightKg)).toEqual([14, 16, 18])
+    expect(result.setPlan.map((r) => r.reps)).toEqual([12, 10, 8])
+  })
+
+  it('keeps the last authored rung weight for a custom set logged without a load', () => {
+    const authored = ladderPrescription()
+    const previous = exposure(
+      authored,
+      [loggedSet(0, 14, 12), loggedSet(1, 16, 10), loggedSet(2, 18, 8), loggedSet(3, null, 8, null, true)],
+      { customSlots: 1 },
+    )
+    const result = carryForwardPrescription(authored, previous) as LadderPrescription
+    expect(result.setPlan[3].weightKg).toBe(18)
+  })
+
+  it('still carries null when the authored rung is itself unloaded (bodyweight)', () => {
+    const authored = ladderPrescription({
+      setPlan: [{ weightKg: null, reps: 10 }, { weightKg: null, reps: 10 }, { weightKg: null, reps: 10 }],
+    })
+    const previous = exposure(authored, [loggedSet(0, null, 12), loggedSet(1, null, 10), loggedSet(2, null, 8)])
+    const result = carryForwardPrescription(authored, previous) as LadderPrescription
+    expect(result.setPlan.map((r) => r.weightKg)).toEqual([null, null, null])
+  })
+})
+
 describe('isCompleteExposure', () => {
   const authored = ladderPrescription() // sets: 3
 

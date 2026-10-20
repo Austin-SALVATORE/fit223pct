@@ -191,7 +191,18 @@ function carriedRung(
    * and set count still carry normally for these two — only `weightKg` is
    * pinned, to `loadFallbackWeightKg`, never to what was logged.
    */
-  const weightKg = gatesLoad ? loadFallbackWeightKg : logged.weightKg
+  /**
+   * **A logged set with no load demonstrates nothing, so it cannot erase the
+   * authored one** (owner report 20 Oct: "in a movement I can no more change
+   * the kg"). `SetScreen` renders the weight Stepper only when the target
+   * weight is non-null, so a `null` carried onto a loaded rung removes the
+   * control — and the next set is logged `null` too, re-carrying it forever.
+   * `swapExercise` keeps the slot's prescription while changing the exercise
+   * id, so an unloaded slot swapped to a loaded movement logs `weightKg:
+   * null` under that movement's id; this line then poisoned its next
+   * authored exposure. Falls back like the technique-gate does.
+   */
+  const weightKg = gatesLoad ? loadFallbackWeightKg : (logged.weightKg ?? loadFallbackWeightKg)
 
   return authoredRung?.variantKey === undefined
     ? { weightKg, reps }
