@@ -3,6 +3,7 @@ import {
   carryForwardPrescription,
   isCompleteExposure,
   isLoadCarryForwardExcluded,
+  carrySessionForward,
   mostRecentCompleteExposureFor,
 } from './carryForward'
 import type { ExercisePrescription, LadderPrescription, LoggedSet, RepRangePrescription, Workout, WorkoutExercise } from './types'
@@ -261,6 +262,23 @@ describe('carryForwardPrescription — a null logged load must not erase a loade
     const previous = exposure(authored, [loggedSet(0, null, 12), loggedSet(1, null, 10), loggedSet(2, null, 8)])
     const result = carryForwardPrescription(authored, previous) as LadderPrescription
     expect(result.setPlan.map((r) => r.weightKg)).toEqual([null, null, null])
+  })
+})
+
+describe('carrySessionForward', () => {
+  it('re-applying carry over the same exposure changes nothing (the render-time carry stays safe over a stored carried plan)', () => {
+    const authored = ladderPrescription()
+    const previous = exposure(
+      authored,
+      [loggedSet(0, 16, 12), loggedSet(1, 16, 10), loggedSet(2, 18, 8), loggedSet(3, 18, 8, null, true)],
+      { customSlots: 1 },
+    )
+    const history = [workout('w1', 'p1', '2026-07-15', '2026-07-15T10:00:00.000Z', [previous])]
+
+    const [once] = carrySessionForward([authored], history, 'p1')
+    const [twice] = carrySessionForward([once], history, 'p1')
+    expect(once.sets).toBe(4)
+    expect(twice).toEqual(once)
   })
 })
 

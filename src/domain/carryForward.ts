@@ -323,3 +323,27 @@ export function mostRecentCompleteExposureFor(
 ): WorkoutExercise | null {
   return scopedExposuresFor(workouts, programId, exerciseId).find(isCompleteExposure) ?? null
 }
+
+/**
+ * Carry-forward applied to a whole session's prescriptions **at the moment a
+ * workout is created**, so the snapshot a workout stores is the plan that is
+ * actually offered.
+ *
+ * **Why this exists (QA F3, 20 Oct).** `createWorkout` used to snapshot the
+ * authored prescriptions while `SetScreen`/`RestScreen` carried them at render
+ * time. The two disagreed whenever carry changed the set count — a completed
+ * custom 4th set made the screen say "of 4" while `workoutPosition`, which
+ * walks the stored `prescription.sets`, moved on after set 3. Set 4 was
+ * counted and never offered. Storing the carried plan makes position, counts,
+ * summary and history one source by construction. The render-time carry stays
+ * as a re-application, which is idempotent over the same exposure.
+ */
+export function carrySessionForward(
+  items: readonly ExercisePrescription[],
+  completed: readonly Workout[],
+  programId: string,
+): ExercisePrescription[] {
+  return items.map((item) =>
+    carryForwardPrescription(item, mostRecentCompleteExposureFor(completed, programId, item.exerciseId)),
+  )
+}

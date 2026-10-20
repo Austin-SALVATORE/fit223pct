@@ -13,6 +13,7 @@ import {
 } from '@/data/repositories'
 import { resolveDayPlan } from '@/domain/schedule'
 import { createWorkout, summarizeWorkout } from '@/domain/workout'
+import { carrySessionForward } from '@/domain/carryForward'
 import { postureResetIsActive } from '@/domain/postureReset'
 import { warmupById } from '@/data/seed/warmups'
 import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readiness'
@@ -790,11 +791,13 @@ function StartButton({
   async function start() {
     if (starting) return
     setStarting(true)
+    // Snapshot the carried plan, not the authored one — see carrySessionForward.
+    const completed = await workoutRepo.getCompleted()
     const workout = {
       ...createWorkout({
         id: crypto.randomUUID(),
         programId: program.id,
-        session,
+        session: { ...session, items: carrySessionForward(session.items, completed, program.id) },
         date: todayKey,
         startedAt: new Date().toISOString(),
       }),
