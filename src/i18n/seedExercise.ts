@@ -24,8 +24,13 @@ export function useExerciseName(exerciseId: string): string {
 }
 
 export function useExerciseCues(exerciseId: string): string[] {
-  const { t } = useTranslation('seed')
+  const { t, i18n } = useTranslation('seed')
   if (exerciseId === '') return []
+  // Cues are optional content (hammer-curl and incline-push-up have none —
+  // names only, none given by the coach), so absence is not a missing key and
+  // must not trip the dev-mode `missingKeyHandler`; same guard as the
+  // teaching concept below.
+  if (!i18n.exists(`seed:exercise.${exerciseId}.cues`)) return []
   const cues = t(`exercise.${exerciseId}.cues`, { returnObjects: true })
   return Array.isArray(cues) ? (cues as string[]) : []
 }
