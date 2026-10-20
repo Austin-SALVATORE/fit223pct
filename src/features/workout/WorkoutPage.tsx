@@ -17,9 +17,8 @@ import {
   undoSkip,
   workoutPosition,
 } from '@/domain/workout'
-import { carryForwardPrescription, mostRecentCompleteExposureFor } from '@/domain/carryForward'
 import { PRODUCT_NAME } from '@/lib/brand'
-import type { LoggedSet, Workout, WorkoutExercise } from '@/domain/types'
+import type { LoggedSet, Workout } from '@/domain/types'
 import { SessionSheet } from './SessionSheet'
 import { SetScreen } from './SetScreen'
 import { UndoLastSetButton } from './UndoLastSetButton'
@@ -117,27 +116,18 @@ export function WorkoutPage() {
   // information the athlete is entitled to regardless of carry-forward.
   const previousSets = previousSetsFor(completed, workoutExercise.exerciseId)
   /**
-   * Progression replacement (28 Aug 2026 coach ruling, Phase 3 of
-   * `~/.claude/plans/progression-carry-forward.md`) — carry-forward runs
-   * **ungated**, per the coach's Q4(a): it echoes a load the athlete has
-   * already lifted and computes nothing, so `equipment.confirmedAt` is not
-   * consulted here (that gate remains reserved, structurally, for any
-   * future mechanism that *proposes* a load rather than echoing one —
-   * `carryForwardPrescription`'s own docblock, `domain/carryForward.ts`).
-   * Wraps `workoutExercise` rather than replacing it everywhere:
-   * `handleLog`/`handleRemoveSet`/`canAddSet` below read the *authored*
-   * prescription (rest duration, custom-slot counting), not the
-   * carried-forward one — only SetScreen's own target resolution needs it.
+   * **No carry-forward here, deliberately.** Carry-forward (28 Aug 2026 coach
+   * ruling, `domain/carryForward.ts`) is applied exactly once, when the
+   * workout is created — `TodayPage`'s start path stores
+   * `carrySessionForward(...)` — so `workoutExercise.prescription` is already
+   * the plan the athlete is asked to do. Position, set counts, rest, the
+   * summary and history all read that one stored plan. It used to be
+   * re-applied at render time while `workoutPosition` read the authored
+   * stored one; the two disagreed whenever carry changed the set count (QA
+   * F3: a carried custom 5th set was counted, never offered). A workout
+   * started before that change keeps its authored numbers for that one
+   * session.
    */
-  const previousExposure = mostRecentCompleteExposureFor(
-    completed,
-    workout.programId,
-    workoutExercise.exerciseId,
-  )
-  const carriedWorkoutExercise: WorkoutExercise = {
-    ...workoutExercise,
-    prescription: carryForwardPrescription(workoutExercise.prescription, previousExposure),
-  }
 
   async function handleLog(set: Omit<LoggedSet, 'setIndex'>) {
     if (!workout || position === 'complete') return
@@ -385,12 +375,11 @@ export function WorkoutPage() {
               workout={workout}
               position={position}
               exerciseById={exerciseById}
-              completed={completed}
               onDone={() => setPhase({ kind: 'logging' })}
             />
           ) : (
             <SetScreen
-              workoutExercise={carriedWorkoutExercise}
+              workoutExercise={workoutExercise}
               exercise={exercise}
               setIndex={position.setIndex}
               previousSets={previousSets}

@@ -9,7 +9,6 @@ import {
   useExerciseTeachingConcept,
 } from '@/i18n/seedExercise'
 import { nextSetTarget, type NextSetTarget } from '@/domain/nextSetTarget'
-import { carryForwardPrescription, mostRecentCompleteExposureFor } from '@/domain/carryForward'
 import { plannedSetIndices, type WorkoutPosition } from '@/domain/workout'
 import { exerciseAsset, exerciseAssetThumbnailFrame } from '@/lib/exerciseAsset'
 import type { Exercise, ExercisePrescription, Workout } from '@/domain/types'
@@ -22,8 +21,6 @@ interface RestScreenProps {
   /** Position of the NEXT set (data is already updated when rest begins) */
   position: WorkoutPosition
   exerciseById: Map<string, Exercise>
-  /** Completed workouts — needed to resolve the next exercise's own history, which is not what `WorkoutPage` computed `previousSets` for (that's the exercise just finished). */
-  completed: readonly Workout[]
   onDone: () => void
 }
 
@@ -34,7 +31,6 @@ export function RestScreen({
   workout,
   position,
   exerciseById,
-  completed,
   onDone,
 }: RestScreenProps) {
   const { t } = useTranslation('workout')
@@ -64,22 +60,11 @@ export function RestScreen({
   /**
    * **The same resolution the set screen uses, never a second one.** A rest
    * screen that recomputed from the prescription would show the ladder rung
-   * while the set screen offers the weight you just lifted — the user loads
-   * one number and is then offered another. See `nextSetTarget`'s module doc.
-   *
-   * Progression replacement (28 Aug 2026, Phase 3) — carry-forward runs
-   * ungated (coach's Q4(a): it echoes a logged load, computes nothing), so
-   * this resolves the *next* exercise's own carried prescription exactly
-   * the way `WorkoutPage` resolves the current one — see
-   * `domain/carryForward.ts`'s own docblock for why no `UserSettings`
-   * enters this at all.
+   * while the set screen offers the weight you just lifted — see
+   * `nextSetTarget`. Carry-forward is already baked into the stored
+   * prescription at workout start (`carrySessionForward`), so this only reads.
    */
-  const previousExposure = mostRecentCompleteExposureFor(
-    completed,
-    workout.programId,
-    nextWorkoutExercise.exerciseId,
-  )
-  const prescription = carryForwardPrescription(nextWorkoutExercise.prescription, previousExposure)
+  const prescription = nextWorkoutExercise.prescription
   const target = nextSetTarget(prescription, nextWorkoutExercise.sets, position.setIndex)
 
   // Session-aware, coach spec §4 — a skipped level is never counted, an

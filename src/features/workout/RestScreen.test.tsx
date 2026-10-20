@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { seedExercises } from '@/data/seed/exercises'
 import { seedProgram } from '@/data/seed/program'
+import { carrySessionForward } from '@/domain/carryForward'
 import { completeWorkout, createWorkout, logSet } from '@/domain/workout'
 import type { LoggedSet, Workout } from '@/domain/types'
 import { RestScreen } from './RestScreen'
@@ -62,7 +63,6 @@ function renderRest(overrides: Partial<React.ComponentProps<typeof RestScreen>> 
       workout={baseWorkout}
       position={{ exerciseIndex: 0, setIndex: 1 }}
       exerciseById={exerciseById}
-      completed={[]}
       onDone={() => {}}
       {...overrides}
     />,
@@ -359,11 +359,15 @@ describe('rear-delt-fly (technique-gated) always echoes the coach\'s own load, n
   }
 
   it("offers the coach's own 5 kg, never the logged 7 kg — reps still carry to 15", () => {
-    renderRest({
-      workout: baseWorkout,
-      position: { exerciseIndex: 3, setIndex: 0 },
-      completed: [toppedOutHeavierThanAuthored()],
+    const session = seedProgram.sessions[0]
+    const workout = createWorkout({
+      id: 'active-rear-delt-fly',
+      programId: seedProgram.id,
+      session: { ...session, items: carrySessionForward(session.items, [toppedOutHeavierThanAuthored()], seedProgram.id) },
+      date: '2026-07-25',
+      startedAt: '2026-07-25T09:00:00.000Z',
     })
+    renderRest({ workout, position: { exerciseIndex: 3, setIndex: 0 } })
 
     expect(screen.getByText(/5 kg × 15/)).toBeInTheDocument()
     expect(screen.queryByText(/7 kg/)).toBeNull()

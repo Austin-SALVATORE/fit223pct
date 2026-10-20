@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { seedProgram } from '@/data/seed/program'
+import { carrySessionForward } from '@/domain/carryForward'
 import { createWorkout, completeWorkout, logSet } from '@/domain/workout'
 import { WorkoutPage } from './WorkoutPage'
 import type { LadderPrescription, SessionTemplate } from '@/domain/types'
@@ -133,10 +134,12 @@ describe('SetScreen ladder rendering', () => {
     )
     await db.workouts.put(priorCompleted)
 
+    // Carry is applied once, at workout start (`carrySessionForward`), so the
+    // active workout stores the carried plan — the screens only read it.
     const active = createWorkout({
       id: 'test-ladder-active',
       programId: seedProgram.id,
-      session: ladderSession,
+      session: { ...ladderSession, items: carrySessionForward(ladderSession.items, [priorCompleted], seedProgram.id) },
       date: '2026-07-23',
       startedAt: '2026-07-23T09:00:00.000Z',
     })

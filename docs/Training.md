@@ -77,6 +77,20 @@ An 'easier' readiness day defers load increases (rep-range) and drops the
 top set of each ladder — filling the rep range, or the remaining lower sets
 of a ladder, is still expected.
 
+### Carry-forward is applied once, at workout start
+
+Since the 28 Aug ruling each set starts where that set finished last time
+(`src/domain/carryForward.ts`). That carry is applied **exactly once, when
+the workout is created** (`TodayPage`'s start path stores
+`carrySessionForward(...)`), so a workout's stored prescription *is* the plan
+the athlete was asked to do. Set position, set counts, rest, the summary and
+history all read that stored plan; the set and rest screens do not re-derive
+it. Applying it at render time while position read the authored stored plan
+let the two disagree whenever carry changed the set count (a completed
+custom set was counted but never offered). A workout started before that
+change keeps its authored numbers for that one session. Corollary: undoing a
+previous workout mid-session does not change today's plan.
+
 ## Phase 1 program (20 Jul – 9 Aug, home gym)
 
 The authoritative content is the coach's specification:
