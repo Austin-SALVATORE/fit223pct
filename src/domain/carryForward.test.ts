@@ -4,6 +4,7 @@ import {
   isCompleteExposure,
   isLoadCarryForwardExcluded,
   carrySessionForward,
+  isCarryBasisExposure,
   isCarryBasisWorkout,
   mostRecentCompleteExposureFor,
   projectExposureAcrossRevision,
@@ -461,6 +462,105 @@ describe('carryForwardPrescription keeps the exercise-level warm-up pointer', ()
     const authored = ladderPrescription({ warmupId: 'some-warmup' })
     const previous = exposure(authored, [loggedSet(0, 14, 12), loggedSet(1, 16, 10), loggedSet(2, 18, 8)])
     expect(carryForwardPrescription(authored, previous).warmupId).toBe('some-warmup')
+  })
+})
+
+/**
+ * Swap attribution (addendum 2 §1; the coach's swap ruling). `swapExercise`
+ * keeps the slot's prescription and rewrites `exerciseId`, so a substitute is
+ * performed and logged against the *replaced* exercise's sets, reps and rungs.
+ * Carry is positional, so reading that as the substitute's own history lands
+ * the logs on rungs they were never performed against. A swapped exposure is
+ * excluded from the carry basis; it stays in history and "Last time".
+ *
+ * **Every swap below logs values that differ from the substitute's own rungs**
+ * (and from B's own last session): a swap logged at the authored values leaves
+ * the controls green with the predicate removed.
+ */
+describe('a swapped exposure is not a carry basis (S1-S5)', () => {
+  const crunchRungs = () => [
+    { weightKg: null, reps: 16 },
+    { weightKg: null, reps: 20 },
+    { weightKg: null, reps: 24 },
+  ]
+  const crunchB = () => ladderPrescription({ exerciseId: 'bicycle-crunch', setPlan: crunchRungs(), role: 'accessory' })
+  const kneeRaiseC = () => ladderPrescription({ exerciseId: 'supported-knee-raise', setPlan: crunchRungs(), role: 'accessory' })
+  const swapped = (prescription: ExercisePrescription, exerciseId: string, forId: string, sets: LoggedSet[]): WorkoutExercise => ({
+    exerciseId,
+    prescription,
+    sets,
+    substitutedForId: forId,
+  })
+  // C's knee-raise slot swapped to bicycle-crunch and logged 3 x 10: not B's 16/20/24 rungs.
+  const swapLog = [loggedSet(0, null, 10), loggedSet(1, null, 10), loggedSet(2, null, 10)]
+  const ownLog = [loggedSet(0, null, 18), loggedSet(1, null, 22), loggedSet(2, null, 26)]
+  const swapWorkout = (date: string) =>
+    workout('swap', 'p1', date, `${date}T10:00:00.000Z`, [
+      swapped(kneeRaiseC(), 'bicycle-crunch', 'supported-knee-raise', swapLog),
+    ])
+  const reps = (p: ExercisePrescription | undefined) => (p as LadderPrescription).setPlan.map((r) => r.reps)
+
+  it('S1 B carries from its own last session, not from a later swap performed against another slot', () => {
+    const history = [
+      workout('own', 'p1', '2026-07-10', '2026-07-10T10:00:00.000Z', [exposure(crunchB(), ownLog)]),
+      swapWorkout('2026-07-17'),
+    ]
+    expect(reps(carrySessionForward([crunchB()], history, 'p1')[0])).toEqual([18, 22, 26])
+  })
+
+  it('S1 with no session of its own, B is authored (not the swap)', () => {
+    const authored = crunchB()
+    expect(carrySessionForward([authored], [swapWorkout('2026-07-17')], 'p1')[0]).toBe(authored)
+  })
+
+  it('S2 a workout holding a swapped slot BEFORE a real slot of the same exercise still counts via the real one', () => {
+    const both = workout('both', 'p1', '2026-07-17', '2026-07-17T10:00:00.000Z', [
+      swapped(kneeRaiseC(), 'bicycle-crunch', 'supported-knee-raise', swapLog),
+      exposure(crunchB(), ownLog),
+    ])
+    expect(reps(carrySessionForward([crunchB()], [both], 'p1')[0])).toEqual([18, 22, 26])
+  })
+
+  it('S3 the Dip slot swapped to incline-push-up does not seed C\'s own push-up', () => {
+    const pushUp = repRangePrescription({ exerciseId: 'incline-push-up', sets: 3, range: { min: 10, max: 15 }, startWeightKg: null, maxWeightKg: null, weightStepKg: null })
+    const dip = repRangePrescription({ exerciseId: 'parallel-bar-dip', sets: 2, range: { min: 5, max: 8 }, startWeightKg: null })
+    const own = [loggedSet(0, null, 14), loggedSet(1, null, 13), loggedSet(2, null, 12)]
+    const dipAsPushUps = [loggedSet(0, null, 6), loggedSet(1, null, 5)]
+    const history = [
+      workout('own', 'p1', '2026-07-10', '2026-07-10T10:00:00.000Z', [exposure(pushUp, own)]),
+      workout('swap', 'p1', '2026-07-17', '2026-07-17T10:00:00.000Z', [swapped(dip, 'incline-push-up', 'parallel-bar-dip', dipAsPushUps)]),
+    ]
+    expect(reps(carrySessionForward([pushUp], history, 'p1')[0])).toEqual([14, 13, 12])
+  })
+
+  it('S4 the replaced exercise resumes from its last unswapped session', () => {
+    const incline = ladderPrescription({ exerciseId: 'incline-dumbbell-press' })
+    const bench = ladderPrescription({ exerciseId: 'dumbbell-bench-press' })
+    const history = [
+      workout('real', 'p1', '2026-07-10', '2026-07-10T10:00:00.000Z', [exposure(incline, [loggedSet(0, 16, 12), loggedSet(1, 16, 10), loggedSet(2, 18, 8)])]),
+      workout('swap', 'p1', '2026-07-17', '2026-07-17T10:00:00.000Z', [swapped(incline, 'dumbbell-bench-press', 'incline-dumbbell-press', [loggedSet(0, 30, 6), loggedSet(1, 30, 6), loggedSet(2, 30, 6)])]),
+    ]
+    expect((carrySessionForward([incline], history, 'p1')[0] as LadderPrescription).setPlan[0].weightKg).toBe(16)
+    // ...and the swap does not seed the substitute's own slot elsewhere either.
+    expect(carrySessionForward([bench], history, 'p1')[0]).toBe(bench)
+  })
+
+  it('S5 (F1) an unloaded slot swapped to a loaded row seeds neither B\'s loads nor B\'s reps', () => {
+    const rowB = ladderPrescription({ exerciseId: 'single-arm-db-row', role: 'main' }) // 14/16/18 kg x 12/10/8
+    const invertedRow = ladderPrescription({ exerciseId: 'inverted-row', setPlan: [{ weightKg: null, reps: 8 }, { weightKg: null, reps: 8 }, { weightKg: null, reps: 8 }], role: 'accessory' })
+    const swapLogNull = [loggedSet(0, null, 12), loggedSet(1, null, 12), loggedSet(2, null, 12)] // reps differ from B's 12/10/8
+    const history = [
+      workout('swap', 'p1', '2026-07-17', '2026-07-17T10:00:00.000Z', [swapped(invertedRow, 'single-arm-db-row', 'inverted-row', swapLogNull)]),
+    ]
+    const result = carrySessionForward([rowB], history, 'p1')[0] as LadderPrescription
+    expect(result.setPlan.map((r) => r.weightKg)).toEqual([14, 16, 18])
+    // Red on reps if the predicate is dropped: the `:209` fallback still protects load.
+    expect(result.setPlan.map((r) => r.reps)).toEqual([12, 10, 8])
+  })
+
+  it('isCarryBasisExposure is exactly "not a substitute"', () => {
+    expect(isCarryBasisExposure(exposure(crunchB(), ownLog))).toBe(true)
+    expect(isCarryBasisExposure(swapped(kneeRaiseC(), 'bicycle-crunch', 'supported-knee-raise', swapLog))).toBe(false)
   })
 })
 

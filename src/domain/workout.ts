@@ -389,11 +389,18 @@ export function previousExposureFor(
  * silently drift apart. See `previousExposureFor`'s own docblock for why
  * this is program-scoped at all, and `previousSetsFor` above for the
  * unscoped display equivalent this is not a replacement for.
+ *
+ * **`include` is applied INSIDE the per-workout `find`, never after it.**
+ * Filtering the result would drop a whole workout whose *first* matching slot
+ * is excluded, even when a later slot in that same workout is the real
+ * exercise. The default (`() => true`) keeps `previousExposureFor` — the
+ * display path — byte-identical.
  */
 export function scopedExposuresFor(
   workouts: readonly Workout[],
   programId: string,
   exerciseId: string,
+  include: (exercise: WorkoutExercise) => boolean = () => true,
 ): WorkoutExercise[] {
   const candidates = workouts
     .filter((w) => w.completedAt !== null && w.programId === programId)
@@ -404,7 +411,9 @@ export function scopedExposuresFor(
     })
 
   return candidates
-    .map((workout) => workout.exercises.find((e) => e.exerciseId === exerciseId && e.sets.length > 0))
+    .map((workout) =>
+      workout.exercises.find((e) => e.exerciseId === exerciseId && e.sets.length > 0 && include(e)),
+    )
     .filter((exercise): exercise is WorkoutExercise => exercise !== undefined)
 }
 

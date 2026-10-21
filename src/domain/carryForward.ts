@@ -209,6 +209,12 @@ function carriedRung(
    * id, so an unloaded slot swapped to a loaded movement logs `weightKg:
    * null` under that movement's id; this line then poisoned its next
    * authored exposure. Falls back like the technique-gate does.
+   *
+   * The swap route is now also closed upstream: a swapped exposure is
+   * excluded from the carry basis (`isCarryBasisExposure`, addendum 2 §1), so
+   * it never reaches this function — for reps as well as load. This fallback
+   * stays regardless: a legacy snapshot whose carried target was already `null`
+   * hides the Stepper and logs `null` again, and imported data can carry one.
    */
   const weightKg = gatesLoad ? loadFallbackWeightKg : (logged.weightKg ?? loadFallbackWeightKg)
 
@@ -323,6 +329,22 @@ export function isCompleteExposure(exercise: WorkoutExercise): boolean {
  * should come from — not `previousExposureFor`, which would hand carry-
  * forward a partial exposure and let it silently become the next
  * prescription, exactly the outcome rule (c) forbids.
+ *
+ * **This is the one "carry basis" rule.** Three things, in this order, decide
+ * which exposure may seed the next prescription:
+ *  1. {@link isCarryBasisWorkout} — a workout started on an easier day is not a
+ *     basis (coach Q7: easier-day logs "do not automatically redefine" the
+ *     normal prescription).
+ *  2. {@link isCarryBasisExposure} — a swapped slot is not a basis (the
+ *     coach's swap ruling: a substitute was performed against the *original*
+ *     exercise's sets and reps, so it changes the next prescription of neither
+ *     exercise; the original resumes from its last real session). Applied
+ *     inside the per-workout `find`, so a workout holding a swapped slot AND a
+ *     real slot of the same exercise still counts via the real one.
+ *  3. {@link isCompleteExposure} — judged last, on what survived both
+ *     filters, so an excluded session can never end the search early.
+ * "Last time" (`previousSetsFor`), stagnation and trends are deliberately
+ * unfiltered: they describe what was actually done.
  */
 export function mostRecentCompleteExposureFor(
   workouts: readonly Workout[],
@@ -330,8 +352,23 @@ export function mostRecentCompleteExposureFor(
   exerciseId: string,
 ): WorkoutExercise | null {
   return (
-    scopedExposuresFor(workouts.filter(isCarryBasisWorkout), programId, exerciseId).find(isCompleteExposure) ?? null
+    scopedExposuresFor(workouts.filter(isCarryBasisWorkout), programId, exerciseId, isCarryBasisExposure).find(
+      isCompleteExposure,
+    ) ?? null
   )
+}
+
+/**
+ * Whether one exposure may serve as the carry basis. A swapped slot
+ * (`substitutedForId` set) was performed against another exercise's
+ * prescription — e.g. push-ups done as the Dip's 2 x 5-8 — and carry is
+ * positional, so its logs would land on rungs they were never performed
+ * against. Excluded at the lookup (addendum 2 §1), so neither the
+ * substitute's own slot nor the replaced slot reads it; it stays in history
+ * and in "Last time".
+ */
+export function isCarryBasisExposure(exercise: WorkoutExercise): boolean {
+  return exercise.substitutedForId === undefined
 }
 
 /**

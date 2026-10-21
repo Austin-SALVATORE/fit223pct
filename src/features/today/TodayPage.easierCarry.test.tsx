@@ -16,6 +16,23 @@ import { TodayPage } from './TodayPage'
  * `TodayPage.earlyStart.test.tsx` starts from an empty database, where carry
  * is a no-op, which is why it never saw the easier-day defect: these tests
  * seed history. Wed 22 Jul offers the session with the 3-rung goblet-squat.
+ *
+ * **Negative controls — two attempts, kept because the discarded one is the
+ * instructive half** (`verification.md`: trace a control through the code as
+ * it will be *after* the change).
+ *  - *Prescribed by the plan, and NOT what these tests guard:* restore
+ *    `session={adjusted.session}` at the `StartButton` call sites. Passing an
+ *    already-eased session into carry-then-ease re-adds the dropped rung from
+ *    the normal log and eases it away again, so the stored plan is identical
+ *    and **neither test here goes red**. It is not fully absorbed: one
+ *    pre-existing test, `TodayPage.earlyStart.test.tsx` "applies readiness to
+ *    an early start exactly as a training day would", does go red at the
+ *    unscheduled-day StartButton (`expected [{10,12}] to deeply equal
+ *    [{10,12}, …(1)]`).
+ *  - *Used here:* compose ease-then-carry inside `StartButton.start` instead
+ *    of calling `prepareSessionForStart`. That reaches the branch directly and
+ *    turns "an easier day stores the normal carried plan one rung shorter"
+ *    red.
  */
 
 beforeAll(async () => {
