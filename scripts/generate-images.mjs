@@ -107,6 +107,28 @@ const PREFIX =
 
 const key = loadKey()
 if (!key) fail('No API key: set OPENAI_API_KEY or create ~/.fit223-openai-key')
+// A key with whitespace, control or non-ASCII characters cannot be a real key,
+// and sending it makes fetch throw an error whose message echoes the key.
+// Refuse before any request, and say nothing about its content.
+if (/[^\x21-\x7e]/.test(key)) {
+  fail('API key is malformed (whitespace or control characters); check OPENAI_API_KEY or ~/.fit223-openai-key')
+}
+
+/**
+ * Every externally sourced string (API error bodies, fetch/network error
+ * messages) passes through here before reaching stdout, stderr or
+ * generation-run.log. OpenAI echoes a *masked* key on a 401 (its prefix and
+ * last characters), and fetch can echo a raw `Authorization` value — neither
+ * may leave the process. The exact key goes first; the patterns catch masks and
+ * fragments the exact match cannot.
+ */
+function redact(text) {
+  return String(text)
+    .split(key)
+    .join('[redacted]')
+    .replace(/Bearer\s+\S+/gi, 'Bearer [redacted]')
+    .replace(/sk-[A-Za-z0-9_\-*.\u2026]{4,}/g, 'sk-[redacted]')
+}
 if (!existsSync(ANCHOR)) fail(`Style anchor missing: ${ANCHOR}`)
 const anchor = readFileSync(ANCHOR)
 
@@ -126,7 +148,7 @@ mkdirSync(OUT, { recursive: true })
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const iso = (t) => new Date(t).toISOString().slice(11, 23)
 function log(line) {
-  const stamped = `${new Date().toISOString()} ${line}`
+  const stamped = `${new Date().toISOString()} ${redact(line)}`
   console.log(stamped)
   appendFileSync(LOG, stamped + '\n')
 }
@@ -226,11 +248,14 @@ async function request(id, candidate) {
     configErrors++
     done('config_error', `HTTP ${res.status} ${note}`)
     if (configErrors >= 2) {
-      haltLine =
-        `STOPPED: model "${cfg.model}" (quality ${cfg.quality}) was rejected with HTTP ${res.status}: ${apiMessage(body)} ` +
-        '— rerun with --model <name> to choose another model explicitly'
-      log(haltLine)
-      halt.abort()
+      // Concurrent rejections all reach here; only the first announces the stop.
+      if (haltLine === null) {
+        haltLine =
+          `STOPPED: model "${cfg.model}" (quality ${cfg.quality}) was rejected with HTTP ${res.status}: ${apiMessage(body)} ` +
+          '— rerun with --model <name> to choose another model explicitly'
+        log(haltLine) // terminal (stdout) and generation-run.log, once each
+        halt.abort()
+      }
       return results[results.length - 1]
     }
   }
@@ -261,5 +286,4 @@ log(
   `DONE wall=${((Date.now() - started) / 1000).toFixed(1)}s ok=${ok.length}/${jobs.length}` +
     (secs.length ? ` min=${secs[0]}s median=${secs[Math.floor(secs.length / 2)]}s max=${secs.at(-1)}s` : ''),
 )
-if (haltLine) console.error(haltLine)
 if (ok.length < jobs.length) process.exitCode = 1
