@@ -45,7 +45,7 @@ Overhead triceps extension (A), barbell curl (B), Russian twist (B), barbell hip
 
 ## 5. Other coach questions
 
-- Q3/Q4: an extra set the athlete added under the old 4-set structure: coach ruled DO NOT inherit (arbitration Q4, body truncated).
+- Q4: an extra set the athlete added under the old 4-set structure does NOT cross the revision boundary; after the revision, newly added completed sets follow the 28 Aug rule again (arbitration Q4, full text).
 - Incline push-up: first three sets, confirmed (Q1).
 - Session C focus line: CONFIRMED "Lower Body & Shoulder Emphasis" in en, fr, zh-CN (Q8). The session id stays.
 - Bicycle crunch swap: REMOVE dead bug from its substitutionIds; leave it with no swap for now; dead bug stays in the Library and in Morning Posture Reset (Q9).
@@ -57,3 +57,9 @@ Overhead triceps extension (A), barbell curl (B), Russian twist (B), barbell hip
 - O2: the revision takes effect at the next app launch after deploy, at whatever rotation position you are in. Fine, or align to the next Session A?
 - Station: exact Domyos model, rated load, assembled and stable.
 
+
+## 7. Open after the validator's second pass (21 Oct, evening)
+
+Blockers the architect is designing (addendum): the OHP ramp needs a per-movement warm-up carrier; the dip-prep drills need a step shape (seconds, 8+8) and a mid-session slot; a swap's performance currently feeds the substitute's own slot elsewhere in the program; dip assistance has no representation in a logged set.
+
+Coach questions sent 21 Oct evening: swap attribution; shoulder circles as one step of 16, two of 8, or prose; dip hold as one number or prose; dip assistance interim (hold on incline push-up, or log unassisted reps only); confirm that an easier day trims plank and hammer curl from 2 rungs to 1 under the new structure.
