@@ -9,11 +9,11 @@ import type { Workout } from './types'
  * no i18next — this module returns data, never prose, same as every other
  * `src/domain/**` file.
  *
- * **Nothing in `src/**` calls anything in this file yet.** Wiring it into
- * `nextSetTarget.ts` and deleting `progression.ts` is Phase 3, blocked on
- * the coach's Q2 (tempo ladder) and the Full Body volume amendment landing
- * first (Q3) — see the plan's §8. This phase ships the mechanism, reviewed
- * in isolation, with zero behaviour change.
+ * **Live since 99f27cf (28 Aug 2026).** Wired in through
+ * `carrySessionForward`, called once from `TodayPage`'s start path (see that
+ * function's docblock), and `nextSetTarget.ts` only reads the result.
+ * `progression.ts` is deleted. This header once said nothing called this
+ * file yet; that stopped being true the day Phase 3 landed.
  */
 
 /**
@@ -85,6 +85,10 @@ export function carryForwardPrescription(
     maxWeightKg: authored.maxWeightKg,
     weightStepKg: authored.weightStepKg,
     rehearsal,
+    // Persisted so the stored snapshot records which structure the athlete
+    // was offered — the next exposure's projection compares against it.
+    // `undefined` (the norm) leaves the literal key-for-key what it was.
+    revision: authored.revision,
   }
   return carried
 }
@@ -344,6 +348,51 @@ export function carrySessionForward(
   programId: string,
 ): ExercisePrescription[] {
   return items.map((item) =>
-    carryForwardPrescription(item, mostRecentCompleteExposureFor(completed, programId, item.exerciseId)),
+    carryForwardPrescription(
+      item,
+      projectExposureAcrossRevision(item, mostRecentCompleteExposureFor(completed, programId, item.exerciseId)),
+    ),
   )
+}
+
+/**
+ * Re-expresses an exposure logged under an older structure in the **new**
+ * structure's set positions, in memory only, so the unchanged
+ * `carryForwardPrescription` can read it positionally.
+ *
+ * **Why (plan `~/.claude/plans/m2-optimization-revision-boundary.md` §1-§2).**
+ * Carry is positional and treats any logged `setIndex >= authored.sets` as an
+ * athlete-added set. After a coach drops a rung under the same program id,
+ * the old last set therefore carried straight back in (4 sets again), and
+ * dropping an earlier rung gave the new rung 0 the removed rung's load. The
+ * coach's 21 Oct §9: a reduction is authoritative, history is never
+ * rewritten. Nothing is written here — the returned exposure is a throwaway.
+ *
+ * - `authored.revision` absent, or equal to the id the exposure was offered
+ *   under (`previous.prescription.revision`): `previous` unchanged, so every
+ *   prescription without a marker behaves exactly as before.
+ * - Otherwise new rung `i` is seeded by the logged set at old `setIndex`
+ *   `carryFrom[i]`; a `null`, unlogged, skipped or out-of-range source leaves
+ *   that rung to fall back to the authored one. Old custom sets (indices at or
+ *   past the old structure's `sets`) and unmapped old rungs are dropped.
+ * - Nothing maps: `null`, the existing "no history" branch.
+ */
+export function projectExposureAcrossRevision(
+  authored: ExercisePrescription,
+  previous: WorkoutExercise | null,
+): WorkoutExercise | null {
+  if (previous === null) return null
+  const revision = authored.revision
+  if (revision === undefined || previous.prescription.revision?.id === revision.id) return previous
+
+  const oldSets = previous.prescription.sets
+  const projected: LoggedSet[] = []
+  revision.carryFrom.forEach((source, newIndex) => {
+    if (source === null || source >= oldSets) return
+    const logged = previous.sets.find((s) => s.setIndex === source)
+    if (logged !== undefined) projected.push({ ...logged, setIndex: newIndex })
+  })
+  if (projected.length === 0) return null
+
+  return { ...previous, prescription: authored, sets: projected, skippedLevels: [], customSlots: 0 }
 }

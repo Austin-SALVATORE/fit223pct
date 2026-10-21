@@ -60,6 +60,11 @@ function isAscendingRung(previousWeightKg: number | null, weightKg: number | nul
 // runs a purpose-built pre-check for exactly that ambiguity, and for the
 // other case .strict() alone can't phrase well (a seconds-mode ladder),
 // before ever handing the input to this schema.
+const revisionSchema = z.object({
+  id: z.string().min(1),
+  carryFrom: z.array(z.number().int().nonnegative().nullable()),
+})
+
 const repRangePrescriptionSchema = z
   .object({
     exerciseId: z.string().min(1),
@@ -74,6 +79,11 @@ const repRangePrescriptionSchema = z
     weightStepKg: z.number().positive().nullable(),
     note: z.string().min(1).optional(),
     substitutionIds: z.array(z.string().min(1)).optional(),
+    // Coach-revision marker (21 Oct, plan m2-optimization-revision-boundary
+    // §2 C). Both branches are `.strict()`, so without this an exported
+    // program carrying `revision` would be rejected on re-import — same
+    // reasoning as `rehearsal` below.
+    revision: revisionSchema.optional(),
   })
   .strict()
 
@@ -99,6 +109,11 @@ const ladderPrescriptionSchema = z
     // import, not silently stripped: a JSON round-trip of a program
     // carrying a rehearsal set would fail without this.
     rehearsal: z.object({ weightKg: z.number().nonnegative(), reps: z.number().int().positive() }).optional(),
+    // Coach-revision marker (21 Oct, plan m2-optimization-revision-boundary
+    // §2 C). Both branches are `.strict()`, so without this an exported
+    // program carrying `revision` would be rejected on re-import — same
+    // reasoning as `rehearsal` below.
+    revision: revisionSchema.optional(),
   })
   .strict()
   .refine((p) => p.sets === p.setPlan.length, {

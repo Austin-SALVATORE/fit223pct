@@ -5,6 +5,7 @@ import {
   isLoadCarryForwardExcluded,
   carrySessionForward,
   mostRecentCompleteExposureFor,
+  projectExposureAcrossRevision,
 } from './carryForward'
 import type { ExercisePrescription, LadderPrescription, LoggedSet, RepRangePrescription, Workout, WorkoutExercise } from './types'
 
@@ -279,6 +280,118 @@ describe('carrySessionForward', () => {
     const [twice] = carrySessionForward([once], history, 'p1')
     expect(once.sets).toBe(4)
     expect(twice).toEqual(once)
+  })
+})
+
+/**
+ * Revision boundary, Phase 1 (`~/.claude/plans/m2-optimization-revision-
+ * boundary.md` §2 C, §6). Fixture: an overhead-press-shaped 4-rung ladder
+ * the coach then cuts to 3. Old structure logged 4 sets at distinct loads so
+ * every assertion can say *which* old rung a new rung came from.
+ */
+describe('projectExposureAcrossRevision', () => {
+  const OLD = [
+    { weightKg: 11.75, reps: 12 },
+    { weightKg: 13.75, reps: 10 },
+    { weightKg: 15.75, reps: 8 },
+    { weightKg: 17.75, reps: 6 },
+  ]
+  const oldAuthored = () => ladderPrescription({ exerciseId: 'overhead-press', setPlan: OLD, sets: 4, role: 'main' })
+  const oldLogged = [loggedSet(0, 12.5, 12), loggedSet(1, 14.5, 10), loggedSet(2, 16.5, 8), loggedSet(3, 18.5, 6)]
+  const newAuthored = (carryFrom: (number | null)[], extra: Partial<LadderPrescription> = {}) =>
+    ladderPrescription({
+      exerciseId: 'overhead-press',
+      role: 'main',
+      sets: 3,
+      setPlan: OLD.slice(1).map((r) => ({ ...r })),
+      revision: { id: 'rev-1', carryFrom },
+      ...extra,
+    })
+  const history = (ex: WorkoutExercise) => [workout('w-old', 'p1', '2026-07-15', '2026-07-15T10:00:00.000Z', [ex])]
+  const carry = (authored: ExercisePrescription, ex: WorkoutExercise | null, past?: Workout[]) =>
+    carrySessionForward([authored], ex === null ? [] : (past ?? history(ex)), 'p1')[0] as LadderPrescription
+
+  it('T1 drop-last: 3 sets, the old 4th set is not recreated', () => {
+    const authored = newAuthored([0, 1, 2], { setPlan: OLD.slice(0, 3).map((r) => ({ ...r })) })
+    const result = carry(authored, exposure(oldAuthored(), oldLogged))
+    expect(result.sets).toBe(3)
+    expect(result.setPlan.map((r) => r.weightKg)).toEqual([12.5, 14.5, 16.5])
+  })
+
+  it('T2 drop-first: new rungs take the load of old rungs 1..3, not rung 0..', () => {
+    const result = carry(newAuthored([1, 2, 3]), exposure(oldAuthored(), oldLogged))
+    expect(result.sets).toBe(3)
+    expect(result.setPlan.map((r) => r.weightKg)).toEqual([14.5, 16.5, 18.5])
+    expect(result.setPlan.map((r) => r.reps)).toEqual([10, 8, 6])
+  })
+
+  it('T3 an old-structure custom 5th set is dropped across the boundary', () => {
+    const previous = exposure(oldAuthored(), [...oldLogged, loggedSet(4, 20, 5, null, true)], { customSlots: 1 })
+    const result = carry(newAuthored([1, 2, 3]), previous)
+    expect(result.sets).toBe(3)
+    expect(result.setPlan.map((r) => r.weightKg)).toEqual([14.5, 16.5, 18.5])
+  })
+
+  it('T4 the second exposure after the revision carries normally (marker persisted, non-identity map)', () => {
+    const authored = newAuthored([1, 2, 3])
+    const first = carry(authored, exposure(oldAuthored(), oldLogged))
+    expect(first.revision).toEqual(authored.revision)
+
+    // Athlete trains the stored snapshot, logging each rung 1 kg heavier.
+    const secondLogged = first.setPlan.map((r, i) => loggedSet(i, (r.weightKg ?? 0) + 1, r.reps))
+    const past = [
+      ...history(exposure(oldAuthored(), oldLogged)),
+      workout('w-new', 'p1', '2026-07-22', '2026-07-22T10:00:00.000Z', [exposure(first, secondLogged)]),
+    ]
+    const second = carrySessionForward([authored], past, 'p1')[0] as LadderPrescription
+    // Positional, no re-projection: rung i <- logged i of the post-revision exposure.
+    expect(second.setPlan.map((r) => r.weightKg)).toEqual([15.5, 17.5, 19.5])
+  })
+
+  it('T5 technique gate across a revision: load pinned to the new authored rungs, reps carry', () => {
+    const gated = (carryFrom: (number | null)[]) =>
+      newAuthored(carryFrom, { exerciseId: 'dumbbell-lateral-raise', role: 'accessory' })
+    const old = ladderPrescription({ exerciseId: 'dumbbell-lateral-raise', setPlan: OLD, sets: 4 })
+    const result = carry(gated([1, 2, 3]), exposure(old, oldLogged.map((l) => ({ ...l, weightKg: (l.weightKg ?? 0) + 4 }))))
+    expect(result.setPlan.map((r) => r.weightKg)).toEqual([13.75, 15.75, 17.75])
+    expect(result.setPlan.map((r) => r.reps)).toEqual([10, 8, 6])
+  })
+
+  it('T6 an all-null map restates the authored values', () => {
+    const authored = newAuthored([null, null, null])
+    const result = carry(authored, exposure(oldAuthored(), oldLogged))
+    expect(result.setPlan).toEqual(authored.setPlan)
+  })
+
+  it('T7 no marker on either side: identical to carryForwardPrescription alone', () => {
+    const authored = ladderPrescription()
+    const previous = exposure(authored, [loggedSet(0, 16, 12), loggedSet(1, 16, 10), loggedSet(2, 18, 8)])
+    expect(projectExposureAcrossRevision(authored, previous)).toBe(previous)
+    expect(carrySessionForward([authored], history(previous), 'p1')[0]).toEqual(carryForwardPrescription(authored, previous))
+  })
+
+  it('T8 an incomplete post-revision exposure walks back and projects the old complete one', () => {
+    const authored = newAuthored([1, 2, 3])
+    const first = carry(authored, exposure(oldAuthored(), oldLogged))
+    // Post-revision session abandoned after one set: incomplete, so not eligible.
+    const partial = exposure(first, [loggedSet(0, 99, 10)])
+    const past = [
+      ...history(exposure(oldAuthored(), oldLogged)),
+      workout('w-new', 'p1', '2026-07-22', '2026-07-22T10:00:00.000Z', [partial]),
+    ]
+    const result = carrySessionForward([authored], past, 'p1')[0] as LadderPrescription
+    expect(result.setPlan.map((r) => r.weightKg)).toEqual([14.5, 16.5, 18.5])
+  })
+
+  it('returns null when nothing maps, and for no history', () => {
+    expect(projectExposureAcrossRevision(newAuthored([null, null, null]), exposure(oldAuthored(), oldLogged))).toBeNull()
+    expect(projectExposureAcrossRevision(newAuthored([1, 2, 3]), null)).toBeNull()
+  })
+
+  it('ignores a source index at or past the old structure (an old custom set)', () => {
+    const previous = exposure(oldAuthored(), [...oldLogged, loggedSet(4, 20, 5, null, true)], { customSlots: 1 })
+    const projected = projectExposureAcrossRevision(newAuthored([4, null, null]), previous)
+    expect(projected).toBeNull()
   })
 })
 

@@ -96,6 +96,26 @@ interface ExercisePrescriptionBase {
   note?: string
   /** Contextual fallbacks this program declares for this slot (e.g. "rack's taken") — layered over the Library's generic Exercise.substitutionIds, never replacing it. See effectiveSubstitutions. */
   substitutionIds?: string[]
+  /**
+   * **Marks a structural coach revision of this slot** — a change to its set
+   * count or rung structure while the program id stays the same — and says how
+   * the previous structure's logged sets seed the new one. Absent is the norm
+   * and means "no revision": carry-forward behaves exactly as before.
+   *
+   * `id` is unique per structural change (suggested `'<programId>@<date>'`).
+   * `carryFrom[i]` is the *previous structure's* prescribed `setIndex` whose
+   * logged value seeds new rung `i`; `null` means "start from the authored
+   * rung" (the coach restating values). It is stored in the workout snapshot
+   * (`carryForwardPrescription` copies it), so a later exposure knows which
+   * structure the athlete was actually offered. See
+   * `projectExposureAcrossRevision` in `carryForward.ts`.
+   *
+   * Plan: `~/.claude/plans/m2-optimization-revision-boundary.md` §2 option C,
+   * answering the coach's 21 Oct §9: a reduction is authoritative and must not
+   * be silently undone by the prior four-set history, and historical logs are
+   * never rewritten — the projection is in memory only.
+   */
+  revision?: { id: string; carryFrom: readonly (number | null)[] }
 }
 
 /**

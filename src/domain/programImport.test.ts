@@ -498,6 +498,57 @@ describe('validateProgramImport', () => {
   })
 })
 
+describe('a coach-revision marker round-trips (T9)', () => {
+  const revision = { id: 'p@2026-10-21', carryFrom: [1, 2, null] }
+
+  function withRevisionOnItem(item: Record<string, unknown>) {
+    const program = validProgram()
+    const sessions = program.sessions.map((session, i) =>
+      i === 0 ? { ...session, items: [{ ...session.items[0], ...item }] } : session,
+    )
+    return validProgram({ sessions })
+  }
+
+  it('keeps `revision` on a rep-range prescription', () => {
+    const result = validateProgramImport(withRevisionOnItem({ revision }), libraryIds)
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.program.sessions[0].items[0].revision).toEqual(revision)
+  })
+
+  it('keeps `revision` on a ladder prescription', () => {
+    const ladder = {
+      exerciseId: 'goblet-squat',
+      sets: 3,
+      mode: 'reps',
+      restSeconds: 120,
+      perSide: false,
+      setPlan: [
+        { weightKg: 14, reps: 12 },
+        { weightKg: 16, reps: 10 },
+        { weightKg: 18, reps: 8 },
+      ],
+      maxWeightKg: 20,
+      weightStepKg: 2,
+      revision,
+    }
+    const program = validProgram()
+    const result = validateProgramImport(
+      validProgram({ sessions: [{ ...program.sessions[0], items: [ladder] }, program.sessions[1]] }),
+      libraryIds,
+    )
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.program.sessions[0].items[0].revision).toEqual(revision)
+  })
+
+  it('rejects a malformed marker rather than stripping it', () => {
+    const result = validateProgramImport(
+      withRevisionOnItem({ revision: { id: 'p@x', carryFrom: [-1] } }),
+      libraryIds,
+    )
+    expect(result.ok).toBe(false)
+  })
+})
+
 /**
  * I2: every JSON validation error used to render raw English in all three
  * locales — `plan:import.schemaError` was a bare `{{message}}` passthrough
