@@ -153,6 +153,24 @@ and the whole team keeps reaching for it until it is written down.
   costs a wrong belief at specification time, before anyone has written
   the guard it was meant to validate.
 
+  **Trace the control through the code as it will be *after* the change,
+  not before.** A mutation in a caller of a function the plan changes can
+  be undone by the very change it is meant to test. (21 Oct: the
+  easier-day plan prescribed "restore `session={adjusted.session}` at the
+  call site → red". Under the new code, passing an already-eased session
+  into carry-then-ease re-adds the dropped rung from the normal log and
+  eases it away again, so the stored plan is identical and every test
+  written for the fix stays green. The dev found a control that reaches
+  the branch, composing ease-then-carry inside the start handler, and kept
+  both attempts in the test's docblock. The independent re-run then showed
+  the prescribed control was not entirely blind: one *pre-existing* test,
+  the early-start readiness case, went red under it — so the honest
+  statement is "the new tests cannot see it", not "nothing can", and the
+  claim-verifier's job of re-running a control is what separated the two.
+  The architect had applied the after-the-change trace to every domain
+  control and skipped it on the one integration control, which is the
+  case the rule exists for.)
+
 - **Ignored and generated files are invisible to git, so git cannot
   answer questions about them.** `public/assets/exercises/*/reference.png`
   is gitignored (`.gitignore:34`) — the authoring source is untracked
