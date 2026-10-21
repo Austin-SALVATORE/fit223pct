@@ -30,9 +30,11 @@
  *
  * Failure policy: HTTP 429 (not insufficient_quota) backs off exponentially
  * with jitter, honouring Retry-After; 5xx and network errors retry twice; a
- * request times out after 5 minutes. After TWO configuration errors (model or
- * parameter rejected) the whole run switches once to gpt-image-2 / high and
- * does not debug further — the owner's rule for the route.
+ * request times out after 5 minutes. On the SECOND configuration error (model
+ * or parameter rejected) the run STOPS: it prints and logs one line naming the
+ * model, the HTTP status and the API's message, and exits non-zero. It never
+ * switches models by itself — a standing tool must not let a batch be drawn by
+ * a model the owner did not choose. `--model` is the only way to change it.
  *
  * Auth: OPENAI_API_KEY env var, or ~/.fit223-openai-key. Never logged or echoed.
  * Every request's start, end, seconds and outcome is appended to
@@ -130,14 +132,28 @@ function log(line) {
 }
 
 let configErrors = 0
-let switched = false
 const results = []
+/** Aborts every in-flight request and stops new ones once a run-ending error is found. */
+const halt = new AbortController()
+let haltLine = null
+
+/** The API's own message from an error body, when it is JSON; the raw start of the body otherwise. */
+function apiMessage(body) {
+  try {
+    const message = JSON.parse(body)?.error?.message
+    if (typeof message === 'string') return message.replace(/\s+/g, ' ').slice(0, 300)
+  } catch {
+    // not JSON — fall through to the raw text
+  }
+  return body.replace(/\s+/g, ' ').slice(0, 300)
+}
 
 async function request(id, candidate) {
   let n429 = 0
   let nNet = 0
   let n5xx = 0
   for (let attempt = 1; attempt <= 8; attempt++) {
+    if (halt.signal.aborted) return { id, candidate, outcome: 'halted' }
     const cfg = { ...route }
     const t = Date.now()
     const fd = new FormData()
@@ -162,9 +178,10 @@ async function request(id, candidate) {
         method: 'POST',
         headers: { Authorization: `Bearer ${key}` },
         body: fd,
-        signal: AbortSignal.timeout(TIMEOUT_MS),
+        signal: AbortSignal.any([AbortSignal.timeout(TIMEOUT_MS), halt.signal]),
       })
     } catch (err) {
+      if (halt.signal.aborted) return done('halted')
       const timedOut = /timeout/i.test(`${err?.name}${err?.message}`)
       if (timedOut) return done('timeout', 'no response in 5 min')
       if (++nNet <= 2) {
@@ -204,16 +221,18 @@ async function request(id, candidate) {
     }
     if (/moderation|safety|content_policy|policy/i.test(body)) return done('blocked', `HTTP ${res.status} ${note}`)
 
-    // A configuration error: model or parameter rejected.
+    // A configuration error: model or parameter rejected. The first is retried
+    // once (it may be one bad request); the second ends the run.
     configErrors++
     done('config_error', `HTTP ${res.status} ${note}`)
-    if (configErrors >= 2 && !switched) {
-      switched = true
-      route.model = 'gpt-image-2'
-      route.quality = 'high'
-      log('*** 2 configuration errors: switching ALL requests to gpt-image-2 / high; not debugging further ***')
+    if (configErrors >= 2) {
+      haltLine =
+        `STOPPED: model "${cfg.model}" (quality ${cfg.quality}) was rejected with HTTP ${res.status}: ${apiMessage(body)} ` +
+        '— rerun with --model <name> to choose another model explicitly'
+      log(haltLine)
+      halt.abort()
+      return results[results.length - 1]
     }
-    if (cfg.model === route.model && cfg.quality === route.quality) return results[results.length - 1]
   }
   return { id, candidate, outcome: 'exhausted' }
 }
@@ -222,7 +241,7 @@ async function request(id, candidate) {
 async function pool(jobs) {
   let next = 0
   const worker = async () => {
-    while (next < jobs.length) {
+    while (next < jobs.length && !halt.signal.aborted) {
       const job = jobs[next++]
       await job()
     }
@@ -242,4 +261,5 @@ log(
   `DONE wall=${((Date.now() - started) / 1000).toFixed(1)}s ok=${ok.length}/${jobs.length}` +
     (secs.length ? ` min=${secs[0]}s median=${secs[Math.floor(secs.length / 2)]}s max=${secs.at(-1)}s` : ''),
 )
+if (haltLine) console.error(haltLine)
 if (ok.length < jobs.length) process.exitCode = 1
