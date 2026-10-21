@@ -529,6 +529,30 @@
       "41f68d189a"
     ]
   },
+  "bicycle-crunch": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1536,
+      1024
+    ],
+    "frameSizes": [
+      [
+        672,
+        1024
+      ],
+      [
+        761,
+        1024
+      ]
+    ],
+    "referenceHash": "e46775316a",
+    "thumbnailHash": "04f3c8ce41",
+    "frameHashes": [
+      "05309a9f90",
+      "5ecfc23b04"
+    ]
+  },
   "bird-dog": {
     "frameCount": 3,
     "thumbnailFrame": 2,
@@ -2469,37 +2493,27 @@
     ]
   },
   "inverted-row": {
-    "frameCount": 4,
-    "thumbnailFrame": 3,
+    "frameCount": 2,
+    "thumbnailFrame": 2,
     "referenceSize": [
-      1912,
-      823
+      1536,
+      1024
     ],
     "frameSizes": [
       [
-        482,
-        823
+        723,
+        1024
       ],
       [
-        509,
-        823
-      ],
-      [
-        482,
-        823
-      ],
-      [
-        439,
-        823
+        662,
+        1024
       ]
     ],
-    "referenceHash": "c879a0e3a6",
-    "thumbnailHash": "a385972d58",
+    "referenceHash": "4a12f9d329",
+    "thumbnailHash": "d0e755ac53",
     "frameHashes": [
-      "853ab5f3bc",
-      "261d1596f6",
-      "2830bc0f58",
-      "03e62bd25a"
+      "c3d588ed1c",
+      "d89e85802f"
     ]
   },
   "kettlebell-swing": {
@@ -2930,6 +2944,30 @@
       "ffb144a16d"
     ]
   },
+  "mountain-climber": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1536,
+      1024
+    ],
+    "frameSizes": [
+      [
+        731,
+        1024
+      ],
+      [
+        704,
+        1024
+      ]
+    ],
+    "referenceHash": "ff096d3643",
+    "thumbnailHash": "bfdb24a27b",
+    "frameHashes": [
+      "3dac8bf0ae",
+      "e008b5b752"
+    ]
+  },
   "neutral-grip-lat-pulldown": {
     "frameCount": 6,
     "thumbnailFrame": 4,
@@ -3171,6 +3209,30 @@
     "frameHashes": [
       "7541d71fcd",
       "972f3c6f16"
+    ]
+  },
+  "parallel-bar-dip": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1536,
+      1024
+    ],
+    "frameSizes": [
+      [
+        521,
+        1024
+      ],
+      [
+        538,
+        1024
+      ]
+    ],
+    "referenceHash": "886de780dc",
+    "thumbnailHash": "ff69a35525",
+    "frameHashes": [
+      "b82cb2eea9",
+      "09fee6daa3"
     ]
   },
   "pec-deck": {
@@ -4371,6 +4433,30 @@
       "452f83b1aa",
       "36c723a6e1",
       "270d1eed0a"
+    ]
+  },
+  "supported-knee-raise": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1536,
+      1024
+    ],
+    "frameSizes": [
+      [
+        560,
+        1024
+      ],
+      [
+        574,
+        1024
+      ]
+    ],
+    "referenceHash": "44b23cc622",
+    "thumbnailHash": "f6edeb439e",
+    "frameHashes": [
+      "c3805a0096",
+      "b0ee148b4a"
     ]
   },
   "t-bar-row": {

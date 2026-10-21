@@ -1,0 +1,32 @@
+{
+  "exerciseId": "parallel-bar-dip",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1536,
+      1024
+    ],
+    "frameSizes": [
+      [
+        521,
+        1024
+      ],
+      [
+        538,
+        1024
+      ]
+    ],
+    "referenceHash": "886de780dc",
+    "thumbnailHash": "ff69a35525",
+    "frameHashes": [
+      "b82cb2eea9",
+      "09fee6daa3"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

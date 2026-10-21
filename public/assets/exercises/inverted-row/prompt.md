@@ -5,9 +5,13 @@
 | Exercise id | `inverted-row` |
 | Category | Back Variants |
 | Camera | `side` |
-| Frames | 4 |
-| Equipment | Smith / press machine — bar racked low |
+| Frames | 2 |
+| Equipment | Parallel bars (freestanding dip station), used low |
 | Status | `planned` |
+
+## Provenance (21 Oct 2026)
+
+Generated with `gpt-image-2.5-sunburst` through the Images edits endpoint, called directly with no orchestrator. Reference image: `goblet-squat/reference.png`. Size 1536x1024, quality `max` (the highest tier documented for this model). Candidate 1 of 3 from one concurrent run of 15 requests (median 71.6 s per image). The Images API response names no snapshot, so the model is recorded as requested. Two-frame strip by the owner's ruling of 21 Oct ("Two-frame strips"). Replaces the previous machine-bar art (Smith-style rack, four frames; the old reference.png and prompt.md are backed up outside the repo in the session scratchpad, old-inverted-row/). The neutral grip between the two bars of the dip station is the team's depiction choice, not the coach's, and is to be put to the owner.
 
 ## Prompt
 
@@ -77,54 +81,33 @@ extra or missing limbs, distorted hands, any magenta on the figure, clothing or 
 
 MOVEMENT FOR THIS IMAGE:
 Exercise: Inverted Row
-Camera: side view, so the rigid straight line of the body, the fixed bar height
-and the path of the chest toward the bar all stay readable.
-Equipment: matte black frame with chrome guide rails and simple black handles.
-The chrome bar is racked and locked on the rails at hip height and never moves.
-The woman lies supine on the ground line beneath the bar, gripping it overhand
-with the hands slightly wider than the shoulders. Her legs are straight with
-only the heels touching the ground, so the whole body hangs as one rigid
-straight line from heels to shoulders, inclined at a shallow angle.
-Number of frames: 4, evenly spaced left to right.
+Camera: side
+Equipment: one piece of equipment only, drawn once for each figure: a freestanding, floor-standing parallel-bar dip station used low. It has two straight horizontal round-tube bars, parallel to each other and about shoulder-width apart, on a matte black steel frame with four feet standing on the ground line. The bars are low: the bar tops are about at her hip height when she stands beside the station. Both bars run left to right across the image at the same height, one bar nearer the camera and one farther from it; the camera looks very slightly down onto the station so that both bars stay visible as two separate parallel lines and neither bar is end-on or diagonal. No wall mount, no rack, no pull-up bar above, no single bar, no high or cantilevered bar, no rails, no bench, no rings, no dumbbells, no other equipment.
+The woman lies on her back on the ground line beneath the low station, between the two bars, one hand on each bar with the palms facing each other (neutral grip). Her heels rest on the ground and her legs are straight, so her whole body is one rigid straight line from the heels to the shoulders, tilted at a shallow angle with the shoulders higher than the heels.
+Number of frames: 2, evenly spaced left to right.
+FRAMING FOR THIS STRIP: draw EXACTLY 2 figures: one figure in the left half of the image and one figure in the right half, at exactly the same scale, each with its own complete copy of the station. Draw each figure together with its station small enough that a clear empty magenta margin of at least 8 percent of the image width surrounds it on every side. Nothing, no hand, foot, hair, bar or station foot, may touch or be cut off by the left, right, top or bottom edge of the image. A wide empty magenta gutter separates the two groups.
 
 Frames:
-1. Start position. Hanging under the racked bar with both arms fully extended,
-   overhand grip slightly wider than the shoulders, shoulder blades
-   protracted. Body one rigid straight line from heels to shoulders, hips
-   level, legs straight, only the heels on the ground, head neutral looking up
-   at the bar.
-2. Early pull. Both elbows bent to roughly 130 degrees, driving down and back
-   close to the ribs, chest rising toward the bar, hips rising exactly in line
-   with the shoulders so the body stays one straight line.
-3. Top position, deepest point. Mid-chest almost touching the bar, both elbows
-   bent to roughly 45 degrees and pointing down behind the torso line,
-   shoulder blades fully retracted and depressed, body still one rigid
-   straight line from heels to shoulders — no sagging hips, no piked hips —
-   wrists straight.
-4. Controlled lowering, halfway. Elbows opening back toward 130 degrees, the
-   body descending as one rigid line, shoulder blades beginning to protract.
+1. Start position, arms straight. She hangs beneath the bars with both arms fully extended and gripping the bars, shoulders reaching up, body one rigid straight line from the heels to the shoulders, hips level, only the heels on the ground. Head neutral and in line with the spine, mouth closed.
+2. Top position. The chest is pulled up toward the bars, the elbows bent and driven back along the body, the shoulder blades squeezed together, and the body still one rigid straight line from the heels to the shoulders: hips neither sagging nor piked, only the heels on the ground. Head neutral and in line with the spine, never thrown back, mouth closed. The two frames must look clearly different: in frame 2 her chest is up at bar height and her body is much more steeply inclined than in frame 1.
 
 TECHNIQUE — must be correct in every frame:
-- The bar stays locked at the same height on the rails — the body moves, the
-  bar never does.
-- The body forms one rigid straight line from heels to shoulders — the hips
-  never sag toward the ground and never pike upward.
-- Only the heels touch the ground; the legs stay straight.
-- The shoulder blades retract and depress before the elbows bend.
-- The chest, not the chin or the hips, travels toward the bar.
-- The head stays neutral, in line with the spine.
+- The body forms one rigid straight line from the heels to the shoulders in both frames: the hips never sag toward the ground and never pike upward.
+- Only the heels touch the ground and the legs stay straight.
+- Both hands grip the bars with the palms facing each other, one hand on each bar, and the bars never move.
+- In the top position the chest is pulled up toward the bars with the elbows back along the body and the shoulder blades squeezed together.
+- The head stays neutral, in line with the spine, chin slightly tucked, never thrown back; the mouth stays closed.
+- Both frames show the same station at the same size from the same camera angle.
 ```
 
 ## Form checkpoints (QA)
 
-- [ ] Bar locked at identical height on the rails in all four frames
-- [ ] Body one rigid straight line from heels to shoulders — no hip sag or
-      pike in any frame
-- [ ] Only the heels touch the ground, legs straight, in all four frames
-- [ ] Shoulder blades progress from protracted in frame 1 to fully retracted
-      and depressed by frame 3, as the elbows bend through the pull
-- [ ] Mid-chest meets the bar in the top frame, not the chin or the hips
-- [ ] Distinguishable at a glance from the pull-up — the body is horizontal
-      and the heels stay grounded
-- [ ] Same face, hair, wardrobe, and body proportions in all four frames
-- [ ] Readable as a horizontal bodyweight pull at 64 px wide
+- [ ] Two frames: arms straight, then chest pulled up toward the bars
+- [ ] One hand on each bar (neutral grip, palms facing each other); the bars never move
+- [ ] Body one rigid straight line from heels to shoulders in both frames; hips neither sag nor pike; only the heels on the ground
+- [ ] Top: chest up at bar height, elbows driven back along the body, shoulder blades squeezed together
+- [ ] Head neutral and in line with the spine, never thrown back; mouth closed
+- [ ] Station: low freestanding two-bar dip station on a black steel frame with four feet; both bars visible; no rack, rails, single bar, bench or rings
+- [ ] Same face, hair, wardrobe, and body proportions in both frames; both figures the same scale
+- [ ] Nothing touches or is cut off by an image edge
+- [ ] Readable as an inverted row at 64 px wide

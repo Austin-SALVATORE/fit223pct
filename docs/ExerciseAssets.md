@@ -107,18 +107,34 @@ different provider, different format generation — is a content change.
 4. **Beyond** — 3D/volumetric models remain folder-per-exercise + metadata;
    the resolver contract absorbs new kinds without UI rewrites.
 
-## Art backlog — parallel-bar movements (21 Oct 2026)
+## Art backlog — parallel-bar movements (21 Oct 2026): done
 
 Owner ruling `docs/programs/parallel-bars-product-ruling-2026-10-21.md` §3.
-The program ships without these; no unrelated placeholder image stands in.
-Style: the existing Fit223 illustration style, with the independent
-anatomical review (`asset-qa-auditor`) before landing. Remove an id from both
-`KNOWN_MISSING` lists in the same commit that lands its art.
+Landed 21 Oct, owner-approved, as **two-frame strips** drawn by
+**`gpt-image-2.5-sunburst`** (quality `max`) through the Images edits
+endpoint called directly, with the goblet-squat anchor as reference and
+all candidates requested concurrently:
 
-1. **`parallel-bar-dip`** — correct two-parallel-bar setup. (`dip` is a
-   straight-bar dip and must not be reused.) In `KNOWN_MISSING`.
-2. **`inverted-row`** — correct freestanding parallel-bar setup. Currently
-   resolves the older machine-bar art, provisionally accepted; a new brief
-   replaces it. Not in `KNOWN_MISSING`.
-3. **`supported-knee-raise`** — straight-arm support and knee-raising
-   positions. In `KNOWN_MISSING`.
+1. **`parallel-bar-dip`**: two-parallel-bar station, supported top and a
+   controlled bottom. (`dip` remains the straight-bar dip.)
+2. **`inverted-row`**: replaces the provisional machine-bar art; lying
+   between the two bars of the freestanding station. The grip shown is the
+   team's depiction choice, pending the owner's word.
+3. **`supported-knee-raise`**: straight-arm support, knees to hip height.
+   At 64 px frame 1 can read as standing; frame 2 is unambiguous.
+
+The same run closed the two oldest gaps, **`bicycle-crunch`** and
+**`mountain-climber`**, by asking for one side only in two frames instead
+of an alternating sequence.
+
+**Why the route changed** (measured 21 Oct): the pinned route
+(`gpt-5.6-sol` at high reasoning, renderer unset, one call at a time)
+produced 0 passes in 11 generations over about 30 minutes, cutting the
+first figure at the image edge and drawing supported poses as standing.
+The direct sunburst route drew 15 candidates in 76 s of wall time and
+passed all five movements. `chatgpt-image-latest` was twice as fast per
+image but passed three of five and left a red cast-shadow smear that
+survives chroma keying and that the converter's QA does not detect; it is
+not used. Known gap: the converter still writes a hard-coded `credits`
+line (`gpt-5.6-sol`, `2026-07-22`) into every `metadata.json`; the true
+model is recorded in each `prompt.md`.

@@ -1,0 +1,32 @@
+{
+  "exerciseId": "mountain-climber",
+  "version": 1,
+  "media": {
+    "frameCount": 2,
+    "thumbnailFrame": 2,
+    "referenceSize": [
+      1536,
+      1024
+    ],
+    "frameSizes": [
+      [
+        731,
+        1024
+      ],
+      [
+        704,
+        1024
+      ]
+    ],
+    "referenceHash": "ff096d3643",
+    "thumbnailHash": "bfdb24a27b",
+    "frameHashes": [
+      "3dac8bf0ae",
+      "e008b5b752"
+    ]
+  },
+  "credits": {
+    "source": "gpt-5.6-sol",
+    "generated": "2026-07-22"
+  }
+}

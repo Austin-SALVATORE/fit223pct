@@ -51,7 +51,9 @@ describe('Settings entry', () => {
 // a renderer swap plus removing a competing action cue) and is removed here
 // in the same commit too — `exerciseAsset.coverage.test.ts`'s own
 // KNOWN_MISSING docblock has the full account.
-const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber', 'parallel-bar-dip', 'supported-knee-raise'])
+// 21 Oct: parallel-bar dip, supported knee raise, bicycle crunch and mountain climber landed as two-frame gpt-image-2.5-sunburst strips (owner-approved); inverted-row's machine-bar art replaced.
+// Empty now; kept in sync by hand with exerciseAsset.coverage.test.ts.
+const KNOWN_MISSING_IDS = new Set<string>()
 
 describe('Every seeded exercise actually reaches the page', () => {
   /**
