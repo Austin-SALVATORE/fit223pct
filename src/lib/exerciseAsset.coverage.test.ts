@@ -73,7 +73,10 @@ import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
 // `supported-knee-raise` have no art yet (owner ruling: no stand-in image; the
 // existing `dip` is a straight-bar dip). `inverted-row` resolves its existing
 // machine-bar art, provisionally accepted, so it is deliberately NOT listed.
-const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber', 'parallel-bar-dip', 'supported-knee-raise'])
+// `bodyweight-reverse-lunge` (Phase 4 prerequisite, warm-up movement step) has
+// no art either: the `reverse-lunge` art depicts the dumbbell version and would
+// mislead, so it is not reused.
+const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber', 'parallel-bar-dip', 'supported-knee-raise', 'bodyweight-reverse-lunge'])
 
 describe('exercise asset coverage', () => {
   it.each(seedExercises.map((e) => e.id))('%s resolves an asset or is in KNOWN_MISSING', (id) => {

@@ -555,6 +555,9 @@
         "Bascule légèrement le bassin vers l'arrière en haut du mouvement",
         "Redescends lentement, tronc contrôlé, sans forcer la flexion de la colonne pour gagner de l'amplitude"
       ]
+    },
+    "bodyweight-reverse-lunge": {
+      "name": "Fente arrière au poids du corps"
     }
   },
   "program": {
