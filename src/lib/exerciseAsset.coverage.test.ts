@@ -69,7 +69,11 @@ import { ASSET_ID_ALIASES, exerciseAsset } from './exerciseAsset'
  * NOT produced by this pipeline's default route and re-running
  * `generate-via-sol.mjs` will not reproduce it.
  */
-const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber'])
+// 21 Oct 2026 (Mesocycle 2 optimization, Phase 2): `parallel-bar-dip` and
+// `supported-knee-raise` have no art yet (owner ruling: no stand-in image; the
+// existing `dip` is a straight-bar dip). `inverted-row` resolves its existing
+// machine-bar art, provisionally accepted, so it is deliberately NOT listed.
+const KNOWN_MISSING = new Set<string>(['bicycle-crunch', 'mountain-climber', 'parallel-bar-dip', 'supported-knee-raise'])
 
 describe('exercise asset coverage', () => {
   it.each(seedExercises.map((e) => e.id))('%s resolves an asset or is in KNOWN_MISSING', (id) => {

@@ -40,7 +40,8 @@
     "bench": "Bench",
     "band": "Band",
     "bodyweight": "Bodyweight",
-    "machine": "Machine"
+    "machine": "Machine",
+    "parallel-bars": "Parallel bars"
   },
   "routeTitle": {
     "today": "{{productName}}",

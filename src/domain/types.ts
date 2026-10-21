@@ -18,7 +18,14 @@ export type MuscleGroup =
   | 'triceps'
   | 'core'
 
-export type Equipment = 'barbell' | 'dumbbell' | 'bench' | 'band' | 'bodyweight' | 'machine'
+/**
+ * `'parallel-bars'` (21 Oct 2026 owner product ruling,
+ * `docs/programs/parallel-bars-product-ruling-2026-10-21.md`) is an equipment
+ * *requirement*, separate from the loading method — a parallel-bar dip is still
+ * `bodyweight` at prescription level. One reusable token, not one per movement,
+ * and no confirmation workflow hangs off it.
+ */
+export type Equipment = 'barbell' | 'dumbbell' | 'bench' | 'band' | 'bodyweight' | 'machine' | 'parallel-bars'
 
 export interface TeachingConcept {
   title: string

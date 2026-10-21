@@ -525,6 +525,36 @@
         "Légère rétroversion du bassin — n'aplatis pas agressivement le bas du dos",
         "Expire lentement, environ 6 secondes"
       ]
+    },
+    "parallel-bar-dip": {
+      "name": "Dips aux barres parallèles",
+      "cues": [
+        "Installe-toi dans une position d'appui stable avant de descendre",
+        "Descends de façon contrôlée, sans élan",
+        "Reste dans une amplitude d'épaules confortable, ne descends pas trop bas",
+        "Arrête-toi avec 2 à 3 répétitions propres en réserve, pas à l'échec",
+        "Arrête si tu ressens une douleur à l'épaule, au sternum ou à l'avant de la poitrine"
+      ]
+    },
+    "inverted-row": {
+      "name": "Rowing inversé",
+      "cues": [
+        "Règle la barre à la hauteur que tu choisis, talons au sol, corps bien aligné",
+        "L'angle de ton corps règle la difficulté : plus il est horizontal, plus c'est dur",
+        "Tire la poitrine vers la barre sans à-coup",
+        "Garde le tronc gainé, ne cambre pas le bas du dos",
+        "Descends lentement et garde des répétitions propres"
+      ]
+    },
+    "supported-knee-raise": {
+      "name": "Relevé de genoux en appui",
+      "cues": [
+        "Tiens-toi en appui stable sur les barres parallèles",
+        "Ne te balance pas",
+        "Monte les genoux de façon contrôlée",
+        "Bascule légèrement le bassin vers l'arrière en haut du mouvement",
+        "Redescends lentement, tronc contrôlé, sans forcer la flexion de la colonne pour gagner de l'amplitude"
+      ]
     }
   },
   "program": {

@@ -40,7 +40,8 @@
     "bench": "Banc",
     "band": "Élastique",
     "bodyweight": "Poids du corps",
-    "machine": "Machine"
+    "machine": "Machine",
+    "parallel-bars": "Barres parallèles"
   },
   "routeTitle": {
     "today": "{{productName}}",

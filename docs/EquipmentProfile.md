@@ -233,6 +233,23 @@ no pyramid may contain duplicate consecutive loads. The Phase 5
 "classification report" as originally designed is superseded: there is
 nothing left to classify when specs are authored from the lists.
 
+## Parallel bars — equipment token (21 Oct 2026, owner product ruling)
+
+`'parallel-bars'` is an `Equipment` token (`src/domain/types.ts`), labelled
+"Parallel bars" / "Barres parallèles" / "双杠". It names an equipment
+*requirement*, separate from the loading method: the three movements below
+stay `bodyweight` at prescription level. It is one reusable token, not one
+per movement, and it carries no confirmation workflow and no profile field.
+Source: `docs/programs/parallel-bars-product-ruling-2026-10-21.md`.
+
+- **`parallel-bar-dip`** — deliberately not `dip`: the existing `dip` art is
+  a straight-bar dip, which the owner forbids as a stand-in. Substitute
+  (coach Q5): `incline-push-up`.
+- **`inverted-row`** — the parallel-bar, freestanding variant. Reuses the
+  existing machine-bar art provisionally; its cues state the bar setup.
+  Substitute: `single-arm-db-row`.
+- **`supported-knee-raise`** — no art. Substitute: `bicycle-crunch`.
+
 ## Change discipline
 
 Update this file when a measurement lands or the coach revises the

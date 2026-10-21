@@ -106,3 +106,19 @@ different provider, different format generation — is a content change.
 3. **Motion era** — Lottie/Rive loops for the workout screen (reduced-motion aware).
 4. **Beyond** — 3D/volumetric models remain folder-per-exercise + metadata;
    the resolver contract absorbs new kinds without UI rewrites.
+
+## Art backlog — parallel-bar movements (21 Oct 2026)
+
+Owner ruling `docs/programs/parallel-bars-product-ruling-2026-10-21.md` §3.
+The program ships without these; no unrelated placeholder image stands in.
+Style: the existing Fit223 illustration style, with the independent
+anatomical review (`asset-qa-auditor`) before landing. Remove an id from both
+`KNOWN_MISSING` lists in the same commit that lands its art.
+
+1. **`parallel-bar-dip`** — correct two-parallel-bar setup. (`dip` is a
+   straight-bar dip and must not be reused.) In `KNOWN_MISSING`.
+2. **`inverted-row`** — correct freestanding parallel-bar setup. Currently
+   resolves the older machine-bar art, provisionally accepted; a new brief
+   replaces it. Not in `KNOWN_MISSING`.
+3. **`supported-knee-raise`** — straight-arm support and knee-raising
+   positions. In `KNOWN_MISSING`.

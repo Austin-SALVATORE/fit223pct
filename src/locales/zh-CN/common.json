@@ -40,7 +40,8 @@
     "bench": "训练凳",
     "band": "弹力带",
     "bodyweight": "自重",
-    "machine": "器械"
+    "machine": "器械",
+    "parallel-bars": "双杠"
   },
   "routeTitle": {
     "today": "{{productName}}",

@@ -525,6 +525,36 @@
         "Gentle posterior pelvic-control cue — don't aggressively flatten the lumbar spine",
         "Slow exhale, about 6 seconds"
       ]
+    },
+    "parallel-bar-dip": {
+      "name": "Parallel bar dip",
+      "cues": [
+        "Get into a stable supported position before you go down",
+        "Lower with control — no momentum",
+        "Stay in a comfortable shoulder range; don't sink too deep",
+        "Stop with 2–3 clean reps left, not at failure",
+        "Stop if you feel shoulder, sternum or front-chest pain"
+      ]
+    },
+    "inverted-row": {
+      "name": "Inverted row",
+      "cues": [
+        "Set the bar at a height you choose, heels on the floor, body in one straight line",
+        "Your body angle sets the difficulty — flatter is harder",
+        "Pull your chest toward the bar without jerking",
+        "Keep your trunk braced; don't arch your lower back",
+        "Lower slowly and keep the reps clean"
+      ]
+    },
+    "supported-knee-raise": {
+      "name": "Supported knee raise",
+      "cues": [
+        "Hold a stable support on the parallel bars",
+        "Don't swing",
+        "Raise your knees under control",
+        "Tilt your pelvis back slightly near the top",
+        "Lower slowly and keep your trunk controlled; don't force your spine to flex for extra range"
+      ]
     }
   },
   "program": {

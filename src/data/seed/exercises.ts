@@ -431,7 +431,11 @@ export const seedExercises: Exercise[] = [
     id: 'bicycle-crunch',
     muscles: ['core'],
     equipment: ['bodyweight'],
-    substitutionIds: ['dead-bug'],
+    // Empty on purpose (coach Q9, 21 Oct): dead-bug is a lower-intensity
+    // trunk-control drill that already lives in Morning Posture Reset, not a
+    // like-for-like swap for a dynamic abdominal movement. Absent is
+    // preferred to inappropriate, until the coach approves a real one.
+    substitutionIds: [],
     isUnilateral: false,
   },
   {
@@ -541,6 +545,39 @@ export const seedExercises: Exercise[] = [
     // movement needs.
     equipment: ['bodyweight', 'bench'],
     substitutionIds: [],
+    isUnilateral: false,
+  },
+  // Mesocycle 2 optimization, Phase 2 (21 Oct 2026) — three parallel-bar
+  // movements, promoted ahead of the program that prescribes them. Loading is
+  // bodyweight at prescription level; `'parallel-bars'` is only the equipment
+  // requirement (owner ruling, docs/programs/parallel-bars-product-ruling-
+  // 2026-10-21.md). Muscle tokens are the closest `MuscleGroup` has: it has no
+  // lats, hip-flexor or front-delt token (`shoulders`, `back`, `core` stand in).
+  // Substitutions are the coach's Q5 temporary substitutes.
+  //
+  // `parallel-bar-dip` is NOT `dip`: the existing `dip` art is a straight-bar
+  // dip, which the owner forbids as a stand-in. `inverted-row` matches its
+  // existing art directory (machine-bar rendering, provisionally accepted);
+  // `supported-knee-raise` has no art yet (KNOWN_MISSING).
+  {
+    id: 'parallel-bar-dip',
+    muscles: ['chest', 'triceps', 'shoulders'],
+    equipment: ['parallel-bars'],
+    substitutionIds: ['incline-push-up'],
+    isUnilateral: false,
+  },
+  {
+    id: 'inverted-row',
+    muscles: ['back', 'biceps'],
+    equipment: ['parallel-bars'],
+    substitutionIds: ['single-arm-db-row'],
+    isUnilateral: false,
+  },
+  {
+    id: 'supported-knee-raise',
+    muscles: ['core'],
+    equipment: ['parallel-bars'],
+    substitutionIds: ['bicycle-crunch'],
     isUnilateral: false,
   },
 ]

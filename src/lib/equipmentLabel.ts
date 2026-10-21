@@ -8,6 +8,7 @@ const EQUIPMENT_MESSAGE_KEY: Record<Equipment, string> = {
   band: 'common:equipment.band',
   bodyweight: 'common:equipment.bodyweight',
   machine: 'common:equipment.machine',
+  'parallel-bars': 'common:equipment.parallel-bars',
 }
 
 export function useEquipmentLabel(equipment: Equipment): string {
