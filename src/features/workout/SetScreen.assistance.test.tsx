@@ -109,4 +109,33 @@ describe('the Unassisted / Assisted control', () => {
     const stored = await workoutRepo.getActive()
     expect(stored?.exercises[0].sets[0]).not.toHaveProperty('assisted')
   })
+
+  // QA F-P4-1: `swapExercise` keeps the slot's prescription, so a swapped slot
+  // still reads `assistable: true` (and a carried `assisted` rung). The ruling
+  // says the control is "specific to Parallel Bar Dip", so it must not follow
+  // the dip onto the exercise it was swapped for — the same gate the prep
+  // block already uses (`substitutedForId === undefined`).
+  it('F-P4-1 is absent on a swapped slot, shows no Assisted tag, and logs without `assisted` even from a carried assisted target', async () => {
+    const carried: ExercisePrescription = {
+      ...plain({ assistable: true }),
+      setPlan: [
+        { weightKg: null, reps: 7, assisted: true },
+        { weightKg: null, reps: 5 },
+      ],
+      range: undefined,
+      startWeightKg: undefined,
+    } as unknown as ExercisePrescription
+    const w = started(carried)
+    await show({
+      ...w,
+      exercises: w.exercises.map((e) => ({ ...e, exerciseId: 'incline-push-up', substitutedForId: 'parallel-bar-dip' })),
+    })
+
+    expect(screen.queryByRole('radiogroup', { name: 'Assistance' })).toBeNull()
+    expect(screen.queryByText('Assisted')).toBeNull()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Log set' }))
+    const stored = await workoutRepo.getActive()
+    expect(stored?.exercises[0].sets[0]).not.toHaveProperty('assisted')
+  })
 })

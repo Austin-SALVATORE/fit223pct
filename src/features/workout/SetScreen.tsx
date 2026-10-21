@@ -97,7 +97,17 @@ export function SetScreen({
   )
   // Per-set assistance (dip ruling 21 Oct): pre-set from the carried target,
   // otherwise Unassisted — never inferred. Only meaningful when `assistable`.
-  const [assisted, setAssisted] = useState(target.assisted === true)
+  //
+  // **Gated on the slot not being a substitute (QA F-P4-1).** `swapExercise`
+  // keeps the slot's prescription, so a dip swapped to Incline Push-Up still
+  // reads `assistable: true` and a carried `assisted` rung; the ruling says the
+  // control is "specific to Parallel Bar Dip", so it must not follow the dip
+  // onto the exercise it was swapped for — the same gate the prep block uses.
+  // Carry needs no change: `carriedRung` still copies the flag, and a swapped
+  // exposure is excluded from the carry basis (`isCarryBasisExposure`), so
+  // nothing stored under a swap can feed any later prescription.
+  const assistable = prescription.assistable === true && workoutExercise.substitutedForId === undefined
+  const [assisted, setAssisted] = useState(assistable && target.assisted === true)
   const [swapOpen, setSwapOpen] = useState(false)
 
   const isSeconds = prescription.mode === 'seconds'
@@ -114,7 +124,7 @@ export function SetScreen({
       completedAt: new Date().toISOString(),
       // Absent, not `false`: an unassisted set is exactly what historical
       // logs already look like.
-      ...(prescription.assistable && assisted ? { assisted: true as const } : {}),
+      ...(assistable && assisted ? { assisted: true as const } : {}),
     })
   }
 
@@ -250,7 +260,7 @@ export function SetScreen({
               unit={isSeconds ? 's' : undefined}
               onChange={setEffort}
             />
-            {prescription.assistable && (
+            {assistable && (
               <AssistanceControl assisted={assisted} onChange={setAssisted} />
             )}
           </div>
@@ -262,6 +272,7 @@ export function SetScreen({
           target={target}
           setIndex={setIndex}
           isCustomSlot={isCustomSlot}
+          showAssisted={assistable}
         />
 
         {confirmingSkip ? (
@@ -490,6 +501,7 @@ function TargetCaption({
   target,
   setIndex,
   isCustomSlot,
+  showAssisted,
 }: {
   id: string
   prescription: ExercisePrescription
@@ -497,6 +509,8 @@ function TargetCaption({
   setIndex: number
   /** A custom slot (Add Set) is never "Rung N of M" — it has no rung. */
   isCustomSlot: boolean
+  /** The "Assisted" tag belongs to the dip's own slot, not to a swapped one (F-P4-1). */
+  showAssisted: boolean
 }) {
   const { t } = useTranslation('workout')
   const { t: tCommon } = useTranslation('common')
@@ -547,7 +561,7 @@ function TargetCaption({
   return (
     <p id={id} className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-ink-tertiary">
       <span>{targetText}</span>
-      {target.prescribed.assisted && <span>{t('setScreen.assisted')}</span>}
+      {showAssisted && target.prescribed.assisted && <span>{t('setScreen.assisted')}</span>}
       {/*
         MAX / TECHNIQUE / "+2 kg" pills removed, 28 Aug 2026 (Phase 3,
         `~/.claude/plans/progression-carry-forward.md`) — all three read
