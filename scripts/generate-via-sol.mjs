@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 /**
+ * SUPERSEDED by scripts/generate-images.mjs (21 Oct 2026, owner ruling: generation
+ * must be fast; this serial reasoning-model route took 30 minutes). Kept for history.
+ *
  * Reproduce the manual ChatGPT-UI generation flow via the API:
  * GPT-5.6 Sol (high reasoning) receives the goblet-squat style anchor and
  * the exercise's prompt.md fenced prompt — exactly what the user pastes in

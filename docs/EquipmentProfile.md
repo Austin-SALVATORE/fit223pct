@@ -245,10 +245,14 @@ Source: `docs/programs/parallel-bars-product-ruling-2026-10-21.md`.
 - **`parallel-bar-dip`** — deliberately not `dip`: the existing `dip` art is
   a straight-bar dip, which the owner forbids as a stand-in. Substitute
   (coach Q5): `incline-push-up`.
-- **`inverted-row`** — the parallel-bar, freestanding variant. Reuses the
-  existing machine-bar art provisionally; its cues state the bar setup.
-  Substitute: `single-arm-db-row`.
-- **`supported-knee-raise`** — no art. Substitute: `bicycle-crunch`.
+- **`inverted-row`** — the parallel-bar, freestanding variant. Its art was
+  redrawn 21 Oct on the parallel-bar station, replacing the provisional
+  machine-bar picture; its cues state the bar setup. Substitute:
+  `single-arm-db-row`.
+- **`supported-knee-raise`** — art landed 21 Oct. Substitute: `bicycle-crunch`.
+
+All three illustrations landed 21 Oct as two-frame strips; see
+`docs/ExerciseAssets.md`, "Art backlog — parallel-bar movements".
 
 ## Change discipline
 

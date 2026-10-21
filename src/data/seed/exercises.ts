@@ -557,8 +557,9 @@ export const seedExercises: Exercise[] = [
   //
   // `parallel-bar-dip` is NOT `dip`: the existing `dip` art is a straight-bar
   // dip, which the owner forbids as a stand-in. `inverted-row` matches its
-  // existing art directory (machine-bar rendering, provisionally accepted);
-  // `supported-knee-raise` has no art yet (KNOWN_MISSING).
+  // art directory. All three movements' art landed 21 Oct 2026 as two-frame
+  // strips (owner-approved), and `inverted-row`'s earlier machine-bar art,
+  // which had been accepted only provisionally, was replaced.
   {
     id: 'parallel-bar-dip',
     muscles: ['chest', 'triceps', 'shoulders'],
