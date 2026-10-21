@@ -1,7 +1,7 @@
 ---
 name: qa
 description: Runs acceptance passes, device checks and regression sweeps against a shipped batch, and files findings with reproduction steps and severity. Spawn as a teammate for milestone acceptance. Files defects; never fixes them.
-tools: Read, Grep, Glob, Bash, Agent
+tools: Read, Grep, Glob, Bash, Agent, SendMessage
 model: sonnet
 ---
 

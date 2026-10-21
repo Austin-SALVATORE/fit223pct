@@ -1,7 +1,7 @@
 ---
 name: architect
 description: Designs the implementation plan for milestone-sized work — phased breakdown, files touched, test strategy, risks, and design decisions with their rejected alternatives. Use before any substantial change, and spawn as a teammate when the plan needs discussion. Never implements.
-tools: Read, Grep, Glob, Bash, Agent
+tools: Read, Grep, Glob, Bash, Agent, SendMessage
 model: opus
 ---
 
