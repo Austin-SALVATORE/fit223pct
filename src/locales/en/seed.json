@@ -555,9 +555,6 @@
         "Tilt your pelvis back slightly near the top",
         "Lower slowly and keep your trunk controlled; don't force your spine to flex for extra range"
       ]
-    },
-    "bodyweight-reverse-lunge": {
-      "name": "Bodyweight reverse lunge"
     }
   },
   "warmupDrill": {
@@ -566,6 +563,11 @@
     },
     "supported-dip-hold": {
       "name": "Supported dip position familiarization"
+    }
+  },
+  "warmupVariant": {
+    "bodyweight-reverse-lunge": {
+      "name": "Bodyweight reverse lunge"
     }
   },
   "program": {

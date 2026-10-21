@@ -25,6 +25,7 @@ interface ExpectedStep {
   weightKg?: number
   reps?: number
   perSide?: boolean
+  variantId?: string
   minutes?: number
 }
 
@@ -52,7 +53,7 @@ const EXPECTED: Record<string, ExpectedStep[]> = {
   'mesocycle2-fullbody-hipext-shoulder-warmup-v2': [
     { kind: 'cycle', minutes: 3 },
     { kind: 'movement', exerciseId: 'glute-bridge', reps: 8 },
-    { kind: 'movement', exerciseId: 'bodyweight-reverse-lunge', reps: 5, perSide: true },
+    { kind: 'movement', exerciseId: 'reverse-lunge', reps: 5, perSide: true, variantId: 'bodyweight-reverse-lunge' },
     { kind: 'ramp', exerciseId: 'reverse-lunge', implement: 'dumbbell', weightKg: 2, reps: 5, perSide: true },
     { kind: 'ramp', exerciseId: 'reverse-lunge', implement: 'dumbbell', weightKg: 4, reps: 3, perSide: true },
   ],

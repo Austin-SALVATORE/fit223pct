@@ -580,17 +580,4 @@ export const seedExercises: Exercise[] = [
     substitutionIds: ['bicycle-crunch'],
     isUnilateral: false,
   },
-  {
-    id: 'bodyweight-reverse-lunge',
-    // Mirrors reverse-lunge's classification exactly — same movement, unloaded
-    // (bodyweight-squat <-> tempo-bodyweight-squat precedent). Promoted only as
-    // Session C's warm-up movement step (coach arbitration Q6, 21 Oct 2026).
-    // Name only, no cues or teachingConcept: warm-up promotions carry cues
-    // only when the coach writes them, and no art (the reverse-lunge art
-    // depicts the dumbbell version, which would mislead).
-    muscles: ['quads', 'glutes'],
-    equipment: ['bodyweight'],
-    substitutionIds: [],
-    isUnilateral: true,
-  },
 ]

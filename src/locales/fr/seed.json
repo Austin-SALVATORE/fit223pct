@@ -555,9 +555,6 @@
         "Bascule légèrement le bassin vers l'arrière en haut du mouvement",
         "Redescends lentement, tronc contrôlé, sans forcer la flexion de la colonne pour gagner de l'amplitude"
       ]
-    },
-    "bodyweight-reverse-lunge": {
-      "name": "Fente arrière au poids du corps"
     }
   },
   "warmupDrill": {
@@ -566,6 +563,11 @@
     },
     "supported-dip-hold": {
       "name": "Familiarisation avec la position d'appui du dip"
+    }
+  },
+  "warmupVariant": {
+    "bodyweight-reverse-lunge": {
+      "name": "Fente arrière au poids du corps"
     }
   },
   "program": {

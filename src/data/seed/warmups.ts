@@ -73,9 +73,11 @@ export const seedWarmups: readonly Warmup[] = [
     steps: [
       { kind: 'cycle', minutes: 3 },
       { kind: 'movement', exerciseId: 'glute-bridge', reps: 8 },
-      // Unloaded lunge: its own Library entry, not `reverse-lunge`, which is
-      // named "Dumbbell reverse lunge" and would mislabel it.
-      { kind: 'movement', exerciseId: 'bodyweight-reverse-lunge', reps: 5, perSide: true },
+      // Unloaded lunge as a warm-up rendition of the Library's reverse lunge
+      // (coach C11: no duplicate Library exercise): the row is named by
+      // `warmupVariant.bodyweight-reverse-lunge`, shows no dumbbell art, and
+      // links to `reverse-lunge`, whose cues (none mention load) are reused.
+      { kind: 'movement', exerciseId: 'reverse-lunge', reps: 5, perSide: true, variantId: 'bodyweight-reverse-lunge' },
       { kind: 'ramp', exerciseId: 'reverse-lunge', implement: 'dumbbell', weightKg: 2, reps: 5, perSide: true },
       { kind: 'ramp', exerciseId: 'reverse-lunge', implement: 'dumbbell', weightKg: 4, reps: 3, perSide: true },
     ],

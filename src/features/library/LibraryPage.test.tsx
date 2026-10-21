@@ -51,7 +51,7 @@ describe('Settings entry', () => {
 // a renderer swap plus removing a competing action cue) and is removed here
 // in the same commit too — `exerciseAsset.coverage.test.ts`'s own
 // KNOWN_MISSING docblock has the full account.
-const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber', 'parallel-bar-dip', 'supported-knee-raise', 'bodyweight-reverse-lunge'])
+const KNOWN_MISSING_IDS = new Set<string>(['bicycle-crunch', 'mountain-climber', 'parallel-bar-dip', 'supported-knee-raise'])
 
 describe('Every seeded exercise actually reaches the page', () => {
   /**
