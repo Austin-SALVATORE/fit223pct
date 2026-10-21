@@ -82,6 +82,41 @@ const OUT = resolve(outValue)
 if (OUT.startsWith(resolve(ROOT))) fail('--out must not be inside public/assets/exercises.')
 
 // ---- inputs -----------------------------------------------------------------
+/** Null until loaded, so `redact()` and the crash handlers are safe to use at any point. */
+let key = null
+
+/**
+ * Every externally sourced string (API error bodies, fetch/network error
+ * messages, parse errors) passes through here before reaching stdout, stderr
+ * or generation-run.log. OpenAI echoes a *masked* key on a 401 (its prefix and
+ * last characters), and fetch can echo a raw `Authorization` value — neither
+ * may leave the process. The pattern rules always apply; the exact-key rule
+ * applies once the key is known.
+ */
+function redact(text) {
+  let out = String(text)
+  if (key) out = out.split(key).join('[redacted]')
+  return out.replace(/Bearer\s+\S+/gi, 'Bearer [redacted]').replace(/sk-[A-Za-z0-9_\-*.\u2026]{4,}/g, 'sk-[redacted]')
+}
+
+/**
+ * No crash path may print raw text: Node's default uncaught-error output
+ * prints the whole error (and, for a failed JSON parse, the response body),
+ * bypassing `redact()`. These handlers log one redacted, truncated line and
+ * exit non-zero instead.
+ */
+function crash(kind, err) {
+  const text = `${kind}: ${err?.name ?? 'Error'}: ${err?.message ?? err}`.slice(0, 300)
+  try {
+    log(`FATAL ${text}`)
+  } catch {
+    console.error(redact(`FATAL ${text}`))
+  }
+  process.exit(1)
+}
+process.on('uncaughtException', (err) => crash('uncaughtException', err))
+process.on('unhandledRejection', (err) => crash('unhandledRejection', err))
+
 function loadKey() {
   if (process.env.OPENAI_API_KEY) return process.env.OPENAI_API_KEY.trim()
   const f = join(homedir(), '.fit223-openai-key')
@@ -105,7 +140,7 @@ const PREFIX =
   'the specification demands, with no magenta anywhere in the artwork itself. Generate one widescreen landscape ' +
   'image following this specification exactly:\n\n'
 
-const key = loadKey()
+key = loadKey()
 if (!key) fail('No API key: set OPENAI_API_KEY or create ~/.fit223-openai-key')
 // A key with whitespace, control or non-ASCII characters cannot be a real key,
 // and sending it makes fetch throw an error whose message echoes the key.
@@ -114,21 +149,6 @@ if (/[^\x21-\x7e]/.test(key)) {
   fail('API key is malformed (whitespace or control characters); check OPENAI_API_KEY or ~/.fit223-openai-key')
 }
 
-/**
- * Every externally sourced string (API error bodies, fetch/network error
- * messages) passes through here before reaching stdout, stderr or
- * generation-run.log. OpenAI echoes a *masked* key on a 401 (its prefix and
- * last characters), and fetch can echo a raw `Authorization` value — neither
- * may leave the process. The exact key goes first; the patterns catch masks and
- * fragments the exact match cannot.
- */
-function redact(text) {
-  return String(text)
-    .split(key)
-    .join('[redacted]')
-    .replace(/Bearer\s+\S+/gi, 'Bearer [redacted]')
-    .replace(/sk-[A-Za-z0-9_\-*.\u2026]{4,}/g, 'sk-[redacted]')
-}
 if (!existsSync(ANCHOR)) fail(`Style anchor missing: ${ANCHOR}`)
 const anchor = readFileSync(ANCHOR)
 
@@ -215,7 +235,16 @@ async function request(id, candidate) {
     }
 
     if (res.ok) {
-      const json = await res.json()
+      // External data: parse defensively. A 200 with a non-JSON body must end
+      // this candidate with one redacted, truncated line — never a crash that
+      // prints the body.
+      const text = await res.text().catch(() => '')
+      let json
+      try {
+        json = JSON.parse(text)
+      } catch {
+        return done('bad_response', `HTTP ${res.status} not JSON: ${text.slice(0, 200)}`)
+      }
       const b64 = json?.data?.[0]?.b64_json
       if (!b64) return done('no_image', JSON.stringify(json).slice(0, 160))
       const buf = Buffer.from(b64, 'base64')
