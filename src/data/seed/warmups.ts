@@ -99,7 +99,7 @@ export const seedWarmups: readonly Warmup[] = [
     steps: [
       { kind: 'drill', id: 'shoulder-circles', dose: { unit: 'reps-each-direction', reps: 8 } },
       { kind: 'movement', exerciseId: 'scapular-push-up', reps: 6 },
-      { kind: 'drill', id: 'supported-dip-hold', dose: { unit: 'seconds', min: 5, max: 10 } },
+      { kind: 'drill', id: 'supported-dip-hold', dose: { unit: 'seconds', seconds: 8 } },
     ],
   },
 ]

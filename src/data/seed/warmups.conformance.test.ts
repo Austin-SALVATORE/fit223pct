@@ -64,7 +64,7 @@ const EXPECTED: Record<string, ExpectedStep[]> = {
   'mesocycle2-parallel-bar-dip-prep-v1': [
     { kind: 'drill', id: 'shoulder-circles', dose: { unit: 'reps-each-direction', reps: 8 } },
     { kind: 'movement', exerciseId: 'scapular-push-up', reps: 6 },
-    { kind: 'drill', id: 'supported-dip-hold', dose: { unit: 'seconds', min: 5, max: 10 } },
+    { kind: 'drill', id: 'supported-dip-hold', dose: { unit: 'seconds', seconds: 8 } },
   ],
 }
 
@@ -89,7 +89,7 @@ describe('warm-up catalogue conformance (transcription independent of the seed)'
 
   it('every exerciseId referenced by a movement or ramp step resolves to a real Library entry, and every drill has an English name (R4)', () => {
     const libraryIds = new Set(seedExercises.map((e) => e.id))
-    expect(checkStepReferences(seedWarmups, libraryIds, drillNamesInEnglish())).toEqual([])
+    expect(checkStepReferences(seedWarmups, libraryIds, drillNamesInEnglish(), variantNamesInEnglish())).toEqual([])
   })
 
   it('R1: every session warm-up ramp targets the session\'s first exercise and sits below its first working load', () => {
@@ -177,20 +177,33 @@ function checkExerciseWarmup(item: ExercisePrescription, warmup: Warmup): string
   return rampsFor(item, warmup.steps.filter(isRamp), `${item.exerciseId}/${warmup.id}`)
 }
 
-/** R4 — Library ids for movement and ramp steps; an English name for every drill id. */
-function checkStepReferences(warmups: readonly Warmup[], libraryIds: Set<string>, drillNames: Set<string>): string[] {
+/** R4 — Library ids for movement and ramp steps; an English name for every drill id and every movement variantId (C11). */
+function checkStepReferences(
+  warmups: readonly Warmup[],
+  libraryIds: Set<string>,
+  drillNames: Set<string>,
+  variantNames: Set<string> = new Set(),
+): string[] {
   const out: string[] = []
   for (const w of warmups) {
     for (const step of w.steps) {
       if (step.kind === 'cycle') continue
       if (step.kind === 'drill') {
         if (!drillNames.has(step.id)) out.push(`${w.id}/drill:${step.id} has no seed:warmupDrill.${step.id}.name`)
-      } else if (!libraryIds.has(step.exerciseId)) {
-        out.push(`${w.id}/${step.exerciseId}`)
+      } else {
+        if (!libraryIds.has(step.exerciseId)) out.push(`${w.id}/${step.exerciseId}`)
+        if (step.kind === 'movement' && step.variantId !== undefined && !variantNames.has(step.variantId)) {
+          out.push(`${w.id}/variant:${step.variantId} has no seed:warmupVariant.${step.variantId}.name`)
+        }
       }
     }
   }
   return out
+}
+
+function variantNamesInEnglish(): Set<string> {
+  const variants = (enSeed as { warmupVariant?: Record<string, { name?: string }> }).warmupVariant ?? {}
+  return new Set(Object.entries(variants).filter(([, v]) => typeof v.name === 'string').map(([k]) => k))
 }
 
 function drillNamesInEnglish(): Set<string> {
@@ -236,7 +249,7 @@ describe('the warm-up rule checkers catch what they claim to (synthetic, because
   })
 
   it('R2 accepts a drills-only warm-up (zero ramps) and a valid ramp on its own exercise', () => {
-    const drillsOnly = warmup({ kind: 'drill', id: 'x', dose: { unit: 'seconds', min: 5, max: 10 } })
+    const drillsOnly = warmup({ kind: 'drill', id: 'x', dose: { unit: 'seconds', seconds: 8 } })
     expect(checkExerciseWarmup(ladder([11.75]), drillsOnly)).toEqual([])
     expect(checkExerciseWarmup(ladder([11.75]), warmup(ramp('overhead-press', 7.75, 5)))).toEqual([])
   })
@@ -262,5 +275,13 @@ describe('the warm-up rule checkers catch what they claim to (synthetic, because
       'synthetic/nope',
     ])
     expect(checkStepReferences([w], new Set(['nope']), new Set(['ghost']))).toEqual([])
+  })
+
+  it('R4 flags a movement variantId with no English name', () => {
+    const w = warmup({ kind: 'movement', exerciseId: 'goblet-squat', reps: 5, variantId: 'ghost-variant' })
+    expect(checkStepReferences([w], new Set(['goblet-squat']), new Set(), new Set())).toEqual([
+      'synthetic/variant:ghost-variant has no seed:warmupVariant.ghost-variant.name',
+    ])
+    expect(checkStepReferences([w], new Set(['goblet-squat']), new Set(), new Set(['ghost-variant']))).toEqual([])
   })
 })

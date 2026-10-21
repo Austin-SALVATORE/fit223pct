@@ -26,7 +26,7 @@
   },
   "warmup": {
     "repsEachDirection_other": "每个方向 {{count}} 次",
-    "secondsRange": "{{min}}–{{max}} 秒",
+    "seconds": "{{seconds}} 秒",
     "cycleLine": "轻松骑行 · {{minutes}} 分钟",
     "reps_other": "{{count}} 次",
     "rampWeightRepsDumbbell": "每只哑铃 {{weight}} kg × {{reps}}",

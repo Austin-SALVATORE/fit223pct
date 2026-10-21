@@ -91,7 +91,7 @@ function DrillRow({ step }: { step: Extract<WarmupStep, { kind: 'drill' }> }) {
   const dose =
     step.dose.unit === 'reps-each-direction'
       ? t('warmup.repsEachDirection', { count: step.dose.reps })
-      : t('warmup.secondsRange', { min: step.dose.min, max: step.dose.max })
+      : t('warmup.seconds', { seconds: step.dose.seconds })
   return (
     <div className="text-sm leading-relaxed">
       <p className="font-medium text-ink">{tSeed(`warmupDrill.${step.id}.name`)}</p>
@@ -131,11 +131,16 @@ function MovementRow({
   origin: OriginState
 }) {
   const { t } = useTranslation('today')
-  const name = useExerciseName(step.exerciseId)
+  const { t: tSeed } = useTranslation('seed')
+  const libraryName = useExerciseName(step.exerciseId)
+  // A warm-up rendition (C11) is named for what is actually performed, and
+  // gets no thumbnail — the Library art would show the loaded version. The
+  // link still goes to the Library movement, so its cues are reused, not copied.
+  const name = step.variantId ? tSeed(`warmupVariant.${step.variantId}.name`) : libraryName
   const suffix = step.perSide ? t('sessionPreview.perSideSuffix') : ''
   return (
     <Link to={`/library/${step.exerciseId}`} state={origin} className={rowLinkClassName()}>
-      <ExerciseThumbnail exerciseId={step.exerciseId} />
+      {step.variantId ? <span aria-hidden="true" /> : <ExerciseThumbnail exerciseId={step.exerciseId} />}
       <div className="min-w-0">
         <p className="truncate font-medium text-ink">{name}</p>
         <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>

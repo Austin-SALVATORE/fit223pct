@@ -28,7 +28,7 @@
   "warmup": {
     "repsEachDirection_one": "{{count}} répétition dans chaque sens",
     "repsEachDirection_other": "{{count}} répétitions dans chaque sens",
-    "secondsRange": "{{min}} à {{max}} s",
+    "seconds": "{{seconds}} s",
     "cycleLine": "Vélo facile · {{minutes}} min",
     "reps_one": "{{count}} répétition",
     "reps_other": "{{count}} répétitions",

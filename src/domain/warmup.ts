@@ -33,14 +33,26 @@
 
 /**
  * How a `drill` is dosed. A closed union, each unit stated rather than
- * inferred (U-1) — only the two doses the coach's Q6 needs. The seconds range
- * is the coach's own wording ("approximately 5–10 seconds"); `cycle.minutes`
- * is a single value only because the coach *retired* its range, which is not a
- * general ban on ranges.
+ * inferred (U-1) — only the two doses the coach's Q6 needs. The hold is a
+ * **fixed** number of seconds (coach's final arbitration A3, 21 Oct: "8
+ * seconds"; the earlier "approximately 5–10" was withdrawn). It is a single
+ * value for the same reason `cycle.minutes` is (above): a range shape is one
+ * careless edit from reintroducing a concept the coach retired, and rendering
+ * `min === max` as one number was the rejected alternative.
  */
 export type DrillDose =
   | { unit: 'reps-each-direction'; reps: number }
-  | { unit: 'seconds'; min: number; max: number }
+  | { unit: 'seconds'; seconds: number }
+
+/**
+ * A `movement` step may name a **warm-up rendition** of a Library movement
+ * with `variantId` (coach's final arbitration C11: "do not create a duplicate
+ * Library exercise merely for this warm-up"). The row shows
+ * `seed:warmupVariant.<variantId>.name` instead of the Library name and no
+ * thumbnail (the Library art would show the loaded version), but the link
+ * stays on `exerciseId`, so the cues a visitor reads are that Library page's
+ * own. A variant is never a Library entry and never prescribable.
+ */
 
 /**
  * `drill` is a prep step that is **not a Library exercise** (coach Q6: do not
@@ -52,7 +64,7 @@ export type DrillDose =
 export type WarmupStep =
   | { kind: 'cycle'; minutes: number }
   | { kind: 'drill'; id: string; dose: DrillDose }
-  | { kind: 'movement'; exerciseId: string; reps: number; perSide?: boolean }
+  | { kind: 'movement'; exerciseId: string; reps: number; perSide?: boolean; variantId?: string }
   | { kind: 'ramp'; exerciseId: string; implement: 'dumbbell' | 'barbell'; weightKg: number; reps: number; perSide?: boolean }
 
 export interface Warmup {

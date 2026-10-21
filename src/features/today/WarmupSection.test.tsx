@@ -153,7 +153,7 @@ describe('a drill step (coach Q6) — not a Library exercise', () => {
       id: 'test-drills',
       steps: [
         { kind: 'drill', id: 'test-circles', dose: { unit: 'reps-each-direction', reps: 8 } },
-        { kind: 'drill', id: 'test-hold', dose: { unit: 'seconds', min: 5, max: 10 } },
+        { kind: 'drill', id: 'test-hold', dose: { unit: 'seconds', seconds: 8 } },
       ],
     }
     renderWarmup(warmup)
@@ -161,9 +161,38 @@ describe('a drill step (coach Q6) — not a Library exercise', () => {
     expect(screen.getByText('Shoulder circles')).toBeInTheDocument()
     expect(screen.getByText('8 reps each direction')).toBeInTheDocument()
     expect(screen.getByText('Supported hold')).toBeInTheDocument()
-    expect(screen.getByText('5–10 s')).toBeInTheDocument()
+    expect(screen.getByText('8 s')).toBeInTheDocument()
+    expect(screen.queryByText(/–/)).toBeNull() // a fixed hold, never rendered as a range
     expect(screen.queryByRole('link')).toBeNull()
     i18n.removeResourceBundle('en', 'seed')
     i18n.addResourceBundle('en', 'seed', real, true, true)
+  })
+})
+
+describe('a movement step with a warm-up variant (coach C11)', () => {
+  // "Do not create a duplicate Library exercise merely for this warm-up": the
+  // row names what is actually performed, shows no Library art (which would
+  // depict the loaded movement), and links to the Library movement so that
+  // page's own cues are reused.
+  it('shows the variant name, no thumbnail, and links to the base exercise', () => {
+    const real = i18n.getResourceBundle('en', 'seed')
+    i18n.addResourceBundle('en', 'seed', { warmupVariant: { 'test-bodyweight-lunge': { name: 'Bodyweight reverse lunge' } } }, true, true)
+    const warmup: Warmup = {
+      id: 'test-variant',
+      steps: [{ kind: 'movement', exerciseId: 'reverse-lunge', reps: 5, perSide: true, variantId: 'test-bodyweight-lunge' }],
+    }
+    renderWarmup(warmup)
+
+    expect(screen.getByText('Bodyweight reverse lunge')).toBeInTheDocument()
+    expect(screen.queryByText('Dumbbell reverse lunge')).toBeNull()
+    expect(document.querySelector('img')).toBeNull()
+    expect(screen.getByRole('link')).toHaveAttribute('href', '/library/reverse-lunge')
+    i18n.removeResourceBundle('en', 'seed')
+    i18n.addResourceBundle('en', 'seed', real, true, true)
+  })
+
+  it('without a variant it still shows the Library name', () => {
+    renderWarmup({ id: 'plain', steps: [{ kind: 'movement', exerciseId: 'reverse-lunge', reps: 5, perSide: true }] })
+    expect(screen.getByText('Dumbbell reverse lunge')).toBeInTheDocument()
   })
 })

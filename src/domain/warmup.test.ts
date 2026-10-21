@@ -33,6 +33,11 @@ describe('WarmupStep', () => {
     expect(Object.keys(step).sort()).toEqual(['dose', 'id', 'kind'])
   })
 
+  it('a movement step adds only variantId when it names a warm-up rendition', () => {
+    const step: WarmupStep = { kind: 'movement', exerciseId: 'reverse-lunge', reps: 5, perSide: true, variantId: 'bodyweight-reverse-lunge' }
+    expect(Object.keys(step).sort()).toEqual(['exerciseId', 'kind', 'perSide', 'reps', 'variantId'])
+  })
+
   it('a ramp step carries only kind/exerciseId/implement/weightKg/reps — never a setPlan rung', () => {
     const step: WarmupStep = {
       kind: 'ramp',

@@ -28,7 +28,7 @@
   "warmup": {
     "repsEachDirection_one": "{{count}} rep each direction",
     "repsEachDirection_other": "{{count}} reps each direction",
-    "secondsRange": "{{min}}–{{max}} s",
+    "seconds": "{{seconds}} s",
     "cycleLine": "Easy cycling · {{minutes}} min",
     "reps_one": "{{count}} rep",
     "reps_other": "{{count}} reps",
