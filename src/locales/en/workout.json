@@ -60,6 +60,7 @@
     "lastTimeFirst": "First time — the numbers below are your starting point.",
     "lastTimePrefix": "Last time",
     "weightLabel": "Weight",
+    "equipmentCeiling": "Your equipment tops out here.",
     "holdLabel": "Hold",
     "repsLabel": "Reps",
     "logHold": "Log hold",

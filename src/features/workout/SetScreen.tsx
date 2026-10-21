@@ -196,6 +196,16 @@ export function SetScreen({
                 unit="kg"
                 onChange={setWeightKg}
               />
+              {/*
+                Owner ruling, 21 Oct: at the equipment ceiling "+" is inert by
+                design (the Stepper clamps), and with no explanation it read as
+                broken. One static line says why. Placed after the control, not
+                `aria-describedby` on it: the Stepper exposes no id hook for its
+                input and is not widened for this.
+              */}
+              {prescription.maxWeightKg != null && weightKg >= prescription.maxWeightKg && (
+                <p className="mt-1 text-center text-sm text-ink-secondary">{t('setScreen.equipmentCeiling')}</p>
+              )}
             </div>
           )}
           <div

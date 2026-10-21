@@ -58,6 +58,7 @@
     "lastTimeFirst": "第一次——下面的数据是你的起点。",
     "lastTimePrefix": "上次",
     "weightLabel": "重量",
+    "equipmentCeiling": "你的器材最大只能加到这里。",
     "holdLabel": "保持",
     "repsLabel": "次数",
     "logHold": "记录保持",

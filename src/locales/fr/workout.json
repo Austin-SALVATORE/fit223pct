@@ -60,6 +60,7 @@
     "lastTimeFirst": "Première fois — les chiffres ci-dessous sont ton point de départ.",
     "lastTimePrefix": "La dernière fois",
     "weightLabel": "Poids",
+    "equipmentCeiling": "Ton matériel arrive à sa limite ici.",
     "holdLabel": "Maintien",
     "repsLabel": "Répétitions",
     "logHold": "Enregistrer le maintien",
