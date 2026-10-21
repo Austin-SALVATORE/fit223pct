@@ -560,6 +560,14 @@
       "name": "Bodyweight reverse lunge"
     }
   },
+  "warmupDrill": {
+    "shoulder-circles": {
+      "name": "Controlled shoulder circles"
+    },
+    "supported-dip-hold": {
+      "name": "Supported dip position familiarization"
+    }
+  },
   "program": {
     "phase-1-home": {
       "name": "Phase 1 — Home",
@@ -724,9 +732,6 @@
             "dumbbell-lateral-raise": {
               "note": "Technique takes priority over load"
             },
-            "overhead-triceps-extension": {
-              "note": "One dumbbell, both hands"
-            },
             "plank": {
               "note": "Rest 45-60 sec"
             }
@@ -738,21 +743,15 @@
           "exercise": {
             "single-arm-db-row": {
               "note": "Rest after both sides"
-            },
-            "russian-twist": {
-              "note": "Total reps, not per side"
             }
           }
         },
         "mesocycle2-fullbody-hipext-shoulder": {
           "name": "Full Body C",
-          "focus": "Lower Body & Glute Emphasis",
+          "focus": "Lower Body & Shoulder Emphasis",
           "exercise": {
             "overhead-press": {
               "note": "Strict press — no leg drive"
-            },
-            "dumbbell-squeeze-press": {
-              "note": "Stop about 2 reps short of failure."
             },
             "reverse-lunge": {
               "note": "Stop with about 2–3 good reps still possible on each side."

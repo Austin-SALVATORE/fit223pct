@@ -524,6 +524,14 @@
       "name": "自重后退弓步"
     }
   },
+  "warmupDrill": {
+    "shoulder-circles": {
+      "name": "可控肩部绕环"
+    },
+    "supported-dip-hold": {
+      "name": "熟悉双杠臂屈伸支撑位置"
+    }
+  },
   "program": {
     "phase-1-home": {
       "name": "第一阶段 — 居家训练",
@@ -688,9 +696,6 @@
             "dumbbell-lateral-raise": {
               "note": "动作质量优先于重量。"
             },
-            "overhead-triceps-extension": {
-              "note": "单个哑铃，双手持握"
-            },
             "plank": {
               "note": "休息 45-60 秒"
             }
@@ -702,21 +707,15 @@
           "exercise": {
             "single-arm-db-row": {
               "note": "两侧完成后休息"
-            },
-            "russian-twist": {
-              "note": "计总次数，不分左右"
             }
           }
         },
         "mesocycle2-fullbody-hipext-shoulder": {
           "name": "全身训练C",
-          "focus": "下肢与臀部强化",
+          "focus": "下肢与肩部强化",
           "exercise": {
             "overhead-press": {
               "note": "严格推举——不借助腿部发力"
-            },
-            "dumbbell-squeeze-press": {
-              "note": "每组做到距力竭还剩大约2次时停止。"
             },
             "reverse-lunge": {
               "note": "每侧还能做大约2-3个标准动作时停止。"

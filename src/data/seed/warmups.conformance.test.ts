@@ -18,6 +18,8 @@ import type { Warmup, WarmupStep } from '@/domain/warmup'
 
 interface ExpectedStep {
   kind: WarmupStep['kind']
+  id?: string
+  dose?: Record<string, unknown>
   exerciseId?: string
   implement?: 'dumbbell' | 'barbell'
   weightKg?: number
@@ -42,14 +44,27 @@ const EXPECTED: Record<string, ExpectedStep[]> = {
     { kind: 'ramp', exerciseId: 'romanian-deadlift', implement: 'barbell', weightKg: 7.75, reps: 8 },
     { kind: 'ramp', exerciseId: 'romanian-deadlift', implement: 'barbell', weightKg: 15.75, reps: 5 },
   ],
-  // New (13 Aug restructure) — rehearses barbell-hip-thrust, now the
-  // session's opening movement; movement step is glute-bridge, promoted
-  // to the Library for this warm-up (Phase 1 of the transcription plan).
-  'mesocycle2-fullbody-hipext-shoulder-warmup-v1': [
+  // 21 Oct 2026 optimization (coach arbitration Q6), replacing -v1: Session C
+  // now opens on the Dumbbell Reverse Lunge, so the warm-up rehearses that and
+  // the hip-thrust ramps are gone (acceptance 8). Glute bridge stays,
+  // unweighted (acceptance 9). The OHP ramp is NOT here — it belongs to
+  // overhead-press (acceptance 10), see the exercise-level entry below.
+  'mesocycle2-fullbody-hipext-shoulder-warmup-v2': [
     { kind: 'cycle', minutes: 3 },
     { kind: 'movement', exerciseId: 'glute-bridge', reps: 8 },
-    { kind: 'ramp', exerciseId: 'barbell-hip-thrust', implement: 'barbell', weightKg: 11.75, reps: 8 },
-    { kind: 'ramp', exerciseId: 'barbell-hip-thrust', implement: 'barbell', weightKg: 19.75, reps: 5 },
+    { kind: 'movement', exerciseId: 'bodyweight-reverse-lunge', reps: 5, perSide: true },
+    { kind: 'ramp', exerciseId: 'reverse-lunge', implement: 'dumbbell', weightKg: 2, reps: 5, perSide: true },
+    { kind: 'ramp', exerciseId: 'reverse-lunge', implement: 'dumbbell', weightKg: 4, reps: 3, perSide: true },
+  ],
+  // Exercise-level (Q6): "Empty barbell, 7.75 kg total x 5", before the OHP.
+  'mesocycle2-overhead-press-prep-v1': [
+    { kind: 'ramp', exerciseId: 'overhead-press', implement: 'barbell', weightKg: 7.75, reps: 5 },
+  ],
+  // Exercise-level (Q6 A), in the coach's order, before the Parallel Bar Dip.
+  'mesocycle2-parallel-bar-dip-prep-v1': [
+    { kind: 'drill', id: 'shoulder-circles', dose: { unit: 'reps-each-direction', reps: 8 } },
+    { kind: 'movement', exerciseId: 'scapular-push-up', reps: 6 },
+    { kind: 'drill', id: 'supported-dip-hold', dose: { unit: 'seconds', min: 5, max: 10 } },
   ],
 }
 
@@ -89,9 +104,11 @@ describe('warm-up catalogue conformance (transcription independent of the seed)'
   })
 
   it('R2: every exercise-level warm-up resolves, ramps only its own exercise, and sits below that exercise\'s first working load', () => {
-    // Vacuous until a prescription carries `warmupId` (Phase 4). The checker
-    // itself is exercised by the synthetic tests below, so this loop is not
-    // the only thing standing behind the rule.
+    // Phase 4: real content now carries `warmupId`. The precondition keeps
+    // this loop from silently going vacuous again if the pointers are deleted
+    // (the checker itself is exercised by the synthetic tests below).
+    const carriers = mesocycle2Build.sessions.flatMap((session) => session.items.filter((item) => item.warmupId !== undefined))
+    expect(carriers.length, 'no prescription references an exercise-level warmupId — guard is checking nothing').toBeGreaterThan(0)
     for (const session of mesocycle2Build.sessions) {
       for (const item of session.items) {
         if (item.warmupId === undefined) continue

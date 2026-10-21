@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
-import { warmupById } from '@/data/seed/warmups'
+import { seedWarmups, warmupById } from '@/data/seed/warmups'
 import { WarmupSection } from './WarmupSection'
 
 /**
@@ -34,11 +34,10 @@ describe('a rendered warm-up writes nothing', () => {
   it('leaves every table byte-identical after mounting every catalogued warm-up', async () => {
     const before = await snapshotDatabase()
 
-    for (const id of [
-      'mesocycle2-fullbody-squat-warmup-v1',
-      'mesocycle2-fullbody-hinge-warmup-v1',
-      'mesocycle2-fullbody-hipext-shoulder-warmup-v1',
-    ]) {
+    // Every catalogued warm-up, derived from the catalogue itself: a
+    // hard-coded list silently skips new entries (the exercise-level OHP and
+    // dip preps) and crashes on a deleted id.
+    for (const id of seedWarmups.map((w) => w.id)) {
       const warmup = warmupById(id)!
       const { unmount } = render(
         <MemoryRouter>

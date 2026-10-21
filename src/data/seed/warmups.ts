@@ -21,16 +21,19 @@ import type { Warmup } from '@/domain/warmup'
  * `incline-dumbbell-press` rehearsal). Session B's warm-up is
  * byte-identical to what shipped before — only the `id` changes, since
  * the Romanian deadlift already opened that session. Session C's warm-up
- * is new (rehearses `barbell-hip-thrust`, now the session's opening
- * movement, replacing the old `dumbbell-shoulder-press` rehearsal) and
- * its movement step is `glute-bridge`, promoted to the Library for
- * exactly this purpose (Phase 1 of the plan above).
+ * was rewritten 21 Oct 2026 (-v2, see its entry) when the Dumbbell Reverse
+ * Lunge became the session's opening movement; its `glute-bridge` movement
+ * step was promoted to the Library for exactly this purpose (Phase 1 of
+ * the plan above). Two further entries are exercise-level (21 Oct): the
+ * overhead-press ramp and the Parallel Bar Dip prep, anchored to those
+ * prescriptions via `ExercisePrescription.warmupId` so they appear
+ * immediately before the movement they prepare, not at session start.
  *
  * A `ramp` step's `weightKg` states its own `implement` (U-1) — per
  * dumbbell for Session A, total bar weight for Sessions B and C.
- * `implement: 'barbell'` is load-bearing on Session C: `'dumbbell'` would
- * render "11.75 kg per dumbbell" for a loaded bar, and 11.75 is not even
- * on the dumbbell ladder. Ramp reps fall as ramp load rises on every
+ * `implement: 'barbell'` is load-bearing on the barbell entries:
+ * `'dumbbell'` would render "11.75 kg per dumbbell" for a loaded bar, and
+ * 11.75 is not even on the dumbbell ladder. Ramp reps fall as ramp load rises on every
  * session (rule 8) and every ramp is strictly below its session's first
  * working rung (rule 6) — pinned by `warmups.conformance.test.ts`, not
  * re-derived here; Session A carries only one ramp, so the
@@ -59,14 +62,44 @@ export const seedWarmups: readonly Warmup[] = [
       { kind: 'ramp', exerciseId: 'romanian-deadlift', implement: 'barbell', weightKg: 15.75, reps: 5 },
     ],
   },
+  // 21 Oct 2026 optimization (coach arbitration Q6), replacing -v1 (the ids
+  // version the content). Session C now opens on the Dumbbell Reverse Lunge,
+  // so this rehearses it; the hip-thrust ramps are gone with the hip thrust
+  // (acceptance 8). Glute bridge stays, unweighted (acceptance 9). The
+  // overhead-press ramp is deliberately NOT here: it belongs to the press
+  // (acceptance 10), see the exercise-level entry below.
   {
-    id: 'mesocycle2-fullbody-hipext-shoulder-warmup-v1',
+    id: 'mesocycle2-fullbody-hipext-shoulder-warmup-v2',
     steps: [
       { kind: 'cycle', minutes: 3 },
       { kind: 'movement', exerciseId: 'glute-bridge', reps: 8 },
-      // Rehearsal ramp — both loads bar-inclusive (Q1).
-      { kind: 'ramp', exerciseId: 'barbell-hip-thrust', implement: 'barbell', weightKg: 11.75, reps: 8 },
-      { kind: 'ramp', exerciseId: 'barbell-hip-thrust', implement: 'barbell', weightKg: 19.75, reps: 5 },
+      // Unloaded lunge: its own Library entry, not `reverse-lunge`, which is
+      // named "Dumbbell reverse lunge" and would mislabel it.
+      { kind: 'movement', exerciseId: 'bodyweight-reverse-lunge', reps: 5, perSide: true },
+      { kind: 'ramp', exerciseId: 'reverse-lunge', implement: 'dumbbell', weightKg: 2, reps: 5, perSide: true },
+      { kind: 'ramp', exerciseId: 'reverse-lunge', implement: 'dumbbell', weightKg: 4, reps: 3, perSide: true },
+    ],
+  },
+  // Exercise-level warm-ups (coach Q6; domain/types.ts `warmupId`), pointed
+  // to from a prescription, not from a session. Once shipped, an
+  // exercise-level id is referenced from stored workout snapshots; deleting
+  // one later degrades those snapshots' prep block to nothing (SetScreen
+  // guards an unknown id), which is safe but should be deliberate.
+  //
+  // Barbell total load including the bar: "Empty barbell, 7.75 kg total x 5".
+  {
+    id: 'mesocycle2-overhead-press-prep-v1',
+    steps: [{ kind: 'ramp', exerciseId: 'overhead-press', implement: 'barbell', weightKg: 7.75, reps: 5 }],
+  },
+  // Prep before the Parallel Bar Dip, in the coach's order. The drills are not
+  // Library exercises (names from seed:warmupDrill.<id>.name, plain rows, no
+  // art); the scapular push-up is.
+  {
+    id: 'mesocycle2-parallel-bar-dip-prep-v1',
+    steps: [
+      { kind: 'drill', id: 'shoulder-circles', dose: { unit: 'reps-each-direction', reps: 8 } },
+      { kind: 'movement', exerciseId: 'scapular-push-up', reps: 6 },
+      { kind: 'drill', id: 'supported-dip-hold', dose: { unit: 'seconds', min: 5, max: 10 } },
     ],
   },
 ]

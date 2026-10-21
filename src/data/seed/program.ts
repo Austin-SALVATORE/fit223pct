@@ -604,8 +604,8 @@ export const seedProgram: Program = {
  * instead of concentrated in one session**: `plank` (Session A, timed
  * hold, `mode: 'seconds'`), `russian-twist` (Session B, single-implement,
  * total reps — one rotation to either side is one rep, never per-side)
- * and `bicycle-crunch` (Session C, reps rise across sets by coach
- * design, not a gap) — each retains the `load-not-the-lever` treatment
+ * and `bicycle-crunch` (Session C when first seeded, moved to Session B
+ * on 21 Oct 2026; reps rise across sets by coach design, not a gap) — each retains the `load-not-the-lever` treatment
  * (`weightKg: null`) the old Core block already used.
  *
  * Session durations and bench angle have no field on `Program` or
@@ -655,7 +655,61 @@ export const seedProgram: Program = {
  * (`achievableLoads(NEW_PROFILE)`) and at or under its ceiling
  * (`BILATERAL_MAX_KG` 20 / `SINGLE_IMPLEMENT_MAX_KG` 38 /
  * `BARBELL_MAX_KG` 43.75) before transcription.
+ *
+ * **21 Oct 2026 — Mesocycle 2 Optimization** (coach arbitration, `docs/
+ * programs/mesocycle-2-optimization-coach-arbitration-2026-10-21.md`;
+ * transcribed per `~/.claude/plans/m2-optimization-phase4-transcription-
+ * sheet.md`). Seventeen prescriptions, 76 -> 54 working sets (A 19, B 17,
+ * C 18), in the coach's order. **Removed:** `overhead-triceps-extension`
+ * (A), `barbell-curl` and `russian-twist` (B), `barbell-hip-thrust` and
+ * `dumbbell-squeeze-press` (C). **Added:** `parallel-bar-dip` (A),
+ * `inverted-row` and `supported-knee-raise` (C). **Moved:** `bicycle-crunch`
+ * C -> B, `reverse-lunge` to first in C. **Shortened:** lateral raise,
+ * single-arm row, rear delt fly, bicycle crunch, overhead press (4 -> 3
+ * rungs), plank (4 -> 2), hammer curl (4 -> 2), incline push-up (4 -> 3
+ * sets); every kept rung is an original rung, unchanged in load and reps.
+ *
+ * **The eight `revision` markers** (all sharing one id, `M2_OPTIMIZATION_
+ * REVISION_ID`) sit on exactly the prescriptions whose structure changed.
+ * Under the same program id, carry-forward would otherwise undo the
+ * reduction at the next exposure — the old last set reads as an
+ * athlete-added set and returns, and a dropped earlier rung hands its load
+ * to the wrong position. A marker tells carry to re-express the athlete's
+ * logged old rungs in the new positions (`carryFrom`, in memory only; no
+ * stored log is rewritten), so kept rungs inherit exactly what was logged
+ * and nothing is reset. No marker sits on an unchanged prescription (it
+ * would drop that exercise's legitimate custom sets), nor on the new ids
+ * (no history can exist under them). `plan m2-optimization-revision-
+ * boundary.md` §2 has the full argument.
+ *
+ * **Exercise-level warm-ups** (`warmupId`, `ExercisePrescription`): the
+ * overhead press carries its own empty-bar ramp and the Parallel Bar Dip its
+ * prep drills, so each appears immediately before the movement it prepares
+ * (coach Q6). This refines the 13 Aug rule above — that a ramp attaches to
+ * the *first* major technical movement — rather than overriding it: the
+ * session warm-up still rehearses the session's first movement
+ * (`warmups.conformance.test.ts` R1), and R3 forbids attaching a second
+ * prep to that first item. `rehearsal` stays unused. **`assistable: true`**
+ * is set on the Parallel Bar Dip only (dip assistance ruling, 21 Oct): it
+ * shows the per-set Unassisted / Assisted control on that set screen.
+ *
+ * Role follows the standing rule: the seven primaries stay `main`
+ * (single-arm row and overhead press keep it); every other movement,
+ * including the three new ones, is `accessory`. Session C's `focus` becomes
+ * "Lower Body & Shoulder Emphasis" (arbitration Q8). Session ids and names
+ * are unchanged (renaming would orphan locale keys and history's
+ * `sessionTemplateId`). Substitutions stay Library-level, and
+ * `bicycle-crunch`'s list is empty (arbitration Q9; `exercises.ts`).
  */
+/**
+ * The one structural-revision id for the 21 Oct 2026 optimization (plan
+ * `~/.claude/plans/m2-optimization-revision-boundary.md` §2): every
+ * prescription whose set count or rungs changed carries it, so carry-forward
+ * re-indexes an exposure logged under the old structure instead of resetting
+ * it or smearing it positionally. Engineering naming, not coach content.
+ */
+const M2_OPTIMIZATION_REVISION_ID = 'mesocycle-2-build@2026-10-21'
+
 export const mesocycle2Build: Program = {
   id: 'mesocycle-2-build',
   name: 'Mesocycle 2 — Build',
@@ -720,49 +774,58 @@ export const mesocycle2Build: Program = {
           BARBELL_MAX_KG,
           DUMBBELL_STEP_KG,
         ),
-        // Volume amendment fourth rung stays at the established 6 kg load
-        // — the existing technique gate remains authoritative, and the
-        // amendment adds volume rather than using it to bypass the load
-        // gate (coach ruling, explicit "do NOT increase this rung to 8 kg").
+        // 21 Oct 2026 optimization — the Parallel Bar Dip (coach arbitration
+        // Q5 A): 2 x 5-8, bodyweight, 120 s. A new Library id, so no history
+        // can exist under it and it carries no revision marker. It opts in to
+        // the per-set Unassisted / Assisted control (dip assistance ruling) —
+        // the only seed prescription that does — and carries its own prep
+        // (Q6 A) so the drills appear immediately before the dip.
+        reps('parallel-bar-dip', 2, 5, 8, bodyweight, {
+          restSeconds: 120,
+          role: 'accessory',
+          warmupId: 'mesocycle2-parallel-bar-dip-prep-v1',
+          assistable: true,
+        }),
+        // 21 Oct 2026 optimization (arbitration Q1 A): four rungs -> three,
+        // keeping original rungs 1-3 (4x15, 6x12, 6x10). The technique gate
+        // is unchanged (6 kg, never stepped to 8): the volume amendment's
+        // fourth rung, 6 kg x 8, is the one removed.
         ladder(
           'dumbbell-lateral-raise',
           [
             { weightKg: 4, reps: 15 },
             { weightKg: 6, reps: 12 },
             { weightKg: 6, reps: 10 },
-            { weightKg: 6, reps: 8 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
-          { restSeconds: 60, role: 'accessory', note: 'Technique takes priority over load' },
+          {
+            restSeconds: 60,
+            role: 'accessory',
+            note: 'Technique takes priority over load',
+            revision: { id: M2_OPTIMIZATION_REVISION_ID, carryFrom: [0, 1, 2] },
+          },
         ),
-        // Use one dumbbell, both hands — spec's single-implement
-        // instruction.
-        ladder(
-          'overhead-triceps-extension',
-          [
-            { weightKg: 10, reps: 12 },
-            { weightKg: 12, reps: 10 },
-            { weightKg: 14, reps: 8 },
-            { weightKg: 16, reps: 6 },
-          ],
-          SINGLE_IMPLEMENT_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { restSeconds: 75, role: 'accessory', note: 'One dumbbell, both hands' },
-        ),
-        // Moved here from the old Core block (Session B → Session A) —
-        // not per side, a front plank is one hold.
+        // Moved here from the old Core block (Session B -> Session A) — not
+        // per side, a front plank is one hold. 21 Oct 2026 (arbitration Q1
+        // A): "keep original rungs 2 and 3" -> 50 s and 60 s; the athlete's
+        // logged rungs 2 and 3 seed them (carryFrom [1, 2]), so the 40 s
+        // entry level and the 70 s fourth rung are gone.
         ladder(
           'plank',
           [
-            { weightKg: null, reps: 40 },
             { weightKg: null, reps: 50 },
             { weightKg: null, reps: 60 },
-            { weightKg: null, reps: 70 },
           ],
           null,
           null,
-          { mode: 'seconds', restSeconds: 60, role: 'accessory', note: 'Rest 45-60 sec' },
+          {
+            mode: 'seconds',
+            restSeconds: 60,
+            role: 'accessory',
+            note: 'Rest 45-60 sec',
+            revision: { id: M2_OPTIMIZATION_REVISION_ID, carryFrom: [1, 2] },
+          },
         ),
       ],
     },
@@ -801,89 +864,94 @@ export const mesocycle2Build: Program = {
           DUMBBELL_STEP_KG,
         ),
         // Use one dumbbell — spec's single-implement instruction.
+        // 21 Oct 2026 optimization (arbitration Q1 B): four rungs -> three
+        // (10x12, 12x10, 14x8), per side. Stays a primary (role omitted ->
+        // 'main').
         ladder(
           'single-arm-db-row',
           [
             { weightKg: 10, reps: 12 },
             { weightKg: 12, reps: 10 },
             { weightKg: 14, reps: 8 },
-            { weightKg: 16, reps: 6 },
           ],
           SINGLE_IMPLEMENT_MAX_KG,
           DUMBBELL_STEP_KG,
-          { perSide: true, restSeconds: 90, note: 'Rest after both sides' },
+          {
+            perSide: true,
+            restSeconds: 90,
+            note: 'Rest after both sides',
+            revision: { id: M2_OPTIMIZATION_REVISION_ID, carryFrom: [0, 1, 2] },
+          },
         ),
-        // Volume amendment fourth rung stays at the established 6 kg load
-        // — the existing technique gate remains authoritative, and the
-        // amendment adds volume rather than using it to bypass the load
-        // gate (coach ruling, explicit "do NOT increase this rung to 8 kg").
+        // 21 Oct 2026 optimization (arbitration Q1 B): four rungs -> three,
+        // keeping original rungs 1-3. The technique gate is unchanged (6 kg).
         ladder(
           'rear-delt-fly',
           [
             { weightKg: 4, reps: 15 },
             { weightKg: 6, reps: 12 },
             { weightKg: 6, reps: 10 },
-            { weightKg: 6, reps: 8 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
-          { restSeconds: 60, role: 'accessory' },
+          {
+            restSeconds: 60,
+            role: 'accessory',
+            revision: { id: M2_OPTIMIZATION_REVISION_ID, carryFrom: [0, 1, 2] },
+          },
         ),
+        // Moved here from Session C (arbitration §4 "Move from C"). Three
+        // rungs of TOTAL reps (16/20/24, not per side); load-not-the-lever
+        // (weightKg null). Its history follows the exercise id, not the
+        // session. Its Library substitution list is empty (arbitration Q9).
         ladder(
-          'barbell-curl',
+          'bicycle-crunch',
           [
-            { weightKg: 15.75, reps: 12 },
-            { weightKg: 17.75, reps: 10 },
-            { weightKg: 19.75, reps: 8 },
-            { weightKg: 21.75, reps: 6 },
+            { weightKg: null, reps: 16 },
+            { weightKg: null, reps: 20 },
+            { weightKg: null, reps: 24 },
           ],
-          BARBELL_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { restSeconds: 75, role: 'accessory' },
-        ),
-        // One dumbbell, both hands, total reps — not per side (one
-        // rotation to either side is one rep).
-        ladder(
-          'russian-twist',
-          [
-            { weightKg: 6, reps: 16 },
-            { weightKg: 8, reps: 14 },
-            { weightKg: 10, reps: 12 },
-            { weightKg: 12, reps: 10 },
-          ],
-          SINGLE_IMPLEMENT_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { restSeconds: 60, role: 'accessory', note: 'Total reps, not per side' },
+          null,
+          null,
+          {
+            restSeconds: 60,
+            role: 'accessory',
+            revision: { id: M2_OPTIMIZATION_REVISION_ID, carryFrom: [0, 1, 2] },
+          },
         ),
       ],
     },
-    // Session C - Full Body / Lower Body & Glute Emphasis (13 Aug
-    // restructure; focus relabelled by the 22 Aug amendment below —
-    // still a Full Body session, the label describes emphasis only).
+    // Session C - Full Body / Lower Body & Shoulder Emphasis (13 Aug
+    // restructure; focus relabelled by the 22 Aug amendment, and again by the
+    // 21 Oct 2026 optimization — still a Full Body session, the label
+    // describes emphasis only).
     {
       id: 'mesocycle2-fullbody-hipext-shoulder',
       name: 'Full Body C',
-      focus: 'Lower Body & Glute Emphasis',
-      // Six-question bundle Q1, 13 Aug 2026 — concrete ramp loads, not
-      // deferred to Load Setup.
-      warmupId: 'mesocycle2-fullbody-hipext-shoulder-warmup-v1',
+      focus: 'Lower Body & Shoulder Emphasis',
+      // 21 Oct 2026 (arbitration Q6): -v2 rehearses the Dumbbell Reverse
+      // Lunge, which now opens the session. The overhead-press ramp is NOT
+      // here — it is the press's own `warmupId`, shown immediately before
+      // the press.
+      warmupId: 'mesocycle2-fullbody-hipext-shoulder-warmup-v2',
       items: [
-        // Primary loaded hip-extension / glute movement, and the only
-        // primary lower-body compound required in Session C (coach's own
-        // language) — block-qualified "primary" prose that does not
-        // promote role (docblock above).
-        ladder(
-          'barbell-hip-thrust',
-          [
-            { weightKg: 27.75, reps: 12 },
-            { weightKg: 31.75, reps: 10 },
-            { weightKg: 35.75, reps: 8 },
-            { weightKg: 39.75, reps: 6 },
-          ],
-          BARBELL_MAX_KG,
-          DUMBBELL_STEP_KG,
-          { restSeconds: 90, role: 'accessory' },
-        ),
+        // 22 Aug amendment: replaces standing-calf-raise. Deliberately not
+        // the retired bulgarian-split-squat prescription (coach's own
+        // distinction) — floor-level, no deficit, TWO dumbbells (bilateral
+        // — follow-up ruling #3 rules out the single-dumbbell/goblet
+        // configuration). Per side (follow-up ruling #2/#4: start 6 kg,
+        // rest 105 s). RIR is prose-only (ruling #1) — coach's exact
+        // wording, "Stop with about 2–3 good reps still possible on each
+        // side." Volume amendment: set count only, 3 → 4.
+        // 21 Oct 2026 optimization (arbitration §5, Q6): retained unchanged
+        // and MOVED TO FIRST ("the first working exercise becomes Dumbbell
+        // Reverse Lunge"). Structure unchanged, so no revision marker.
+        reps('reverse-lunge', 4, 8, 12, { start: 6, max: BILATERAL_MAX_KG, step: DUMBBELL_STEP_KG }, {
+          perSide: true,
+          restSeconds: 105,
+          role: 'accessory',
+          note: 'Stop with about 2–3 good reps still possible on each side.',
+        }),
         // Session C Shoulder Press Amendment, 13 Aug 2026 evening —
         // replaces dumbbell-shoulder-press ("a REPLACEMENT, not an
         // additional exercise"; dumbbell-shoulder-press keeps its Library
@@ -892,80 +960,63 @@ export const mesocycle2Build: Program = {
         // the slot on a replacement (shipped precedent 0dccd7d, romanian-
         // deadlift for dumbbell-rdl), not from the coach's block-qualified
         // "primary … for Session C" language, which alone would read
-        // accessory (same register as barbell-hip-thrust/barbell-curl).
-        // The LOAD-FIRST tag contributes nothing to this either — Q5 rules
-        // out inferring role from progression policy in either direction.
+        // accessory. The LOAD-FIRST tag contributes nothing to this either —
+        // Q5 rules out inferring role from progression policy in either
+        // direction.
+        // 21 Oct 2026 optimization (arbitration Q1 C): four rungs -> three
+        // (11.75x12, 13.75x10, 15.75x8), and its empty-bar ramp belongs to it
+        // (Q6) via `warmupId`.
         ladder(
           'overhead-press',
           [
             { weightKg: 11.75, reps: 12 },
             { weightKg: 13.75, reps: 10 },
             { weightKg: 15.75, reps: 8 },
-            { weightKg: 17.75, reps: 6 },
           ],
           BARBELL_MAX_KG,
           DUMBBELL_STEP_KG,
-          { restSeconds: 120, note: 'Strict press — no leg drive' },
+          {
+            restSeconds: 120,
+            note: 'Strict press — no leg drive',
+            revision: { id: M2_OPTIMIZATION_REVISION_ID, carryFrom: [0, 1, 2] },
+            warmupId: 'mesocycle2-overhead-press-prep-v1',
+          },
         ),
-        // 22 Aug amendment: replaces dumbbell-pullover ("the athlete does
-        // not want this movement retained"). Bilateral pair (two
-        // dumbbells pressed together), not single-implement — follow-up
-        // ruling #2/#4: start 8 kg, rest 75 s. RIR is prose-only (ruling
-        // #1) — coach's exact wording, "Stop about 2 reps short of
-        // failure."
-        // Volume amendment: set count only, 3 → 4 (load/rep range unchanged).
-        reps('dumbbell-squeeze-press', 4, 10, 15, { start: 8, max: BILATERAL_MAX_KG, step: DUMBBELL_STEP_KG }, {
-          restSeconds: 75,
-          role: 'accessory',
-          note: 'Stop about 2 reps short of failure.',
-        }),
+        // 21 Oct 2026 optimization (arbitration Q5 C): the Inverted Row,
+        // 3 x 8-12, bodyweight, 90 s. New Library id (no history, no marker).
+        // Body angle sets the difficulty and is not recorded (open coach
+        // item, not part of this change).
+        reps('inverted-row', 3, 8, 12, bodyweight, { restSeconds: 90, role: 'accessory' }),
         // Rep-range, not a ladder — the spec's own text ("3 working sets /
         // 10-15 reps / Bodyweight") is a rep-range verbatim. Rest changed
         // from the 12 Aug seed (was 75) — six-question bundle §3.4.
-        // Volume amendment: set count only, 3 → 4.
-        reps('incline-push-up', 4, 10, 15, bodyweight, { restSeconds: 60, role: 'accessory' }),
+        // 21 Oct 2026 optimization (arbitration Q1 C): "keep the first three
+        // working sets" — 3 x 10-15 (the 28 Aug fourth set is removed).
+        reps('incline-push-up', 3, 10, 15, bodyweight, {
+          restSeconds: 60,
+          role: 'accessory',
+          revision: { id: M2_OPTIMIZATION_REVISION_ID, carryFrom: [0, 1, 2] },
+        }),
+        // 21 Oct 2026 optimization (arbitration Q1 C): four rungs -> two
+        // (8x12, 10x10).
         ladder(
           'hammer-curl',
           [
             { weightKg: 8, reps: 12 },
             { weightKg: 10, reps: 10 },
-            { weightKg: 12, reps: 8 },
-            { weightKg: 14, reps: 6 },
           ],
           BILATERAL_MAX_KG,
           DUMBBELL_STEP_KG,
-          { restSeconds: 75, role: 'accessory' },
+          {
+            restSeconds: 75,
+            role: 'accessory',
+            revision: { id: M2_OPTIMIZATION_REVISION_ID, carryFrom: [0, 1] },
+          },
         ),
-        // 22 Aug amendment: replaces standing-calf-raise. Deliberately not
-        // the retired bulgarian-split-squat prescription (coach's own
-        // distinction) — floor-level, no deficit, TWO dumbbells (bilateral
-        // — follow-up ruling #3 rules out the single-dumbbell/goblet
-        // configuration). Per side (follow-up ruling #2/#4: start 6 kg,
-        // rest 105 s). RIR is prose-only (ruling #1) — coach's exact
-        // wording, "Stop with about 2–3 good reps still possible on each
-        // side."
-        // Volume amendment: set count only, 3 → 4.
-        reps('reverse-lunge', 4, 8, 12, { start: 6, max: BILATERAL_MAX_KG, step: DUMBBELL_STEP_KG }, {
-          perSide: true,
-          restSeconds: 105,
-          role: 'accessory',
-          note: 'Stop with about 2–3 good reps still possible on each side.',
-        }),
-        // Reps rise across sets by coach design, not a gap.
-        // load-not-the-lever once complete. Rest changed from the 12 Aug
-        // seed (was 45) — six-question bundle §3.4.
-        ladder(
-          'bicycle-crunch',
-          [
-            { weightKg: null, reps: 16 },
-            { weightKg: null, reps: 20 },
-            { weightKg: null, reps: 24 },
-            { weightKg: null, reps: 28 },
-          ],
-          null,
-          null,
-          { restSeconds: 60, role: 'accessory' },
-        ),
+        // 21 Oct 2026 optimization (arbitration Q5 C): the Supported Knee
+        // Raise, 3 x 8-12, bodyweight, 75 s. New Library id (no history, no
+        // marker).
+        reps('supported-knee-raise', 3, 8, 12, bodyweight, { restSeconds: 75, role: 'accessory' }),
       ],
     },
   ],

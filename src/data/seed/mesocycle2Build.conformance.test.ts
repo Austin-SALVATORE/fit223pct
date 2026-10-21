@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { mesocycle2Build } from './program'
+import { seedWarmups } from './warmups'
 import { seedExercises } from './exercises'
 import { carryForwardPrescription } from '@/domain/carryForward'
 import { achievableLoads } from '@/domain/equipment'
@@ -44,6 +45,10 @@ interface ExpectedLadderPrescription {
   mode?: 'reps' | 'seconds'
   role?: 'main' | 'accessory'
   rehearsal?: { weightKg: number; reps: number }
+  /** 21 Oct optimization: present only on the changed-structure prescriptions (see G4). */
+  revision?: { id: string; carryFrom: readonly (number | null)[] }
+  warmupId?: string
+  assistable?: true
 }
 
 /**
@@ -68,14 +73,33 @@ interface ExpectedRepRangePrescription {
   startWeightKg?: number | null
   maxWeightKg?: number | null
   weightStepKg?: number | null
+  revision?: { id: string; carryFrom: readonly (number | null)[] }
+  warmupId?: string
+  assistable?: true
 }
 
 type ExpectedPrescription = ExpectedLadderPrescription | ExpectedRepRangePrescription
 
+/**
+ * The one structural-revision id, 21 Oct 2026 (`program.ts` docblock; plan
+ * `~/.claude/plans/m2-optimization-revision-boundary.md`). Engineering naming,
+ * not coach content. Shared by every marker: it is one structural change.
+ */
+const REVISION_ID = 'mesocycle-2-build@2026-10-21'
+const rev = (carryFrom: (number | null)[]) => ({ id: REVISION_ID, carryFrom })
+
+/**
+ * Transcribed from the coach's arbitration of 21 Oct 2026
+ * (`docs/programs/mesocycle-2-optimization-coach-arbitration-2026-10-21.md`,
+ * Q1/Q5/Q6/Q8/Q9 and §3-§5 order columns) and the Phase 4 sheet
+ * (`~/.claude/plans/m2-optimization-phase4-transcription-sheet.md` §1); the
+ * six unchanged prescriptions are the 28 Aug 2026 Volume Amendment values.
+ * Every number below traces to one of those two.
+ */
 const EXPECTED: Record<string, ExpectedPrescription[]> = {
   'mesocycle2-fullbody-squat': [
     {
-      // Volume amendment (28 Aug 2026): fourth rung 20 kg × 6.
+      // Unchanged (Volume amendment 28 Aug 2026: fourth rung 20 kg × 6).
       exerciseId: 'goblet-squat',
       setPlan: [
         { weightKg: 14, reps: 12 },
@@ -87,7 +111,7 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       role: 'accessory',
     },
     {
-      // Volume amendment (28 Aug 2026): fourth rung 16 kg × 6.
+      // Unchanged (Volume amendment: fourth rung 16 kg × 6).
       exerciseId: 'incline-dumbbell-press',
       setPlan: [
         { weightKg: 10, reps: 12 },
@@ -98,8 +122,8 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       restSeconds: 120,
     },
     {
-      // Volume amendment (28 Aug 2026): fourth rung 29.75 kg × 6 (total
-      // load including the bar).
+      // Unchanged (Volume amendment: fourth rung 29.75 kg × 6, total load
+      // including the bar).
       exerciseId: 'bent-over-row',
       setPlan: [
         { weightKg: 17.75, reps: 12 },
@@ -110,51 +134,48 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       restSeconds: 120,
     },
     {
-      // Volume amendment (28 Aug 2026): fourth rung is 6 kg × 8 — the
-      // established third-rung load, NOT 8 kg. Coach's explicit
-      // instruction: the technique gate on this movement remains
-      // authoritative; the amendment adds volume at the existing load
-      // rather than using it to bypass the load gate.
+      // 21 Oct optimization, ARB Q5 A: 2 × 5-8, bodyweight, 120 s. Opts in
+      // to the per-set assistance control (dip assistance ruling, 21 Oct —
+      // the only seed opt-in) and carries its own prep (ARB Q6 A).
+      exerciseId: 'parallel-bar-dip',
+      range: { min: 5, max: 8 },
+      sets: 2,
+      restSeconds: 120,
+      role: 'accessory',
+      warmupId: 'mesocycle2-parallel-bar-dip-prep-v1',
+      assistable: true,
+    },
+    {
+      // 21 Oct optimization, ARB Q1 A: four rungs -> three, keeping original
+      // rungs 1-3 (4x15, 6x12, 6x10). The technique gate is unchanged.
       exerciseId: 'dumbbell-lateral-raise',
       setPlan: [
         { weightKg: 4, reps: 15 },
         { weightKg: 6, reps: 12 },
         { weightKg: 6, reps: 10 },
-        { weightKg: 6, reps: 8 },
       ],
       restSeconds: 60,
       role: 'accessory',
+      revision: rev([0, 1, 2]),
     },
     {
-      // Volume amendment (28 Aug 2026): fourth rung 16 kg × 6.
-      exerciseId: 'overhead-triceps-extension',
-      setPlan: [
-        { weightKg: 10, reps: 12 },
-        { weightKg: 12, reps: 10 },
-        { weightKg: 14, reps: 8 },
-        { weightKg: 16, reps: 6 },
-      ],
-      restSeconds: 75,
-      role: 'accessory',
-    },
-    {
-      // Volume amendment (28 Aug 2026): fourth rung 70 seconds.
+      // 21 Oct optimization, ARB Q1 A: "keep original rungs 2 and 3" -> 50 s
+      // and 60 s; the athlete's logged rungs 2 and 3 seed them (carryFrom
+      // [1, 2]).
       exerciseId: 'plank',
       setPlan: [
-        { weightKg: null, reps: 40 },
         { weightKg: null, reps: 50 },
         { weightKg: null, reps: 60 },
-        { weightKg: null, reps: 70 },
       ],
       restSeconds: 60,
       mode: 'seconds',
       role: 'accessory',
+      revision: rev([1, 2]),
     },
   ],
   'mesocycle2-fullbody-hinge': [
     {
-      // Volume amendment (28 Aug 2026): explicitly UNCHANGED — already
-      // four rungs from the 12 Aug equipment upgrade, no fifth rung.
+      // Unchanged: four rungs since the 12 Aug equipment upgrade.
       exerciseId: 'romanian-deadlift',
       setPlan: [
         { weightKg: 23.75, reps: 12 },
@@ -165,7 +186,7 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       restSeconds: 120,
     },
     {
-      // Volume amendment (28 Aug 2026): fourth rung 16 kg × 6.
+      // Unchanged (Volume amendment: fourth rung 16 kg × 6).
       exerciseId: 'dumbbell-bench-press',
       setPlan: [
         { weightKg: 10, reps: 12 },
@@ -176,127 +197,52 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       restSeconds: 120,
     },
     {
-      // Volume amendment (28 Aug 2026): fourth rung 16 kg × 6, per side.
+      // 21 Oct optimization, ARB Q1 B: four rungs -> three (10x12, 12x10,
+      // 14x8), per side; stays a primary (role omitted -> main).
       exerciseId: 'single-arm-db-row',
       setPlan: [
         { weightKg: 10, reps: 12 },
         { weightKg: 12, reps: 10 },
         { weightKg: 14, reps: 8 },
-        { weightKg: 16, reps: 6 },
       ],
       restSeconds: 90,
       perSide: true,
+      revision: rev([0, 1, 2]),
     },
     {
-      // Volume amendment (28 Aug 2026): fourth rung is 6 kg × 8 — the
-      // established third-rung load, NOT 8 kg. Coach's explicit
-      // instruction: the technique gate on this movement remains
-      // authoritative; the amendment adds volume at the existing load
-      // rather than using it to bypass the load gate.
+      // 21 Oct optimization, ARB Q1 B: four rungs -> three; technique gate
+      // unchanged.
       exerciseId: 'rear-delt-fly',
       setPlan: [
         { weightKg: 4, reps: 15 },
         { weightKg: 6, reps: 12 },
         { weightKg: 6, reps: 10 },
-        { weightKg: 6, reps: 8 },
       ],
       restSeconds: 60,
       role: 'accessory',
+      revision: rev([0, 1, 2]),
     },
     {
-      // Volume amendment (28 Aug 2026): fourth rung 21.75 kg × 6 (total
-      // load including the bar).
-      exerciseId: 'barbell-curl',
+      // 21 Oct optimization, ARB Q1 B / §4 "Move from C": three rungs
+      // (16/20/24 total reps; not per side). Its history follows the
+      // exercise id, not the session. Substitution list is Library-level and
+      // empty (ARB Q9).
+      exerciseId: 'bicycle-crunch',
       setPlan: [
-        { weightKg: 15.75, reps: 12 },
-        { weightKg: 17.75, reps: 10 },
-        { weightKg: 19.75, reps: 8 },
-        { weightKg: 21.75, reps: 6 },
-      ],
-      restSeconds: 75,
-      role: 'accessory',
-    },
-    {
-      // Volume amendment (28 Aug 2026): fourth rung 12 kg × 10.
-      exerciseId: 'russian-twist',
-      setPlan: [
-        { weightKg: 6, reps: 16 },
-        { weightKg: 8, reps: 14 },
-        { weightKg: 10, reps: 12 },
-        { weightKg: 12, reps: 10 },
+        { weightKg: null, reps: 16 },
+        { weightKg: null, reps: 20 },
+        { weightKg: null, reps: 24 },
       ],
       restSeconds: 60,
       role: 'accessory',
+      revision: rev([0, 1, 2]),
     },
   ],
   'mesocycle2-fullbody-hipext-shoulder': [
     {
-      // Volume amendment (28 Aug 2026): fourth rung 39.75 kg × 6 (total
-      // load including the bar).
-      exerciseId: 'barbell-hip-thrust',
-      setPlan: [
-        { weightKg: 27.75, reps: 12 },
-        { weightKg: 31.75, reps: 10 },
-        { weightKg: 35.75, reps: 8 },
-        { weightKg: 39.75, reps: 6 },
-      ],
-      restSeconds: 90,
-      role: 'accessory',
-    },
-    {
-      // Session C Shoulder Press Amendment, 13 Aug 2026 evening —
-      // replaces dumbbell-shoulder-press; role omitted → defaults 'main'
-      // (role travels with the slot on a replacement). Volume amendment
-      // (28 Aug 2026): fourth rung 17.75 kg × 6 (total load including
-      // the bar).
-      exerciseId: 'overhead-press',
-      setPlan: [
-        { weightKg: 11.75, reps: 12 },
-        { weightKg: 13.75, reps: 10 },
-        { weightKg: 15.75, reps: 8 },
-        { weightKg: 17.75, reps: 6 },
-      ],
-      restSeconds: 120,
-    },
-    {
-      // 22 Aug amendment: replaces dumbbell-pullover. Bilateral pair
-      // (two dumbbells, not single-implement) — follow-up rulings #2/#4.
-      // Volume amendment (28 Aug 2026): set count only, 3 → 4; load and
-      // rep range unchanged.
-      exerciseId: 'dumbbell-squeeze-press',
-      range: { min: 10, max: 15 },
-      sets: 4,
-      restSeconds: 75,
-      role: 'accessory',
-      startWeightKg: 8,
-      maxWeightKg: 20,
-      weightStepKg: 2,
-    },
-    {
-      // Volume amendment (28 Aug 2026): set count only, 3 → 4.
-      exerciseId: 'incline-push-up',
-      range: { min: 10, max: 15 },
-      sets: 4,
-      restSeconds: 60,
-      role: 'accessory',
-    },
-    {
-      // Volume amendment (28 Aug 2026): fourth rung 14 kg × 6.
-      exerciseId: 'hammer-curl',
-      setPlan: [
-        { weightKg: 8, reps: 12 },
-        { weightKg: 10, reps: 10 },
-        { weightKg: 12, reps: 8 },
-        { weightKg: 14, reps: 6 },
-      ],
-      restSeconds: 75,
-      role: 'accessory',
-    },
-    {
-      // 22 Aug amendment: replaces standing-calf-raise. TWO dumbbells
-      // (bilateral — follow-up ruling #3 rules out single-dumbbell/
-      // goblet), per side. Volume amendment (28 Aug 2026): set count
-      // only, 3 → 4; load and rep range unchanged.
+      // Unchanged literal, moved to first (ARB §5; Q6: "the first working
+      // exercise becomes Dumbbell Reverse Lunge"). 22 Aug amendment: two
+      // dumbbells, per side; Volume amendment: 4 sets.
       exerciseId: 'reverse-lunge',
       range: { min: 8, max: 12 },
       sets: 4,
@@ -308,15 +254,54 @@ const EXPECTED: Record<string, ExpectedPrescription[]> = {
       weightStepKg: 2,
     },
     {
-      // Volume amendment (28 Aug 2026): fourth rung 28 reps.
-      exerciseId: 'bicycle-crunch',
+      // 21 Oct optimization, ARB Q1 C: four rungs -> three (11.75x12,
+      // 13.75x10, 15.75x8). Role omitted -> main (a primary). Its empty-bar
+      // ramp belongs to it (ARB Q6), not to the session warm-up.
+      exerciseId: 'overhead-press',
       setPlan: [
-        { weightKg: null, reps: 16 },
-        { weightKg: null, reps: 20 },
-        { weightKg: null, reps: 24 },
-        { weightKg: null, reps: 28 },
+        { weightKg: 11.75, reps: 12 },
+        { weightKg: 13.75, reps: 10 },
+        { weightKg: 15.75, reps: 8 },
       ],
+      restSeconds: 120,
+      revision: rev([0, 1, 2]),
+      warmupId: 'mesocycle2-overhead-press-prep-v1',
+    },
+    {
+      // 21 Oct optimization, ARB Q5 C: 3 × 8-12, bodyweight, 90 s.
+      exerciseId: 'inverted-row',
+      range: { min: 8, max: 12 },
+      sets: 3,
+      restSeconds: 90,
+      role: 'accessory',
+    },
+    {
+      // 21 Oct optimization, ARB Q1 C: "keep the first three working sets",
+      // 3 × 10-15.
+      exerciseId: 'incline-push-up',
+      range: { min: 10, max: 15 },
+      sets: 3,
       restSeconds: 60,
+      role: 'accessory',
+      revision: rev([0, 1, 2]),
+    },
+    {
+      // 21 Oct optimization, ARB Q1 C: four rungs -> two (8x12, 10x10).
+      exerciseId: 'hammer-curl',
+      setPlan: [
+        { weightKg: 8, reps: 12 },
+        { weightKg: 10, reps: 10 },
+      ],
+      restSeconds: 75,
+      role: 'accessory',
+      revision: rev([0, 1]),
+    },
+    {
+      // 21 Oct optimization, ARB Q5 C: 3 × 8-12, bodyweight, 75 s.
+      exerciseId: 'supported-knee-raise',
+      range: { min: 8, max: 12 },
+      sets: 3,
+      restSeconds: 75,
       role: 'accessory',
     },
   ],
@@ -429,6 +414,12 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
             expected.restSeconds,
           )
           expect(actual!.role, `${session.id}/${expected.exerciseId} role`).toBe(expected.role ?? 'main')
+          // Absent in EXPECTED means absent in the seed: that is what keeps a
+          // marker off the six unchanged prescriptions (a marker on an
+          // unchanged exercise would drop its legitimate custom sets).
+          expect(actual!.revision, `${session.id}/${expected.exerciseId} revision`).toEqual(expected.revision)
+          expect(actual!.warmupId, `${session.id}/${expected.exerciseId} warmupId`).toBe(expected.warmupId)
+          expect(actual!.assistable, `${session.id}/${expected.exerciseId} assistable`).toBe(expected.assistable)
 
           if ('setPlan' in expected) {
             const ladder = actual as LadderPrescription
@@ -572,25 +563,19 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
   })
 
   /**
-   * §D8: a timed hold, not a rep Pyramid — 40s/50s/60s/70s, never reps.
-   * Retargeted from `side-plank` (12 Aug 2026 equipment upgrade) to
-   * `plank` in Session B's old Core block, and retargeted again (13 Aug
-   * Full Body Restructure — plank moves Session B → Session A) to keep
-   * proving a timed hold can complete — the only test in the suite that
-   * does. `plank` is not per-side, unlike side-plank. Extended to a
-   * fourth rung (70 sec) by the 28 Aug 2026 volume amendment.
+   * §D8: a timed hold, not a rep Pyramid — never reps. Cut from four levels
+   * (40/50/60/70) to two (50/60) by the coach's arbitration of 21 Oct 2026
+   * (Q1 A: "keep original rungs 2 and 3"). `plank` is not per-side.
    */
-  it('plank is a four-level timed hold, 40/50/60/70 sec, never reps', () => {
+  it('plank is a two-level timed hold, 50/60 sec, never reps (ARB Q1)', () => {
     const sessionA = mesocycle2Build.sessions.find((s) => s.id === 'mesocycle2-fullbody-squat')!
     const plank = sessionA.items.find((i) => i.exerciseId === 'plank') as LadderPrescription
 
     expect(plank.mode).toBe('seconds')
     expect(plank.perSide).toBe(false)
     expect(plank.setPlan).toEqual([
-      { weightKg: null, reps: 40 },
       { weightKg: null, reps: 50 },
       { weightKg: null, reps: 60 },
-      { weightKg: null, reps: 70 },
     ])
   })
 
@@ -749,6 +734,165 @@ describe('mesocycle2Build — spec conformance (12 Aug 2026 equipment upgrade + 
   it('Morning Activation is a single Apple Fitness+ item (11 Aug ruling)', () => {
     expect(mesocycle2Build.morningActivation?.items).toHaveLength(1)
     expect(mesocycle2Build.morningActivation?.items[0]?.label).toBe('Apple Fitness+')
+  })
+
+  /**
+   * 21 Oct 2026 optimization — ARB acceptance 1: exactly 19 / 17 / 18 working
+   * sets per session. Literals, not derived from the seed.
+   */
+  it('Sessions A / B / C carry exactly 19 / 17 / 18 working sets (ARB acceptance 1)', () => {
+    const totals = mesocycle2Build.sessions.map((session) => session.items.reduce((sum, item) => sum + item.sets, 0))
+    expect(totals).toEqual([19, 17, 18])
+  })
+
+  /**
+   * G4, the marker guard (plan §6). `BASELINE_F8B20CCD` is the M2 seed as it
+   * stood at f8b20ccd, **typed as literal numbers on purpose**: if it were
+   * derived from `mesocycle2Build` the guard would be circular and every
+   * control would stay green. Read from `program.ts` at that commit and
+   * confirmed against the plan (§1.3) and the draft (§1).
+   */
+  describe('G4: revision markers appear exactly where the structure changed', () => {
+    type Rung = { weightKg: number | null; reps: number }
+    const BASELINE_F8B20CCD: Record<string, { sets: number; setPlan?: Rung[] }> = {
+      'goblet-squat': { sets: 4 },
+      'incline-dumbbell-press': { sets: 4 },
+      'bent-over-row': { sets: 4 },
+      'romanian-deadlift': { sets: 4 },
+      'dumbbell-bench-press': { sets: 4 },
+      'reverse-lunge': { sets: 4 },
+      'dumbbell-lateral-raise': {
+        sets: 4,
+        setPlan: [
+          { weightKg: 4, reps: 15 },
+          { weightKg: 6, reps: 12 },
+          { weightKg: 6, reps: 10 },
+          { weightKg: 6, reps: 8 },
+        ],
+      },
+      plank: {
+        sets: 4,
+        setPlan: [
+          { weightKg: null, reps: 40 },
+          { weightKg: null, reps: 50 },
+          { weightKg: null, reps: 60 },
+          { weightKg: null, reps: 70 },
+        ],
+      },
+      'single-arm-db-row': {
+        sets: 4,
+        setPlan: [
+          { weightKg: 10, reps: 12 },
+          { weightKg: 12, reps: 10 },
+          { weightKg: 14, reps: 8 },
+          { weightKg: 16, reps: 6 },
+        ],
+      },
+      'rear-delt-fly': {
+        sets: 4,
+        setPlan: [
+          { weightKg: 4, reps: 15 },
+          { weightKg: 6, reps: 12 },
+          { weightKg: 6, reps: 10 },
+          { weightKg: 6, reps: 8 },
+        ],
+      },
+      'bicycle-crunch': {
+        sets: 4,
+        setPlan: [
+          { weightKg: null, reps: 16 },
+          { weightKg: null, reps: 20 },
+          { weightKg: null, reps: 24 },
+          { weightKg: null, reps: 28 },
+        ],
+      },
+      'overhead-press': {
+        sets: 4,
+        setPlan: [
+          { weightKg: 11.75, reps: 12 },
+          { weightKg: 13.75, reps: 10 },
+          { weightKg: 15.75, reps: 8 },
+          { weightKg: 17.75, reps: 6 },
+        ],
+      },
+      'hammer-curl': {
+        sets: 4,
+        setPlan: [
+          { weightKg: 8, reps: 12 },
+          { weightKg: 10, reps: 10 },
+          { weightKg: 12, reps: 8 },
+          { weightKg: 14, reps: 6 },
+        ],
+      },
+      'incline-push-up': { sets: 4 },
+    }
+
+    const items = mesocycle2Build.sessions.flatMap((session) => session.items.map((item) => ({ session, item })))
+
+    it('(i) a prescription has a marker if and only if its set count differs from the baseline', () => {
+      const wrong: string[] = []
+      for (const { session, item } of items) {
+        const baseline = BASELINE_F8B20CCD[item.exerciseId]
+        if (baseline === undefined) continue
+        const changed = item.sets !== baseline.sets
+        if (changed !== (item.revision !== undefined)) {
+          wrong.push(`${session.id}/${item.exerciseId}: sets ${item.sets} vs baseline ${baseline.sets}, revision ${item.revision ? 'present' : 'absent'}`)
+        }
+      }
+      expect(wrong).toEqual([])
+    })
+
+    it('(ii) every marker maps one source per rung, with no null (ARB Q2: inherit), unique, below the old count, one shared id', () => {
+      const markers = items.filter(({ item }) => item.revision !== undefined)
+      expect(markers.length, 'no revision markers found — the guard is checking nothing').toBe(8)
+      const ids = new Set<string>()
+      for (const { session, item } of markers) {
+        const label = `${session.id}/${item.exerciseId}`
+        const { carryFrom, id } = item.revision!
+        ids.add(id)
+        expect(carryFrom.length, `${label}: carryFrom length`).toBe(item.sets)
+        expect(carryFrom.every((c) => c !== null), `${label}: a null entry restates instead of inheriting`).toBe(true)
+        expect(new Set(carryFrom).size, `${label}: duplicate sources`).toBe(carryFrom.length)
+        for (const c of carryFrom) {
+          expect(c as number, `${label}: source out of range`).toBeLessThan(BASELINE_F8B20CCD[item.exerciseId].sets)
+        }
+      }
+      expect([...ids], 'one structural change, one id').toEqual([REVISION_ID])
+    })
+
+    it('(iii) acceptance 2: each kept rung is exactly the baseline rung its carryFrom names', () => {
+      for (const { session, item } of items) {
+        const baseline = BASELINE_F8B20CCD[item.exerciseId]
+        if (item.revision === undefined || baseline?.setPlan === undefined || item.setPlan === undefined) continue
+        item.setPlan.forEach((rung, i) => {
+          expect(rung, `${session.id}/${item.exerciseId} rung ${i + 1}`).toEqual(baseline.setPlan![item.revision!.carryFrom[i] as number])
+        })
+      }
+    })
+
+    it('(iv) the new movements carry no marker (no history can exist under their ids)', () => {
+      const unmarkedNew = items.filter(({ item }) => BASELINE_F8B20CCD[item.exerciseId] === undefined)
+      expect(unmarkedNew.map(({ item }) => item.exerciseId).sort()).toEqual(['inverted-row', 'parallel-bar-dip', 'supported-knee-raise'])
+      for (const { item } of unmarkedNew) expect(item.revision, item.exerciseId).toBeUndefined()
+    })
+  })
+
+  /** The sibling of the rehearsal guard above: exactly these two carry an exercise-level warm-up (R2 is vacuous for a prescription whose pointer was deleted). */
+  it('exactly overhead-press and parallel-bar-dip carry a warmupId', () => {
+    const carriers = mesocycle2Build.sessions.flatMap((s) => s.items.filter((i) => i.warmupId !== undefined).map((i) => i.exerciseId))
+    expect(carriers.sort()).toEqual(['overhead-press', 'parallel-bar-dip'])
+  })
+
+  it('only parallel-bar-dip is assistable (dip assistance ruling: specific to the dip)', () => {
+    const carriers = mesocycle2Build.sessions.flatMap((s) => s.items.filter((i) => i.assistable !== undefined).map((i) => i.exerciseId))
+    expect(carriers).toEqual(['parallel-bar-dip'])
+  })
+
+  it('Barbell Hip Thrust is absent from every item and every warm-up step (ARB acceptance 8)', () => {
+    const inItems = mesocycle2Build.sessions.flatMap((s) => s.items.map((i) => i.exerciseId))
+    expect(inItems).not.toContain('barbell-hip-thrust')
+    const inWarmups = seedWarmups.flatMap((w) => w.steps).filter((st) => 'exerciseId' in st && st.exerciseId === 'barbell-hip-thrust')
+    expect(inWarmups).toEqual([])
   })
 
   /**

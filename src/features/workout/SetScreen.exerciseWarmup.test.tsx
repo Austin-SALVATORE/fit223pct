@@ -101,3 +101,21 @@ describe('exercise-level warm-up on the set screen', () => {
     expect(screen.queryByText(WARMUP_HEADING)).toBeNull()
   })
 })
+
+describe('a stored snapshot whose warm-up no longer exists (sheet §4.7)', () => {
+  // Deleting a catalogue entry must degrade stored snapshots to "no prep
+  // block", never crash: SetScreen is the one storage-sourced reader of an
+  // exercise-level `warmupId`. Phase 4 deletes the C -v1 session warm-up, and
+  // the forward rule is that deleting an exercise-level id later is safe only
+  // because of this guard.
+  it('renders the set screen without a prep block', async () => {
+    await show(
+      workout((w) => ({
+        ...w,
+        exercises: w.exercises.map((e) => ({ ...e, prescription: { ...item, warmupId: 'mesocycle2-deleted-prep-v0' } })),
+      })),
+    )
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+    expect(screen.queryByText(WARMUP_HEADING)).toBeNull()
+  })
+})

@@ -560,6 +560,14 @@
       "name": "Fente arrière au poids du corps"
     }
   },
+  "warmupDrill": {
+    "shoulder-circles": {
+      "name": "Cercles d'épaules contrôlés"
+    },
+    "supported-dip-hold": {
+      "name": "Familiarisation avec la position d'appui du dip"
+    }
+  },
   "program": {
     "phase-1-home": {
       "name": "Phase 1 — Maison",
@@ -724,9 +732,6 @@
             "dumbbell-lateral-raise": {
               "note": "La technique passe avant la charge"
             },
-            "overhead-triceps-extension": {
-              "note": "Un haltère, à deux mains"
-            },
             "plank": {
               "note": "Repos 45-60 sec"
             }
@@ -738,21 +743,15 @@
           "exercise": {
             "single-arm-db-row": {
               "note": "Repos après les deux côtés"
-            },
-            "russian-twist": {
-              "note": "Répétitions totales, pas par côté"
             }
           }
         },
         "mesocycle2-fullbody-hipext-shoulder": {
           "name": "Corps entier C",
-          "focus": "Accent bas du corps et fessiers",
+          "focus": "Accent bas du corps et épaules",
           "exercise": {
             "overhead-press": {
               "note": "Développé strict — sans élan des jambes"
-            },
-            "dumbbell-squeeze-press": {
-              "note": "Arrête-toi à environ 2 répétitions de l'échec."
             },
             "reverse-lunge": {
               "note": "Arrête-toi quand il reste encore 2 à 3 bonnes répétitions possibles de chaque côté."

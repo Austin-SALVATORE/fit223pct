@@ -33,7 +33,14 @@ interface EnActivityJson {
   item: Record<string, EnActivityItemJson>
 }
 
+interface EnSessionJson {
+  name: string
+  focus: string
+  exercise?: Record<string, { note?: string }>
+}
+
 interface EnMesocycle2BuildJson {
+  session: Record<string, EnSessionJson>
   activity: Record<string, EnActivityJson>
   morningActivation?: EnActivityJson
 }
@@ -85,4 +92,36 @@ describe('mesocycle2Build — en/seed.json matches the seed exactly (no stale ke
     if (!mesocycle2Build.morningActivation) return
     assertMatchesEn(mesocycle2Build.morningActivation, enProgram.morningActivation, 'morningActivation')
   })
+})
+
+/**
+ * Phase 4 (21 Oct 2026). A session `name`/`focus` and a prescription `note`
+ * resolve as `i18n.exists(key) ? t(key) : seedLiteral`, so an existing key
+ * beats the seed literal in every locale including English. Changing C's
+ * `focus` literal in `program.ts` alone therefore changes nothing on screen
+ * and no other test sees it; and a note key left behind for a removed
+ * prescription is dead content nobody notices. This pins both directions:
+ * the en keys equal the seed exactly, no extras, none missing.
+ */
+describe('mesocycle2Build — session names, focuses and notes match en/seed.json exactly', () => {
+  for (const session of mesocycle2Build.sessions) {
+    describe(session.id, () => {
+      const enSession = enProgram.session[session.id]
+
+      it('name and focus equal the seed literals', () => {
+        expect(enSession, `${session.id}: no en/seed.json session`).toBeDefined()
+        expect(enSession.name).toBe(session.name)
+        expect(enSession.focus).toBe(session.focus)
+      })
+
+      it('the note keys are exactly the prescriptions that carry a note, with equal text (no stale keys)', () => {
+        const withNote = session.items.filter((item) => item.note !== undefined)
+        const enNotes = enSession.exercise ?? {}
+        expect(Object.keys(enNotes).sort()).toEqual(withNote.map((item) => item.exerciseId).sort())
+        for (const item of withNote) {
+          expect(enNotes[item.exerciseId].note, `${session.id}/${item.exerciseId} note`).toBe(item.note)
+        }
+      })
+    })
+  }
 })
