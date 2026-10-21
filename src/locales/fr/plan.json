@@ -32,6 +32,7 @@
     "secondsEffort": "{{seconds}}s",
     "weightSuffix": " × {{weight}} kg",
     "customSuffix": "{{set}} (Ajoutée)",
+    "assistedSuffix": "{{set}} (avec assistance)",
     "skippedLevels_one": "{{count}} palier passé",
     "skippedLevels_other": "{{count}} paliers passés"
   },

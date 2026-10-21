@@ -87,6 +87,8 @@ const repRangePrescriptionSchema = z
     // Exercise-level warm-up pointer (addendum §1.3). Deliberately not checked
     // against the catalogue — the `ActivityItem.routineId` precedent.
     warmupId: z.string().min(1).optional(),
+    // Per-set assistance control opt-in (dip ruling 21 Oct 2026).
+    assistable: z.literal(true).optional(),
   })
   .strict()
 
@@ -120,6 +122,8 @@ const ladderPrescriptionSchema = z
     // Exercise-level warm-up pointer (addendum §1.3). Deliberately not checked
     // against the catalogue — the `ActivityItem.routineId` precedent.
     warmupId: z.string().min(1).optional(),
+    // Per-set assistance control opt-in (dip ruling 21 Oct 2026).
+    assistable: z.literal(true).optional(),
   })
   .strict()
   .refine((p) => p.sets === p.setPlan.length, {

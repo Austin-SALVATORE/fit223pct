@@ -407,7 +407,8 @@ function LoggedExerciseRow({
               // history either. Marked inline, not a separate line: it's one
               // set among several logged, the same granularity the line
               // already reads at.
-              return set.custom ? tPlan('dayDetail.customSuffix', { set: formatted }) : formatted
+              const marked = set.assisted ? tPlan('dayDetail.assistedSuffix', { set: formatted }) : formatted
+              return set.custom ? tPlan('dayDetail.customSuffix', { set: marked }) : marked
             })
             .join(' · ')}
         </p>

@@ -90,6 +90,16 @@ export interface SetTarget {
    * varies only by weight/reps).
    */
   variantKey?: SetVariant
+  /**
+   * The athlete performed this rung **assisted** last time (parallel-bar dip,
+   * ruling 21 Oct 2026: `docs/programs/dip-assistance-ruling-2026-10-21.md`).
+   * Carried by position from `LoggedSet.assisted`, so a rung that was assisted
+   * stays assisted next exposure — **carry never converts assisted reps into
+   * unassisted ones**; going back is the athlete's explicit choice on the set
+   * screen. Absent means unassisted (and is what an authored rung always is).
+   * Yes/no only: no magnitude, no effective load.
+   */
+  assisted?: true
 }
 
 interface ExercisePrescriptionBase {
@@ -137,6 +147,13 @@ interface ExercisePrescriptionBase {
    * Plan: `~/.claude/plans/m2-optimization-addendum-warmups-easier-day.md` §1.
    */
   warmupId?: string
+  /**
+   * Opts this exercise into the per-set Unassisted / Assisted control on the
+   * set screen (the parallel-bar dip only; ruling 21 Oct 2026). Authored,
+   * display-and-logging only, copied through the carry literal. The control
+   * is absent everywhere else — no equipment-specific UI for other lifts.
+   */
+  assistable?: true
 }
 
 /**
@@ -321,6 +338,14 @@ export interface LoggedSet {
    * `carryForward.ts`'s `buildSetPlan` for the mechanism.
    */
   custom?: true
+  /**
+   * This set was performed with assistance (only offered where the
+   * prescription is `assistable`). Part of the actual performance: assisted
+   * and unassisted reps are not equivalent, so every comparison that reads
+   * effort treats the two apart. Absent means unassisted — historical logs
+   * are unchanged, no migration. A boolean records *that*, not *how much*.
+   */
+  assisted?: true
 }
 
 export interface WorkoutExercise {

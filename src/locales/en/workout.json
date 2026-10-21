@@ -55,6 +55,9 @@
     "stopSuffix": "— Stop"
   },
   "setScreen": {
+    "assistanceLabel": "Assistance",
+    "unassisted": "Unassisted",
+    "assisted": "Assisted",
     "prepareFirst": "Before your first set",
     "setProgress": "Set {{setIndex}} of {{totalSets}}",
     "eachSide": "each side",
@@ -96,6 +99,7 @@
     "confirmCancel": "Cancel"
   },
   "sessionSummary": {
+    "assistedDetail": "{{detail}}, assisted",
     "eyebrow": "Session complete",
     "heading": "Nice work.",
     "statMinutes": "Minutes",

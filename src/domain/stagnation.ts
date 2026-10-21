@@ -49,12 +49,17 @@ export function detectStagnation(
     .flatMap((w) => {
       const entry = w.exercises.find((e) => e.exerciseId === exercise.id && e.sets.length > 0)
       if (!entry) return []
+      // Assisted sets are not comparable effort (dip ruling, 21 Oct): only
+      // unassisted work can show progress or a plateau. A session with none
+      // contributes no evidence at all, rather than a fake zero.
+      const sets = entry.sets.filter((s) => s.assisted !== true)
+      if (sets.length === 0) return []
       return [
         {
           date: w.date,
           tier: w.readiness?.tier ?? 'steady',
-          weightKg: maxOrNull(entry.sets, (s) => s.weightKg),
-          effort: maxOf(entry.sets, (s) => s.reps ?? s.seconds),
+          weightKg: maxOrNull(sets, (s) => s.weightKg),
+          effort: maxOf(sets, (s) => s.reps ?? s.seconds),
           effortMode: entry.prescription.mode,
         },
       ]

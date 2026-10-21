@@ -95,6 +95,9 @@ export function SetScreen({
   const [effort, setEffort] = useState(
     (prescription.mode === 'seconds' ? target.seconds : target.reps) ?? 0,
   )
+  // Per-set assistance (dip ruling 21 Oct): pre-set from the carried target,
+  // otherwise Unassisted — never inferred. Only meaningful when `assistable`.
+  const [assisted, setAssisted] = useState(target.assisted === true)
   const [swapOpen, setSwapOpen] = useState(false)
 
   const isSeconds = prescription.mode === 'seconds'
@@ -109,6 +112,9 @@ export function SetScreen({
       reps: isSeconds ? null : effort,
       seconds: isSeconds ? effort : null,
       completedAt: new Date().toISOString(),
+      // Absent, not `false`: an unassisted set is exactly what historical
+      // logs already look like.
+      ...(prescription.assistable && assisted ? { assisted: true as const } : {}),
     })
   }
 
@@ -244,6 +250,9 @@ export function SetScreen({
               unit={isSeconds ? 's' : undefined}
               onChange={setEffort}
             />
+            {prescription.assistable && (
+              <AssistanceControl assisted={assisted} onChange={setAssisted} />
+            )}
           </div>
         </div>
 
@@ -433,6 +442,40 @@ function IllustrationBand({ exerciseId }: { exerciseId: string }) {
 }
 
 /**
+ * Two-state Unassisted / Assisted control under the reps (dip ruling,
+ * 21 Oct 2026). A radiogroup of two buttons, 44px each: selecting is one tap
+ * at most and none when the pre-set is already right, so it adds no step. Says
+ * *that* assistance was used, never how much.
+ */
+function AssistanceControl({ assisted, onChange }: { assisted: boolean; onChange: (assisted: boolean) => void }) {
+  const { t } = useTranslation('workout')
+  const options = [
+    { value: false, label: t('setScreen.unassisted') },
+    { value: true, label: t('setScreen.assisted') },
+  ]
+  return (
+    <div role="radiogroup" aria-label={t('setScreen.assistanceLabel')} className="mt-3 flex justify-center gap-2">
+      {options.map((option) => (
+        <button
+          key={String(option.value)}
+          type="button"
+          role="radio"
+          aria-checked={assisted === option.value}
+          onClick={() => onChange(option.value)}
+          className={`min-h-11 min-w-28 rounded-card border px-4 text-sm font-medium transition-colors ${
+            assisted === option.value
+              ? 'border-amber bg-raised text-ink'
+              : 'border-border text-ink-secondary hover:border-border-strong'
+          }`}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+/**
  * What you were told to do — a different question from "what am I about to
  * log", which is the card above.
  *
@@ -504,6 +547,7 @@ function TargetCaption({
   return (
     <p id={id} className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-ink-tertiary">
       <span>{targetText}</span>
+      {target.prescribed.assisted && <span>{t('setScreen.assisted')}</span>}
       {/*
         MAX / TECHNIQUE / "+2 kg" pills removed, 28 Aug 2026 (Phase 3,
         `~/.claude/plans/progression-carry-forward.md`) — all three read

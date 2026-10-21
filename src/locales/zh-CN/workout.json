@@ -53,6 +53,9 @@
     "stopSuffix": "——停止"
   },
   "setScreen": {
+    "assistanceLabel": "辅助",
+    "unassisted": "无辅助",
+    "assisted": "有辅助",
     "prepareFirst": "第一组之前",
     "setProgress": "第 {{setIndex}} / {{totalSets}} 组",
     "eachSide": "每侧",
@@ -93,6 +96,7 @@
     "confirmCancel": "取消"
   },
   "sessionSummary": {
+    "assistedDetail": "{{detail}}，有辅助",
     "eyebrow": "训练完成",
     "heading": "干得漂亮。",
     "statMinutes": "分钟",

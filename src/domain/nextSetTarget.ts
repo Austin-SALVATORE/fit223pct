@@ -104,7 +104,7 @@ export interface NextSetTarget {
    * directly is exactly what this field already is for a rung — kept as its
    * own field for the rep-range case, where the two genuinely diverge.
    */
-  prescribed: { weightKg: number | null; reps: number | null; seconds: number | null }
+  prescribed: { weightKg: number | null; reps: number | null; seconds: number | null; assisted?: true }
   /**
    * How this rung differs from the default form, when the coach prescribed
    * one — never prose (see `SetVariant`). Read from the **offered** rung
@@ -117,6 +117,14 @@ export interface NextSetTarget {
    * same batch).
    */
   variantKey?: SetVariant
+  /**
+   * Assistance state to pre-set the set screen's control to (dip ruling,
+   * 21 Oct 2026). Present only when `true`; absent means Unassisted, which is
+   * also the first-ever default. Never inferred — it is a rung's carried
+   * `assisted`, or (for non-rung work and custom slots, where weight and reps
+   * carry the same way) the set just logged this session.
+   */
+  assisted?: true
 }
 
 /**
@@ -176,6 +184,7 @@ export function nextSetTarget(
   const weightKg = isRung ? prescribedWeight : (carried?.weightKg ?? prescribedWeight)
   const effort = isRung ? prescribedEffort : (carriedEffort ?? prescribedEffort)
 
+  const assisted = isRung ? rung?.assisted : carried?.assisted
   const source: NextSetTarget['source'] = isRung
     ? 'rung'
     : carried
@@ -201,6 +210,7 @@ export function nextSetTarget(
       weightKg: prescribedWeight,
       reps: isSeconds ? null : prescribedEffort,
       seconds: isSeconds ? prescribedEffort : null,
+      ...(!isCustomSlot && rung?.assisted ? { assisted: true as const } : {}),
     },
     weightKg,
     reps: isSeconds ? null : effort,
@@ -208,5 +218,6 @@ export function nextSetTarget(
     source,
     delta,
     variantKey: rung?.variantKey,
+    ...(assisted ? { assisted: true as const } : {}),
   }
 }

@@ -47,6 +47,13 @@ export function workoutHighlights(
         }
       }
 
+      // Assisted and unassisted reps are not equivalent (dip ruling, 21 Oct):
+      // if any set changed assistance state versus last time, there is no
+      // honest effort delta, so report steady rather than "+N reps".
+      if (assistanceChanged(exercise.sets, previous)) {
+        return { exerciseId, kind: 'steady' as const, label: { key: 'domain:highlight.steady' } }
+      }
+
       const effortNow = bestEffort(exercise.sets, topWeightNow, seconds)
       const effortBefore = bestEffort(previous, topWeightBefore, seconds)
       if (effortNow > effortBefore) {
@@ -106,4 +113,12 @@ function bestEffort(
     (best, s) => Math.max(best, (seconds ? s.seconds : s.reps) ?? 0),
     0,
   )
+}
+
+/** True when a set at the same position was assisted in one exposure and not the other. Positions present in only one exposure are not compared. */
+function assistanceChanged(now: readonly LoggedSet[], before: readonly LoggedSet[]): boolean {
+  return now.some((set) => {
+    const match = before.find((b) => b.setIndex === set.setIndex)
+    return match !== undefined && (match.assisted === true) !== (set.assisted === true)
+  })
 }

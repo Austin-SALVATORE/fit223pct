@@ -132,7 +132,11 @@ export function strengthTrend(exerciseId: string, workouts: readonly Workout[]):
     .filter((w) => w.completedAt !== null)
     .flatMap((w) => {
       const exercise = w.exercises.find((e) => e.exerciseId === exerciseId && e.sets.length > 0)
-      return exercise ? [{ date: w.date, sets: exercise.sets, mode: exercise.prescription.mode }] : []
+      if (!exercise) return []
+      // Assisted sets are excluded (dip ruling, 21 Oct): they are not the
+      // same performance as unassisted ones. A session with none is skipped.
+      const sets = exercise.sets.filter((s) => s.assisted !== true)
+      return sets.length > 0 ? [{ date: w.date, sets, mode: exercise.prescription.mode }] : []
     })
     .sort((a, b) => a.date.localeCompare(b.date))
 

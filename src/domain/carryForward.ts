@@ -93,6 +93,8 @@ export function carryForwardPrescription(
     // mode reads the stored *carried* prescription — without this line the
     // pointer is stripped for every exercise that has history.
     warmupId: authored.warmupId,
+    // Same trap: the stored carried prescription is what the set screen reads.
+    assistable: authored.assistable,
   }
   return carried
 }
@@ -218,9 +220,16 @@ function carriedRung(
    */
   const weightKg = gatesLoad ? loadFallbackWeightKg : (logged.weightKg ?? loadFallbackWeightKg)
 
-  return authoredRung?.variantKey === undefined
-    ? { weightKg, reps }
-    : { weightKg, reps, variantKey: authoredRung.variantKey }
+  // The target is built by literal, so the assistance flag must be copied
+  // here explicitly or it is silently dropped (same trap as `revision` and
+  // `warmupId`). Copied by position only; an unassisted logged set carries no
+  // flag, so assisted -> unassisted happens only when the athlete says so.
+  return {
+    weightKg,
+    reps,
+    ...(authoredRung?.variantKey === undefined ? {} : { variantKey: authoredRung.variantKey }),
+    ...(logged.assisted ? { assisted: true as const } : {}),
+  }
 }
 
 /**

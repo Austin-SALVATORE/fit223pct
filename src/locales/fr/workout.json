@@ -55,6 +55,9 @@
     "stopSuffix": "— Arrêter"
   },
   "setScreen": {
+    "assistanceLabel": "Assistance",
+    "unassisted": "Sans assistance",
+    "assisted": "Avec assistance",
     "prepareFirst": "Avant ta première série",
     "setProgress": "Série {{setIndex}} sur {{totalSets}}",
     "eachSide": "de chaque côté",
@@ -96,6 +99,7 @@
     "confirmCancel": "Annuler"
   },
   "sessionSummary": {
+    "assistedDetail": "{{detail}}, avec assistance",
     "eyebrow": "Séance terminée",
     "heading": "Bien joué.",
     "statMinutes": "Minutes",

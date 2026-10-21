@@ -29,6 +29,7 @@
     "secondsEffort": "{{seconds}} 秒",
     "weightSuffix": " × {{weight}} kg",
     "customSuffix": "{{set}}（加练）",
+    "assistedSuffix": "{{set}}（有辅助）",
     "skippedLevels_other": "跳过了 {{count}} 级"
   },
   "export": {

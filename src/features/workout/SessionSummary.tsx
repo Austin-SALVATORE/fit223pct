@@ -154,7 +154,10 @@ function useTopSetLabel(workoutExercise: WorkoutExercise): string | null {
       : best.seconds !== null
         ? t('sessionSummary.topSeconds', { seconds: best.seconds })
         : t('sessionSummary.topReps', { reps: best.reps ?? 0 })
-  return t('sessionSummary.topSetLine', { countPhrase, detail })
+  return t('sessionSummary.topSetLine', {
+    countPhrase,
+    detail: best.assisted ? t('sessionSummary.assistedDetail', { detail }) : detail,
+  })
 }
 
 function formatVolume(volume: number): string {
