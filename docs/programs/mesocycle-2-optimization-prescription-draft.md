@@ -63,3 +63,5 @@ Overhead triceps extension (A), barbell curl (B), Russian twist (B), barbell hip
 Blockers the architect is designing (addendum): the OHP ramp needs a per-movement warm-up carrier; the dip-prep drills need a step shape (seconds, 8+8) and a mid-session slot; a swap's performance currently feeds the substitute's own slot elsewhere in the program; dip assistance has no representation in a logged set.
 
 Coach questions sent 21 Oct evening: swap attribution; shoulder circles as one step of 16, two of 8, or prose; dip hold as one number or prose; dip assistance interim (hold on incline push-up, or log unassisted reps only); confirm that an easier day trims plank and hammer curl from 2 rungs to 1 under the new structure.
+
+Resolved 21 Oct, afternoon (owner/coach ruling, `dip-assistance-ruling-2026-10-21.md`): dip assistance is a per-set two-state Unassisted / Assisted flag on the dip's set screen, first exposure Unassisted, each set's state carried as logged, yes/no only. The interim question is withdrawn; addendum 2 CQ-A1 and CQ-A2 are closed, CQ-A3 (inverted-row angle) stays open. The owner also accepted the six French and Chinese names (board, 14:23).
