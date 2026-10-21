@@ -4,6 +4,7 @@ import {
   isCompleteExposure,
   isLoadCarryForwardExcluded,
   carrySessionForward,
+  isCarryBasisWorkout,
   mostRecentCompleteExposureFor,
   projectExposureAcrossRevision,
 } from './carryForward'
@@ -392,6 +393,63 @@ describe('projectExposureAcrossRevision', () => {
     const previous = exposure(oldAuthored(), [...oldLogged, loggedSet(4, 20, 5, null, true)], { customSlots: 1 })
     const projected = projectExposureAcrossRevision(newAuthored([4, null, null]), previous)
     expect(projected).toBeNull()
+  })
+})
+
+/**
+ * Easier-day carry basis (coach Q7; addendum §3). An easier-day session never
+ * redefines the normal prescription, so a workout started with
+ * `readiness.tier === 'easier'` is not a carry basis. **D1's fixture logs the
+ * normal session ABOVE authored (+2 kg) on purpose**: a fixture that logs
+ * exactly the authored values gives identical output with the filter removed
+ * (E1-blind) and the control could not fail.
+ */
+describe('easier-day workouts are not a carry basis (D1, D5, D6)', () => {
+  const AUTHORED = [
+    { weightKg: 11.75, reps: 12 },
+    { weightKg: 13.75, reps: 10 },
+    { weightKg: 15.75, reps: 8 },
+    { weightKg: 17.75, reps: 6 },
+  ]
+  const fourRungs = () => ladderPrescription({ exerciseId: 'overhead-press', setPlan: AUTHORED, sets: 4, role: 'main' })
+  const eased = (w: Workout): Workout => ({ ...w, readiness: { tier: 'easier', drivers: [] } })
+  const normalLogged = AUTHORED.map((r, i) => loggedSet(i, (r.weightKg ?? 0) + 2, r.reps)) // +2 kg over authored
+  const easedAuthored = () => ladderPrescription({ exerciseId: 'overhead-press', setPlan: AUTHORED.slice(0, 3), sets: 3, role: 'main' })
+
+  it('D1 the next normal day restores the 4th rung at the last NORMAL value, not the authored one', () => {
+    const history = [
+      workout('normal', 'p1', '2026-07-15', '2026-07-15T10:00:00.000Z', [exposure(fourRungs(), normalLogged)]),
+      eased(
+        workout('eased', 'p1', '2026-07-18', '2026-07-18T10:00:00.000Z', [
+          exposure(easedAuthored(), normalLogged.slice(0, 3)),
+        ]),
+      ),
+    ]
+    const [result] = carrySessionForward([fourRungs()], history, 'p1') as LadderPrescription[]
+    expect(result.sets).toBe(4)
+    expect(result.setPlan.map((r) => r.weightKg)).toEqual([13.75, 15.75, 17.75, 19.75])
+  })
+
+  it('D5 only eased history means no basis: authored values', () => {
+    const history = [
+      eased(
+        workout('eased', 'p1', '2026-07-18', '2026-07-18T10:00:00.000Z', [
+          exposure(easedAuthored(), normalLogged.slice(0, 3)),
+        ]),
+      ),
+    ]
+    const authored = fourRungs()
+    expect(carrySessionForward([authored], history, 'p1')[0]).toBe(authored)
+  })
+
+  it('D6 a workout with no readiness field counts as normal', () => {
+    const plain = workout('plain', 'p1', '2026-07-15', '2026-07-15T10:00:00.000Z', [exposure(fourRungs(), normalLogged)])
+    expect(plain.readiness).toBeUndefined()
+    expect(isCarryBasisWorkout(plain)).toBe(true)
+    expect(isCarryBasisWorkout({ ...plain, readiness: { tier: 'ready', drivers: [] } })).toBe(true)
+    expect(isCarryBasisWorkout(eased(plain))).toBe(false)
+    const [result] = carrySessionForward([fourRungs()], [plain], 'p1') as LadderPrescription[]
+    expect(result.setPlan.map((r) => r.weightKg)).toEqual([13.75, 15.75, 17.75, 19.75])
   })
 })
 

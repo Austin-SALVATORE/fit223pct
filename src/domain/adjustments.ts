@@ -12,7 +12,8 @@ export interface AdjustedSession {
   adjustments: Adjustment[]
 }
 
-const MIN_LADDER_RUNGS = 1
+/** The floor easing never drops a ladder below — exported so `sessionStart.ts` eases a *carried* plan to the same floor instead of repeating the number. */
+export const MIN_LADDER_RUNGS = 1
 
 /**
  * Readiness modulation — deliberately small and capped (docs/Readiness.md):

@@ -13,7 +13,7 @@ import {
 } from '@/data/repositories'
 import { resolveDayPlan } from '@/domain/schedule'
 import { createWorkout, summarizeWorkout } from '@/domain/workout'
-import { carrySessionForward } from '@/domain/carryForward'
+import { prepareSessionForStart } from '@/domain/sessionStart'
 import { postureResetIsActive } from '@/domain/postureReset'
 import { warmupById } from '@/data/seed/warmups'
 import { describeDrivers, readinessFrom, type Readiness } from '@/domain/readiness'
@@ -604,7 +604,7 @@ function TrainingDay({
       {checkInCard}
       <StartButton
         program={program}
-        session={adjusted.session}
+        session={session}
         readiness={readiness}
         todayKey={todayKey}
       />
@@ -760,7 +760,7 @@ function UnscheduledDay({
       {showStartButton && (
         <StartButton
           program={program}
-          session={adjusted.session}
+          session={session}
           readiness={readiness}
           todayKey={todayKey}
           variant="quiet"
@@ -797,7 +797,7 @@ function StartButton({
       ...createWorkout({
         id: crypto.randomUUID(),
         programId: program.id,
-        session: { ...session, items: carrySessionForward(session.items, completed, program.id) },
+        session: prepareSessionForStart(session, completed, program.id, readiness),
         date: todayKey,
         startedAt: new Date().toISOString(),
       }),

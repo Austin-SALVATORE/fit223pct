@@ -325,7 +325,25 @@ export function mostRecentCompleteExposureFor(
   programId: string,
   exerciseId: string,
 ): WorkoutExercise | null {
-  return scopedExposuresFor(workouts, programId, exerciseId).find(isCompleteExposure) ?? null
+  return (
+    scopedExposuresFor(workouts.filter(isCarryBasisWorkout), programId, exerciseId).find(isCompleteExposure) ?? null
+  )
+}
+
+/**
+ * Whether a workout may serve as the carry basis. An easier-day session never
+ * redefines the normal prescription (coach Q7, 21 Oct: "easier-day logs … do
+ * not automatically redefine" it), so a workout started with
+ * `readiness.tier === 'easier'` is excluded. A workout with no `readiness`
+ * field counts as normal.
+ *
+ * **Filtered here, not in `scopedExposuresFor`** (`workout.ts`): that function
+ * is shared with `previousExposureFor`, which serves the "Last time" display,
+ * and "Last time" must keep showing what was actually lifted. Same precedent as
+ * `detectStagnation`, which judges only non-easier sessions.
+ */
+export function isCarryBasisWorkout(workout: Workout): boolean {
+  return workout.readiness?.tier !== 'easier'
 }
 
 /**
