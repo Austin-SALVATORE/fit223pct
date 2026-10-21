@@ -453,6 +453,17 @@ describe('easier-day workouts are not a carry basis (D1, D5, D6)', () => {
   })
 })
 
+describe('carryForwardPrescription keeps the exercise-level warm-up pointer', () => {
+  // The carried literal is built field by field and Workout mode reads the
+  // stored carried prescription: without `warmupId: authored.warmupId` the
+  // pointer is silently stripped for every exercise that has history.
+  it('persists warmupId onto the carried prescription', () => {
+    const authored = ladderPrescription({ warmupId: 'some-warmup' })
+    const previous = exposure(authored, [loggedSet(0, 14, 12), loggedSet(1, 16, 10), loggedSet(2, 18, 8)])
+    expect(carryForwardPrescription(authored, previous).warmupId).toBe('some-warmup')
+  })
+})
+
 describe('isCompleteExposure', () => {
   const authored = ladderPrescription() // sets: 3
 

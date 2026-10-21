@@ -6,6 +6,9 @@ import { GroupedList, GroupedRow } from '@/ui/GroupedList'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { useSessionName, usePrescriptionNote } from '@/i18n/seedProgram'
 import type { OriginState } from '@/lib/navigationOrigin'
+import { WarmupStepList } from './WarmupSection'
+import { warmupById } from '@/data/seed/warmups'
+import type { Warmup } from '@/domain/warmup'
 import type { Exercise, ExercisePrescription, Program, SessionTemplate } from '@/domain/types'
 
 interface SessionPreviewProps {
@@ -73,8 +76,13 @@ export function SessionPreview({
             // non-interactive treatment WarmupSection established.
             // Structurally invisible to setPlan/progression (types.ts).
             const rehearsal = 'rehearsal' in item ? item.rehearsal : undefined
+            // Exercise-anchored warm-up (coach Q6): preparation that belongs
+            // to this movement, shown immediately above it. An unknown id
+            // renders nothing, like the session warm-up.
+            const exerciseWarmup = item.warmupId ? warmupById(item.warmupId) : undefined
             return (
               <Fragment key={item.exerciseId}>
+                {exerciseWarmup && <ExerciseWarmupRow steps={exerciseWarmup.steps} origin={origin} />}
                 {rehearsal && <RehearsalRow exercise={exercise} rehearsal={rehearsal} />}
                 <ItemRow
                   item={item}
@@ -90,6 +98,20 @@ export function SessionPreview({
         </GroupedList>
       </div>
     </section>
+  )
+}
+
+function ExerciseWarmupRow({ steps, origin }: { steps: Warmup['steps']; origin: OriginState }) {
+  const { t } = useTranslation('today')
+  return (
+    <GroupedRow>
+      <div className="w-full min-w-0">
+        <p className="text-sm font-medium text-ink-tertiary">{t('sessionPreview.exerciseWarmupHeading')}</p>
+        <div className="mt-2">
+          <WarmupStepList steps={steps} origin={origin} />
+        </div>
+      </div>
+    </GroupedRow>
   )
 }
 

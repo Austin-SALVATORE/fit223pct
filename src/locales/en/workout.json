@@ -55,6 +55,7 @@
     "stopSuffix": "— Stop"
   },
   "setScreen": {
+    "prepareFirst": "Before your first set",
     "setProgress": "Set {{setIndex}} of {{totalSets}}",
     "eachSide": "each side",
     "lastTimeFirst": "First time — the numbers below are your starting point.",

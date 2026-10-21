@@ -123,6 +123,20 @@ interface ExercisePrescriptionBase {
    * never rewritten — the projection is in memory only.
    */
   revision?: { id: string; carryFrom: readonly (number | null)[] }
+  /**
+   * A pointer into the warm-up catalogue (`seedWarmups`, `data/seed/warmups.ts`)
+   * for preparation that belongs to **this exercise** rather than to the
+   * session's opening movement — e.g. a ramp for a later barbell lift, or
+   * prep drills for a new movement (coach Q6, 21 Oct 2026). It is
+   * `SessionTemplate.warmupId` reproduced one level down, with the same
+   * properties: display only (a `WarmupStep` cannot reach progression), never
+   * read by carry or progression, and not validated against the catalogue on
+   * import (an unknown id degrades to nothing rendered, as for the session
+   * warm-up). Anchored to the exercise, so it survives a reorder.
+   *
+   * Plan: `~/.claude/plans/m2-optimization-addendum-warmups-easier-day.md` §1.
+   */
+  warmupId?: string
 }
 
 /**

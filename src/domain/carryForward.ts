@@ -89,6 +89,10 @@ export function carryForwardPrescription(
     // was offered — the next exposure's projection compares against it.
     // `undefined` (the norm) leaves the literal key-for-key what it was.
     revision: authored.revision,
+    // A display pointer, but the literal is built field by field and Workout
+    // mode reads the stored *carried* prescription — without this line the
+    // pointer is stripped for every exercise that has history.
+    warmupId: authored.warmupId,
   }
   return carried
 }

@@ -55,6 +55,7 @@
     "stopSuffix": "— Arrêter"
   },
   "setScreen": {
+    "prepareFirst": "Avant ta première série",
     "setProgress": "Série {{setIndex}} sur {{totalSets}}",
     "eachSide": "de chaque côté",
     "lastTimeFirst": "Première fois — les chiffres ci-dessous sont ton point de départ.",

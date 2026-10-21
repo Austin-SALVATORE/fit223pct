@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { warmupById } from '@/data/seed/warmups'
 import { WarmupSection } from './WarmupSection'
+import i18n from '@/i18n/i18next'
 import type { Warmup } from '@/domain/warmup'
 
 function renderWarmup(warmup: Warmup, origin?: Parameters<typeof WarmupSection>[0]['origin']) {
@@ -133,5 +134,36 @@ describe('WarmupSection', () => {
       renderWarmup(warmup)
       expect(screen.getByRole('link', { name: /Scapular push-up/ })).toBeInTheDocument()
     })
+  })
+})
+
+describe('a drill step (coach Q6) — not a Library exercise', () => {
+  // `WarmupStepRow` has no `default`, so a missing `case 'drill'` renders
+  // nothing without a type error — this render is the guard, not the compiler.
+  it('renders its name and each dose format as plain text, with no link', async () => {
+    const real = i18n.getResourceBundle('en', 'seed')
+    i18n.addResourceBundle(
+      'en',
+      'seed',
+      { warmupDrill: { 'test-circles': { name: 'Shoulder circles' }, 'test-hold': { name: 'Supported hold' } } },
+      true,
+      true,
+    )
+    const warmup: Warmup = {
+      id: 'test-drills',
+      steps: [
+        { kind: 'drill', id: 'test-circles', dose: { unit: 'reps-each-direction', reps: 8 } },
+        { kind: 'drill', id: 'test-hold', dose: { unit: 'seconds', min: 5, max: 10 } },
+      ],
+    }
+    renderWarmup(warmup)
+
+    expect(screen.getByText('Shoulder circles')).toBeInTheDocument()
+    expect(screen.getByText('8 reps each direction')).toBeInTheDocument()
+    expect(screen.getByText('Supported hold')).toBeInTheDocument()
+    expect(screen.getByText('5–10 s')).toBeInTheDocument()
+    expect(screen.queryByRole('link')).toBeNull()
+    i18n.removeResourceBundle('en', 'seed')
+    i18n.addResourceBundle('en', 'seed', real, true, true)
   })
 })

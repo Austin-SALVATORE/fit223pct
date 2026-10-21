@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
 import { Stepper } from '@/ui/Stepper'
+import { WarmupStepList } from '@/features/today/WarmupSection'
+import { warmupById } from '@/data/seed/warmups'
 import { ConfirmAction } from '@/ui/ConfirmAction'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { nextSetTarget } from '@/domain/nextSetTarget'
@@ -87,6 +89,7 @@ export function SetScreen({
    * computes from history itself.
    */
   const target = nextSetTarget(prescription, workoutExercise.sets, setIndex)
+  const exerciseWarmup = prescription.warmupId ? warmupById(prescription.warmupId) : undefined
 
   const [weightKg, setWeightKg] = useState(target.weightKg)
   const [effort, setEffort] = useState(
@@ -160,6 +163,21 @@ export function SetScreen({
           delta chip in the caption below.
         */}
         {note && setIndex === 0 && <p className="mt-1 text-sm text-ink-tertiary">{note}</p>}
+        {/*
+          Exercise-anchored preparation (coach Q6), shown before the first set
+          that is actually offered — `sets.length === 0`, not `setIndex === 0`,
+          because if level 0 is skipped the first offered set is index 1 and
+          the prep must still show. Suppressed once the slot is a substitute:
+          a barbell ramp for a dumbbell swap is a false instruction.
+        */}
+        {exerciseWarmup && workoutExercise.sets.length === 0 && workoutExercise.substitutedForId === undefined && (
+          <div className="mt-3 rounded-card border border-border bg-surface px-4 py-3">
+            <p className="text-sm font-medium text-ink-tertiary">{t('setScreen.prepareFirst')}</p>
+            <div className="mt-2">
+              <WarmupStepList steps={exerciseWarmup.steps} origin={{ from: 'workout' }} />
+            </div>
+          </div>
+        )}
         {/*
           A custom set is never a Pyramid level (coach spec §4) — this says
           so up front, rather than leaving the athlete to infer it from the

@@ -28,6 +28,11 @@ describe('WarmupStep', () => {
     expect(Object.keys(step).sort()).toEqual(['exerciseId', 'kind', 'perSide', 'reps'])
   })
 
+  it('a drill step carries only kind/id/dose — no exerciseId, weightKg, sets or Library link', () => {
+    const step: WarmupStep = { kind: 'drill', id: 'shoulder-circles', dose: { unit: 'reps-each-direction', reps: 8 } }
+    expect(Object.keys(step).sort()).toEqual(['dose', 'id', 'kind'])
+  })
+
   it('a ramp step carries only kind/exerciseId/implement/weightKg/reps — never a setPlan rung', () => {
     const step: WarmupStep = {
       kind: 'ramp',

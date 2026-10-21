@@ -84,6 +84,9 @@ const repRangePrescriptionSchema = z
     // program carrying `revision` would be rejected on re-import — same
     // reasoning as `rehearsal` below.
     revision: revisionSchema.optional(),
+    // Exercise-level warm-up pointer (addendum §1.3). Deliberately not checked
+    // against the catalogue — the `ActivityItem.routineId` precedent.
+    warmupId: z.string().min(1).optional(),
   })
   .strict()
 
@@ -114,6 +117,9 @@ const ladderPrescriptionSchema = z
     // program carrying `revision` would be rejected on re-import — same
     // reasoning as `rehearsal` below.
     revision: revisionSchema.optional(),
+    // Exercise-level warm-up pointer (addendum §1.3). Deliberately not checked
+    // against the catalogue — the `ActivityItem.routineId` precedent.
+    warmupId: z.string().min(1).optional(),
   })
   .strict()
   .refine((p) => p.sets === p.setPlan.length, {

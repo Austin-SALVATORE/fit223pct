@@ -46,15 +46,60 @@ export function WarmupSection({ warmup, origin = { from: 'today' } }: { warmup: 
   )
 }
 
-function WarmupStepRow({ step, origin }: { step: WarmupStep; origin: OriginState }) {
+/**
+ * One step row, shared by the session warm-up, the exercise-anchored preview
+ * (`SessionPreview`) and Workout mode (`SetScreen`) so the markup exists once.
+ *
+ * Every `kind` must have a case: with no `default`, a missing one returns
+ * `undefined` and the step silently renders nothing, so `WarmupSection.test`
+ * rendering a `drill` is the guard, not the compiler.
+ */
+export function WarmupStepRow({ step, origin }: { step: WarmupStep; origin: OriginState }) {
   switch (step.kind) {
     case 'cycle':
       return <CycleRow step={step} />
+    case 'drill':
+      return <DrillRow step={step} />
     case 'movement':
       return <MovementRow step={step} origin={origin} />
     case 'ramp':
       return <RampRow step={step} origin={origin} />
   }
+}
+
+/** A list of steps, for the places that show a warm-up that is not the session's own (exercise preview, Workout mode). */
+export function WarmupStepList({ steps, origin }: { steps: readonly WarmupStep[]; origin: OriginState }) {
+  return (
+    <ul className="space-y-3">
+      {steps.map((step, index) => (
+        <li key={index}>
+          <WarmupStepRow step={step} origin={origin} />
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+/**
+ * A prep drill that is not a Library exercise: name from
+ * `seed:warmupDrill.<id>.name`, no link, no thumbnail — the same plain shape
+ * as `CycleRow`, because there is no exercise page to go to.
+ */
+function DrillRow({ step }: { step: Extract<WarmupStep, { kind: 'drill' }> }) {
+  const { t } = useTranslation('today')
+  const { t: tSeed } = useTranslation('seed')
+  const dose =
+    step.dose.unit === 'reps-each-direction'
+      ? t('warmup.repsEachDirection', { count: step.dose.reps })
+      : t('warmup.secondsRange', { min: step.dose.min, max: step.dose.max })
+  return (
+    <div className="text-sm leading-relaxed">
+      <p className="font-medium text-ink">{tSeed(`warmupDrill.${step.id}.name`)}</p>
+      <p className="mt-0.5 text-ink-secondary" data-numeric>
+        {dose}
+      </p>
+    </div>
+  )
 }
 
 function CycleRow({ step }: { step: Extract<WarmupStep, { kind: 'cycle' }> }) {

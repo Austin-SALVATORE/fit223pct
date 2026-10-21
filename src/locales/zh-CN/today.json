@@ -1,5 +1,6 @@
 {
   "sessionPreview": {
+    "exerciseWarmupHeading": "本动作的热身",
     "perSideSuffix": " /侧",
     "rehearsalWeightReps": "技术组 · {{weight}} kg × {{reps}}"
   },
@@ -24,6 +25,8 @@
     "undo": "撤销——今天继续训练"
   },
   "warmup": {
+    "repsEachDirection_other": "每个方向 {{count}} 次",
+    "secondsRange": "{{min}}–{{max}} 秒",
     "cycleLine": "轻松骑行 · {{minutes}} 分钟",
     "reps_other": "{{count}} 次",
     "rampWeightRepsDumbbell": "每只哑铃 {{weight}} kg × {{reps}}",

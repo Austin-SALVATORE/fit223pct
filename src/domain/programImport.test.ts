@@ -549,6 +549,18 @@ describe('a coach-revision marker round-trips (T9)', () => {
   })
 })
 
+describe('an exercise-level warm-up pointer round-trips', () => {
+  it('keeps `warmupId` on a prescription, unvalidated against the catalogue', () => {
+    const program = validProgram()
+    const sessions = program.sessions.map((session, i) =>
+      i === 0 ? { ...session, items: [{ ...session.items[0], warmupId: 'not-in-any-catalogue' }] } : session,
+    )
+    const result = validateProgramImport(validProgram({ sessions }), libraryIds)
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.program.sessions[0].items[0].warmupId).toBe('not-in-any-catalogue')
+  })
+})
+
 /**
  * I2: every JSON validation error used to render raw English in all three
  * locales — `plan:import.schemaError` was a bare `{{message}}` passthrough

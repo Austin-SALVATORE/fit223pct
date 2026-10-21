@@ -311,3 +311,32 @@ describe('SessionPreview name/prescription layout', () => {
     expect(prescription.textContent).toBe('12→14→15 kg · 12/10/8')
   })
 })
+
+describe('an exercise-level warm-up (coach Q6)', () => {
+  const warmupItem: ExercisePrescription = { ...prescription('goblet-squat'), warmupId: 'mesocycle2-fullbody-hinge-warmup-v1' }
+  const render1 = (item: ExercisePrescription) =>
+    render(
+      <MemoryRouter>
+        <SessionPreview
+          session={{ ...session, items: [item] }}
+          programId="phase-1-home"
+          exerciseById={new Map([['goblet-squat', withAsset]])}
+          heading="Today"
+        />
+      </MemoryRouter>,
+    )
+
+  it('renders its steps under a sub-heading, above the exercise it belongs to', () => {
+    render1(warmupItem)
+    expect(screen.getByText('Warm up for this exercise')).toBeInTheDocument()
+    expect(screen.getByText('Bodyweight hip hinge')).toBeInTheDocument()
+    expect(screen.getByText('7.75 kg total × 8')).toBeInTheDocument()
+  })
+
+  it('renders nothing extra when the prescription carries no warmupId, or an unknown one', () => {
+    render1(prescription('goblet-squat'))
+    expect(screen.queryByText('Warm up for this exercise')).toBeNull()
+    render1({ ...prescription('goblet-squat'), warmupId: 'no-such-warmup' })
+    expect(screen.queryByText('Warm up for this exercise')).toBeNull()
+  })
+})

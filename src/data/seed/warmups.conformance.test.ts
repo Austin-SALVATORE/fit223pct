@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { seedWarmups, warmupById } from './warmups'
 import { mesocycle2Build } from './program'
 import { seedExercises } from './exercises'
-import type { LadderPrescription } from '@/domain/types'
-import type { WarmupStep } from '@/domain/warmup'
+import enSeed from '@/locales/en/seed.json'
+import type { ExercisePrescription, SessionTemplate } from '@/domain/types'
+import type { Warmup, WarmupStep } from '@/domain/warmup'
 
 /**
  * Conformance guard for the 13 Aug 2026 Full Body Restructure's warm-up
@@ -71,54 +72,178 @@ describe('warm-up catalogue conformance (transcription independent of the seed)'
     expect(seedWarmups.map((w) => w.id).sort()).toEqual(Object.keys(EXPECTED).sort())
   })
 
-  it('every exerciseId referenced by a movement or ramp step resolves to a real Library entry', () => {
+  it('every exerciseId referenced by a movement or ramp step resolves to a real Library entry, and every drill has an English name (R4)', () => {
     const libraryIds = new Set(seedExercises.map((e) => e.id))
-    const unresolved: string[] = []
-    for (const warmup of seedWarmups) {
-      for (const step of warmup.steps) {
-        if (step.kind === 'cycle') continue
-        if (!libraryIds.has(step.exerciseId)) unresolved.push(`${warmup.id}/${step.exerciseId}`)
-      }
-    }
-    expect(unresolved).toEqual([])
+    expect(checkStepReferences(seedWarmups, libraryIds, drillNamesInEnglish())).toEqual([])
   })
 
-  it('every ramp step is strictly below its session\'s first working rung, and reps fall as ramp load rises (coach rules 6 and 8)', () => {
+  it('R1: every session warm-up ramp targets the session\'s first exercise and sits below its first working load', () => {
     const sessionsWithWarmup = mesocycle2Build.sessions.filter((s) => s.warmupId)
     expect(sessionsWithWarmup.length, 'no session references a warmupId — guard is checking nothing').toBeGreaterThan(0)
 
     for (const session of sessionsWithWarmup) {
       const warmup = warmupById(session.warmupId!)
       expect(warmup, `${session.id} references ${session.warmupId}, which does not exist`).toBeDefined()
+      expect(checkSessionWarmup(session, warmup!)).toEqual([])
+    }
+  })
 
-      const firstItem = session.items[0] as LadderPrescription
-      const firstRungKg = firstItem.setPlan[0].weightKg
-      expect(firstRungKg, `${session.id}'s first item has no weighted first rung`).not.toBeNull()
-
-      const ramps = warmup!.steps.filter((s): s is Extract<WarmupStep, { kind: 'ramp' }> => s.kind === 'ramp')
-      expect(ramps.length, `${session.id}'s warm-up has no ramp step`).toBeGreaterThan(0)
-
-      for (const ramp of ramps) {
-        expect(
-          ramp.exerciseId,
-          `${session.id}'s ramp rehearses ${ramp.exerciseId}, not the session's first exercise ${firstItem.exerciseId}`,
-        ).toBe(firstItem.exerciseId)
-        expect(
-          ramp.weightKg,
-          `${session.id}: ramp load ${ramp.weightKg} kg is not below the first working rung ${firstRungKg} kg`,
-        ).toBeLessThan(firstRungKg!)
-      }
-
-      for (let i = 1; i < ramps.length; i += 1) {
-        expect(
-          ramps[i].weightKg,
-          `${session.id}: ramp ${i + 1} does not increase load over ramp ${i}`,
-        ).toBeGreaterThan(ramps[i - 1].weightKg)
-        expect(
-          ramps[i].reps,
-          `${session.id}: ramp ${i + 1} does not decrease reps as load rises over ramp ${i}`,
-        ).toBeLessThan(ramps[i - 1].reps)
+  it('R2: every exercise-level warm-up resolves, ramps only its own exercise, and sits below that exercise\'s first working load', () => {
+    // Vacuous until a prescription carries `warmupId` (Phase 4). The checker
+    // itself is exercised by the synthetic tests below, so this loop is not
+    // the only thing standing behind the rule.
+    for (const session of mesocycle2Build.sessions) {
+      for (const item of session.items) {
+        if (item.warmupId === undefined) continue
+        const warmup = warmupById(item.warmupId)
+        expect(warmup, `${session.id}/${item.exerciseId} references ${item.warmupId}, which does not exist`).toBeDefined()
+        expect(checkExerciseWarmup(item, warmup!)).toEqual([])
       }
     }
+  })
+
+  it('R3: the session\'s first item never carries an exercise-level warmupId — the session warm-up owns it', () => {
+    for (const session of mesocycle2Build.sessions) {
+      expect(session.items[0].warmupId, `${session.id}'s first item carries a warmupId`).toBeUndefined()
+    }
+  })
+})
+
+// ---- the checkers, with their own synthetic proof ---------------------------------------
+
+type Ramp = Extract<WarmupStep, { kind: 'ramp' }>
+const isRamp = (s: WarmupStep): s is Ramp => s.kind === 'ramp'
+
+/**
+ * The load a prescription's first working set uses: a ladder's first rung, or
+ * a rep-range item's `startWeightKg`. `null` when unloaded. This replaces the
+ * old `as LadderPrescription` cast, which threw a TypeError the moment a
+ * rep-range exercise opened a session.
+ */
+function firstWorkingLoadKg(item: ExercisePrescription): number | null {
+  return item.setPlan !== undefined ? (item.setPlan[0]?.weightKg ?? null) : item.startWeightKg
+}
+
+function rampOrderViolations(label: string, ramps: Ramp[]): string[] {
+  const out: string[] = []
+  for (let i = 1; i < ramps.length; i += 1) {
+    if (ramps[i].weightKg <= ramps[i - 1].weightKg) out.push(`${label}: ramp ${i + 1} does not increase load over ramp ${i}`)
+    if (ramps[i].reps >= ramps[i - 1].reps) out.push(`${label}: ramp ${i + 1} does not decrease reps over ramp ${i}`)
+  }
+  return out
+}
+
+function rampsFor(item: ExercisePrescription, ramps: Ramp[], label: string): string[] {
+  const first = firstWorkingLoadKg(item)
+  if (first === null) return ramps.length > 0 ? [`${label}: ramps need a loaded first working set`] : []
+  return [
+    ...ramps.flatMap((r) =>
+      r.exerciseId !== item.exerciseId
+        ? [`${label}: ramp rehearses ${r.exerciseId}, not ${item.exerciseId}`]
+        : r.weightKg >= first
+          ? [`${label}: ramp ${r.weightKg} kg is not below the first working load ${first} kg`]
+          : [],
+    ),
+    ...rampOrderViolations(label, ramps),
+  ]
+}
+
+/** R1 — the 13 Aug rule: the session warm-up ramps the session's first exercise, and has at least one ramp. */
+function checkSessionWarmup(session: SessionTemplate, warmup: Warmup): string[] {
+  const ramps = warmup.steps.filter(isRamp)
+  const label = session.id
+  return [...(ramps.length === 0 ? [`${label}: warm-up has no ramp step`] : []), ...rampsFor(session.items[0], ramps, label)]
+}
+
+/** R2 — an exercise-level warm-up ramps only its own exercise. Zero ramps is allowed (the Dip prep is drills only). */
+function checkExerciseWarmup(item: ExercisePrescription, warmup: Warmup): string[] {
+  return rampsFor(item, warmup.steps.filter(isRamp), `${item.exerciseId}/${warmup.id}`)
+}
+
+/** R4 — Library ids for movement and ramp steps; an English name for every drill id. */
+function checkStepReferences(warmups: readonly Warmup[], libraryIds: Set<string>, drillNames: Set<string>): string[] {
+  const out: string[] = []
+  for (const w of warmups) {
+    for (const step of w.steps) {
+      if (step.kind === 'cycle') continue
+      if (step.kind === 'drill') {
+        if (!drillNames.has(step.id)) out.push(`${w.id}/drill:${step.id} has no seed:warmupDrill.${step.id}.name`)
+      } else if (!libraryIds.has(step.exerciseId)) {
+        out.push(`${w.id}/${step.exerciseId}`)
+      }
+    }
+  }
+  return out
+}
+
+function drillNamesInEnglish(): Set<string> {
+  const drills = (enSeed as { warmupDrill?: Record<string, { name?: string }> }).warmupDrill ?? {}
+  return new Set(Object.entries(drills).filter(([, v]) => typeof v.name === 'string').map(([k]) => k))
+}
+
+describe('the warm-up rule checkers catch what they claim to (synthetic, because the real content cannot yet)', () => {
+  const ladder = (weights: number[]): ExercisePrescription => ({
+    exerciseId: 'overhead-press',
+    sets: weights.length,
+    mode: 'reps',
+    restSeconds: 120,
+    perSide: false,
+    setPlan: weights.map((weightKg) => ({ weightKg, reps: 8 })),
+    maxWeightKg: 43.75,
+    weightStepKg: 2,
+  })
+  const repRange = (start: number | null): ExercisePrescription => ({
+    exerciseId: 'reverse-lunge',
+    sets: 3,
+    mode: 'reps',
+    restSeconds: 90,
+    perSide: true,
+    range: { min: 8, max: 12 },
+    startWeightKg: start,
+    maxWeightKg: 20,
+    weightStepKg: 2,
+  })
+  const ramp = (exerciseId: string, weightKg: number, reps: number): WarmupStep => ({
+    kind: 'ramp',
+    exerciseId,
+    implement: 'barbell',
+    weightKg,
+    reps,
+  })
+  const warmup = (...steps: WarmupStep[]): Warmup => ({ id: 'synthetic', steps })
+
+  it('firstWorkingLoadKg reads a ladder\'s first rung and a rep-range item\'s start weight', () => {
+    expect(firstWorkingLoadKg(ladder([11.75, 13.75]))).toBe(11.75)
+    expect(firstWorkingLoadKg(repRange(6))).toBe(6) // the branch that used to throw
+    expect(firstWorkingLoadKg(repRange(null))).toBeNull()
+  })
+
+  it('R2 accepts a drills-only warm-up (zero ramps) and a valid ramp on its own exercise', () => {
+    const drillsOnly = warmup({ kind: 'drill', id: 'x', dose: { unit: 'seconds', min: 5, max: 10 } })
+    expect(checkExerciseWarmup(ladder([11.75]), drillsOnly)).toEqual([])
+    expect(checkExerciseWarmup(ladder([11.75]), warmup(ramp('overhead-press', 7.75, 5)))).toEqual([])
+  })
+
+  it('R2 rejects a ramp for another exercise, a ramp not below the first rung, and a non-rising pair', () => {
+    const item = ladder([11.75, 13.75])
+    expect(checkExerciseWarmup(item, warmup(ramp('reverse-lunge', 7.75, 5)))).toHaveLength(1) // wrong exercise
+    expect(checkExerciseWarmup(item, warmup(ramp('overhead-press', 11.75, 5)))).toHaveLength(1) // equal to first rung
+    expect(checkExerciseWarmup(item, warmup(ramp('overhead-press', 7.75, 5), ramp('overhead-press', 9.75, 5)))).toHaveLength(1) // reps do not fall
+  })
+
+  it('R1 works for a rep-range first item and rejects a session warm-up with no ramp or a retargeted ramp', () => {
+    const session = (first: ExercisePrescription): SessionTemplate => ({ id: 's', name: 'S', focus: 'F', items: [first] })
+    expect(checkSessionWarmup(session(repRange(6)), warmup(ramp('reverse-lunge', 2, 5)))).toEqual([])
+    expect(checkSessionWarmup(session(repRange(6)), warmup({ kind: 'cycle', minutes: 3 }))).toHaveLength(1)
+    expect(checkSessionWarmup(session(ladder([11.75])), warmup(ramp('reverse-lunge', 7.75, 5)))).toHaveLength(1)
+  })
+
+  it('R4 flags a drill with no English name and a movement that is not a Library id', () => {
+    const w = warmup({ kind: 'drill', id: 'ghost', dose: { unit: 'reps-each-direction', reps: 8 } }, { kind: 'movement', exerciseId: 'nope', reps: 5 })
+    expect(checkStepReferences([w], new Set(['goblet-squat']), new Set())).toEqual([
+      'synthetic/drill:ghost has no seed:warmupDrill.ghost.name',
+      'synthetic/nope',
+    ])
+    expect(checkStepReferences([w], new Set(['nope']), new Set(['ghost']))).toEqual([])
   })
 })

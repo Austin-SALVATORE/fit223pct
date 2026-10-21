@@ -1,5 +1,6 @@
 {
   "sessionPreview": {
+    "exerciseWarmupHeading": "Échauffement pour cet exercice",
     "perSideSuffix": " /côté",
     "rehearsalWeightReps": "Série technique · {{weight}} kg × {{reps}}"
   },
@@ -25,6 +26,9 @@
     "undo": "Annuler — la garder aujourd'hui"
   },
   "warmup": {
+    "repsEachDirection_one": "{{count}} répétition dans chaque sens",
+    "repsEachDirection_other": "{{count}} répétitions dans chaque sens",
+    "secondsRange": "{{min}} à {{max}} s",
     "cycleLine": "Vélo facile · {{minutes}} min",
     "reps_one": "{{count}} répétition",
     "reps_other": "{{count}} répétitions",

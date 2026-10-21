@@ -31,8 +31,27 @@
  * tag — a unit should be stated, not inferred.
  */
 
+/**
+ * How a `drill` is dosed. A closed union, each unit stated rather than
+ * inferred (U-1) — only the two doses the coach's Q6 needs. The seconds range
+ * is the coach's own wording ("approximately 5–10 seconds"); `cycle.minutes`
+ * is a single value only because the coach *retired* its range, which is not a
+ * general ban on ranges.
+ */
+export type DrillDose =
+  | { unit: 'reps-each-direction'; reps: number }
+  | { unit: 'seconds'; min: number; max: number }
+
+/**
+ * `drill` is a prep step that is **not a Library exercise** (coach Q6: do not
+ * force these into the browsable Library). It follows the routine-step
+ * convention: `id` is the locale key (`seed:warmupDrill.<id>.name`) and there
+ * is no Library link and no thumbnail. Like every step it has no `sets`,
+ * `weightKg` or `exerciseId`, so it still cannot reach progression.
+ */
 export type WarmupStep =
   | { kind: 'cycle'; minutes: number }
+  | { kind: 'drill'; id: string; dose: DrillDose }
   | { kind: 'movement'; exerciseId: string; reps: number; perSide?: boolean }
   | { kind: 'ramp'; exerciseId: string; implement: 'dumbbell' | 'barbell'; weightKg: number; reps: number; perSide?: boolean }
 
