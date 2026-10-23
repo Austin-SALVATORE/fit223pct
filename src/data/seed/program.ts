@@ -991,7 +991,7 @@ export const mesocycle2Build: Program = {
           role: 'accessory',
           // Coach ruling 23 Oct 2026 (inverted-row-grip): verify bar stability before
           // the first set. Content only — not a structural revision.
-          note: "Before your first set, pull on both bars the way you'll row. If either bar moves, slides or tilts, don't do this exercise — swap to the single-arm dumbbell row.",
+          note: "Before your first set, check both bars are locked at the same height, then pull on both the way you'll row. If either bar moves, slides or tilts, don't do this exercise — swap to the single-arm dumbbell row.",
         }),
         // Rep-range, not a ladder — the spec's own text ("3 working sets /
         // 10-15 reps / Bodyweight") is a rep-range verbatim. Rest changed

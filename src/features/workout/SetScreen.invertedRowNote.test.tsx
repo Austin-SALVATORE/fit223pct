@@ -20,9 +20,9 @@ const SESSION = mesocycle2Build.sessions.find((s) => s.id === 'mesocycle2-fullbo
 const ROW = SESSION.items.find((i) => i.exerciseId === 'inverted-row')!
 
 const NOTES: Record<string, string> = {
-  en: "Before your first set, pull on both bars the way you'll row. If either bar moves, slides or tilts, don't do this exercise — swap to the single-arm dumbbell row.",
-  fr: 'Avant ta première série, tire sur les deux barres comme tu vas ramer. Si une barre bouge, glisse ou bascule, ne fais pas cet exercice — remplace-le par le rowing haltère unilatéral.',
-  'zh-CN': '第一组之前，先像划船那样用力拉两根杠。如果任何一根杠移动、滑动或倾斜，就不要做这个动作——更换为单臂哑铃划船。',
+  en: "Before your first set, check both bars are locked at the same height, then pull on both the way you'll row. If either bar moves, slides or tilts, don't do this exercise — swap to the single-arm dumbbell row.",
+  fr: 'Avant ta première série, vérifie que les deux barres sont bloquées à la même hauteur, puis tire sur les deux comme tu vas ramer. Si une barre bouge, glisse ou bascule, ne fais pas cet exercice — remplace-le par le rowing haltère unilatéral.',
+  'zh-CN': '第一组之前，先确认两根杠已锁定在相同高度，再像划船那样用力拉两根杠。如果任何一根杠移动、滑动或倾斜，就不要做这个动作——更换为单臂哑铃划船。',
 }
 
 beforeAll(async () => {
@@ -39,8 +39,9 @@ describe('inverted-row bar-stability note (Full Body C)', () => {
     expect(ROW.note).toBe(NOTES.en)
   })
 
-  it('en cue 3 says "between the bars"', () => {
+  it('en cues 1 and 3 name both bars', () => {
     const cues = (enSeed.exercise as unknown as Record<string, { cues: string[] }>)['inverted-row'].cues
+    expect(cues[0]).toBe('Set both bars to the same suitable height, heels on the floor, body in one straight line')
     expect(cues[2]).toBe('Pull your torso upward between the bars without jerking')
   })
 
