@@ -47,3 +47,19 @@ Preserve historical logs and the existing carry-forward mechanism.
 **Status: Mesocycle 2 Build v3 is coach-approved for continued training and observation.**
 
 No further program development work is required unless actual training feedback identifies a specific issue.
+
+---
+
+## Follow-up — received verbatim 23 Oct 2026, pasted in chat (the review schedule)
+
+The athlete will complete the first week of Mesocycle 2 v3 before providing feedback.
+
+There is insufficient real-world training evidence to evaluate the revised program yet.
+
+No further program changes or development work are requested at this stage.
+
+We will conduct an initial review after the first complete A/B/C rotation, focusing on fatigue, exercise comfort, session duration and actual logged performance.
+
+A broader progression and recovery evaluation will follow after 3–4 completed rotations.
+
+For now, keep the program unchanged and continue normal training and logging.
