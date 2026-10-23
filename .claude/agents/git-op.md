@@ -17,8 +17,9 @@ exactly what happened.
 - **Do only what the brief names.** Not the adjacent helpful thing. If
   the brief says push, push — do not also tag, amend, or clean up.
 - **The commit message you are given is final, trailer included.** The
-  `Co-Authored-By` line names the model that wrote the message: the
-  lead's commits carry Opus, the dev's carry Sonnet. A trailer that
+  `Co-Authored-By` line names the model that wrote the message. As of
+  23 Oct the lead's commits carry Opus and the dev's carry Sonnet;
+  earlier history follows whichever model each role ran on. A trailer that
   differs from the attribution instruction in your own context is
   expected, not a conflict, so commit it as given. (23 Oct 2026: two
   runs stopped over this. The "attribution disabled" note in the global

@@ -114,12 +114,14 @@ Athlete/coach ruling `docs/programs/parallel-bars-station-ruling-2026-10-23.md`
 the athlete's **Decathlon Domyos TS 100**, two independent freestanding
 height-adjustable bars, using the athlete's own photo as a second reference
 image (`scripts/generate-images.mjs --ref`). The 21 Oct strips below drew a
-connected rectangular frame (dip, row) and an arch (knee raise). Mechanics and
+generic station, a rectangular frame for the dip and the row and an arch for
+the knee raise. The ruling rules out both: "not a connected rectangular frame
+or an arch-shaped station". Mechanics and
 a consistent structure across the three come first; branding is not drawn.
 No cue or prescription changes to suit the art. Brief:
 `docs/art/parallel-bar-station-redraw-brief-2026-10-23.md`.
 
-Landed 23 Oct, after the lead reviewed every candidate at full size. Each
+Landed 23 Oct. The lead reviewed every candidate on a contact sheet and each pick at full size. Each
 unit is an inverted-U grip on two adjustable uprights with pop-pins, and it
 stands on two foot blocks laid end to end along the bar. The footing was read
 from the photo crop enlarged 4×. Picks: `parallel-bar-dip` c1 and
@@ -128,7 +130,9 @@ from the photo crop enlarged 4×. Picks: `parallel-bar-dip` c1 and
 row put the hands about 2× shoulder width apart. The coach rules hands at
 about shoulder width; the pick measures about 1.3×, with near-parallel arms.
 Reference image: the owner's photo, cropped from a screenshot of the coach
-chat (246 × 310). A full-size file would only add cosmetic detail. The
+chat (246 × 310). The full-size original was requested and has not arrived.
+The photo follow-up asks for the base geometry to match, so if the original
+arrives, re-check the drawn feet against it. The
 `credits` line in each `metadata.json` is still the converter's hard-coded
 value; the true route is recorded in each `prompt.md`.
 

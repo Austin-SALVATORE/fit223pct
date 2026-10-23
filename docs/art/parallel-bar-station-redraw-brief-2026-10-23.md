@@ -3,7 +3,7 @@
 **Authority.**
 - `docs/programs/parallel-bars-station-ruling-2026-10-23.md`, including its photo follow-up. All three parallel-bar drawings must match the athlete's actual **Decathlon Domyos TS 100**: two independent, freestanding, height-adjustable bars. The athlete's original photo is the reference. The follow-up says: "Match the two independent freestanding bars, adjustable uprights and base geometry. Prioritize accurate exercise mechanics and consistent equipment structure across the three drawings. Exact branding and cosmetic details are unnecessary."
 - `docs/programs/inverted-row-grip-coach-ruling-2026-10-23.md`. The inverted row uses a neutral grip: body between the two bars, one hand gripping each bar, hands about shoulder width, torso pulled upward, trunk stable. Both bars sit at the same height.
-- Owner, 21 Oct: price is no constraint; wall-clock time and correctness are. Generate best-of-N concurrently, never in a serial generate-inspect-regenerate loop.
+- Owner, 21 Oct (quoted in commit 5feecf4): "I don't care the price, I need it to be generated fast and in quality." The team rule derived from it is to generate best-of-N concurrently, never in a serial generate-inspect-regenerate loop.
 - Coach: do not change any cue or prescription to suit the artwork.
 
 **What exists when this is done.**
@@ -15,7 +15,7 @@
 
 Reference file, passed with `--ref`: `/Users/austinzhang/.claude/agent-memory/asset-generator/references/domyos-ts100-thumb.png`.
 
-The lead's description of what the photo shows: 
+The lead's description of what the photo shows:
 
 Two separate, identical units stand side by side and parallel, with nothing joining them. Each unit is matte black steel tube. Its upper section is an **inverted U**: the straight horizontal top is the grip bar, and its rounded corners bend down into two legs. Those legs slide into two slightly wider **lower uprights**, one at each end of the unit. Each lower upright has a vertical row of small adjustment holes and a small silver **pop-pin knob** that locks the height. Each lower upright stands on a **low, flat, rectangular floor foot**. Copy the feet and proportions from the photo; do not invent a frame, crossbar, arch or rail between the two units. In every drawing the grip bars sit at the same height, about the woman's hip height when standing, and the two units are about her shoulder width apart.
 
