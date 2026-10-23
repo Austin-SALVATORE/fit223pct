@@ -188,7 +188,7 @@ function ItemRow({
         <ExerciseThumbnail exerciseId={exercise.id} />
         <div className="min-w-0">
           <p className="truncate font-medium text-ink">{exerciseName}</p>
-          {note && <p className="mt-0.5 truncate text-sm text-ink-tertiary">{note}</p>}
+          {note && <p className="mt-0.5 text-sm text-ink-tertiary">{note}</p>}
           <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
             {formatPrescription(tCommon, item, perSideSuffix)}
           </p>

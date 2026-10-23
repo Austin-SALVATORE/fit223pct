@@ -6,7 +6,10 @@ import i18n from '@/i18n/i18next'
 import { seedDatabase } from '@/data/seed'
 import { mesocycle2Build } from '@/data/seed/program'
 import { createWorkout } from '@/domain/workout'
+import type { Workout } from '@/domain/types'
 import enSeed from '@/locales/en/seed.json'
+import frSeed from '@/locales/fr/seed.json'
+import zhSeed from '@/locales/zh-CN/seed.json'
 import { WorkoutPage } from './WorkoutPage'
 
 /**
@@ -68,5 +71,46 @@ describe('inverted-row bar-stability note (Full Body C)', () => {
     const note = screen.getByText(NOTES[lng])
     expect(note).toBeInTheDocument()
     expect(note.className).not.toMatch(/truncate|line-clamp|overflow-hidden|whitespace-nowrap/)
+  })
+
+  it.each([
+    ['en', enSeed, 'Set both bars to the same suitable height, heels on the floor, body in one straight line', 'Pull your torso upward between the bars without jerking'],
+    ['fr', frSeed, 'Règle les deux barres à la même hauteur adaptée, talons au sol, corps bien aligné', 'Tire ton buste vers le haut, entre les barres, sans à-coup'],
+    ['zh-CN', zhSeed, '把两根杠调到相同的合适高度，脚跟着地，身体成一条直线', '把躯干向上拉到两根杠之间，不要猛拽'],
+  ])('cues 1 and 3 in %s', (_lng, seed, cue1, cue3) => {
+    const cues = (seed.exercise as unknown as Record<string, { cues: string[] }>)['inverted-row'].cues
+    expect(cues[0]).toBe(cue1)
+    expect(cues[2]).toBe(cue3)
+  })
+
+  async function showWith(change: (e: Workout['exercises'][number]) => Workout['exercises'][number]) {
+    const base = createWorkout({
+      id: 'row-variant',
+      programId: mesocycle2Build.id,
+      session: { ...SESSION, items: [ROW] },
+      date: '2026-10-23',
+      startedAt: '2026-10-23T09:00:00.000Z',
+    })
+    await db.workouts.put({ ...base, exercises: base.exercises.map(change) })
+    render(
+      <MemoryRouter initialEntries={['/workout']}>
+        <Routes>
+          <Route path="/" element={<p>TODAY PROBE</p>} />
+          <Route path="/workout" element={<WorkoutPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    await screen.findByRole('heading', { level: 1 })
+  }
+
+  it('shows on the first offered set when level 0 is skipped', async () => {
+    await showWith((e) => ({ ...e, skippedLevels: [0] }))
+    expect(screen.getByText(NOTES.en)).toBeInTheDocument()
+  })
+
+  it('does not show on a substitute exercise', async () => {
+    await showWith((e) => ({ ...e, exerciseId: 'single-arm-db-row', substitutedForId: 'inverted-row' }))
+    expect(screen.getByRole('heading', { level: 1, name: /single-arm/i })).toBeInTheDocument()
+    expect(screen.queryByText(NOTES.en)).toBeNull()
   })
 })

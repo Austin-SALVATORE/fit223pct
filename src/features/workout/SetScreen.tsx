@@ -67,6 +67,7 @@ export function SetScreen({
   // A custom slot (Add Set) is never a prescribed level — index at or past
   // prescription.sets, matching workout.ts's plannedSetIndices exactly.
   const isCustomSlot = setIndex >= prescription.sets
+  const showNote = workoutExercise.sets.length === 0 && workoutExercise.substitutedForId === undefined
   const [confirmingSkip, setConfirmingSkip] = useState(false)
   /*
     The progression *reason* is no longer read here — it moves to the rest
@@ -173,12 +174,15 @@ export function SetScreen({
           <LastTime sets={previousSets} mode={prescription.mode} />
         </p>
         {/*
-          Set 1 only. On sets 2..n it is 20px of something already read, and
-          the progression *reason* has moved to the rest screen entirely —
+          The first set actually offered, not `setIndex === 0` (a skipped
+          level 0 would hide it), and never on a substitute: a prescription
+          note describes the authored exercise (a bar-stability check or a
+          tempo for the row is a false instruction on the swap). On sets 2..n
+          it is 20px of something already read, and the progression *reason* has moved to the rest screen entirely —
           education belongs during rest, and the actionable residue is the
           delta chip in the caption below.
         */}
-        {note && setIndex === 0 && <p className="mt-1 text-sm text-ink-tertiary">{note}</p>}
+        {note && showNote && <p className="mt-1 text-sm text-ink-tertiary">{note}</p>}
         {/*
           Exercise-anchored preparation (coach Q6), shown before the first set
           that is actually offered — `sets.length === 0`, not `setIndex === 0`,
