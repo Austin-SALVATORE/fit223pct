@@ -6,12 +6,12 @@
 | Category | Core |
 | Camera | `three-quarter-front` |
 | Frames | 2 |
-| Equipment | Parallel bars (freestanding dip station) |
+| Equipment | Parallel bars (two independent freestanding units, Domyos TS 100) |
 | Status | `planned` |
 
-## Provenance (21 Oct 2026)
+## Provenance (23 Oct 2026)
 
-Generated with `gpt-image-2.5-sunburst` through the Images edits endpoint, called directly with no orchestrator. Reference image: `goblet-squat/reference.png`. Size 1536x1024, quality `max` (the highest tier documented for this model). Candidate 2 of 3 from one concurrent run of 15 requests (median 71.6 s per image). The Images API response names no snapshot, so the model is recorded as requested. Two-frame strip by the owner's ruling of 21 Oct ("Two-frame strips"). Camera three-quarter-front was chosen because it keeps both bars of the station visible; a pure side view collapses the two bars into one. A second reference image, the correct supported figure cropped from an earlier rejected attempt, was attached and labelled "the correct supported position and station".
+Redrawn on 23 Oct 2026 for the athlete's actual station, a Decathlon Domyos TS 100: two independent, freestanding, height-adjustable bars (athlete/coach ruling `docs/programs/parallel-bars-station-ruling-2026-10-23.md`; art brief `docs/art/parallel-bar-station-redraw-brief-2026-10-23.md`). Generated with `gpt-image-2.5-sunburst` through the Images edits endpoint, called directly with no orchestrator (`scripts/generate-images.mjs`, `--ref`). Two reference images were attached, in this order: the style anchor `goblet-squat/reference.png`, then the station photo, a 246 x 310 px crop of the owner's screenshot (`domyos-ts100-thumb.png`, sha256 3902d3043d2cda31...). Size 1536x1024, quality `max` (the highest tier documented for this model). Candidate 3 of 4, from the same one concurrent wave of 12 requests (dip, inverted row and supported knee raise, four candidates each, across two invocations started together; 71.6 to 77.8 s per image, wall about 77 s). Accepted by the lead on 23 Oct 2026 after a full-size review. The Images API response names no snapshot, so the model is recorded as requested. The fenced prompt below has sha256 8c444f2f578b... (sent after the script's fixed style-and-reference preface). Two-frame strip by the owner's ruling of 21 Oct ("Two-frame strips"). It replaces the 21 Oct art, which did not match the athlete's station (see the ruling). The feet (two long low blocks per unit, end to end along the unit, each centred under its upright, with a thin collar only at the top of each lower upright) are a reading of the small photo crop, confirmed by the lead's 4x upscale. The full-size original photo had not arrived at landing: re-check the feet against it when it does.
 
 ## Prompt
 
@@ -81,32 +81,36 @@ extra or missing limbs, distorted hands, any magenta on the figure, clothing or 
 
 MOVEMENT FOR THIS IMAGE:
 Exercise: Supported Knee Raise
-Camera: three-quarter-front
-Equipment: one piece of equipment only, drawn once for each figure: a freestanding, floor-standing parallel-bar dip station. It has two straight horizontal round-tube bars, parallel to each other and about shoulder-width apart, on a matte black steel frame with four feet standing on the ground line. No wall mount, no rack, no pull-up bar above, no single bar, no rails, no bench, no rings, no dumbbells, no other equipment.
+Camera: three-quarter-front, slightly elevated: the camera stands in front of her and a little to one side, a little above her hip height, and looks very slightly down, so that the gap between the two units and the feet of both units stay visible and the two units read as two separate pieces.
+Equipment: one pair of parallel bars only, drawn once for each figure. The pair is TWO SEPARATE, IDENTICAL, FREESTANDING UNITS that stand side by side, parallel to each other and about her shoulder width apart, with nothing joining them: no crossbar, no connecting frame, no arch and no rail between the two units. Each unit is matte dark charcoal steel tube. Its upper section is an inverted U: a straight horizontal grip bar whose rounded corners bend down into two legs. Those legs slide into two slightly wider lower uprights, one at each end of the unit. Each lower upright has a thin brushed-chrome collar where the leg enters it, a vertical row of small height-adjustment holes, and a small brushed-chrome locking knob. Each lower upright stands in the middle of its own low, flat, rectangular black steel foot. The feet lie lengthwise under the unit, parallel to the grip bar, and extend past the upright on both sides, so that each unit stands on two long, low feet set end to end. Copy the construction, the proportions, the uprights and the feet from the attached equipment image, but not its spacing: here the two units stand about her shoulder width apart, wide enough for her body to fit between them. Both units are set to exactly the same height: their grip bars are level with each other and at her hip height when she stands. No logo, label, sticker or text on the equipment. No connected rectangular frame, no arch-shaped station, no single bar, no pull-up bar above, no wall mount, no rack, no bench, no rings, no dumbbells, no other equipment.
+She is between the two units, one unit on each side of her body, and each unit's grip bar runs front to back in the direction she faces: in the three-quarter view each unit shows one upright nearer the camera and one farther.
 Number of frames: 2, evenly spaced left to right.
-FRAMING FOR THIS STRIP: draw EXACTLY 2 figures: one figure in the left half of the image and one figure in the right half, at exactly the same scale, each with its own complete copy of the station. Draw each figure together with its station small enough that a clear empty magenta margin of at least 8 percent of the image width surrounds it on every side. Nothing, no hand, foot, hair, bar or station foot, may touch or be cut off by the left, right, top or bottom edge of the image. A wide empty magenta gutter separates the two groups.
+FRAMING FOR THIS STRIP: draw EXACTLY 2 figures: one figure in the left half of the image and one figure in the right half, at exactly the same scale, each with its own complete pair of parallel bars (both units). Draw each figure together with its two units small enough that a clear empty magenta margin of at least 8 percent of the image width surrounds it on every side. Nothing, no hand, foot, hair, unit or foot of a unit, may touch or be cut off by the left, right, top or bottom edge of the image. A wide empty magenta gutter separates the two groups.
 
 Frames:
-1. Start position, straight-arm support. Her whole body weight is carried on her straight, locked arms, with one hand on the top of each bar; her shoulders are clearly above the bars and pressed down away from the ears, her torso upright. Her legs are straight and hang down together beneath her hips, toes pointing down; the soles of her shoes are higher than the station's feet, with open magenta visible beneath them. She is not standing.
-2. Top position. From the same straight-arm support, both knees are raised together to about hip height: the thighs near horizontal, the shins hanging down from the knees, the pelvis tilted back slightly. The arms are still straight and the torso has not swung; the soles of her shoes are still higher than the station's feet, with open magenta visible beneath them.
+1. Start position, straight-arm support. Her whole body weight is carried on her straight, locked arms, with one hand on the top of the grip bar of each unit; her shoulders are clearly above the bars and pressed down away from the ears, her torso upright. Her legs are straight and hang down together beneath her hips, toes pointing down; the soles of her shoes are higher than the tops of the units' steel feet, with open magenta visible beneath them. She is not standing.
+2. Top position. From the same straight-arm support, both knees are raised together to about hip height: the thighs near horizontal, the shins hanging down from the knees, the pelvis tilted back slightly. The arms are still straight and the torso has not swung; the soles of her shoes are still higher than the tops of the units' steel feet, with open magenta visible beneath them.
 
 TECHNIQUE — must be correct in every frame:
-- The arms stay straight and locked in both frames, with the shoulders down away from the ears and above the bars.
+- The arms stay straight and locked in both frames, with the shoulders down away from the ears and above the grip bars.
 - Her weight is on her hands and arms, never on her feet: in both frames her feet are off the ground.
 - Frame 1: the legs are straight and hanging, the feet clearly off the ground.
 - Frame 2: both knees are raised together to about hip height, thighs near horizontal, pelvis tilted back slightly.
 - No swing: the torso stays still and upright in both frames; the lift comes from the abs and hips.
-- The head stays neutral with the eyes looking ahead. Both frames show the same station at the same size from the same camera angle.
+- One hand rests on the grip bar of each unit: one hand per bar, never both on the same bar.
+- The head stays neutral with the eyes looking ahead.
+- Both frames show the same two units at the same size, the same height setting, the same spacing and the same color, from the same camera angle; the two units are never joined.
 ```
 
 ## Form checkpoints (QA)
 
 - [ ] Two frames: legs hanging straight, then both knees raised together
-- [ ] Her weight is on her hands and arms in both frames: arms straight and locked, shoulders above the bars and down away from the ears, feet off the ground
+- [ ] Her weight is on her hands and arms in both frames: arms straight and locked, shoulders above the bars and down away from the ears, feet off the ground, she is not standing
 - [ ] Frame 1: legs straight and hanging, toes pointing down
 - [ ] Frame 2: both knees raised together to about hip height, thighs near horizontal, pelvis tilted back slightly, arms still straight
 - [ ] No swing: torso upright and still in both frames
-- [ ] Station: freestanding two-bar dip station on a black steel frame with four feet; no wall mount, rack, pull-up bar, single bar, rails, bench or rings
+- [ ] Station: two separate, identical freestanding units (inverted-U grip bar on two adjustable uprights, each upright on a low flat foot), set to the same height, a little wider apart than her shoulders; nothing joins them. No connected frame, arch, single bar, pull-up bar, wall mount, rack, bench, rings, dumbbells, logo or text
+- [ ] Both frames show the same units at the same size, height, spacing and color
 - [ ] Same face, hair, wardrobe, and body proportions in both frames; both figures the same scale
 - [ ] Nothing touches or is cut off by an image edge
 - [ ] Readable as a supported knee raise at 64 px wide

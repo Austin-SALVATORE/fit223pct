@@ -2501,19 +2501,19 @@
     ],
     "frameSizes": [
       [
-        723,
+        751,
         1024
       ],
       [
-        662,
+        704,
         1024
       ]
     ],
-    "referenceHash": "4a12f9d329",
-    "thumbnailHash": "d0e755ac53",
+    "referenceHash": "736bee5fa4",
+    "thumbnailHash": "b2d13a4b0a",
     "frameHashes": [
-      "c3d588ed1c",
-      "d89e85802f"
+      "c62cf1424a",
+      "861256ae3c"
     ]
   },
   "kettlebell-swing": {
@@ -3220,19 +3220,19 @@
     ],
     "frameSizes": [
       [
-        521,
+        563,
         1024
       ],
       [
-        538,
+        581,
         1024
       ]
     ],
-    "referenceHash": "886de780dc",
-    "thumbnailHash": "ff69a35525",
+    "referenceHash": "4113daf711",
+    "thumbnailHash": "9a6967deb9",
     "frameHashes": [
-      "b82cb2eea9",
-      "09fee6daa3"
+      "15e2dee1aa",
+      "0bb4354726"
     ]
   },
   "pec-deck": {
@@ -4444,19 +4444,19 @@
     ],
     "frameSizes": [
       [
-        560,
+        553,
         1024
       ],
       [
-        574,
+        552,
         1024
       ]
     ],
-    "referenceHash": "44b23cc622",
-    "thumbnailHash": "f6edeb439e",
+    "referenceHash": "061f472273",
+    "thumbnailHash": "4fcfa11854",
     "frameHashes": [
-      "c3805a0096",
-      "b0ee148b4a"
+      "1c108faf30",
+      "1e7b3167f3"
     ]
   },
   "t-bar-row": {
