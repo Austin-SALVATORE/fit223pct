@@ -19,6 +19,7 @@
  * Usage:
  *   node scripts/generate-images.mjs --only mountain-climber --candidates 1 --out /tmp/gen
  *   node scripts/generate-images.mjs --only parallel-bar-dip --only inverted-row --out /tmp/gen
+ *   node scripts/generate-images.mjs --only parallel-bar-dip --ref ~/ts100.jpg --out /tmp/gen
  *
  * Flags:
  *   --out <dir>          required. Candidate files: <dir>/<id>__c<n>.png
@@ -27,6 +28,18 @@
  *   --model <name>       default gpt-image-2.5-sunburst
  *   --quality <q>        default max
  *   --size <WxH>         default 1536x1024
+ *   --ref <path>         optional, repeatable, one path per flag. A photo of the exact equipment to
+ *                        draw. Sent as an extra image[] part AFTER the style anchor, which stays
+ *                        first, with a note in the prompt prefix: the first image is the style
+ *                        reference, the later ones show the equipment to copy and nothing else.
+ *                        PNG, JPEG or WebP, read from the file's first bytes (not its name).
+ *                        Everything is checked before any request. Without --ref the request is
+ *                        byte-identical to what this script sent before the flag existed.
+ *
+ * Why --ref exists (athlete/coach ruling, 23 Oct 2026, docs/programs/
+ * parallel-bars-station-ruling-2026-10-23.md): the parallel-bar art must match the athlete's
+ * actual station, and the existing reference is to be passed to the illustration workflow
+ * rather than a station design being guessed.
  *
  * Failure policy: HTTP 429 (not insufficient_quota) backs off exponentially
  * with jitter, honouring Retry-After; 5xx and network errors retry twice; a
@@ -36,12 +49,25 @@
  * switches models by itself — a standing tool must not let a batch be drawn by
  * a model the owner did not choose. `--model` is the only way to change it.
  *
+ * Input-image limits behind the --ref checks (read 23 Oct 2026, not guessed): at most 16 images
+ * per request, each a png, webp or jpg file under 50MB. The count is in the Images edits
+ * reference, "Create image edit": "For GPT image models, you can provide up to 16 images"
+ * (developers.openai.com/api/reference/resources/images.md). That page states no per-image size
+ * and no formats; those are in the openai-node 7.43.0 types, resources/images.d.ts,
+ * ImageEditParamsBase.image: "each image should be a `png`, `webp`, or `jpg` file less than
+ * 50MB. You can provide up to 16 images". The image-generation guide repeats the 50MB figure
+ * under its mask requirements ("less than 50MB in size"). The style anchor is one of the 16, so
+ * at most 15 --ref. "50MB" is read as 50,000,000 bytes, the smaller reading, so a file the API
+ * might refuse is never sent. HEIC is not accepted; export it as JPEG. Magic bytes prove the
+ * type, not that the image decodes.
+ *
  * Auth: OPENAI_API_KEY env var, or ~/.fit223-openai-key. Never logged or echoed.
  * Every request's start, end, seconds and outcome is appended to
  * generation-run.log at the repo root.
  */
 
-import { readFileSync, existsSync, mkdirSync, writeFileSync, appendFileSync } from 'node:fs'
+import { readFileSync, existsSync, mkdirSync, writeFileSync, appendFileSync, statSync } from 'node:fs'
+import { createHash } from 'node:crypto'
 import { join, dirname, resolve } from 'node:path'
 import { homedir } from 'node:os'
 import { fileURLToPath } from 'node:url'
@@ -140,6 +166,111 @@ const PREFIX =
   'the specification demands, with no magenta anywhere in the artwork itself. Generate one widescreen landscape ' +
   'image following this specification exactly:\n\n'
 
+// ---- reference images: optional, repeatable --ref <path> ---------------------
+// Limits and where they were read: see the header. The style anchor is one of the 16 images.
+const MAX_INPUT_IMAGES = 16
+const MAX_IMAGE_BYTES = 50_000_000 // "less than 50MB", read as decimal MB: the smaller reading
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
+const HEIC_BRANDS = new Set(['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'hevm', 'hevs', 'mif1', 'msf1'])
+
+/**
+ * With at least one --ref, REF_NOTE goes just before PREFIX's final sentence. PREFIX itself is never
+ * edited, so a run without --ref sends exactly the bytes it always did.
+ */
+const TASK_SENTENCE = 'Generate one widescreen landscape image following this specification exactly:\n\n'
+const REF_NOTE =
+  'More than one image is attached. The FIRST attached image is the style reference described above. ' +
+  'Every attached image after the first shows the exact equipment to draw: copy its construction, ' +
+  'proportions, number of separate pieces, base and feet, and bar shape. Do NOT copy anything else from ' +
+  'those equipment images: not their photographic look, colors, lighting or background, not the room, and ' +
+  'not any person or object in them. The specification below still decides the style, colors, background, ' +
+  'figure, pose and movement. '
+if (!PREFIX.endsWith(TASK_SENTENCE)) fail('Internal: PREFIX no longer ends with TASK_SENTENCE; change them together.')
+const PREFIX_WITH_REFS = PREFIX.slice(0, -TASK_SENTENCE.length) + REF_NOTE + TASK_SENTENCE
+
+/** PNG, JPEG or WebP by the file's first bytes; null for anything else. The extension is never consulted. */
+function sniffImage(buf) {
+  const text = (from, to) => buf.toString('latin1', from, to)
+  if (buf.length >= PNG_SIGNATURE.length && buf.subarray(0, PNG_SIGNATURE.length).equals(PNG_SIGNATURE)) {
+    return { mime: 'image/png', ext: 'png' }
+  }
+  if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return { mime: 'image/jpeg', ext: 'jpg' }
+  if (buf.length >= 12 && text(0, 4) === 'RIFF' && text(8, 12) === 'WEBP') return { mime: 'image/webp', ext: 'webp' }
+  return null
+}
+
+/** An ISO-BMFF `ftyp` box with a HEIC/HEIF brand: what an iPhone photo is by default. */
+function isHeic(buf) {
+  return buf.length >= 12 && buf.toString('latin1', 4, 8) === 'ftyp' && HEIC_BRANDS.has(buf.toString('latin1', 8, 12))
+}
+
+/**
+ * Every --ref path, in order. --ref is repeatable and takes exactly one path per flag. Any other shape
+ * (no path, `--ref=path`, a second path after one flag) would quietly send fewer photos than the caller
+ * meant, so each one stops the run instead of degrading to a request without the photo.
+ */
+function refPathsFromArgs() {
+  const paths = []
+  args.forEach((a, i) => {
+    if (a.startsWith('--ref') && a !== '--ref') {
+      fail(
+        a.startsWith('--ref=')
+          ? '--ref does not take --ref=<path>; write the path as a separate argument: --ref <path>.'
+          : `Unknown option ${a.split('=')[0]}: the reference-image flag is --ref <path>.`,
+      )
+    }
+    if (a !== '--ref') return
+    const path = args[i + 1]
+    if (!path || path.startsWith('--')) fail('--ref needs a path: --ref <path>.')
+    const extra = args[i + 2]
+    if (extra && !extra.startsWith('--')) fail('--ref takes one path per flag; repeat --ref for each further image.')
+    paths.push(path)
+  })
+  return paths
+}
+
+/** Validates one --ref and returns its bytes. Every message names the path only, never the file's contents. */
+function loadRef(path) {
+  const file = resolve(path)
+  let st
+  try {
+    st = statSync(file)
+  } catch (err) {
+    const missing = err?.code === 'ENOENT' || err?.code === 'ENOTDIR'
+    return fail(`--ref ${path}: ${missing ? 'no such file' : `cannot be read (${err?.code ?? 'unknown error'})`}`)
+  }
+  if (st.isDirectory()) return fail(`--ref ${path}: is a directory, not an image file`)
+  if (!st.isFile()) return fail(`--ref ${path}: not a regular file`)
+  if (st.size >= MAX_IMAGE_BYTES) {
+    return fail(`--ref ${path}: ${(st.size / 1e6).toFixed(1)} MB is too large; each image must be under ${MAX_IMAGE_BYTES / 1e6} MB`)
+  }
+  let bytes
+  try {
+    bytes = readFileSync(file)
+  } catch (err) {
+    return fail(`--ref ${path}: cannot be read (${err?.code ?? 'unknown error'})`)
+  }
+  const kind = sniffImage(bytes)
+  if (!kind) {
+    return fail(
+      isHeic(bytes)
+        ? `--ref ${path}: HEIC/HEIF is not accepted; export it as JPEG and pass that`
+        : `--ref ${path}: not a PNG, JPEG or WebP image (the type is read from the file's first bytes, not its name)`,
+    )
+  }
+  return { path, bytes, ...kind, sha: createHash('sha256').update(bytes).digest('hex').slice(0, 12) }
+}
+
+const refPaths = refPathsFromArgs()
+if (1 + refPaths.length > MAX_INPUT_IMAGES) {
+  fail(
+    `Too many images: the style anchor plus ${refPaths.length} --ref is ${1 + refPaths.length}, and the endpoint ` +
+      `accepts at most ${MAX_INPUT_IMAGES} per request (so at most ${MAX_INPUT_IMAGES - 1} --ref).`,
+  )
+}
+/** Checked before the key is read: a bad --ref never gets as far as a secret or the network. */
+const refs = refPaths.map((p) => loadRef(p))
+
 key = loadKey()
 if (!key) fail('No API key: set OPENAI_API_KEY or create ~/.fit223-openai-key')
 // A key with whitespace, control or non-ASCII characters cannot be a real key,
@@ -153,11 +284,12 @@ if (!existsSync(ANCHOR)) fail(`Style anchor missing: ${ANCHOR}`)
 const anchor = readFileSync(ANCHOR)
 
 const prompts = new Map()
+const prefix = refs.length > 0 ? PREFIX_WITH_REFS : PREFIX
 for (const id of only) {
   const file = join(ROOT, id, 'prompt.md')
   if (!existsSync(file)) fail(`No prompt.md for "${id}" (${file})`)
   try {
-    prompts.set(id, PREFIX + extractPrompt(file))
+    prompts.set(id, prefix + extractPrompt(file))
   } catch (err) {
     fail(`${id}: ${err.message}`)
   }
@@ -205,6 +337,8 @@ async function request(id, candidate) {
     fd.append('quality', cfg.quality)
     fd.append('n', '1')
     fd.append('image[]', new Blob([anchor], { type: 'image/png' }), 'anchor.png')
+    // Equipment references ride after the anchor, which stays first. None without --ref.
+    refs.forEach((ref, i) => fd.append('image[]', new Blob([ref.bytes], { type: ref.mime }), `equipment-${i + 1}.${ref.ext}`))
     const tag = `${id} c${candidate} a${attempt} ${cfg.model}/${cfg.quality}`
     const done = (outcome, extra = '') => {
       const seconds = ((Date.now() - t) / 1000).toFixed(1)
@@ -307,7 +441,12 @@ async function pool(jobs) {
 const started = Date.now()
 const jobs = []
 for (let c = 1; c <= CANDIDATES; c++) for (const id of only) jobs.push(() => request(id, c))
-log(`run start route=${route.model}/${route.quality} ${SIZE} ${jobs.length} requests (concurrency ${CONCURRENCY}) out=${OUT}`)
+log(
+  `run start route=${route.model}/${route.quality} ${SIZE} ${jobs.length} requests (concurrency ${CONCURRENCY}) out=${OUT}` +
+    (refs.length > 0 ? ` refs=${refs.length}` : ''),
+)
+// Provenance for the redraw's prompt.md: which photo, by path, type, size and a short digest (never its bytes).
+refs.forEach((ref, i) => log(`ref ${i + 1}: ${ref.path} ${ref.mime} ${(ref.bytes.length / 1024).toFixed(0)}KB sha256=${ref.sha}`))
 await pool(jobs)
 const ok = results.filter((r) => r.outcome === 'ok')
 const secs = ok.map((r) => r.seconds).sort((a, b) => a - b)
