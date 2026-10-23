@@ -107,6 +107,31 @@ different provider, different format generation — is a content change.
 4. **Beyond** — 3D/volumetric models remain folder-per-exercise + metadata;
    the resolver contract absorbs new kinds without UI rewrites.
 
+## Art backlog — parallel-bar redraw on the owner's station (23 Oct 2026): done
+
+Athlete/coach ruling `docs/programs/parallel-bars-station-ruling-2026-10-23.md`
+(and its photo follow-up): all three parallel-bar strips are redrawn to match
+the athlete's **Decathlon Domyos TS 100**, two independent freestanding
+height-adjustable bars, using the athlete's own photo as a second reference
+image (`scripts/generate-images.mjs --ref`). The 21 Oct strips below drew a
+connected rectangular frame (dip, row) and an arch (knee raise). Mechanics and
+a consistent structure across the three come first; branding is not drawn.
+No cue or prescription changes to suit the art. Brief:
+`docs/art/parallel-bar-station-redraw-brief-2026-10-23.md`.
+
+Landed 23 Oct, after the lead reviewed every candidate at full size. Each
+unit is an inverted-U grip on two adjustable uprights with pop-pins, and it
+stands on two foot blocks laid end to end along the bar. The footing was read
+from the photo crop enlarged 4×. Picks: `parallel-bar-dip` c1 and
+`supported-knee-raise` c3 from round 1 (4 candidates each, 77 s for all 12).
+`inverted-row` c2 comes from a second round of 6, because every first-round
+row put the hands about 2× shoulder width apart. The coach rules hands at
+about shoulder width; the pick measures about 1.3×, with near-parallel arms.
+Reference image: the owner's photo, cropped from a screenshot of the coach
+chat (246 × 310). A full-size file would only add cosmetic detail. The
+`credits` line in each `metadata.json` is still the converter's hard-coded
+value; the true route is recorded in each `prompt.md`.
+
 ## Art backlog — parallel-bar movements (21 Oct 2026): done
 
 Owner ruling `docs/programs/parallel-bars-product-ruling-2026-10-21.md` §3.
@@ -118,8 +143,8 @@ all candidates requested concurrently:
 1. **`parallel-bar-dip`**: two-parallel-bar station, supported top and a
    controlled bottom. (`dip` remains the straight-bar dip.)
 2. **`inverted-row`**: replaces the provisional machine-bar art; lying
-   between the two bars of the freestanding station. The grip shown is the
-   team's depiction choice, pending the owner's word.
+   between the two bars of the freestanding station, one hand on each bar
+   (grip confirmed by the coach, 23 Oct).
 3. **`supported-knee-raise`**: straight-arm support, knees to hip height.
    At 64 px frame 1 can read as standing; frame 2 is unambiguous.
 

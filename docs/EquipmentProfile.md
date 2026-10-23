@@ -242,17 +242,28 @@ stay `bodyweight` at prescription level. It is one reusable token, not one
 per movement, and it carries no confirmation workflow and no profile field.
 Source: `docs/programs/parallel-bars-product-ruling-2026-10-21.md`.
 
+**The athlete's station** (athlete/coach ruling, 23 Oct 2026,
+`docs/programs/parallel-bars-station-ruling-2026-10-23.md`) is a **Decathlon
+Domyos TS 100**: two *independent*, freestanding, height-adjustable parallel
+bars, not a connected frame. The coach needs no further equipment details.
+
 - **`parallel-bar-dip`** — deliberately not `dip`: the existing `dip` art is
   a straight-bar dip, which the owner forbids as a stand-in. Substitute
   (coach Q5): `incline-push-up`.
-- **`inverted-row`** — the parallel-bar, freestanding variant. Its art was
-  redrawn 21 Oct on the parallel-bar station, replacing the provisional
-  machine-bar picture; its cues state the bar setup. Substitute:
+- **`inverted-row`** — the parallel-bar, freestanding variant: lying between
+  the two bars, one hand on each, neutral grip (coach ruling 23 Oct,
+  `docs/programs/inverted-row-grip-coach-ruling-2026-10-23.md`). Because the
+  bars are independent, its Full Body C prescription carries a safety note:
+  both bars locked at the same height and a pull test before the first set,
+  and if either bar moves, slides or tilts, swap to the substitute,
   `single-arm-db-row`.
 - **`supported-knee-raise`** — art landed 21 Oct. Substitute: `bicycle-crunch`.
 
-All three illustrations landed 21 Oct as two-frame strips; see
-`docs/ExerciseAssets.md`, "Art backlog — parallel-bar movements".
+All three illustrations landed 21 Oct as two-frame strips, on a generic
+station. They were redrawn on 23 Oct from the owner's photo of the TS 100
+(23 Oct ruling): two independent units, the same in all three. See
+`docs/ExerciseAssets.md`, "Art backlog — parallel-bar redraw on the owner's
+station".
 
 ## Change discipline
 
