@@ -1,0 +1,71 @@
+import { afterEach, beforeAll, describe, expect, it } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { MemoryRouter, Route, Routes } from 'react-router'
+import { db } from '@/data/db'
+import i18n from '@/i18n/i18next'
+import { seedDatabase } from '@/data/seed'
+import { mesocycle2Build } from '@/data/seed/program'
+import { createWorkout } from '@/domain/workout'
+import enSeed from '@/locales/en/seed.json'
+import { WorkoutPage } from './WorkoutPage'
+
+/**
+ * Coach ruling 23 Oct 2026 (inverted-row grip): the bar-stability check is the
+ * inverted row's prescription note on Full Body C, and it must resolve — not
+ * fall back to the English literal, not show a raw key — in every locale on
+ * set 1 of the seeded session. Cue 3 now says "between the bars".
+ */
+
+const SESSION = mesocycle2Build.sessions.find((s) => s.id === 'mesocycle2-fullbody-hipext-shoulder')!
+const ROW = SESSION.items.find((i) => i.exerciseId === 'inverted-row')!
+
+const NOTES: Record<string, string> = {
+  en: "Before your first set, pull on both bars the way you'll row. If either bar moves, slides or tilts, don't do this exercise — swap to the single-arm dumbbell row.",
+  fr: 'Avant ta première série, tire sur les deux barres comme tu vas ramer. Si une barre bouge, glisse ou bascule, ne fais pas cet exercice — remplace-le par le rowing haltère unilatéral.',
+  'zh-CN': '第一组之前，先像划船那样用力拉两根杠。如果任何一根杠移动、滑动或倾斜，就不要做这个动作——更换为单臂哑铃划船。',
+}
+
+beforeAll(async () => {
+  await seedDatabase()
+})
+
+afterEach(async () => {
+  await db.workouts.clear()
+  await i18n.changeLanguage('en')
+})
+
+describe('inverted-row bar-stability note (Full Body C)', () => {
+  it('is authored on the seeded prescription', () => {
+    expect(ROW.note).toBe(NOTES.en)
+  })
+
+  it('en cue 3 says "between the bars"', () => {
+    const cues = (enSeed.exercise as unknown as Record<string, { cues: string[] }>)['inverted-row'].cues
+    expect(cues[2]).toBe('Pull your torso upward between the bars without jerking')
+  })
+
+  it.each(Object.keys(NOTES))('shows on set 1 in %s', async (lng) => {
+    await i18n.changeLanguage(lng)
+    await db.workouts.put(
+      createWorkout({
+        id: `row-${lng}`,
+        programId: mesocycle2Build.id,
+        session: { ...SESSION, items: [ROW] },
+        date: '2026-10-23',
+        startedAt: '2026-10-23T09:00:00.000Z',
+      }),
+    )
+    render(
+      <MemoryRouter initialEntries={['/workout']}>
+        <Routes>
+          <Route path="/" element={<p>TODAY PROBE</p>} />
+          <Route path="/workout" element={<WorkoutPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    await screen.findByRole('heading', { level: 1 })
+    const note = screen.getByText(NOTES[lng])
+    expect(note).toBeInTheDocument()
+    expect(note.className).not.toMatch(/truncate|line-clamp|overflow-hidden|whitespace-nowrap/)
+  })
+})

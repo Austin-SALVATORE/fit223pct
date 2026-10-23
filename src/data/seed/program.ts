@@ -986,7 +986,13 @@ export const mesocycle2Build: Program = {
         // 3 x 8-12, bodyweight, 90 s. New Library id (no history, no marker).
         // Body angle sets the difficulty and is not recorded (open coach
         // item, not part of this change).
-        reps('inverted-row', 3, 8, 12, bodyweight, { restSeconds: 90, role: 'accessory' }),
+        reps('inverted-row', 3, 8, 12, bodyweight, {
+          restSeconds: 90,
+          role: 'accessory',
+          // Coach ruling 23 Oct 2026 (inverted-row-grip): verify bar stability before
+          // the first set. Content only — not a structural revision.
+          note: "Before your first set, pull on both bars the way you'll row. If either bar moves, slides or tilts, don't do this exercise — swap to the single-arm dumbbell row.",
+        }),
         // Rep-range, not a ladder — the spec's own text ("3 working sets /
         // 10-15 reps / Bodyweight") is a rep-range verbatim. Rest changed
         // from the 12 Aug seed (was 75) — six-question bundle §3.4.

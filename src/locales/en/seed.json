@@ -541,7 +541,7 @@
       "cues": [
         "Set the bar at a height you choose, heels on the floor, body in one straight line",
         "Your body angle sets the difficulty — flatter is harder",
-        "Pull your chest toward the bar without jerking",
+        "Pull your torso upward between the bars without jerking",
         "Keep your trunk braced; don't arch your lower back",
         "Lower slowly and keep the reps clean"
       ]
@@ -757,6 +757,9 @@
             },
             "reverse-lunge": {
               "note": "Stop with about 2–3 good reps still possible on each side."
+            },
+            "inverted-row": {
+              "note": "Before your first set, pull on both bars the way you'll row. If either bar moves, slides or tilts, don't do this exercise — swap to the single-arm dumbbell row."
             }
           }
         }

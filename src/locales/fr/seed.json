@@ -541,7 +541,7 @@
       "cues": [
         "Règle la barre à la hauteur que tu choisis, talons au sol, corps bien aligné",
         "L'angle de ton corps règle la difficulté : plus il est horizontal, plus c'est dur",
-        "Tire la poitrine vers la barre sans à-coup",
+        "Tire ton buste vers le haut, entre les barres, sans à-coup",
         "Garde le tronc gainé, ne cambre pas le bas du dos",
         "Descends lentement et garde des répétitions propres"
       ]
@@ -757,6 +757,9 @@
             },
             "reverse-lunge": {
               "note": "Arrête-toi quand il reste encore 2 à 3 bonnes répétitions possibles de chaque côté."
+            },
+            "inverted-row": {
+              "note": "Avant ta première série, tire sur les deux barres comme tu vas ramer. Si une barre bouge, glisse ou bascule, ne fais pas cet exercice — remplace-le par le rowing haltère unilatéral."
             }
           }
         }
