@@ -64,7 +64,7 @@ export function RestScreen({
    * while the set screen offers the weight you just lifted — see
    * `nextSetTarget`. Carry-forward is already baked into the stored
    * prescription at workout start (`carrySessionForward`), so this only reads.
-   * A cross-implement substitute's own starting load rides along
+   * A substitute's own starting load rides along
    * (`substituteLoad`), for the same reason: this screen must offer the number
    * the set screen will.
    */

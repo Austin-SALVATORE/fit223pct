@@ -11,11 +11,13 @@ import { completeWorkout, createWorkout, logSet } from './workout'
 import type { Exercise, LadderPrescription, Program, Workout } from './types'
 
 /**
- * Cross-implement substitution start (coach Q4, option b; Track A Phase 2.3).
- * A substitute never inherits another implement's load: it starts from its own
- * last logged weight, or from nothing, and steps in its own implement's
- * increment. This file is the domain half; `SetScreen.substitute.test.tsx` is
- * the screen half.
+ * Substitution start (coach Q4; Track A Phase 2.3, then the stopgap of 29 Oct
+ * 16:53: "every swap starts with a blank weight until the coach's set-by-set
+ * rule is built"). A substitute never inherits the slot's load: a loaded one
+ * starts empty, whatever the implement and whatever history exists; an unloaded
+ * one stays unloaded; both step in their own implement's increment. The only
+ * swap with no `SubstituteLoad` is the swap back to the authored exercise. This
+ * file is the domain half; `SetScreen.substitute.test.tsx` is the screen half.
  *
  * Negative controls, run 29 Oct (mutation applied, this file and its
  * neighbours run, restored byte-for-byte):
@@ -43,17 +45,26 @@ import type { Exercise, LadderPrescription, Program, Workout } from './types'
  *                                          trailing set ..."
  *     walk past a null-weight exposure  -> "does not walk past an exposure that
  *                                          logged no weight at all"
- *   substituteLoadFor
- *     treat every swap as incompatible
- *     (drop `from === to`)              -> "a same-implement swap keeps the
- *                                          slot's loads"
+ *   substituteLoadFor (stopgap, run 29 Oct against the same files)
+ *     restore the old early return for a same-implement swap
+ *     (`if (from === to) return undefined`)
+ *                                       -> "a same-implement swap starts blank
+ *                                          too" and "... with history"
+ *     restore the history read
+ *     (`startWeightKg: lastLoggedWeightKg(input.history, ...)`)
+ *                                       -> "history is not read ...", "a
+ *                                          same-implement swap with history",
+ *                                          "the 24 Oct swapped bench"
+ *     drop the explicit `authored.id === substitute.id` check
+ *                                       -> "swapping back to the authored
+ *                                          exercise has no substitute load"
+ *                                          (it is now the only thing that
+ *                                          returns `undefined`)
+ *     the unloaded branch removed       -> "an unloaded substitute ..."
  *   Library lists
  *     remove 'inverted-row' from the
  *     single-arm row's list             -> "single-arm-db-row offers
  *                                          inverted-row ..." (and the screen's T19)
- * A swap back to the authored exercise has no control of its own: it is the
- * same-class case, covered by the line above and by
- * "swapping back to the authored exercise ..." below.
  */
 
 // ---------------------------------------------------------------------------
@@ -334,15 +345,22 @@ describe('lastLoggedWeightKg', () => {
 describe('substituteLoadFor', () => {
   const base = { program: program([ladder('goblet-squat', 2), ladder('bent-over-row', 2.5)]), exerciseById, history: [] }
 
-  it('a same-implement swap keeps the slot\'s loads (no substitute load)', () => {
-    // DB bench -> incline DB press: both dumbbell.
+  it("a same-implement swap starts blank too, in the substitute's own increment (CQ4)", () => {
+    // DB bench -> incline DB press: both dumbbell. The slot's rung weights are not
+    // "this exercise's load" merely because the implement matches.
     expect(
       substituteLoadFor({ ...base, authored: exercise('dumbbell-bench-press'), substitute: exercise('incline-dumbbell-press') }),
-    ).toBeUndefined()
-    // Bodyweight -> bodyweight: both unloaded.
+    ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2 })
+    // Bodyweight -> bodyweight: both unloaded, and it stays that way.
     expect(
       substituteLoadFor({ ...base, authored: exercise('parallel-bar-dip'), substitute: exercise('incline-push-up') }),
-    ).toBeUndefined()
+    ).toEqual({ loaded: false, startWeightKg: null, stepKg: null })
+  })
+
+  it('a swap to a different movement on the same implement is blank (bench -> lateral raise)', () => {
+    expect(
+      substituteLoadFor({ ...base, authored: exercise('dumbbell-bench-press'), substitute: exercise('dumbbell-lateral-raise') }),
+    ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2 })
   })
 
   it('swapping back to the authored exercise has no substitute load', () => {
@@ -365,11 +383,29 @@ describe('substituteLoadFor', () => {
     ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2.5 })
   })
 
-  it('a loaded substitute with history starts from its own last logged weight', () => {
+  it('history is not read: a loaded substitute with history still starts blank (the suggestion is disabled pending Phase 2b.1)', () => {
     const history = [completed('h', '2026-10-17', 'bent-over-row', [17.75, 21.75, 25.75, 29.75])]
     expect(
       substituteLoadFor({ ...base, history, authored: exercise('single-arm-db-row'), substitute: exercise('bent-over-row') }),
-    ).toEqual({ loaded: true, startWeightKg: 29.75, stepKg: 2.5 })
+    ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2.5 })
+  })
+
+  it('a same-implement swap with history of the substitute still starts blank (incline press after the dumbbell bench)', () => {
+    const history = [completed('h', '2026-10-17', 'incline-dumbbell-press', [14, 16, 18])]
+    expect(
+      substituteLoadFor({ ...base, history, authored: exercise('dumbbell-bench-press'), substitute: exercise('incline-dumbbell-press') }),
+    ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2 })
+  })
+
+  it("the 24 Oct swapped bench (20 kg in history) does not seed the next barbell bench", () => {
+    // Recorded under the swap: exerciseId 'bench-press', substitutedForId the dumbbell bench.
+    const swapped = completed('oct24', '2026-10-24', 'bench-press', [20, 20, 20, 20])
+    const history = [
+      { ...swapped, exercises: swapped.exercises.map((e) => ({ ...e, substitutedForId: 'dumbbell-bench-press' })) },
+    ]
+    expect(
+      substituteLoadFor({ ...base, history, authored: exercise('dumbbell-bench-press'), substitute: exercise('bench-press') }),
+    ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2.5 })
   })
 
   it('an unloaded slot swapped to a loaded exercise offers the control with no suggestion', () => {

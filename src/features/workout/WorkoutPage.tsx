@@ -70,9 +70,9 @@ export function WorkoutPage() {
       workoutRepo.getCompleted(),
     ])
     // Origin is needed for note resolution; the program itself only for a
-    // cross-implement swap (`substituteLoadFor` reads its prescriptions for the
-    // substitute's increment). Workout is the source of truth for everything
-    // else Workout Mode renders.
+    // swap (`substituteLoadFor` reads its prescriptions for the substitute's
+    // increment). Workout is the source of truth for everything else Workout
+    // Mode renders.
     const program = workout ? await programRepo.getById(workout.programId) : undefined
     return {
       workout,

@@ -63,17 +63,19 @@ export function implementStepKg(
 /**
  * The last weight the athlete logged for this exercise, from the **same
  * lookup as the "Last time" line** above the weight control
- * (`previousSetsFor`), so the offered weight is by construction the weight
- * that line shows. "Valid" is: a completed workout, and a non-null weight —
- * the last non-null `weightKg` of the most recent exposure. Easier-day and
- * other-program logs count, as they do for "Last time" (CQ3).
+ * (`previousSetsFor`). "Valid" is: a completed workout, and a non-null weight —
+ * the last non-null `weightKg` of the most recent exposure; easier-day and
+ * other-program logs count, as they do for "Last time".
  *
- * **CQ2 (coach, pending):** "most recent valid logged weight" is read here as
- * ONE value — the last non-null weight of the latest exposure — and later sets
- * carry the weight just lifted. If the coach means a weight per set position
- * (rung i starts from the substitute's own set i), this function, the
- * `carried ?? startWeightKg` branch in `nextSetTarget`, and the shape of
- * `SubstituteLoad.startWeightKg` change together.
+ * **Not called while the suggestion is disabled** (owner, 29 Oct 16:53: "every
+ * swap starts with a blank weight until the coach's set-by-set rule is built").
+ * Kept, with its tests, for Phase 2b.1, which replaces it. It reads the
+ * readings the coach has since ruled against: CQ2 asks for the weight at the
+ * *same rung position*, not one value, and CQ3 excludes easier days and
+ * unrelated programs, which this includes. **CQ2 (coach): the suggestion is
+ * disabled pending 2b.1**; this function, the substitute branch of
+ * `nextSetTarget`, and the shape of `SubstituteLoad.startWeightKg` change
+ * together.
  */
 export function lastLoggedWeightKg(history: readonly Workout[], exerciseId: string): number | null {
   const withWeight = previousSetsFor(history, exerciseId).filter((set) => set.weightKg !== null)
@@ -81,13 +83,27 @@ export function lastLoggedWeightKg(history: readonly Workout[], exerciseId: stri
 }
 
 /**
- * What a swap starts from, or `undefined` when the slot's own loads still
- * apply: the two exercises are the same class of implement (DB bench ->
- * incline DB press keeps its 10 kg; whether that is right for two *different*
- * dumbbell set-ups is coach question CQ4, not decided here). A swap back to
- * the authored exercise is the degenerate case of that — an exercise is the
- * same class as itself — so it needs no check of its own (one was written and
- * removed: no mutation of it could turn a test red).
+ * What a swap starts from. **Every swap gets one, except a swap back to the
+ * authored exercise** (`undefined`: the slot's own loads apply again).
+ *
+ * **A stopgap, by the owner's ruling of 29 Oct 16:53:** "deploy now, but every
+ * swap starts with a blank weight until the coach's set-by-set rule is built."
+ * The coach's CQ2-CQ4 rulings (`docs/programs/coach-rulings-cq1-cq7-2026-10-29.md`)
+ * ask for the substitute's own valid history, matched rung by rung, for *every*
+ * substitute — same implement included (CQ4: "do not preserve the original
+ * slot's load merely because both exercises use dumbbells"). That is Phase
+ * 2b.1. Until it exists, the two readings Phase 2.3 shipped would each offer a
+ * number the rulings forbid: a single weight from the latest exposure (CQ2),
+ * which may be an easier day or another program (CQ3); and the slot's own rung
+ * weights on a same-implement swap, which put a bench's 10 kg on a lateral
+ * raise (CQ4). So a loaded substitute starts empty ("—", the athlete types
+ * it), and history is not read at all.
+ *
+ *   - an **unloaded** substitute stays unloaded: no weight control, no weight
+ *     stored (the inverted row);
+ *   - the **step** is still the substitute's own implement's, never the slot's
+ *     (CQ4: "preserve the substitute's load convention and increments");
+ *   - the ceiling warning stays off every substitute (`SetScreen`).
  *
  * `authored` is the exercise the slot was prescribed for — the prescription's
  * loads belong to it, however many substitutions have happened since.
@@ -101,14 +117,17 @@ export function substituteLoadFor(input: {
 }): SubstituteLoad | undefined {
   const { authored, substitute } = input
 
-  const from = loadImplementOf(authored)
-  const to = loadImplementOf(substitute)
-  if (from === to) return undefined
+  // Swapped back: the slot's own prescription describes this exercise again.
+  if (authored.id === substitute.id) return undefined
 
+  const to = loadImplementOf(substitute)
   if (to === null) return { loaded: false, startWeightKg: null, stepKg: null }
   return {
     loaded: true,
-    startWeightKg: lastLoggedWeightKg(input.history, substitute.id),
+    // CQ2 (coach): the suggestion is disabled pending Phase 2b.1 — blank, never
+    // `lastLoggedWeightKg(input.history, substitute.id)`. `history` stays in the
+    // input for that rework.
+    startWeightKg: null,
     stepKg: implementStepKg(input.program, input.exerciseById, to, substitute.id),
   }
 }

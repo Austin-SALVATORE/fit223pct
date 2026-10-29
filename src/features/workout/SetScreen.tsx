@@ -90,7 +90,7 @@ export function SetScreen({
    * (`domain/carryForward.ts`), so this call only ever reads it, never
    * computes from history itself.
    *
-   * `substituteLoad` is set only on a cross-implement substitute (coach Q4,
+   * `substituteLoad` is set on every substitute (coach Q4 and CQ4,
    * `substituteLoad.ts`): the slot's rung weights, step and ceiling belong to
    * the exercise that was swapped out, so none of them is offered.
    */

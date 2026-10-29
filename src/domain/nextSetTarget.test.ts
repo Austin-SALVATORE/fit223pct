@@ -307,21 +307,30 @@ describe('variantKey — how a rung differs from the default form', () => {
 })
 
 /**
- * A cross-implement substitute (coach Q4, option b). The slot's prescription
- * belongs to the exercise that was swapped out, so no weight in it is offered;
- * reps, sets and rest still follow the slot. Negative controls, run 29 Oct:
+ * A substitute (coach Q4, CQ4, CC3). The slot's prescription belongs to the
+ * exercise that was swapped out, so no weight in it is offered — and neither is
+ * the weight the athlete just lifted: "do not automatically reuse the weight
+ * from set 3 ... leave the weight for explicit athlete selection" (CC3). A
+ * substitute's weight is its own suggested start and nothing else; reps, sets
+ * and rest still follow the slot. Negative controls, run 29 Oct (mutation
+ * applied, this file and `SetScreen.substitute.test.tsx` run, restored):
  *   drop the `substitute` branch of the offered weight (the rung is offered
- *     again)                      -> the first five tests below (not the sixth)
- *   offer the rung as the start   -> "no history still has the control", "with
- *                                    history is offered its own last weight",
- *                                    "later sets ...", "a set logged with no
- *                                    weight falls back to the start"
- *   ignore the weight just lifted -> "later sets offer the weight just lifted"
+ *     again)                      -> the first six tests below (not the last two)
+ *   offer the rung as the start   -> "no history still has the control", "a
+ *                                    suggested start is offered", "later sets
+ *                                    never offer ...", "no weight change to
+ *                                    report", "a set logged with no weight"
+ *   re-introduce `carried ?? start` (the weight just lifted carries to the next
+ *     set)                        -> "later sets never offer the weight just
+ *                                    lifted", and the screen's T20b
+ *   the delta computed as for an authored exercise (no substitute guard)
+ *                                 -> "reports no weight change ...", and T20b
+ *                                    (the Rest screen says "41.75 kg lighter")
  *   `loaded` always `weightKg !== null`
  *                                 -> "a loaded substitute with no history still
  *                                    has the control"
  */
-describe('a cross-implement substitute', () => {
+describe('a substitute', () => {
   // The slot: a dumbbell ladder, 10/12/14 kg per hand.
   const slot: LadderPrescription = {
     exerciseId: 'single-arm-db-row',
@@ -357,27 +366,36 @@ describe('a cross-implement substitute', () => {
     expect(target.reps).toBe(12)
   })
 
-  it("a loaded substitute with history is offered its own last weight, never the slot's rung", () => {
+  it("a loaded substitute with a suggested start is offered that start, never the slot's rung", () => {
+    // (No production path sets one while the suggestion is disabled; Phase 2b.1 will.)
     const target = nextSetTarget(slot, [], 0, { loaded: true, startWeightKg: 29.75 })
 
     expect(target.weightKg).toBe(29.75)
     expect(target.weightKg).not.toBe(10)
   })
 
-  it('later sets offer the weight just lifted, because the rung weights mean nothing on this implement', () => {
+  it('later sets never offer the weight just lifted — set 2 is blank after set 1 (CC3)', () => {
     const lifted = [set({ weightKg: 41.75, reps: 12 })]
 
-    expect(nextSetTarget(slot, lifted, 1, { loaded: true, startWeightKg: 29.75 }).weightKg).toBe(41.75)
-    // ...and not the rung (12) or the start (29.75).
+    expect(nextSetTarget(slot, lifted, 1, { loaded: true, startWeightKg: null }).weightKg).toBeNull()
+    // And with a start, it is the start that returns — not the 41.75 just lifted.
+    expect(nextSetTarget(slot, lifted, 1, { loaded: true, startWeightKg: 29.75 }).weightKg).toBe(29.75)
   })
 
-  it('a set logged with no weight falls back to the start, not to the rung', () => {
+  it('reports no weight change when there is no weight to offer — the blank is not "lighter than" what was lifted', () => {
+    const lifted = [set({ weightKg: 41.75, reps: 12 })]
+    const target = nextSetTarget(slot, lifted, 1, { loaded: true, startWeightKg: null })
+
+    expect(target.delta?.weightKg ?? 0).toBe(0)
+  })
+
+  it('a set logged with no weight changes nothing: the offered weight is the start, whatever was logged', () => {
     const noWeight = [set({ weightKg: null, reps: 12 })]
     expect(nextSetTarget(slot, noWeight, 1, { loaded: true, startWeightKg: 29.75 }).weightKg).toBe(29.75)
     expect(nextSetTarget(slot, noWeight, 1, { loaded: true, startWeightKg: null }).weightKg).toBeNull()
   })
 
-  it('without a substitute, `loaded` is exactly "there is a weight" — today\'s rule, unchanged', () => {
+  it("without a substitute, `loaded` is exactly \"there is a weight\" — today's rule, unchanged", () => {
     expect(nextSetTarget(slot, [], 0).loaded).toBe(true)
     expect(nextSetTarget(slot, [], 0).weightKg).toBe(10)
 
@@ -391,5 +409,11 @@ describe('a cross-implement substitute', () => {
     expect(nextSetTarget(bodyweight, [], 0).loaded).toBe(false)
     expect(nextSetTarget(bodyweight, [], 0).weightKg).toBeNull()
   })
-})
 
+  it('an authored exercise still carries the weight just lifted on rep-range work (unchanged)', () => {
+    // The CC3 rule is for substitutes only: the authored rules still apply.
+    const target = nextSetTarget(repRange, [set({ weightKg: 18, reps: 10 })], 1)
+    expect(target.weightKg).toBe(18)
+    expect(target.source).toBe('carried')
+  })
+})

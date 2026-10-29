@@ -144,12 +144,14 @@ export interface NextSetTarget {
  *   still). This function reads it; it computes nothing from history.
  * @param setsThisSession sets already logged for this exercise, this session
  * @param setIndex        0-based position of the set being resolved
- * @param substitute      set only for a **cross-implement** substitute
- *   (`SubstituteLoad`, coach Q4). The slot's prescription belongs to the
- *   exercise that was swapped out, so none of its weights apply: the weight
- *   offered is the weight just lifted this session, else the substitute's own
- *   last logged weight, else none — and none at all for an unloaded movement.
- *   Reps, sets and rest still follow the slot (the coach's swap ruling).
+ * @param substitute      set for a substitute (`SubstituteLoad`, coach Q4, CQ4
+ *   and CC3). The slot's prescription belongs to the exercise that was swapped
+ *   out, so none of its weights apply, and **neither is the weight just
+ *   lifted**: the weight offered is the substitute's own suggested start and
+ *   nothing else (always none for now: the suggestion is disabled pending
+ *   Phase 2b.1), and none at all for an unloaded movement. Every set of a
+ *   loaded substitute therefore starts blank, for the athlete to choose. Reps,
+ *   sets and rest still follow the slot (the coach's swap ruling).
  */
 export function nextSetTarget(
   prescription: ExercisePrescription,
@@ -197,13 +199,17 @@ export function nextSetTarget(
   */
   const isRung = prescription.setPlan !== undefined && !isCustomSlot
   const carriedEffort = carried ? ((isSeconds ? carried.seconds : carried.reps) ?? 0) : null
-  // CQ2 (coach, pending): one start value (`substitute.startWeightKg`, from
-  // `lastLoggedWeightKg`), then the weight just lifted carries to later sets.
-  // A per-position reading would replace the start with the substitute's own
-  // set `setIndex` here.
+  // A substitute's weight comes ONLY from the substitute's own suggested start,
+  // never from the set just logged: "do not automatically reuse the weight from
+  // set 3 ... leave the weight for explicit athlete selection" (coach CC3). What
+  // the athlete just lifted is evidence of what they lifted, not a
+  // recommendation for the next rung. The start is null while the suggestion is
+  // disabled, so every set of a loaded substitute shows "—".
+  // CQ2 (coach): the suggestion is disabled pending Phase 2b.1, where this
+  // becomes the substitute's own valid weight at set `setIndex` (rung by rung).
   const weightKg = substitute
     ? substitute.loaded
-      ? (carried?.weightKg ?? substitute.startWeightKg)
+      ? substitute.startWeightKg
       : null
     : isRung
       ? prescribedWeight
@@ -224,7 +230,11 @@ export function nextSetTarget(
     against the prescription would report +1 and be a lie about the physical
     load.
   */
-  const weightDelta = (weightKg ?? 0) - (carried?.weightKg ?? 0)
+  // A substitute with no weight to offer has no weight change to report: the
+  // blank is not "lighter than" the set just logged (a "41.75 kg lighter" line
+  // on the Rest screen, after the athlete's own typed weight).
+  const weightDelta =
+    substitute && weightKg === null ? 0 : (weightKg ?? 0) - (carried?.weightKg ?? 0)
   const repsDelta = effort - (carriedEffort ?? 0)
   const delta =
     carried && (weightDelta !== 0 || repsDelta !== 0)

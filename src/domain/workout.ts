@@ -224,11 +224,11 @@ export function undoLastSet(workout: Workout): UndoResult {
  * exerciseId per slot, so mid-session provenance beyond
  * `substitutedForId` isn't representable) rather than silently misattributed.
  *
- * `substituteLoad` is what a **cross-implement** substitute starts from
- * (`substituteLoad.ts`, coach Q4); it is stored on the slot, and a swap
- * always replaces whatever an earlier swap stored — so passing none (a
- * same-implement swap, or a swap back to the authored exercise) clears it
- * rather than leaving the previous substitute's load on this one.
+ * `substituteLoad` is what a substitute starts from (`substituteLoad.ts`,
+ * coach Q4); it is stored on the slot, and a swap always replaces whatever an
+ * earlier swap stored — so passing none (a swap back to the authored
+ * exercise) clears it rather than leaving the previous substitute's load on
+ * this one.
  */
 export function swapExercise(
   workout: Workout,

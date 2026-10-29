@@ -359,26 +359,32 @@ export interface LoggedSet {
 }
 
 /**
- * What a **cross-implement** substitute starts from — coach Q4 (29 Oct 2026,
- * option b): the substitute's own most recent logged weight, otherwise no
- * suggestion; never a load copied between incompatible implements, and never
- * a weight at all for a bodyweight movement. `swapExercise` keeps the slot's
+ * What a **substitute** starts from. `swapExercise` keeps the slot's
  * prescription, so without this the substitute would inherit the authored
- * exercise's rung weights, step and ceiling (a per-dumbbell 10 kg offered on
- * a total-load barbell, dumbbell weights shown for an inverted row).
+ * exercise's rung weights, step and ceiling (a per-dumbbell 10 kg offered on a
+ * total-load barbell, dumbbell weights shown for an inverted row, a bench's
+ * 10 kg on a lateral raise). Coach Q4 and CQ4: a substitute starts from its
+ * *own* history, never a load copied from the slot, and never a weight at all
+ * for a bodyweight movement.
  *
  * Computed once, at swap time (`substituteLoad.ts`), and stored on the slot —
  * the same reason carry is stored at Start: the Set screen and the Rest
- * screen read one snapshot and cannot disagree. Absent for a same-implement
- * swap, where the slot's own loads still apply (CQ4).
+ * screen read one snapshot and cannot disagree. Present for every swap except
+ * a swap back to the authored exercise, where the slot's own loads apply again.
+ *
+ * **Stopgap (owner, 29 Oct 16:53):** until the coach's set-by-set rule is built
+ * (Phase 2b.1), every loaded substitute starts blank — `startWeightKg` is
+ * always null — whatever the implement and whatever history exists.
  */
 export interface SubstituteLoad {
   /** False for a movement that carries no load (bodyweight, band, bars): no weight control, `weightKg: null` is logged. */
   loaded: boolean
   /**
-   * The substitute's own last logged weight; null = no suggestion, the athlete
-   * chooses. CQ2 (coach, pending): a single value — "most recent valid" read as
-   * one weight, not one per set position (see `lastLoggedWeightKg`).
+   * The suggested first weight; null = no suggestion, the athlete chooses.
+   * **Always null for now**: CQ2 (coach) asks for the substitute's own valid
+   * weight at the same rung position, and that suggestion is disabled pending
+   * Phase 2b.1, where this becomes one weight per position (see
+   * `lastLoggedWeightKg`).
    */
   startWeightKg: number | null
   /** The substitute's own implement increment; null = unknown (the Stepper uses 1). Never the slot's step. */
@@ -392,7 +398,7 @@ export interface WorkoutExercise {
   sets: LoggedSet[]
   substitutedForId?: string
   /**
-   * Set only by a cross-implement swap (`SubstituteLoad`). Additive and
+   * Set by a swap to a different exercise (`SubstituteLoad`). Additive and
    * optional, like `LoggedSet.assisted` and `skippedLevels` before it: no
    * Dexie version, no migration, an older record simply has none. (v7 is
    * reserved for nutrition, `db.ts`.)
