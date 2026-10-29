@@ -52,17 +52,25 @@ Schema versions live in `db.ts` — migrations are additive, and
 destructive ones (v3 stripped RIR from stored data) are irreversible
 and need explicit owner approval.
 
-## Progression model (post-M8)
+## Progression model (carry-forward, since 28 Aug 2026)
 
-Two models coexist, chosen **per prescription** by the presence of
-`setPlan` — never inferred from equipment or role:
+Two prescription shapes, chosen **per prescription** by the presence of
+`setPlan`, never inferred from equipment or role:
 
-- **Ladder** (`setPlan: SetTarget[]`) — primary compound lifts.
-  Explicit weight×reps per set; the whole ladder steps up when every
-  rung hits target reps; holds at `maxWeightKg` and surfaces
-  `at-equipment-max` rather than faking progress.
-- **Rep-range** — bodyweight, timed, and isolation accessories.
-  Steps up when every set reaches the top of the range.
+- **Ladder** (`setPlan: SetTarget[]`): explicit weight×reps per set.
+- **Rep-range**: bodyweight, timed and isolation accessories.
+
+Neither shape auto-increments. The coach's rule, live since `99f27cf`:
+the next prescription is what the athlete actually completed at the
+previous complete exposure, set by set ("each set starts where that set
+finished last time"). This lives in `src/domain/carryForward.ts` and is
+applied once, at session start. Swapped and easier-day exposures are
+never a carry basis. Generating a load the athlete has not lifted needs
+`equipment.confirmedAt`, a structural line the coach drew, so the carry
+function takes no settings argument. `maxWeightKg` is the equipment
+ceiling. Carry-forward copies it and never clamps a logged load to it.
+The old engines that stepped ladders up and reported `at-equipment-max`
+were deleted in `99f27cf`.
 
 RIR no longer exists anywhere — UI, schema, or stored data.
 
