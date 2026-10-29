@@ -132,11 +132,14 @@ export function SetScreen({
     block and the assistance control above already apply.
   */
   const ceilingKg = prescription.maxWeightKg
-  const showAboveCeiling =
-    ceilingKg != null &&
-    weightKg !== null &&
-    weightKg > ceilingKg &&
-    workoutExercise.substitutedForId === undefined
+  // Whether this slot can ever show the warning. Stable for the life of the
+  // screen (the weight control is either there or not, and a substitute stays
+  // one), which is what lets it reserve the warning's room — see the slot below.
+  const canWarnAboveCeiling =
+    ceilingKg != null && weightKg !== null && workoutExercise.substitutedForId === undefined
+  const showAboveCeiling = canWarnAboveCeiling && weightKg > ceilingKg
+  // The gap above the log action: the reserved slot already supplies most of it.
+  const logGapClass = canWarnAboveCeiling ? 'mt-2' : 'mt-8'
 
   function handleLog() {
     onLog({
@@ -260,31 +263,6 @@ export function SetScreen({
                 unit="kg"
                 onChange={setWeightKg}
               />
-              {/*
-                29 Oct athlete feedback (docs/programs/athlete-feedback-weight-
-                cap-dip-station-program-months-2026-10-24.md, §1) supersedes the
-                21 Oct ruling that "+" is inert at the equipment ceiling. The
-                weight is no longer capped at all — the Stepper gets no `max`,
-                so "+", "−" and typed entry pass the number through as entered,
-                and the log stores it. The ceiling is the program's guidance,
-                not an input limit: above it, one static line says so and that
-                nothing is altered. It never blocks, confirms or rewrites.
-
-                `>` rather than `>=`, and not on a substitute — see
-                `showAboveCeiling`. Static text, not a live region: a second
-                region would race the Stepper's debounced announcement (see
-                `TargetCaption`), so the line is reached through the heading's
-                `aria-describedby` instead. Placed after the control, not
-                `aria-describedby` on it: the Stepper exposes no id hook for its
-                input and is not widened for this.
-              */}
-              {showAboveCeiling && (
-                <p id={aboveCeilingId} className="mt-1 text-center text-sm text-ink-secondary">
-                  {t('setScreen.aboveEquipmentCeiling', {
-                    max: formatNumber(ceilingKg, i18n.language),
-                  })}
-                </p>
-              )}
             </div>
           )}
           <div
@@ -320,11 +298,57 @@ export function SetScreen({
           showAssisted={assistable}
         />
 
+        {/*
+          29 Oct athlete feedback (docs/programs/athlete-feedback-weight-
+          cap-dip-station-program-months-2026-10-24.md, §1) supersedes the
+          21 Oct ruling that "+" is inert at the equipment ceiling. The
+          weight is no longer capped at all — the Stepper gets no `max`, so
+          "+", "−" and typed entry pass the number through as entered, and
+          the log stores it. The ceiling is the program's guidance, not an
+          input limit: above it, one static line says so and that nothing is
+          altered. It never blocks, confirms or rewrites.
+
+          `>` rather than `>=`, and not on a substitute — see
+          `showAboveCeiling`. Static text, not a live region: a second region
+          would race the Stepper's debounced announcement (see
+          `TargetCaption`), so the line is reached through the heading's
+          `aria-describedby` instead.
+
+          **A reserved slot, not a line that appears.** QA F-A (29 Oct): the
+          line used to render inside the card, and every pixel it added came
+          out of the illustration band above (it is the one flex-1 child, so
+          the stack is bottom-anchored) — "+" jumped 44px up the moment the
+          weight crossed the ceiling, and repeated taps landed on text. Below
+          700px the art is already gone and the same line pushed Log set down
+          instead. Either way the control under the thumb moved. So the room
+          is held whenever this slot can warn, and the line only fills it:
+          two lines of text-sm, which is what all three locales take from
+          360px up (measured; the French wording needs a third at 320px, where
+          the slot grows by one line). It sits between the target and the log
+          action, where its last sentence reads as the confirmation it is,
+          full width rather than inside the card, which is what keeps French
+          at two lines, and it stands in for most of the gap that used to be
+          there (`logGapClass`). Rendered only for a slot that can warn, so a
+          bodyweight, band or substituted exercise keeps exactly the layout it
+          had.
+        */}
+        {canWarnAboveCeiling && (
+          <div className="mt-2 flex min-h-10 items-center justify-center">
+            {showAboveCeiling && (
+              <p id={aboveCeilingId} className="text-center text-sm text-ink-secondary">
+                {t('setScreen.aboveEquipmentCeiling', {
+                  max: formatNumber(ceilingKg, i18n.language),
+                })}
+              </p>
+            )}
+          </div>
+        )}
+
         {confirmingSkip ? (
           // Replaces the log action in place — same pattern as SwapSheet's
           // ConfirmClear (ConfirmAction's own doc): the control the user
           // just acted on is what claims focus for the confirm step.
-          <div className="mt-8">
+          <div className={logGapClass}>
             <ConfirmAction
               heading={t('setScreen.skipConfirmHeading')}
               warning={t('setScreen.skipConfirmWarning')}
@@ -344,7 +368,7 @@ export function SetScreen({
               onClick={handleLog}
               whileTap={reducedMotion ? undefined : { scale: 0.94 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              className="mt-8 w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg"
+              className={`${logGapClass} w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg`}
             >
               {isSeconds ? t('setScreen.logHold') : t('setScreen.logSet')}
             </motion.button>

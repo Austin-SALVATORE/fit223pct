@@ -31,6 +31,8 @@ import { WorkoutPage } from './WorkoutPage'
  *     exercise that was swapped out (T4)
  *   - its `{{max}}` is formatted for the locale (T6)
  *   - the heading is described by it only while it renders (T7)
+ *   - it fills room that is already there, so showing and hiding it moves
+ *     nothing under the thumb (T9, with the caveat below)
  * The carry-forward half (a logged load above the ceiling carries
  * verbatim, and the ceiling stays as authored) is T5, in
  * `domain/carryForward.test.ts`.
@@ -41,14 +43,17 @@ import { WorkoutPage } from './WorkoutPage'
  *   re-add `max={prescription.maxWeightKg ?? undefined}` to the weight
  *     Stepper             -> T1 (45 shows 38kg), T2 ("+" gives 38kg, i.e.
  *                            it LOWERS the weight), T3, T4 (27.75 shows
- *                            20kg — the 24 Oct defect), T7 stepping
+ *                            20kg — the 24 Oct defect), T7 stepping, T9 slot
  *   `weightKg > ceilingKg` becomes `>=`
  *                         -> T3 (a warning at exactly the ceiling), and
- *                            T7 stepping, which also starts on the boundary
+ *                            T7 stepping and T9 slot, which also start on
+ *                            the boundary
  *   delete the warning's JSX (id still in aria-describedby)
- *                         -> T1, T2, T3, T6 fr, T6 zh-CN, T7 above, T7 stepping
+ *                         -> T1, T2, T3, T6 fr, T6 zh-CN, T7 above, T7
+ *                            stepping, T9 slot
  *   drop the `substitutedForId === undefined` clause
- *                         -> T4 only (warns against the dumbbell's 20)
+ *                         -> T4 (warns against the dumbbell's 20) and T9
+ *                            substitute (it would also reserve the slot)
  *   remove `{{max}}` from the fr value
  *                         -> T6 fr only
  *   remove `{{max}}` from the zh-CN value
@@ -63,6 +68,23 @@ import { WorkoutPage } from './WorkoutPage'
  * (fr: `fr has the same key families as en`), and does NOT catch `{{max}}`
  * being dropped from a value — it passed 60/60 under the fr mutation above.
  * T6 is the only guard for that.
+ *
+ * **T9 is a structural proxy, not a measurement.** jsdom has no layout, so
+ * it cannot see a 44px jump; it pins the thing that prevents one — the
+ * warning is rendered into a slot that already exists directly above Log
+ * set, and a slot that cannot warn has none. The pixels were measured in a
+ * browser (QA F-A, 29 Oct; re-measured after the fix: "+" and Log set at
+ * 0px displacement at 375x812, 740, 701, 667 and 568, en/fr/zh-CN). The
+ * 375x812 tap sequence at one fixed point went 38, 40, 40, 40 before the fix
+ * and 38, 40, 42, 44 after it. Controls for T9, run 29 Oct:
+ *   render the slot only while the warning shows
+ *                         -> T9 slot (nothing above Log set to be empty)
+ *   drop `min-h-10` from the slot
+ *                         -> T9 slot (the reservation is gone)
+ *   render the slot for every exercise (ignore canWarnAboveCeiling there)
+ *                         -> T9 substitute and T9 no-ceiling
+ *   make the gap above Log set `mt-2` for every exercise
+ *                         -> T9 substitute and T9 no-ceiling
  */
 
 const WARNING_STEM = "Above this program's"
@@ -260,5 +282,51 @@ describe('what a screen reader hears on landing', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Decrease Weight' }))
     expect(headingDescription().ids).toHaveLength(2)
     expect(headingDescription().resolved).toBe(true)
+  })
+})
+
+describe('the warning does not move the controls (QA F-A)', () => {
+  it('T9 slot: the warning fills a slot that is already there, directly above Log set', async () => {
+    await start(goblet([36, 36], 38))
+    const logSet = screen.getByRole('button', { name: 'Log set' })
+
+    // Below the ceiling: the slot exists, reserves room, and is empty.
+    const slot = logSet.previousElementSibling as HTMLElement
+    expect(slot).toBeEmptyDOMElement()
+    expect(slot.className).toMatch(/\bmin-h-/)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
+    expect(weightText()).toBe('40kg')
+
+    // Above it: the same node, now holding the warning.
+    expect(logSet.previousElementSibling).toBe(slot)
+    expect(slot).toContainElement(screen.getByText(warningEn('38')))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Decrease Weight' }))
+    expect(logSet.previousElementSibling).toBe(slot)
+    expect(slot).toBeEmptyDOMElement()
+  })
+
+  it('T9 substitute: a slot that can never warn reserves nothing', async () => {
+    await start(dumbbellBench(), 'Dumbbell bench press')
+    await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
+    await userEvent.click(
+      within(await screen.findByRole('dialog')).getByRole('button', { name: /Barbell bench press/ }),
+    )
+    await screen.findByRole('heading', { name: 'Barbell bench press' })
+
+    const logSet = screen.getByRole('button', { name: 'Log set' })
+    expect(logSet).toHaveClass('mt-8')
+    // What sits above Log set is the target caption, not an empty slot.
+    expect(logSet.previousElementSibling).not.toBeEmptyDOMElement()
+  })
+
+  it('T9 no-ceiling: nor does an exercise with no ceiling', async () => {
+    await start({ ...goblet([36, 36], 38), maxWeightKg: null })
+
+    const logSet = screen.getByRole('button', { name: 'Log set' })
+    expect(logSet).toHaveClass('mt-8')
+    expect(logSet.previousElementSibling).not.toBeEmptyDOMElement()
   })
 })

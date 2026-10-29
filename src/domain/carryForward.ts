@@ -407,8 +407,10 @@ export function isCarryBasisWorkout(workout: Workout): boolean {
  * custom 4th set made the screen say "of 4" while `workoutPosition`, which
  * walks the stored `prescription.sets`, moved on after set 3. Set 4 was
  * counted and never offered. Storing the carried plan makes position, counts,
- * summary and history one source by construction. The render-time carry stays
- * as a re-application, which is idempotent over the same exposure.
+ * summary and history one source by construction. Nothing carries at render
+ * time any more: `SetScreen` and `RestScreen` read the stored, already carried
+ * prescription as it is. Carrying over the same exposure a second time would
+ * still change nothing (the "re-applying carry" test), but no code does it.
  */
 export function carrySessionForward(
   items: readonly ExercisePrescription[],
