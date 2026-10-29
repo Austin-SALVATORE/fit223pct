@@ -7,7 +7,7 @@ import { WarmupStepList } from '@/features/today/WarmupSection'
 import { warmupById } from '@/data/seed/warmups'
 import { ConfirmAction } from '@/ui/ConfirmAction'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
-import { nextSetTarget } from '@/domain/nextSetTarget'
+import { nextSetTarget, weightPressStartKg } from '@/domain/nextSetTarget'
 import { showsPerSidePill } from '@/domain/substitutions'
 import { plannedSetIndices } from '@/domain/workout'
 import { useExerciseName } from '@/i18n/seedExercise'
@@ -271,6 +271,11 @@ export function SetScreen({
                 // when that is unknown — never the slot's (the other implement's).
                 step={substituteLoad ? (substituteLoad.stepKg ?? 1) : (prescription.weightStepKg ?? 1)}
                 min={0}
+                // On a blank substitute weight, a deliberate "+" or "−" starts
+                // from the weight last logged for this exercise this session.
+                // The display stays "—": only the press materialises it (never
+                // `value`, which would be a visible pre-fill — coach CC3).
+                startFrom={weightPressStartKg(target, workoutExercise.sets, substituteLoad)}
                 unit="kg"
                 onChange={setWeightKg}
               />

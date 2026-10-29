@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { nextSetTarget } from './nextSetTarget'
+import { nextSetTarget, weightPressStartKg } from './nextSetTarget'
 import type { LadderPrescription, LoggedSet, RepRangePrescription } from './types'
 
 /**
@@ -417,3 +417,71 @@ describe('a substitute', () => {
     expect(target.source).toBe('carried')
   })
 })
+
+/**
+ * Where a "+" or "−" press lands on a blank weight (owner, 29 Oct 17:02) — a
+ * convenience that is not a recommendation (coach CC3). Only a loaded substitute
+ * whose target weight is blank, and only from a weight logged this session.
+ * Negative controls, run 29 Oct (mutation applied, this file and
+ * `SetScreen.substitute.test.tsx` run, restored):
+ *   the first logged set instead of the most recent (`findLast` -> `find`)
+ *                       -> "the most recent, not the first" and, on the screen,
+ *                          "the most recent set, not the first"
+ *   the `target.weightKg !== null` condition dropped
+ *                       -> "nothing when the target already has a weight"
+ *   `findLast((set) => set.weightKg !== null)` -> `.at(-1)` (a blank set erases it)
+ *                       -> "skips a set logged blank" and, on the screen, the
+ *                          blank-set test
+ * Not controls, and why: the `substitute === undefined` and `!target.loaded`
+ * conditions cannot be seen by any test (both run: all green). For an authored
+ * exercise `loaded` is defined as `weightKg !== null`, so a loaded authored
+ * exercise never has a blank target and the weight condition already returns
+ * nothing; an unloaded substitute has no weight control and logs no weight, so
+ * `findLast` already finds none. A first attempt at the second one, a unit test
+ * giving an unloaded substitute a logged 41.75, did turn red under the
+ * mutation, and was discarded: that input cannot occur (nothing can log a
+ * weight on an unloaded substitute), so it was a control invented to make the
+ * condition look guarded. The conditions are kept because they state the
+ * owner's scope (substitutes only, loaded only) rather than leave it to that
+ * coincidence.
+ */
+describe('weightPressStartKg', () => {
+  const blankLoaded = { loaded: true, weightKg: null }
+  const loadedSub = { loaded: true }
+  const lifted = (weightKg: number | null, setIndex = 0) => set({ weightKg, setIndex })
+
+  it("is the last weight logged for this exercise this session", () => {
+    expect(weightPressStartKg(blankLoaded, [lifted(41.75)], loadedSub)).toBe(41.75)
+  })
+
+  it('the most recent, not the first', () => {
+    expect(weightPressStartKg(blankLoaded, [lifted(40, 0), lifted(42, 1)], loadedSub)).toBe(42)
+    // ...and not the heaviest.
+    expect(weightPressStartKg(blankLoaded, [lifted(44, 0), lifted(42, 1)], loadedSub)).toBe(42)
+  })
+
+  it('skips a set logged blank: the last weight is still the last weight', () => {
+    expect(weightPressStartKg(blankLoaded, [lifted(41.75, 0), lifted(null, 1)], loadedSub)).toBe(41.75)
+  })
+
+  it('is nothing before any weight has been logged — no history, no rung, no pre-swap weight', () => {
+    expect(weightPressStartKg(blankLoaded, [], loadedSub)).toBeUndefined()
+    expect(weightPressStartKg(blankLoaded, [lifted(null)], loadedSub)).toBeUndefined()
+  })
+
+  it('is nothing when the target already has a weight', () => {
+    expect(weightPressStartKg({ loaded: true, weightKg: 29.75 }, [lifted(41.75)], loadedSub)).toBeUndefined()
+  })
+
+  it('is nothing for an unloaded substitute, whose sets carry no weight', () => {
+    expect(weightPressStartKg({ loaded: false, weightKg: null }, [lifted(null), lifted(null, 1)], { loaded: false })).toBeUndefined()
+  })
+
+  it('is nothing for an authored exercise, whatever it carries', () => {
+    expect(weightPressStartKg({ loaded: true, weightKg: 12 }, [lifted(10)], undefined)).toBeUndefined()
+    // The real target of an authored ladder: it has a weight, so no press start.
+    const target = nextSetTarget(ladder, [lifted(20)], 1)
+    expect(weightPressStartKg(target, [lifted(20)], undefined)).toBeUndefined()
+  })
+})
+

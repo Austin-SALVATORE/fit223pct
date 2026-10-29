@@ -259,3 +259,37 @@ export function nextSetTarget(
     ...(assisted ? { assisted: true as const } : {}),
   }
 }
+
+/**
+ * Where a deliberate "+" or "−" press lands on a **blank** weight, for the
+ * weight Stepper's `startFrom` (owner, 29 Oct 17:02: "+ or − starts from my last
+ * weight in that slot; the screen stays blank until I press").
+ *
+ * **A convenience, not a recommendation** (coach CC3: "the UI may make manual
+ * selection convenient, but should not silently turn that observation into a
+ * recommendation"). The display stays "—"; nothing is pre-filled, and typing
+ * still starts from an empty field. Only a press materialises the number —
+ * the Stepper's shipped distinction that revealing a control is not choosing,
+ * but pressing it is. Without this the first press gives 0 kg.
+ *
+ * Only for a **loaded substitute whose target weight is blank**, and only from
+ * what the athlete actually logged for this exercise in this workout: the last
+ * set that carries a weight (a set logged blank has none to offer). A swap
+ * clears the slot's sets, so before the first set after a swap there is nothing
+ * to start from and the press gives 0, as before — no pre-swap weight, no
+ * history, no rung (CC3 forbids a suggestion, and this must never become a
+ * visible pre-fill).
+ *
+ * An authored exercise can never satisfy the conditions: its `loaded` is
+ * exactly "it has a weight", so a loaded authored exercise never has a blank
+ * target. It is unchanged by construction.
+ */
+export function weightPressStartKg(
+  target: Pick<NextSetTarget, 'loaded' | 'weightKg'>,
+  setsThisSession: readonly LoggedSet[],
+  substitute: Pick<SubstituteLoad, 'loaded'> | undefined,
+): number | undefined {
+  if (substitute === undefined || !target.loaded || target.weightKg !== null) return undefined
+  return setsThisSession.findLast((set) => set.weightKg !== null)?.weightKg ?? undefined
+}
+

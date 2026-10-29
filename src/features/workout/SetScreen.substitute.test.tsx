@@ -94,6 +94,36 @@ import { WorkoutPage } from './WorkoutPage'
  *                                      -> T19, T19b, the Rest screen per-side
  *                                         test, and the Library test
  *
+ * The first press on a blank weight (OD-e, owner 29 Oct 17:02)
+ *   pre-fill `value` with the start instead of passing `startFrom`
+ *                                      -> the display-is-blank assertion in the
+ *                                         first "+" test, and the "−" test
+ *   the `startFrom` prop removed       -> every press test (the press gives 0)
+ *   the first logged set instead of the most recent (`findLast` -> `find`)
+ *                                      -> "the most recent set, not the first"
+ *                                         and the helper's unit test
+ *   a blank set allowed to erase the last weight (`findLast(...)` -> `.at(-1)`)
+ *                                      -> the blank-set test and a unit test
+ *   the `target.weightKg !== null` condition dropped
+ *                                      -> the helper's unit test only (on the
+ *                                         screen `startFrom` is ignored once the
+ *                                         value is not blank)
+ *   the `!target.loaded` condition dropped
+ *                                      -> NOTHING (all green): an unloaded
+ *                                         substitute has no weight control and
+ *                                         logs no weight, so there is no weight
+ *                                         to start from either way
+ *   the `substitute === undefined` condition dropped
+ *                                      -> NOTHING can see it. A loaded authored
+ *                                         exercise never has a blank target (its
+ *                                         `loaded` is `weightKg !== null`), so the
+ *                                         weight condition already returns nothing.
+ *                                         No control was invented: the condition
+ *                                         states the owner's scope (substitutes
+ *                                         only) rather than leave it to that
+ *                                         coincidence. The authored test above
+ *                                         pins the outcome, not the condition.
+ *
  * The per-side pill — the rule is `showsPerSidePill`: the slot's claim, which a
  * swap may hide but never add (the first 2.3 build also added it; the
  * independent check found it)
@@ -316,6 +346,95 @@ describe('a bodyweight substitute (Dumbbell row -> Inverted row)', () => {
     expect(stored.substitutedForId).toBe('single-arm-db-row')
     expect(stored.sets[0].weightKg).toBeNull()
     expect(stored.sets[0].reps).toBe(12)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// A press on a blank weight starts from the weight last logged (owner 29 Oct 17:02)
+// ---------------------------------------------------------------------------
+
+/** Log the set on screen, skip the rest, and wait for the next set's screen. */
+async function logAndSkipRest(nextSet: string) {
+  await logCurrentSet()
+  await userEvent.click(await screen.findByRole('button', { name: 'Skip' }))
+  await screen.findByText(nextSet)
+}
+
+describe('a "+" or "−" on a blank weight of a substitute (OD-e)', () => {
+  async function swappedAndLogged(weights: string[]) {
+    await start(dumbbellRow())
+    await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
+    await swapTo(/Barbell bent-over row/, 'Barbell bent-over row')
+    for (const [index, weight] of weights.entries()) {
+      if (weight !== '') await typeWeight(weight)
+      await logAndSkipRest(`Set ${index + 2} of 3`)
+    }
+  }
+
+  it('"+" gives the weight last logged — exactly — and the display stays blank until the press; the next "+" steps in the substitute\'s own step', async () => {
+    await swappedAndLogged(['41.75'])
+
+    // Blank, no weight in the caption: nothing is pre-filled or recommended.
+    expect(weightText()).toBe('—')
+    expect(screen.getByText('Rung 2 of 3 · 10 reps')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
+    // Not 41.75 + a step, and not 0.
+    expect(weightText()).toBe('41.75kg')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
+    expect(weightText()).toBe('43.75kg')
+  })
+
+  it('"−" gives the same weight, not a step below it', async () => {
+    await swappedAndLogged(['41.75'])
+    expect(weightText()).toBe('—')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Decrease Weight' }))
+    expect(weightText()).toBe('41.75kg')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Decrease Weight' }))
+    expect(weightText()).toBe('39.75kg')
+  })
+
+  it('the most recent set, not the first: 40 then 42, and set 3 starts from 42', async () => {
+    await swappedAndLogged(['40', '42'])
+
+    expect(weightText()).toBe('—')
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
+    expect(weightText()).toBe('42kg')
+  })
+
+  it('a set logged blank does not erase the last weight: 41.75, then nothing, then set 3 starts from 41.75', async () => {
+    await swappedAndLogged(['41.75', ''])
+
+    expect(weightText()).toBe('—')
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
+    expect(weightText()).toBe('41.75kg')
+  })
+
+  it('straight after the swap there is nothing to start from, so the press gives 0, as before — no pre-swap weight, no rung, no history', async () => {
+    // History exists for the bent-over row, and the slot's rung is 10: neither is used.
+    await putHistory('bent-over-row', '2026-10-17', [17.75, 21.75, 25.75, 29.75], dumbbellRow())
+    await start(dumbbellRow())
+    await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
+    await swapTo(/Barbell bent-over row/, 'Barbell bent-over row')
+
+    expect(weightText()).toBe('—')
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
+    expect(weightText()).toBe('0kg')
+  })
+
+  it('an authored exercise is unchanged: it offers its own rung and steps from it', async () => {
+    await start(dumbbellRow())
+    await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
+    expect(weightText()).toBe('10kg')
+    await logAndSkipRest('Set 2 of 3')
+
+    // Set 2 is its own rung (12), not the weight just logged (10), and a press steps from it.
+    expect(weightText()).toBe('12kg')
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
+    expect(weightText()).toBe('14kg')
   })
 })
 
