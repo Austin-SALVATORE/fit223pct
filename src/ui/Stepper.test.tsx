@@ -743,24 +743,45 @@ describe('an absent value renders as nothing, and a press supplies one', () => {
  *
  * **What this test can and cannot see.** jsdom has no layout. It sees class
  * tokens, no pixels: it pins the *cause* not coming back (a content-sized,
- * minimum-width value cell), that the editor takes the display's width, that the
- * step buttons cannot be squeezed, and that the row is capped at its container.
- * It cannot see the widths being right, the font, wrapping, or the retargeted
- * click itself. Those were measured in Chromium with touch emulation at 375px
- * (the table in the report that came with this change: "+" at 312 for every
- * value, "—" to 41.75 in en and fr, 9.75 to 11.75, reps 9 to 10, and the form
- * variant), and QA's F1 repro is the check that counts.
+ * minimum-width value cell), that the editor's width token is the display's plus
+ * 0.5rem, that the step buttons carry `shrink-0`, and that the row carries
+ * `max-w-full`. It cannot see the widths being right, the font, wrapping, whether
+ * those classes actually keep a narrow row from squeezing or moving the buttons,
+ * or the retargeted click itself. Those were measured in a browser (below), and
+ * QA's F1 repro is the check that counts.
  *
- * Negative controls, run 30 Oct (mutation applied, this describe run, restored):
+ * **Measured**, Chromium with touch emulation, 375x812, a tap at the "+" or "−"
+ * centre as it was before the press. x is the button's centre in px; "47821a0"
+ * is the Stepper before the fix, "fix" is this change. Every button is 44x44
+ * after the fix; the page is 375px wide in every row.
+ *
+ *   case (value)                     | 47821a0: + x        − x           | fix: + x      − x
+ *   weight "—" -> 41.75 (+)          | 281.5 -> 293.5   93.5 -> 81.5 (*) | 312 -> 312   63 -> 63
+ *   weight "—" -> 41.75 (−)          | 281.5 -> 293.5   93.5 -> 81.5 (*) | 312 -> 312   63 -> 63
+ *   fr weight "—" -> 41,75 (+)       | 281.5 -> 293.5   93.5 -> 81.5 (*) | 312 -> 312   63 -> 63
+ *   weight 9.75 -> 11.75 (+)         | 295.4 -> 314.5   79.6 -> 60.5     | 312 -> 312   63 -> 63
+ *   weight 11.75 -> 9.75 (−)         | 314.5 -> 295.4   60.5 -> 79.6     | 312 -> 312   63 -> 63
+ *   weight 38 -> 40, 41.75 -> 43.75  | no movement (281.5 / 314.5)       | 312 -> 312   63 -> 63
+ *   reps 9 -> 10 (+), 10 -> 9 (−)    | 281.5 -> 281.5   93.5 -> 93.5     | 312 -> 312   63 -> 63
+ *   editor closed vs open (weight)   | 93.5 / 281.5 vs 81.5 / 293.5      | 63 / 312 both
+ *   form weight "—" -> 70 (+)        | 179 -> 183.1     63 -> 63         | 235 -> 235   63 -> 63
+ *   form weight 99.9 -> 100 (+)      | 209.8 -> 202.5   63 -> 63         | 235 -> 235   63 -> 63
+ *   form waist 99.5 -> 100 (+)       | 215.3 -> 207.9   63 -> 63         | 235 -> 235   63 -> 63
+ *
+ *   (*) at 47821a0 the press did not apply: the click landed on the display and
+ *   the editor opened with 41.75 selected (so these x are the editor's). Under
+ *   the fix the same tap applies 41.75 and no editor opens, in en and in fr.
+ *
+ * Negative controls, run 29 Oct (mutation applied, this describe run, restored):
  *   `w-[12.125rem]` back to `min-w-32` on the lg output -> the lg "fixed width" and "editor" tests
  *   `w-[7rem]` back to `min-w-14` on the form output   -> the form "fixed width" and "editor" tests
  *   the editor back to `w-40`                          -> "the editor takes the display's width"
- *   `shrink-0` removed from the step buttons           -> "the step buttons keep their size"
- *   `max-w-full` removed from the row                  -> "the row is capped at its container"
+ *   `shrink-0` removed from the step buttons           -> "step buttons carry h-11, w-11 and shrink-0"
+ *   `max-w-full` removed from the row                  -> "the row carries max-w-full"
  * Measured in the browser against the same mutations: the cell back to a minimum
  * moves "+" 281.5 -> 314.5 and opens the editor; the narrower editor shifts both
  * buttons 12px when it opens; without `shrink-0` the buttons render 43px wide at
- * 375.
+ * 375. (`max-w-full` removed was not measured in the browser.)
  */
 describe('the step buttons do not move when the value changes width', () => {
   const widthRem = (classes: string): number | null => {
@@ -801,7 +822,7 @@ describe('the step buttons do not move when the value changes width', () => {
     expect(editor).toBe((display ?? 0) + 0.5)
   })
 
-  it('the step buttons keep their size: they cannot be squeezed by a narrow row', () => {
+  it('step buttons carry h-11, w-11 and shrink-0 (that a narrow row cannot squeeze them is measured in a browser, not here)', () => {
     renderStepper()
     for (const name of ['Decrease Weight', 'Increase Weight']) {
       const button = screen.getByRole('button', { name })
@@ -811,7 +832,7 @@ describe('the step buttons do not move when the value changes width', () => {
     }
   })
 
-  it('the row is capped at its container, so a narrow screen compresses the cell and not the buttons', () => {
+  it('the row carries max-w-full (what that does on a narrow screen is measured in a browser, not here)', () => {
     renderStepper()
     const row = screen.getByRole('button', { name: 'Decrease Weight' }).parentElement
     expect(row?.className).toMatch(/\bmax-w-full\b/)
