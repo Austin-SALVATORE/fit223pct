@@ -1,4 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks'
+import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router'
 import { programRepo, settingsRepo, workoutRepo } from '@/data/repositories'
@@ -113,7 +114,15 @@ export function PlanPage() {
 
   const days = projectSchedule(program, workouts, today, scheduleShift)
   const hasProjectedDays = days.some((d) => d.projected)
-  const weeks = groupByWeek(days)
+  const months = groupByMonth(days)
+  // Which month opens on mount — the first month that is not already over,
+  // else the last one. That is today's month while today is inside the
+  // phase, the first month for a phase that has not started, the last for
+  // one that has finished, and the next month when today's own month has
+  // no rows. Exactly one month is open; open state is per-mount, not
+  // remembered (RestScreen's disclosure makes the same choice).
+  const todayMonth = todayKey.slice(0, 7)
+  const defaultOpenMonth = (months.find((m) => m.month >= todayMonth) ?? months.at(-1))?.month
 
   return (
     <div>
@@ -134,31 +143,104 @@ export function PlanPage() {
         </p>
       )}
 
-      {weeks.map((week) => {
-        const weekLabel = t('weekOf', { weekStart: formatShortDate(week.weekStart, locale) })
-        return (
-          // A12 (docs/review-backlog.md, re-measured 30 Jul "STILL
-          // OPEN"): this wrapper used to carry its own aria-label,
-          // duplicating GroupedList's own aria-label={weekLabel} below
-          // — a second, redundant named region with no heading of its
-          // own to point aria-labelledby at, so the section's name is
-          // simply dropped; the list stays the one named element.
-          <section key={week.weekStart} className="mt-6">
-            <GroupedList label={weekLabel}>
-              {week.days.map((day) => (
-                <DayRow
-                  key={day.date}
-                  day={day}
-                  locale={locale}
-                  programId={program.id}
-                  programOrigin={program.origin}
-                />
-              ))}
-            </GroupedList>
-          </section>
-        )
-      })}
+      {months.map((group) => (
+        // Keyed on the program as well as the month: PhaseNav switches
+        // programs through the URL on this same route, so the page does not
+        // remount. Keyed on month alone, Phase 1's collapsed August would be
+        // reused for Mesocycle 2's August and ignore its own default.
+        <MonthSection
+          key={`${program.id}:${group.month}`}
+          month={group.month}
+          days={group.days}
+          defaultExpanded={group.month === defaultOpenMonth}
+          locale={locale}
+          programId={program.id}
+          programOrigin={program.origin}
+        />
+      ))}
     </div>
+  )
+}
+
+interface MonthSectionProps {
+  month: string
+  days: readonly ScheduleDay[]
+  defaultExpanded: boolean
+  locale: string
+  programId: string
+  programOrigin: Program['origin']
+}
+
+/**
+ * One calendar month of the phase, collapsible. Each section owns its own
+ * open state, so months open and close independently. The panel is hidden,
+ * never unmounted: `aria-controls` always resolves, and every DayRow keeps
+ * rendering. The button sits inside the heading, not the other way round
+ * (a heading inside a button is backlog A9).
+ */
+function MonthSection({
+  month,
+  days,
+  defaultExpanded,
+  locale,
+  programId,
+  programOrigin,
+}: MonthSectionProps) {
+  const { t } = useTranslation('plan')
+  const [expanded, setExpanded] = useState(defaultExpanded)
+  const panelId = useId()
+  const trainingDayCount = days.filter((d) => d.isTrainingDay).length
+
+  return (
+    <section className="mt-8">
+      <h3>
+        <button
+          type="button"
+          aria-expanded={expanded}
+          aria-controls={panelId}
+          onClick={() => setExpanded((value) => !value)}
+          className="flex min-h-11 w-full items-center justify-between gap-3 text-left"
+        >
+          <span className="text-lg font-medium text-ink">
+            {formatMonthLabel(month, locale)}
+            {/* The explicit space keeps the accessible name from reading "July 20265 training days". */}
+            {' '}
+            <span className="text-sm font-normal text-ink-tertiary">
+              · {t('month.trainingDays', { count: trainingDayCount })}
+            </span>
+          </span>
+          <span aria-hidden="true" className="shrink-0 text-ink-tertiary">
+            {expanded ? '⌃' : '⌄'}
+          </span>
+        </button>
+      </h3>
+      <div id={panelId} hidden={!expanded}>
+        {groupByWeek(days).map((week) => {
+          const weekLabel = t('weekOf', { weekStart: formatShortDate(week.weekStart, locale) })
+          return (
+            // A12 (docs/review-backlog.md, re-measured 30 Jul "STILL
+            // OPEN"): this wrapper used to carry its own aria-label,
+            // duplicating GroupedList's own aria-label={weekLabel} below
+            // — a second, redundant named region with no heading of its
+            // own to point aria-labelledby at, so the section's name is
+            // simply dropped; the list stays the one named element.
+            <section key={week.weekStart} className="mt-6">
+              <GroupedList label={weekLabel}>
+                {week.days.map((day) => (
+                  <DayRow
+                    key={day.date}
+                    day={day}
+                    locale={locale}
+                    programId={programId}
+                    programOrigin={programOrigin}
+                  />
+                ))}
+              </GroupedList>
+            </section>
+          )
+        })}
+      </div>
+    </section>
   )
 }
 
@@ -465,6 +547,22 @@ function Heading() {
   )
 }
 
+function groupByMonth(days: readonly ScheduleDay[]): { month: string; days: ScheduleDay[] }[] {
+  const groups = new Map<string, ScheduleDay[]>()
+  for (const day of days) {
+    const month = day.date.slice(0, 7)
+    const group = groups.get(month)
+    if (group) {
+      group.push(day)
+    } else {
+      groups.set(month, [day])
+    }
+  }
+  return [...groups.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([month, monthDays]) => ({ month, days: monthDays }))
+}
+
 function groupByWeek(days: readonly ScheduleDay[]): { weekStart: string; days: ScheduleDay[] }[] {
   const groups = new Map<string, ScheduleDay[]>()
   for (const day of days) {
@@ -492,6 +590,22 @@ function formatDayLabel(dateKey: string, locale: string): string {
     day: 'numeric',
     month: 'short',
   })
+}
+
+/**
+ * "August 2026" — month and year from Intl, never hand-written names. A
+ * month is a heading, but French (and a few other locales) return it in
+ * lower case ("août 2026"), so the first letter is raised with the locale's
+ * own casing rules. Chinese ("2026年8月") has no case and passes through.
+ */
+function formatMonthLabel(month: string, locale: string): string {
+  const formattingLocale = dateFormattingLocale(locale)
+  const label = parseDateKey(`${month}-01`).toLocaleDateString(formattingLocale, {
+    month: 'long',
+    year: 'numeric',
+  })
+  const [first = '', ...rest] = label
+  return first.toLocaleUpperCase(formattingLocale) + rest.join('')
 }
 
 function formatShortDate(dateKey: string, locale: string): string {
