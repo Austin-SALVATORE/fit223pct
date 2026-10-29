@@ -63,8 +63,11 @@ Two prescription shapes, chosen **per prescription** by the presence of
 Neither shape auto-increments. The coach's rule, live since `99f27cf`:
 the next prescription is what the athlete actually completed at the
 previous complete exposure, set by set ("each set starts where that set
-finished last time"). This lives in `src/domain/carryForward.ts` and is
-applied once, at session start. Swapped and easier-day exposures are
+finished last time"). Two exceptions. Rungs that were skipped or never
+logged fall back to the authored rung. `dumbbell-lateral-raise` and
+`rear-delt-fly` carry reps but not load: they are technique-gated, per
+`LOAD_CARRY_FORWARD_EXCLUDED_EXERCISE_IDS`. This lives in
+`src/domain/carryForward.ts` and is applied once, at session start. Swapped and easier-day exposures are
 never a carry basis. Generating a load the athlete has not lifted needs
 `equipment.confirmedAt`, a structural line the coach drew, so the carry
 function takes no settings argument. `maxWeightKg` is the equipment
