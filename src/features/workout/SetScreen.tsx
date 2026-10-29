@@ -2,7 +2,7 @@ import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { motion, useReducedMotion } from 'motion/react'
-import { Stepper } from '@/ui/Stepper'
+import { Stepper, formatNumber } from '@/ui/Stepper'
 import { WarmupStepList } from '@/features/today/WarmupSection'
 import { warmupById } from '@/data/seed/warmups'
 import { ConfirmAction } from '@/ui/ConfirmAction'
@@ -60,7 +60,7 @@ export function SetScreen({
   canAddSet,
   onRemoveSet,
 }: SetScreenProps) {
-  const { t } = useTranslation('workout')
+  const { t, i18n } = useTranslation('workout')
   const exerciseName = useExerciseName(exercise.id)
   const { prescription } = workoutExercise
   const note = usePrescriptionNote(programId, sessionId, prescription, programOrigin)
@@ -115,7 +115,28 @@ export function SetScreen({
   const headingRef = useFocusOnMount<HTMLHeadingElement>()
   const setProgressId = useId()
   const captionId = useId()
+  const aboveCeilingId = useId()
   const reducedMotion = useReducedMotion()
+
+  /*
+    The weight on screen is above the program's equipment ceiling. One
+    boolean drives both the warning line and the heading's description, so
+    the two cannot disagree (a dangling aria-describedby id, or a warning
+    nobody is told about).
+
+    Strictly `>`: at exactly the ceiling there is nothing to warn about.
+    Never on a substitute — `swapExercise` keeps the slot's prescription, so
+    the ceiling belongs to the exercise that was swapped out (a per-dumbbell
+    20 kg on a barbell bench), and a warning against it would be false on the
+    very case that prompted this change. The same gate the note, the prep
+    block and the assistance control above already apply.
+  */
+  const ceilingKg = prescription.maxWeightKg
+  const showAboveCeiling =
+    ceilingKg != null &&
+    weightKg !== null &&
+    weightKg > ceilingKg &&
+    workoutExercise.substitutedForId === undefined
 
   function handleLog() {
     onLog({
@@ -164,7 +185,13 @@ export function SetScreen({
           // expressed for a non-sighted user, from text already on screen and
           // already translated. Still a description, never a live region: a
           // region here would race the focus move with a second announcement.
-          aria-describedby={`${setProgressId} ${captionId}`}
+          // The above-ceiling warning joins only while it renders, so landing
+          // on a carried rung that is already above the ceiling announces it.
+          aria-describedby={
+            showAboveCeiling
+              ? `${setProgressId} ${captionId} ${aboveCeilingId}`
+              : `${setProgressId} ${captionId}`
+          }
           className="text-display mt-2 text-2xl text-ink"
         >
           {exerciseName}
@@ -230,19 +257,33 @@ export function SetScreen({
                 value={weightKg}
                 step={prescription.weightStepKg ?? 1}
                 min={0}
-                max={prescription.maxWeightKg ?? undefined}
                 unit="kg"
                 onChange={setWeightKg}
               />
               {/*
-                Owner ruling, 21 Oct: at the equipment ceiling "+" is inert by
-                design (the Stepper clamps), and with no explanation it read as
-                broken. One static line says why. Placed after the control, not
+                29 Oct athlete feedback (docs/programs/athlete-feedback-weight-
+                cap-dip-station-program-months-2026-10-24.md, §1) supersedes the
+                21 Oct ruling that "+" is inert at the equipment ceiling. The
+                weight is no longer capped at all — the Stepper gets no `max`,
+                so "+", "−" and typed entry pass the number through as entered,
+                and the log stores it. The ceiling is the program's guidance,
+                not an input limit: above it, one static line says so and that
+                nothing is altered. It never blocks, confirms or rewrites.
+
+                `>` rather than `>=`, and not on a substitute — see
+                `showAboveCeiling`. Static text, not a live region: a second
+                region would race the Stepper's debounced announcement (see
+                `TargetCaption`), so the line is reached through the heading's
+                `aria-describedby` instead. Placed after the control, not
                 `aria-describedby` on it: the Stepper exposes no id hook for its
                 input and is not widened for this.
               */}
-              {prescription.maxWeightKg != null && weightKg >= prescription.maxWeightKg && (
-                <p className="mt-1 text-center text-sm text-ink-secondary">{t('setScreen.equipmentCeiling')}</p>
+              {showAboveCeiling && (
+                <p id={aboveCeilingId} className="mt-1 text-center text-sm text-ink-secondary">
+                  {t('setScreen.aboveEquipmentCeiling', {
+                    max: formatNumber(ceilingKg, i18n.language),
+                  })}
+                </p>
               )}
             </div>
           )}

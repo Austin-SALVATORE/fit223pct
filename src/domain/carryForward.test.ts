@@ -232,6 +232,35 @@ describe('carryForwardPrescription', () => {
   })
 })
 
+/**
+ * T5 (Track A Phase 1, 29 Oct 2026). The weight Stepper no longer caps what
+ * can be logged, so a logged load can sit above the authored equipment
+ * ceiling. Carry-forward is the coach's rule — "each set starts where that
+ * set finished last time" — and it echoes the logged load; the ceiling is
+ * guidance and is carried through unchanged. Whether carry should instead
+ * hold at the ceiling is the coach's ruling (Phase 2, pending), not this
+ * test's: when it lands, THIS test flips to the ruled behaviour.
+ *
+ * Negative control, run 29 Oct against a scratch copy of the project (so
+ * `carryForward.ts` itself was never touched): wrapping each carried rung
+ * load in `Math.min(weightKg, authored.maxWeightKg)` turns this test red
+ * (`expected { weightKg: 38, reps: 8 } to deeply equal { weightKg: 42,
+ * reps: 8 }`) while the other 44 tests in this file stay green, so within
+ * this file it is the only guard that can see a clamp. Across the whole
+ * suite one other test notices it: `TodayPage.easierCarry.test.tsx`, "a
+ * normal day carries the last NORMAL session, ignoring the later eased one".
+ */
+describe('carryForwardPrescription — a logged load above the equipment ceiling carries as logged (T5)', () => {
+  it('echoes the above-ceiling load onto the rung and leaves the authored ceiling alone', () => {
+    const authored = ladderPrescription({ maxWeightKg: 38 })
+    const previous = exposure(authored, [loggedSet(0, 14, 12), loggedSet(1, 16, 10), loggedSet(2, 42, 8)])
+
+    const result = carryForwardPrescription(authored, previous) as LadderPrescription
+    expect(result.setPlan[2]).toEqual({ weightKg: 42, reps: 8 })
+    expect(result.maxWeightKg).toBe(38)
+  })
+})
+
 describe('carryForwardPrescription — a null logged load must not erase a loaded rung', () => {
   // Owner report 20 Oct: "in a movement I can no more change the kg". A logged
   // `weightKg: null` (the exercise was bodyweight/unloaded when last performed)

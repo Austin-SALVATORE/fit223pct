@@ -42,7 +42,11 @@ import { PlanPage } from './PlanPage'
  *                                                      "Plan (Mesocycle 2) -> day
  *                                                      -> back" (no Mon 10 Aug link)
  *   T5  drop `?? months.at(-1)`                     -> T5 only
- *   T6  key={group.month} (no program id)           -> T6 only
+ *   T6  key={group.month} (no program id)           -> T6, and
+ *                                                      PlanDayPage.test.tsx "Plan
+ *                                                      (Mesocycle 2) -> day -> back
+ *                                                      returns to Mesocycle 2, not
+ *                                                      the default phase"
  *   T7  hard-code 'en-GB'                           -> T7 fr, T7 zh-CN, T9 fr
  *       drop the first-letter capitalisation        -> T7 fr, T9 fr
  *   T8  days.length                                 -> T8 (12 and 9, not 5 and 4)

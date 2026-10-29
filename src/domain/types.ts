@@ -165,7 +165,12 @@ interface ExercisePrescriptionBase {
 export interface RepRangePrescription extends ExercisePrescriptionBase {
   range: RepRange
   startWeightKg: number | null
-  /** Hard equipment ceiling at home; null = load is not the lever (bands, bodyweight) */
+  /**
+   * Equipment ceiling at home: guidance and metadata, never an input limit
+   * on logging (29 Oct 2026 athlete feedback — the set screen warns above it
+   * and stores the weight as entered). null = load is not the lever (bands,
+   * bodyweight).
+   */
   maxWeightKg: number | null
   weightStepKg: number | null
   setPlan?: undefined
@@ -173,7 +178,12 @@ export interface RepRangePrescription extends ExercisePrescriptionBase {
 
 export interface LadderPrescription extends ExercisePrescriptionBase {
   setPlan: SetTarget[]
-  /** Hard equipment ceiling at home — the top rung's cap, see suggestLadderProgression */
+  /**
+   * Equipment ceiling at home: guidance and metadata, never an input limit
+   * on logging (29 Oct 2026 athlete feedback — the set screen warns above it
+   * and stores the weight as entered). Carry-forward copies it unchanged and
+   * never clamps a carried rung to it.
+   */
   maxWeightKg: number | null
   weightStepKg: number | null
   range?: undefined

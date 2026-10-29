@@ -64,7 +64,7 @@
     "lastTimeFirst": "First time — the numbers below are your starting point.",
     "lastTimePrefix": "Last time",
     "weightLabel": "Weight",
-    "equipmentCeiling": "Your equipment tops out here.",
+    "aboveEquipmentCeiling": "Above this program's {{max}} kg equipment limit. It will be logged as entered.",
     "holdLabel": "Hold",
     "repsLabel": "Reps",
     "logHold": "Log hold",

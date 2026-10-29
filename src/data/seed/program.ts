@@ -72,12 +72,13 @@ const DUMBBELL_MAX_KG = 15
  * sharing one plate pool (8×1 kg, 4×2 kg, 4×5 kg): bilateral tops out at
  * 20 kg/hand, single-implement at 38 kg. Distinct from phase-1-home's
  * `DUMBBELL_MAX_KG` (15), which describes that phase's retired tier and
- * is left alone. Read live by `SetScreen`'s weight Stepper (`max` prop)
- * with no gate — a prescribed rung above the cap would silently clamp
- * the Stepper's typed/± input below the prescribed load; that is the
- * reason for these constants, not the (currently unreachable)
- * auto-progression path (`hasVerifiedLoadList` gates it closed — nothing
- * in `src/**` writes `settings.equipment`, D5).
+ * is left alone. Read live by `SetScreen`, which shows a non-blocking
+ * warning when the weight on screen is above the cap (never on a
+ * substitute) and never limits what can be entered or logged — the cap is
+ * guidance and metadata, not an input limit (29 Oct 2026). It does not
+ * feed auto-progression either: that path is unreachable
+ * (`hasVerifiedLoadList` gates it closed — nothing in `src/**` writes
+ * `settings.equipment`, D5).
  */
 const BILATERAL_MAX_KG = 20
 /** Single-implement ceiling, current hardware — `equipment.test.ts`'s `NEW_PROFILE.singleImplement` ends at 38. Used by every M2 prescription the coach marks "use one dumbbell". */
@@ -578,8 +579,9 @@ export const seedProgram: Program = {
  * **`standing-calf-raise` moves to the single-implement ladder** (Session
  * C calf-raise ruling, 13 Aug: "Use one dumbbell") — `maxWeightKg` moves
  * from `BILATERAL_MAX_KG` to `SINGLE_IMPLEMENT_MAX_KG`, raising its
- * Stepper ceiling 20→38 kg; no other production code keys off the
- * classification (`SetScreen.tsx`'s `max` prop is the sole consumer).
+ * equipment ceiling 20→38 kg; no other production code keys off the
+ * classification (`SetScreen.tsx`'s above-ceiling warning is the sole
+ * consumer).
  * It is Session C's optional seventh accessory — skipping it never
  * invalidates Day Completion (no `ExercisePrescription` field is
  * required, and no completion gate reads item count), and it is never
