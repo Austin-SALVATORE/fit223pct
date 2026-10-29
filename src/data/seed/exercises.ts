@@ -36,6 +36,11 @@ export const seedExercises: Exercise[] = [
     isUnilateral: false,
   },
   {
+    // Stays in the Library, and can still be recorded truthfully, but is
+    // recommended as a substitute from no list (coach Q2, 29 Oct 2026: the
+    // equipment has no rack, so it must not be suggested as one). It is
+    // reached through the swap sheet's "Other exercises". This entry's own
+    // list below is what *it* offers when it is the exercise on screen.
     id: 'bench-press',
     muscles: ['chest', 'triceps', 'shoulders'],
     equipment: ['barbell', 'bench'],
@@ -46,28 +51,32 @@ export const seedExercises: Exercise[] = [
     id: 'deficit-push-up',
     muscles: ['chest', 'triceps', 'shoulders', 'core'],
     equipment: ['bodyweight'],
-    substitutionIds: ['bench-press'],
+    // Empty since 29 Oct 2026 (coach Q2): its only entry was the barbell
+    // bench press, which is no longer recommended as a substitute for
+    // anything (see `bench-press` above). It is prescribed nowhere, and its
+    // swap sheet shows the "no substitutions" line plus "Other exercises".
+    substitutionIds: [],
     isUnilateral: false,
   },
   {
     id: 'db-floor-press',
     muscles: ['chest', 'triceps'],
     equipment: ['dumbbell'],
-    substitutionIds: ['bench-press', 'deficit-push-up', 'dumbbell-bench-press'],
+    substitutionIds: ['deficit-push-up', 'dumbbell-bench-press'],
     isUnilateral: false,
   },
   {
     id: 'dumbbell-bench-press',
     muscles: ['chest', 'triceps', 'shoulders'],
     equipment: ['dumbbell', 'bench'],
-    substitutionIds: ['bench-press', 'db-floor-press', 'incline-dumbbell-press'],
+    substitutionIds: ['db-floor-press', 'incline-dumbbell-press'],
     isUnilateral: false,
   },
   {
     id: 'incline-dumbbell-press',
     muscles: ['chest', 'triceps', 'shoulders'],
     equipment: ['dumbbell', 'bench'],
-    substitutionIds: ['dumbbell-bench-press', 'bench-press'],
+    substitutionIds: ['dumbbell-bench-press'],
     isUnilateral: false,
   },
   {

@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router'
 import { db } from '@/data/db'
 import { seedDatabase } from '@/data/seed'
 import { seedProgram } from '@/data/seed/program'
+import i18n from '@/i18n/i18next'
 import { createWorkout } from '@/domain/workout'
 import type { LadderPrescription, Workout } from '@/domain/types'
 import { WorkoutPage } from './WorkoutPage'
@@ -38,6 +39,7 @@ beforeAll(async () => {
 
 afterEach(async () => {
   await db.workouts.clear()
+  await i18n.changeLanguage('en')
 })
 
 function workout(overrides: (w: Workout) => Workout = (w) => w): Workout {
@@ -119,3 +121,49 @@ describe('a stored snapshot whose warm-up no longer exists (sheet §4.7)', () =>
     expect(screen.queryByText(WARMUP_HEADING)).toBeNull()
   })
 })
+
+/**
+ * French decimals in a ramp row (Phase 2.4 ride-along, 29 Oct). `RampRow`
+ * (`today/WarmupSection.tsx`, shared by the Today preview, the Plan day
+ * preview and this prep block) passed the raw `step.weightKg` to the locale
+ * string, so a French athlete read "7.75 kg au total × 5" directly above a
+ * ladder printed "11,75 → 13,75 → 15,75 kg". The empty barbell is 7.75 kg on
+ * this hardware, so the case is the common one, not an edge.
+ *
+ * Negative control, run 29 Oct: `weight: step.weightKg` in `RampRow` (the raw
+ * number again) turns this test red — `Unable to find an element with the
+ * text: 7,75 kg au total × 5` — and nothing else in the suite (the English
+ * tests above are unaffected: "7.75" is what English writes).
+ */
+describe('a ramp row in French', () => {
+  const overheadPress: LadderPrescription = {
+    exerciseId: 'overhead-press',
+    sets: 3,
+    mode: 'reps',
+    restSeconds: 120,
+    perSide: false,
+    setPlan: [
+      { weightKg: 11.75, reps: 8 },
+      { weightKg: 13.75, reps: 8 },
+      { weightKg: 15.75, reps: 8 },
+    ],
+    maxWeightKg: 43.75,
+    weightStepKg: 2,
+    warmupId: 'mesocycle2-overhead-press-prep-v1',
+  }
+
+  it('writes the empty barbell as 7,75 kg, not 7.75', async () => {
+    await i18n.changeLanguage('fr')
+    await show(
+      workout((w) => ({
+        ...w,
+        exercises: w.exercises.map((e) => ({ ...e, exerciseId: 'overhead-press', prescription: overheadPress })),
+      })),
+    )
+
+    expect(screen.getByText('Avant ta première série')).toBeInTheDocument()
+    expect(screen.getByText('7,75 kg au total × 5')).toBeInTheDocument()
+    expect(screen.queryByText(/7\.75/)).toBeNull()
+  })
+})
+

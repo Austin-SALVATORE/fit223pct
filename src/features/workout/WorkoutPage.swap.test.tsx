@@ -71,7 +71,10 @@ describe('SwapSheet in workout mode', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
 
     const sheet = await screen.findByRole('dialog', { name: 'Swap Goblet squat' })
-    const options = within(sheet).getAllByRole('button').map((b) => b.textContent)
+    // The recommended list only: the sheet also holds a collapsed "Other
+    // exercises" disclosure, whose button is not an option and whose rows are
+    // hidden (WorkoutPage.swapOther.test.tsx covers that section).
+    const options = within(within(sheet).getByRole('list')).getAllByRole('button').map((b) => b.textContent)
     // Program-defined (bench press, tempo bodyweight squat) before the
     // remaining Library generic (split squat); tempo bodyweight squat
     // appears exactly once despite being in both lists.

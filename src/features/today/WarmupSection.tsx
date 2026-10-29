@@ -2,6 +2,7 @@ import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
+import { formatNumber } from '@/ui/Stepper'
 import type { OriginState } from '@/lib/navigationOrigin'
 import type { Warmup, WarmupStep } from '@/domain/warmup'
 
@@ -153,7 +154,7 @@ function MovementRow({
 }
 
 function RampRow({ step, origin }: { step: Extract<WarmupStep, { kind: 'ramp' }>; origin: OriginState }) {
-  const { t } = useTranslation('today')
+  const { t, i18n } = useTranslation('today')
   const name = useExerciseName(step.exerciseId)
   const suffix = step.perSide ? t('sessionPreview.perSideSuffix') : ''
   // Distinct keys per implement (U-1) — the unit is stated, not inferred,
@@ -166,7 +167,8 @@ function RampRow({ step, origin }: { step: Extract<WarmupStep, { kind: 'ramp' }>
       <div className="min-w-0">
         <p className="truncate font-medium text-ink">{name}</p>
         <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
-          {t(key, { weight: step.weightKg, reps: step.reps })}
+          {/* Formatted for the language, like every other load on screen: French writes 7,75. */}
+          {t(key, { weight: formatNumber(step.weightKg, i18n.language), reps: step.reps })}
           {suffix}
         </p>
       </div>

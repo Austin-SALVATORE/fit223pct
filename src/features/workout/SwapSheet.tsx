@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { otherExercisesFor } from '@/domain/exerciseGroups'
 import { effectiveSubstitutions } from '@/domain/substitutions'
 import { useEquipmentLabel } from '@/lib/equipmentLabel'
 import { useFocusOnChange } from '@/lib/useFocusOnChange'
 import { useExerciseName } from '@/i18n/seedExercise'
+import { useLocale } from '@/i18n/useLocale'
 import { ConfirmAction } from '@/ui/ConfirmAction'
 import { Sheet } from '@/ui/Sheet'
 import type { Exercise, ExercisePrescription } from '@/domain/types'
@@ -29,10 +31,24 @@ export function SwapSheet({
   onClose,
 }: SwapSheetProps) {
   const { t } = useTranslation('workout')
+  const { t: tSeed } = useTranslation('seed')
+  const locale = useLocale()
   const exerciseName = useExerciseName(exercise.id)
-  const options = effectiveSubstitutions(prescription, exercise)
+  const recommendedIds = effectiveSubstitutions(prescription, exercise)
+  const options = recommendedIds
     .map((id) => exerciseById.get(id))
     .filter((sub): sub is Exercise => sub !== undefined)
+  // Not recommendations: the rest of this exercise's Library group, so
+  // something the athlete really did can be recorded as itself. Sorted for
+  // display the way the Library page sorts, by the resolved name in this
+  // language, not an id or an English order.
+  const collator = new Intl.Collator(locale)
+  const otherOptions = otherExercisesFor(exercise, [...exerciseById.values()], recommendedIds)
+    .map((other) => ({ exercise: other, name: tSeed(`exercise.${other.id}.name`) }))
+    .sort((a, b) => collator.compare(a.name, b.name))
+    .map(({ exercise: other }) => other)
+  const [otherOpen, setOtherOpen] = useState(false)
+  const otherPanelId = useId()
 
   // Set only when the tapped option would clear logged sets — the sheet
   // shows a confirm step instead of swapping immediately. Reset whenever
@@ -72,6 +88,7 @@ export function SwapSheet({
   useEffect(() => {
     setPendingExerciseId(null)
     setJustCancelled(false)
+    setOtherOpen(false)
   }, [open])
 
   return (
@@ -93,7 +110,10 @@ export function SwapSheet({
           }}
         />
       ) : (
-        <>
+        // The sheet has no height of its own, so the whole options view
+        // scrolls inside the viewport: an expanded "Other exercises" is
+        // 7 to 19 rows, and without a cap it ran off the top of the screen.
+        <div className="max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain">
           <h2 ref={optionsHeadingRef} tabIndex={-1} className="eyebrow">
             {t('swapSheet.heading', { exerciseName })}
           </h2>
@@ -106,6 +126,41 @@ export function SwapSheet({
               ))}
             </ul>
           )}
+          {otherOptions.length > 0 && (
+            /*
+              Collapsed, below the recommendations, under one line that says
+              these are not recommendations (coach Q2 / owner, 29 Oct: the
+              barbell bench press leaves every recommended list but must stay
+              recordable, so there is never a gap where the athlete has to log
+              it as something else). The disclosure is the same button-in-a-
+              heading pattern as the Program page's months; its panel is hidden,
+              never unmounted, so `aria-controls` always resolves.
+            */
+            <section className="mt-4 border-t border-border">
+              <h3>
+                <button
+                  type="button"
+                  aria-expanded={otherOpen}
+                  aria-controls={otherPanelId}
+                  onClick={() => setOtherOpen((value) => !value)}
+                  className="flex min-h-11 w-full items-center justify-between gap-3 text-left text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
+                >
+                  <span>{t('swapSheet.otherHeading')}</span>
+                  <span aria-hidden="true" className="shrink-0 text-ink-tertiary">
+                    {otherOpen ? '⌃' : '⌄'}
+                  </span>
+                </button>
+              </h3>
+              <div id={otherPanelId} hidden={!otherOpen}>
+                <p className="text-sm leading-relaxed text-ink-tertiary">{t('swapSheet.otherNote')}</p>
+                <ul className="mt-1 divide-y divide-border">
+                  {otherOptions.map((option) => (
+                    <SubstitutionRow key={option.id} option={option} onSelect={chooseOption} />
+                  ))}
+                </ul>
+              </div>
+            </section>
+          )}
           <button
             type="button"
             onClick={onClose}
@@ -113,7 +168,7 @@ export function SwapSheet({
           >
             {t('swapSheet.keep', { exerciseName })}
           </button>
-        </>
+        </div>
       )}
     </Sheet>
   )

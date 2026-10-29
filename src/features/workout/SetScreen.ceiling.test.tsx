@@ -21,7 +21,10 @@ import { WorkoutPage } from './WorkoutPage'
  * `max` prop was removed from SetScreen — evidence the change reaches its
  * subject — and are replaced, not patched. What the defect did: a typed
  * 27.75 kg barbell bench (swapped in for a dumbbell bench whose per-dumbbell
- * ceiling is 20) was stored as 20.
+ * ceiling is 20) was stored as 20. T4 and T9's substitute case now use a
+ * dumbbell row swapped to the barbell bent-over row (41.75 over a 38 ceiling),
+ * because the bench left every recommended list on 29 Oct (coach Q2); the
+ * bench case itself runs in `WorkoutPage.swapOther.test.tsx`.
  *
  * The rules pinned here:
  *   - nothing clamps the weight: typed entry, "+" and "−" pass it through
@@ -42,8 +45,9 @@ import { WorkoutPage } from './WorkoutPage'
  * line-numbered, so the record survives edits.
  *   re-add `max={prescription.maxWeightKg ?? undefined}` to the weight
  *     Stepper             -> T1 (45 shows 38kg), T2 ("+" gives 38kg, i.e.
- *                            it LOWERS the weight), T3, T4 (27.75 shows
- *                            20kg — the 24 Oct defect), T7 stepping, T9 slot
+ *                            it LOWERS the weight), T3, T4 (41.75 shows
+ *                            38kg — the 24 Oct defect, on the row), T7
+ *                            stepping, T9 slot
  *   `weightKg > ceilingKg` becomes `>=`
  *                         -> T3 (a warning at exactly the ceiling), and
  *                            T7 stepping and T9 slot, which also start on
@@ -106,16 +110,26 @@ function goblet(weights: number[], maxWeightKg: number): LadderPrescription {
   }
 }
 
-/** The authored slot of the 24 Oct report: a per-dumbbell ceiling of 20 kg. */
-function dumbbellBench(): LadderPrescription {
+/**
+ * The Full Body B row slot: per-dumbbell weights and a 38 ceiling. Its barbell
+ * bent-over row substitute is the cross-implement swap these tests use — the
+ * barbell bench press of the original 24 Oct report left every recommended
+ * list on 29 Oct (coach Q2), so it is reached through "Other exercises"
+ * (`WorkoutPage.swapOther.test.tsx` drives that exact case end to end).
+ */
+function dumbbellRow(): LadderPrescription {
   return {
-    exerciseId: 'dumbbell-bench-press',
-    sets: 4,
+    exerciseId: 'single-arm-db-row',
+    sets: 3,
     mode: 'reps',
     restSeconds: 90,
-    perSide: false,
-    setPlan: [10, 12, 14, 16].map((weightKg) => ({ weightKg, reps: 10 })),
-    maxWeightKg: 20,
+    perSide: true,
+    setPlan: [
+      { weightKg: 10, reps: 12 },
+      { weightKg: 12, reps: 10 },
+      { weightKg: 14, reps: 8 },
+    ],
+    maxWeightKg: 38,
     weightStepKg: 2,
   }
 }
@@ -216,22 +230,22 @@ describe('the warning', () => {
   })
 
   it('T4: a cross-implement swap logs the typed barbell load as entered, with no warning against the swapped-out exercise\'s ceiling', async () => {
-    await start(dumbbellBench(), 'Dumbbell bench press')
+    await start(dumbbellRow(), 'Single-arm dumbbell row')
     await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
     await userEvent.click(
-      within(await screen.findByRole('dialog')).getByRole('button', { name: /Barbell bench press/ }),
+      within(await screen.findByRole('dialog')).getByRole('button', { name: /Barbell bent-over row/ }),
     )
-    await screen.findByRole('heading', { name: 'Barbell bench press' })
+    await screen.findByRole('heading', { name: 'Barbell bent-over row' })
 
-    // 27.75 kg is the barbell on its own plus symmetric plates — well over
-    // the dumbbell slot's per-hand 20.
-    await typeWeight('27.75')
-    expect(weightText()).toBe('27.75kg')
+    // 41.75 kg is a barbell load (the 7.75 kg bar plus symmetric plates), above
+    // the dumbbell slot's per-hand ceiling of 38 — which is not this exercise's.
+    await typeWeight('41.75')
+    expect(weightText()).toBe('41.75kg')
     expect(screen.queryByText(new RegExp(WARNING_STEM))).toBeNull()
 
     const stored = await logSet()
-    expect(stored.exerciseId).toBe('bench-press')
-    expect(stored.sets[0].weightKg).toBe(27.75)
+    expect(stored.exerciseId).toBe('bent-over-row')
+    expect(stored.sets[0].weightKg).toBe(41.75)
   })
 
   it('T6: the ceiling reads in the active language and number format (fr 43,75 · zh-CN 43.75)', async () => {
@@ -309,12 +323,12 @@ describe('the warning does not move the controls (QA F-A)', () => {
   })
 
   it('T9 substitute: a slot that can never warn reserves nothing', async () => {
-    await start(dumbbellBench(), 'Dumbbell bench press')
+    await start(dumbbellRow(), 'Single-arm dumbbell row')
     await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
     await userEvent.click(
-      within(await screen.findByRole('dialog')).getByRole('button', { name: /Barbell bench press/ }),
+      within(await screen.findByRole('dialog')).getByRole('button', { name: /Barbell bent-over row/ }),
     )
-    await screen.findByRole('heading', { name: 'Barbell bench press' })
+    await screen.findByRole('heading', { name: 'Barbell bent-over row' })
 
     const logSet = screen.getByRole('button', { name: 'Log set' })
     expect(logSet).toHaveClass('mt-8')

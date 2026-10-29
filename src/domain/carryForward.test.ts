@@ -298,7 +298,7 @@ describe('carryForwardPrescription — a null logged load must not erase a loade
 })
 
 describe('carrySessionForward', () => {
-  it('re-applying carry over the same exposure changes nothing (the render-time carry stays safe over a stored carried plan)', () => {
+  it('re-applying carry over the same exposure changes nothing (carry is idempotent over a stored carried plan)', () => {
     const authored = ladderPrescription()
     const previous = exposure(
       authored,

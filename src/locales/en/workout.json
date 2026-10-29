@@ -91,6 +91,8 @@
     "dialogAriaLabel": "Swap {{exerciseName}}",
     "heading": "Swap {{exerciseName}} for",
     "noSubstitutions": "No substitutions for this one — it's already the fallback.",
+    "otherHeading": "Other exercises",
+    "otherNote": "These aren't suggested substitutes. They're here so you can log what you actually did.",
     "keep": "Keep {{exerciseName}}",
     "confirmHeading": "Swap {{exerciseName}} for {{newExerciseName}}?",
     "confirmWarning_one": "{{count}} logged set will be cleared.",

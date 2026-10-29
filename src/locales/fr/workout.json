@@ -91,6 +91,8 @@
     "dialogAriaLabel": "Remplacer {{exerciseName}}",
     "heading": "Remplacer {{exerciseName}} par",
     "noSubstitutions": "Aucune substitution pour celui-ci — c'est déjà la solution de repli.",
+    "otherHeading": "Autres exercices",
+    "otherNote": "Ces exercices ne sont pas des substitutions suggérées. Ils sont là pour que tu enregistres ce que tu as vraiment fait.",
     "keep": "Garder {{exerciseName}}",
     "confirmHeading": "Remplacer {{exerciseName}} par {{newExerciseName}} ?",
     "confirmWarning_one": "{{count}} série enregistrée sera effacée.",

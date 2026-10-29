@@ -358,8 +358,8 @@ describe('an exercise-level warm-up (coach Q6)', () => {
  * they cannot see these regressions; they are here to pin that English did not
  * change.
  *  - Ladder: `formatPrescription`'s ladder branch back to
- *    `String(rung.weightKg)`. 13 passed | 1 failed: `Unable to find an element
- *    with the text: 17,75→21,75→25,75→29,75 kg · 12/10/8/6`.
+ *    `String(rung.weightKg)`. 17 passed | 1 failed (18 tests): `Unable to find
+ *    an element with the text: 17,75→21,75→25,75→29,75 kg · 12/10/8/6`.
  *  - Rep-range: the `startWeightKg` fragment back to `${item.startWeightKg}
  *    kg`. 17 passed | 1 failed: `Unable to find an element with the text:
  *    3 × 8–12 · 17,75 kg`.
