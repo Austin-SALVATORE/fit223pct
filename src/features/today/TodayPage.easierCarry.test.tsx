@@ -33,6 +33,15 @@ import { TodayPage } from './TodayPage'
  *    of calling `prepareSessionForStart`. That reaches the branch directly and
  *    turns "an easier day stores the normal carried plan one rung shorter"
  *    red.
+ *
+ * **Moved 29 Oct (Phase 2.4, F-B).** `StartButton` no longer calls
+ * `prepareSessionForStart`: `TrainingDay` and `UnscheduledDay` call it once and
+ * hand the result to both the preview and `StartButton`. The two controls above
+ * are written for the old site. The "used here" control, re-run at the new one
+ * (`TrainingDay`'s `startSession` composed as ease-then-carry), still turns
+ * "an easier day stores the normal carried plan one rung shorter" red
+ * (`expected 3 to be 2`), as well as the eased test in
+ * `TodayPage.previewIsStored.test.tsx`.
  */
 
 beforeAll(async () => {

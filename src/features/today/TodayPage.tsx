@@ -83,6 +83,13 @@ interface TodayData {
   todayCheckIn: CheckIn | undefined
   recentCheckIns: CheckIn[]
   completedCount: number
+  /**
+   * Every completed workout, read once here and shared by the weekly review
+   * and by the session preview / Start (`prepareSessionForStart`) — one read,
+   * so the preview and the stored plan are computed from the same history.
+   * Empty when there is no active program.
+   */
+  completed: Workout[]
   weeklyReview: WeeklyReview | null
   lastSeenWeeklyReviewWeekStart: string | null
   /** Today's ride/activation records, if any (coach spec v2.11 §3) — at most one per kind. */
@@ -136,9 +143,8 @@ export function TodayPage() {
     // Not gated to Monday — a review the user hasn't seen yet stays
     // available on every open of the week it covers, never tied to
     // whether they happened to open the app on any one particular day.
-    const weeklyReview = program
-      ? buildWeeklyReview(program, await workoutRepo.getCompleted(), today)
-      : null
+    const completed = program ? await workoutRepo.getCompleted() : []
+    const weeklyReview = program ? buildWeeklyReview(program, completed, today) : null
     return {
       program,
       exercises,
@@ -147,6 +153,7 @@ export function TodayPage() {
       todayCheckIn,
       recentCheckIns,
       completedCount,
+      completed,
       weeklyReview,
       lastSeenWeeklyReviewWeekStart: settings?.lastSeenWeeklyReviewWeekStart ?? null,
       todayActivityRecords,
@@ -189,6 +196,7 @@ function TodayBody({
     todayCheckIn,
     recentCheckIns,
     completedCount,
+    completed,
     weeklyReview,
     lastSeenWeeklyReviewWeekStart,
     todayActivityRecords,
@@ -256,6 +264,7 @@ function TodayBody({
         <PlannedDay
           program={program}
           completedCount={completedCount}
+          completed={completed}
           exerciseById={exerciseById}
           today={today}
           todayKey={todayKey}
@@ -287,6 +296,7 @@ function NoProgram({ checkInCard }: { checkInCard: ReactNode }) {
 function PlannedDay({
   program,
   completedCount,
+  completed,
   exerciseById,
   today,
   todayKey,
@@ -300,6 +310,7 @@ function PlannedDay({
 }: {
   program: Program
   completedCount: number
+  completed: Workout[]
   exerciseById: Map<string, Exercise>
   today: Date
   todayKey: string
@@ -349,6 +360,7 @@ function PlannedDay({
         <UnscheduledDay
           program={program}
           session={plan.firstSession}
+          completed={completed}
           exerciseById={exerciseById}
           todayKey={todayKey}
           todayCheckIn={todayCheckIn}
@@ -371,6 +383,7 @@ function PlannedDay({
         <TrainingDay
           program={program}
           session={plan.session}
+          completed={completed}
           exerciseById={exerciseById}
           todayKey={todayKey}
           readiness={readiness}
@@ -393,6 +406,7 @@ function PlannedDay({
         <UnscheduledDay
           program={program}
           session={plan.nextSession}
+          completed={completed}
           exerciseById={exerciseById}
           todayKey={todayKey}
           todayCheckIn={todayCheckIn}
@@ -443,6 +457,7 @@ function PlannedDay({
           <UnscheduledDay
             program={nextProgram}
             session={nextPhasePlan.firstSession}
+            completed={completed}
             exerciseById={exerciseById}
             todayKey={todayKey}
             todayCheckIn={todayCheckIn}
@@ -521,6 +536,7 @@ function PlannedDay({
 function TrainingDay({
   program,
   session,
+  completed,
   exerciseById,
   todayKey,
   readiness,
@@ -535,6 +551,8 @@ function TrainingDay({
 }: {
   program: Program
   session: SessionTemplate
+  /** Completed history, from the Today query — what `prepareSessionForStart` carries from. */
+  completed: Workout[]
   exerciseById: Map<string, Exercise>
   todayKey: string
   readiness: Readiness
@@ -559,8 +577,12 @@ function TrainingDay({
   const locale = useLocale()
   const sessionName = useSessionName(program.id, session, program.origin)
   const sessionFocus = useSessionFocus(program.id, session, program.origin)
+  // The badge and its reasons come from `applyReadiness`; the numbers come
+  // from `startSession`, computed once and handed to BOTH the preview and
+  // Start, so what is shown is the object that is stored (QA F-B, 29 Oct).
   const adjusted = applyReadiness(session, readiness)
   const eased = adjusted.adjustments.length > 0
+  const startSession = prepareSessionForStart(session, completed, program.id, readiness)
   const because = describeDrivers(readiness.drivers)
   const warmup = session.warmupId ? warmupById(session.warmupId) : undefined
 
@@ -604,7 +626,7 @@ function TrainingDay({
       {checkInCard}
       <StartButton
         program={program}
-        session={session}
+        session={startSession}
         readiness={readiness}
         todayKey={todayKey}
       />
@@ -614,7 +636,7 @@ function TrainingDay({
         </p>
       )}
       <SessionPreview
-        session={adjusted.session}
+        session={startSession}
         programId={program.id}
         programOrigin={program.origin}
         exerciseById={exerciseById}
@@ -693,12 +715,13 @@ function PostponedDay({
  * program starts. The day's framing (rest, anticipation) stays the hero;
  * the way into Workout Mode is a quiet affordance below the preview, so
  * training early is always possible but never the recommendation. What it
- * starts is exactly what the preview shows: the same readiness-adjusted
- * session a training day would offer.
+ * starts is exactly what the preview shows: the same carried,
+ * readiness-adjusted session a training day would offer.
  */
 function UnscheduledDay({
   program,
   session,
+  completed,
   exerciseById,
   todayKey,
   todayCheckIn,
@@ -712,6 +735,8 @@ function UnscheduledDay({
 }: {
   program: Program
   session: SessionTemplate
+  /** Completed history, from the Today query — what `prepareSessionForStart` carries from. */
+  completed: Workout[]
   exerciseById: Map<string, Exercise>
   todayKey: string
   todayCheckIn: CheckIn | undefined
@@ -737,8 +762,11 @@ function UnscheduledDay({
   showStartButton: boolean
 }) {
   const { t } = useTranslation('today')
+  // Badge and reasons from `applyReadiness`; numbers from `startSession`,
+  // the one object both the preview and Start use (see TrainingDay).
   const adjusted = applyReadiness(session, readiness)
   const eased = adjusted.adjustments.length > 0
+  const startSession = prepareSessionForStart(session, completed, program.id, readiness)
 
   return (
     <>
@@ -748,7 +776,7 @@ function UnscheduledDay({
       )}
       {checkInCard}
       <SessionPreview
-        session={adjusted.session}
+        session={startSession}
         programId={program.id}
         programOrigin={program.origin}
         exerciseById={exerciseById}
@@ -760,7 +788,7 @@ function UnscheduledDay({
       {showStartButton && (
         <StartButton
           program={program}
-          session={session}
+          session={startSession}
           readiness={readiness}
           todayKey={todayKey}
           variant="quiet"
@@ -778,6 +806,11 @@ function StartButton({
   variant = 'primary',
 }: {
   program: Program
+  /**
+   * The session to store, already carried and readiness-eased
+   * (`prepareSessionForStart`) — the very object the preview beside this
+   * button renders. Stored as given; never re-derived here.
+   */
   session: SessionTemplate
   readiness: Readiness
   todayKey: string
@@ -791,13 +824,13 @@ function StartButton({
   async function start() {
     if (starting) return
     setStarting(true)
-    // Snapshot the carried plan, not the authored one — see carrySessionForward.
-    const completed = await workoutRepo.getCompleted()
+    // `session` is the previewed object itself: re-reading history here
+    // would let the stored plan drift from the numbers the athlete just saw.
     const workout = {
       ...createWorkout({
         id: crypto.randomUUID(),
         programId: program.id,
-        session: prepareSessionForStart(session, completed, program.id, readiness),
+        session,
         date: todayKey,
         startedAt: new Date().toISOString(),
       }),

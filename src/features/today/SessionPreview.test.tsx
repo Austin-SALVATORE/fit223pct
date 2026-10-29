@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import manifest from '@/data/generated/asset-manifest.json'
+import i18n from '@/i18n/i18next'
 import { SessionPreview } from './SessionPreview'
 import type { Exercise, ExercisePrescription, LadderPrescription, SessionTemplate } from '@/domain/types'
 
@@ -338,5 +339,122 @@ describe('an exercise-level warm-up (coach Q6)', () => {
     expect(screen.queryByText('Warm up for this exercise')).toBeNull()
     render1({ ...prescription('goblet-squat'), warmupId: 'no-such-warmup' })
     expect(screen.queryByText('Warm up for this exercise')).toBeNull()
+  })
+})
+
+/**
+ * Phase 2.4 (QA F-B ride-along, 29 Oct). The set and rest screens print loads
+ * through `formatNumber(weight, i18n.language)`, so a French athlete reads
+ * 17,75; the preview built its weight line with `String(rung.weightKg)` and
+ * printed 17.75 beside them. Carried plans make fractional barbell loads
+ * (7.75 kg bar + symmetric plates) routine on this screen.
+ *
+ * Three sites print a weight, and each has its own fr/en pair: the ladder
+ * rungs, a rep-range `startWeightKg`, and a technique-rehearsal set.
+ *
+ * **Negative controls (run 29 Oct, one site at a time; the file was diffed
+ * byte-identical to the unmutated copy after each).** Each goes RED in its own
+ * fr test and nowhere else. The en tests stay green under every control, so
+ * they cannot see these regressions; they are here to pin that English did not
+ * change.
+ *  - Ladder: `formatPrescription`'s ladder branch back to
+ *    `String(rung.weightKg)`. 13 passed | 1 failed: `Unable to find an element
+ *    with the text: 17,75→21,75→25,75→29,75 kg · 12/10/8/6`.
+ *  - Rep-range: the `startWeightKg` fragment back to `${item.startWeightKg}
+ *    kg`. 17 passed | 1 failed: `Unable to find an element with the text:
+ *    3 × 8–12 · 17,75 kg`.
+ *  - Rehearsal: `RehearsalRow`'s `weight` param back to `rehearsal.weightKg`.
+ *    17 passed | 1 failed: `Unable to find an element with the text:
+ *    Série technique · 7,75 kg × 8`.
+ */
+describe('SessionPreview weights in the athlete\'s locale', () => {
+  afterEach(async () => {
+    await i18n.changeLanguage('en')
+  })
+
+  const barbellLadder: LadderPrescription = {
+    exerciseId: 'goblet-squat',
+    sets: 4,
+    mode: 'reps',
+    restSeconds: 120,
+    perSide: false,
+    setPlan: [
+      { weightKg: 17.75, reps: 12 },
+      { weightKg: 21.75, reps: 10 },
+      { weightKg: 25.75, reps: 8 },
+      { weightKg: 29.75, reps: 6 },
+    ],
+    maxWeightKg: null,
+    weightStepKg: 2,
+  }
+  const renderLadder = () =>
+    render(
+      <MemoryRouter>
+        <SessionPreview
+          session={{ ...session, items: [barbellLadder] }}
+          programId="phase-1-home"
+          exerciseById={new Map([['goblet-squat', withAsset]])}
+          heading="Today"
+        />
+      </MemoryRouter>,
+    )
+
+  it('prints the decimal comma in French: 17,75, not 17.75', async () => {
+    await i18n.changeLanguage('fr')
+    renderLadder()
+    expect(await screen.findByText('17,75→21,75→25,75→29,75 kg · 12/10/8/6')).toBeInTheDocument()
+  })
+
+  it('keeps the decimal point in English', async () => {
+    renderLadder()
+    expect(await screen.findByText('17.75→21.75→25.75→29.75 kg · 12/10/8/6')).toBeInTheDocument()
+  })
+
+  // The rep-range branch (no setPlan) prints `startWeightKg`.
+  const repRange: ExercisePrescription = {
+    exerciseId: 'goblet-squat',
+    sets: 3,
+    mode: 'reps',
+    range: { min: 8, max: 12 },
+    restSeconds: 90,
+    perSide: false,
+    startWeightKg: 17.75,
+    maxWeightKg: 40,
+    weightStepKg: 2,
+  }
+  // The technique-rehearsal row sits above the ladder's first working set.
+  const withRehearsal: LadderPrescription = { ...barbellLadder, rehearsal: { weightKg: 7.75, reps: 8 } }
+  const renderItem = (item: ExercisePrescription) =>
+    render(
+      <MemoryRouter>
+        <SessionPreview
+          session={{ ...session, items: [item] }}
+          programId="phase-1-home"
+          exerciseById={new Map([['goblet-squat', withAsset]])}
+          heading="Today"
+        />
+      </MemoryRouter>,
+    )
+
+  it('prints a rep-range start weight with the decimal comma in French', async () => {
+    await i18n.changeLanguage('fr')
+    renderItem(repRange)
+    expect(await screen.findByText('3 × 8–12 · 17,75 kg')).toBeInTheDocument()
+  })
+
+  it('keeps the decimal point on a rep-range start weight in English', async () => {
+    renderItem(repRange)
+    expect(await screen.findByText('3 × 8–12 · 17.75 kg')).toBeInTheDocument()
+  })
+
+  it('prints a rehearsal-set weight with the decimal comma in French', async () => {
+    await i18n.changeLanguage('fr')
+    renderItem(withRehearsal)
+    expect(await screen.findByText('Série technique · 7,75 kg × 8')).toBeInTheDocument()
+  })
+
+  it('keeps the decimal point on a rehearsal-set weight in English', async () => {
+    renderItem(withRehearsal)
+    expect(await screen.findByText('Rehearsal · 7.75 kg × 8')).toBeInTheDocument()
   })
 })

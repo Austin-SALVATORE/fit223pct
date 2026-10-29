@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import type { TFunction } from 'i18next'
 import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
 import { GroupedList, GroupedRow } from '@/ui/GroupedList'
+import { formatNumber } from '@/ui/Stepper'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { useSessionName, usePrescriptionNote } from '@/i18n/seedProgram'
 import type { OriginState } from '@/lib/navigationOrigin'
@@ -122,7 +123,7 @@ function ExerciseWarmupRow({ steps, origin }: { steps: Warmup['steps']; origin: 
  * so it carries no note and no `formatPrescription` call.
  */
 function RehearsalRow({ exercise, rehearsal }: { exercise: Exercise; rehearsal: { weightKg: number; reps: number } }) {
-  const { t } = useTranslation('today')
+  const { t, i18n } = useTranslation('today')
   const exerciseName = useExerciseName(exercise.id)
   return (
     <GroupedRow>
@@ -131,7 +132,10 @@ function RehearsalRow({ exercise, rehearsal }: { exercise: Exercise; rehearsal: 
         <div className="min-w-0">
           <p className="truncate font-medium text-ink">{exerciseName}</p>
           <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
-            {t('sessionPreview.rehearsalWeightReps', { weight: rehearsal.weightKg, reps: rehearsal.reps })}
+            {t('sessionPreview.rehearsalWeightReps', {
+              weight: formatNumber(rehearsal.weightKg, i18n.language),
+              reps: rehearsal.reps,
+            })}
           </p>
         </div>
       </div>
@@ -155,7 +159,7 @@ function ItemRow({
   sessionId: string
 }) {
   const { t } = useTranslation('today')
-  const { t: tCommon } = useTranslation('common')
+  const { t: tCommon, i18n } = useTranslation('common')
   const exerciseName = useExerciseName(exercise.id)
   const note = usePrescriptionNote(programId, sessionId, item, programOrigin)
   const perSideSuffix = item.perSide ? t('sessionPreview.perSideSuffix') : ''
@@ -190,7 +194,7 @@ function ItemRow({
           <p className="truncate font-medium text-ink">{exerciseName}</p>
           {note && <p className="mt-0.5 text-sm text-ink-tertiary">{note}</p>}
           <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
-            {formatPrescription(tCommon, item, perSideSuffix)}
+            {formatPrescription(tCommon, i18n.language, item, perSideSuffix)}
           </p>
         </div>
       </div>
@@ -217,6 +221,7 @@ function ItemRow({
  */
 function formatPrescription(
   t: TFunction<'common'>,
+  locale: string,
   item: ExercisePrescription,
   perSideSuffix: string,
 ): string {
@@ -228,7 +233,12 @@ function formatPrescription(
     const hasWeight = item.setPlan.some((rung) => rung.weightKg !== null)
     if (!hasWeight) return repsLine
 
-    const weights = item.setPlan.map((rung) => (rung.weightKg !== null ? String(rung.weightKg) : '–'))
+    // The locale's own decimal separator (French 17,75), as the set and rest
+    // screens already print it (`formatNumber`, `RestScreen.tsx`). A carried
+    // plan makes fractional barbell loads routine on this screen.
+    const weights = item.setPlan.map((rung) =>
+      rung.weightKg !== null ? formatNumber(rung.weightKg, locale) : '–',
+    )
     return t('middotJoin', {
       a: `${weights.join('→')} kg`,
       b: repsLine,
@@ -237,6 +247,6 @@ function formatPrescription(
   const unit = item.mode === 'seconds' ? t('unitSeconds') : ''
   const base = `${item.sets} × ${item.range.min}–${item.range.max}${unit}${perSideSuffix}`
   return item.startWeightKg !== null
-    ? t('middotJoin', { a: base, b: `${item.startWeightKg} kg` })
+    ? t('middotJoin', { a: base, b: `${formatNumber(item.startWeightKg, locale)} kg` })
     : base
 }
