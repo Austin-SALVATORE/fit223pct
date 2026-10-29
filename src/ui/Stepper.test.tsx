@@ -731,3 +731,90 @@ describe('an absent value renders as nothing, and a press supplies one', () => {
     }
   })
 })
+
+/**
+ * **The buttons never move** (QA F1 on 47821a0, Medium). On a touch screen the
+ * click that follows a press is delivered to whatever is under the finger when
+ * it lifts, and `StepButton` applies the value on pointerdown. The value cell
+ * used to grow with its content, so "—" to "41.75kg" widened the row by 33px:
+ * the "+" slid out from under the thumb, its click landed on the display, and
+ * the editor opened with the soft keyboard. Every barbell load on this hardware
+ * ends in .75, so it hit the owner's exact case.
+ *
+ * **What this test can and cannot see.** jsdom has no layout. It sees class
+ * tokens, no pixels: it pins the *cause* not coming back (a content-sized,
+ * minimum-width value cell), that the editor takes the display's width, that the
+ * step buttons cannot be squeezed, and that the row is capped at its container.
+ * It cannot see the widths being right, the font, wrapping, or the retargeted
+ * click itself. Those were measured in Chromium with touch emulation at 375px
+ * (the table in the report that came with this change: "+" at 312 for every
+ * value, "—" to 41.75 in en and fr, 9.75 to 11.75, reps 9 to 10, and the form
+ * variant), and QA's F1 repro is the check that counts.
+ *
+ * Negative controls, run 30 Oct (mutation applied, this describe run, restored):
+ *   `w-[12.125rem]` back to `min-w-32` on the lg output -> the lg "fixed width" and "editor" tests
+ *   `w-[7rem]` back to `min-w-14` on the form output   -> the form "fixed width" and "editor" tests
+ *   the editor back to `w-40`                          -> "the editor takes the display's width"
+ *   `shrink-0` removed from the step buttons           -> "the step buttons keep their size"
+ *   `max-w-full` removed from the row                  -> "the row is capped at its container"
+ * Measured in the browser against the same mutations: the cell back to a minimum
+ * moves "+" 281.5 -> 314.5 and opens the editor; the narrower editor shifts both
+ * buttons 12px when it opens; without `shrink-0` the buttons render 43px wide at
+ * 375.
+ */
+describe('the step buttons do not move when the value changes width', () => {
+  const widthRem = (classes: string): number | null => {
+    const match = /(?:^|\s)w-\[([\d.]+)rem\]/.exec(classes)
+    return match ? Number(match[1]) : null
+  }
+
+  it.each([
+    ['lg', 'lg' as const],
+    ['form', 'form' as const],
+  ])('%s: the value cell has a fixed width, never a minimum, whatever it shows', (_name, kind) => {
+    const props = kind === 'lg' ? { size: 'lg' as const } : { variant: 'form' as const }
+    const { unmount } = render(<Stepper label="Weight" value={null} step={2} min={0} unit="kg" onChange={() => {}} {...props} />)
+    const blank = screen.getByLabelText('Weight', { selector: 'output' }).className
+    unmount()
+    render(<Stepper label="Weight" value={41.75} step={2} min={0} unit="kg" onChange={() => {}} {...props} />)
+    const filled = screen.getByLabelText('Weight', { selector: 'output' }).className
+
+    expect(widthRem(blank)).not.toBeNull()
+    // The same cell for "—" and for "41.75kg".
+    expect(widthRem(filled)).toBe(widthRem(blank))
+    expect(blank).not.toMatch(/min-w-/)
+    expect(filled).not.toMatch(/min-w-/)
+    expect(filled).toMatch(/\bshrink-0\b/)
+  })
+
+  it.each([
+    ['lg', { size: 'lg' as const }],
+    ['form', { variant: 'form' as const }],
+  ])("%s: the editor takes the display's width (the cell plus the button's 4px padding each side)", async (_name, props) => {
+    render(<Stepper label="Weight" value={41.75} step={2} min={0} unit="kg" onChange={() => {}} {...props} />)
+    const display = widthRem(screen.getByLabelText('Weight', { selector: 'output' }).className)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Weight' }))
+    const editor = widthRem(screen.getByRole('textbox', { name: 'Weight' }).className)
+
+    expect(display).not.toBeNull()
+    expect(editor).toBe((display ?? 0) + 0.5)
+  })
+
+  it('the step buttons keep their size: they cannot be squeezed by a narrow row', () => {
+    renderStepper()
+    for (const name of ['Decrease Weight', 'Increase Weight']) {
+      const button = screen.getByRole('button', { name })
+      expect(button.className).toMatch(/\bh-11\b/)
+      expect(button.className).toMatch(/\bw-11\b/)
+      expect(button.className).toMatch(/\bshrink-0\b/)
+    }
+  })
+
+  it('the row is capped at its container, so a narrow screen compresses the cell and not the buttons', () => {
+    renderStepper()
+    const row = screen.getByRole('button', { name: 'Decrease Weight' }).parentElement
+    expect(row?.className).toMatch(/\bmax-w-full\b/)
+  })
+})
+

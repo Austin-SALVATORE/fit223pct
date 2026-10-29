@@ -54,6 +54,26 @@ function intervalForTick(tick: number): number {
   return Math.max(HOLD_MIN_INTERVAL_MS, shortened)
 }
 
+/**
+ * The value cell's width, fixed (not a minimum), per size — see the comment on
+ * the row in `Stepper`. Measured in Chromium at 375px, tabular figures: every
+ * digit is the same width, so the cell is sized for the widest ordinary value,
+ * "00.00kg" (and "000.0cm"):
+ *
+ *   lg    194px = 12.125rem   ("41.75kg", "100.5kg"; 155.8 for "9.75kg")
+ *   form  112px = 7rem        ("102.5cm" 111.6, "100.5kg" 106.2)
+ *
+ * `editor` is the display plus the display button's 4px padding each side
+ * (202px, 120px): the same width as the button it replaces, so opening or
+ * committing the editor moves nothing. A value wider than the cell (three
+ * integer digits and two decimals at lg) spills out of it, centred, rather than
+ * pushing the buttons: the layout is the same for every value.
+ */
+const VALUE_SLOT = {
+  lg: { display: 'w-[12.125rem]', editor: 'w-[12.625rem]' },
+  form: { display: 'w-[7rem]', editor: 'w-[7.5rem]' },
+} as const
+
 interface StepperProps {
   label: string
   /**
@@ -267,7 +287,20 @@ export function Stepper({
   return (
     <div className={`flex flex-col gap-2 ${form ? 'items-start' : 'items-center'}`}>
       <span className={form ? 'text-sm text-ink-secondary' : 'eyebrow'}>{label}</span>
-      <div className="flex items-center gap-1">
+      {/*
+        **The buttons never move.** A press that changes the value's width must
+        not move the button under the finger: `StepButton` applies the value on
+        pointerdown, and on a touch screen the click that follows is delivered to
+        whatever is under the finger when it lifts. With a value cell that grew
+        with its content ("—" to "41.75kg" widened the row by 33px) the "+" slid
+        out from under the thumb and its click landed on the display, opening the
+        editor with the soft keyboard. So the value cell has one fixed width
+        (`VALUE_SLOT`, below) whatever it shows, and the editor takes the same
+        width, so opening or committing it cannot shift the buttons either. The
+        row is capped at its container and the cell may shrink, so a narrow
+        screen compresses the cell, not the buttons.
+      */}
+      <div className="flex max-w-full items-center gap-1">
         <StepButton
           symbol="−"
           ariaLabel={t('stepper.decrease', { label })}
@@ -305,14 +338,14 @@ export function Stepper({
                 setDraft(null)
               }
             }}
-            className={`box-border min-w-0 appearance-none rounded-card border border-amber bg-raised text-center font-semibold text-ink ${lg ? 'w-40 text-6xl' : 'w-24 text-3xl'}`}
+            className={`box-border min-w-0 appearance-none rounded-card border border-amber bg-raised text-center font-semibold text-ink ${lg ? `${VALUE_SLOT.lg.editor} text-6xl` : `${VALUE_SLOT.form.editor} text-3xl`}`}
           />
         ) : (
           <button
             type="button"
             aria-label={t('stepper.edit', { label })}
             onClick={() => setDraft(value === null ? '' : formatNumber(value, i18n.language))}
-            className="rounded-card px-1 transition-colors hover:bg-raised"
+            className="flex min-w-0 shrink justify-center rounded-card px-1 transition-colors hover:bg-raised"
           >
             {/*
               The value keeps its own `role="status"` so a change made with the
@@ -326,7 +359,7 @@ export function Stepper({
               // Silent, the same way TimerRing's `<time>` is: visually live,
               // and announced only by the debounced region below.
               aria-live="off"
-              className={`block text-center font-semibold text-ink ${lg ? 'min-w-32 text-6xl' : 'min-w-14 text-3xl'}`}
+              className={`block shrink-0 text-center font-semibold text-ink ${lg ? `${VALUE_SLOT.lg.display} text-6xl` : `${VALUE_SLOT.form.display} text-3xl`}`}
             >
               {value === null ? (
                 // Visibly not a number. The test is whether someone could
@@ -376,7 +409,7 @@ function StepButton({ symbol, ariaLabel, onPress, onRelease }: StepButtonProps) 
     <button
       type="button"
       aria-label={ariaLabel}
-      className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-xl text-ink-secondary transition-colors active:bg-raised active:text-ink"
+      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-xl text-ink-secondary transition-colors active:bg-raised active:text-ink"
       onPointerDown={(event) => {
         event.currentTarget.setPointerCapture(event.pointerId)
         onPress()
