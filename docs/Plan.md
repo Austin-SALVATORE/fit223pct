@@ -28,7 +28,10 @@ bottom:
    started opens its first month, and one that has finished opens its
    last. Open state lasts for one visit and is not remembered (athlete
    feedback, 24 Oct 2026; owner go-ahead 29 Oct). Within a month the
-   days are grouped by week as before:
+   days are grouped by week. A week that crosses a month boundary is
+   split, so it appears under both months with the same "Week of …"
+   label. This was accepted as the cost of keeping each week's days in
+   their own calendar month:
    - **Past days** state facts only: the session that was completed
      (name, sets, volume one-liner) or a plain em-dash for a scheduled
      day with no workout. No "missed", no streaks, no guilt copy — a
