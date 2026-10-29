@@ -15,9 +15,10 @@ No influencer programming. No fabricated claims. No promised outcomes.
   entirely from the app (22 Jul, `docs/PyramidProgression.md`) — a session
   advances because it was completed as prescribed, never because of a
   self-rated number.
-- Load is capped at home (15 kg per hand, adjustable dumbbells only, 30 kg
-  combined) — a ladder that reaches this ceiling holds there and says so,
-  rather than quietly faking further progress.
+- Load follows the verified home equipment (`docs/EquipmentProfile.md`).
+  A prescription's `maxWeightKg` is the equipment ceiling. Since 29 Oct
+  (`4fec4bb`) it is a warning shown above the ceiling and never a clamp
+  on what you log. Swapped exercises show no warning.
 - Recovery is tracked (sleep, energy, soreness, stress, motivation) and is a
   first-class input to training decisions — an 'easier' day drops the
   heaviest set of each ladder and trims accessory volume, never load.
@@ -29,16 +30,20 @@ is the full spec; this section is the summary).
 
 **Pyramid / ladder (`setPlan`)** — primary compound lifts. An explicit,
 ascending set-by-set plan: weight climbs, reps descend
-(e.g. `8×12 → 10×10 → 12×8`). When every set in the ladder hits its target
-reps, the whole ladder steps up by a fixed weight increment next session.
-Falling short on any set repeats the same targets. At the equipment ceiling
-the whole ladder holds — never a partial advance of the lower sets, which
-would quietly collapse the coach-authored spacing between sets.
+(e.g. `8×12 → 10×10 → 12×8`).
 
 **Rep-range (existing shape, minus RIR)** — bodyweight, band and timed
 (seconds-mode) work, plus any loaded accessory the coach has not written
-as weight × reps per set. Fill the rep range first (add reps to the
-weakest set); once every set tops the range, add load.
+as weight × reps per set.
+
+**Neither shape auto-increments (carry-forward, since 28 Aug, `99f27cf`).**
+Each set starts where that set finished at the previous complete exposure.
+Rungs that were skipped or never logged fall back to the authored rung.
+Swapped and easier-day exposures are never a carry basis. The step-up
+engines this section used to describe were retired in that commit;
+`.claude/rules/architecture.md` (Progression model) is the current
+summary. A swapped exercise starts with a blank weight until the coach's
+set-by-set rule is built (CC3, 29 Oct).
 
 A loaded isolation movement may be either shape, and **the exercise does
 not tell you which** — only the presence of `setPlan` does. Since 31 Jul

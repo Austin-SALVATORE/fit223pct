@@ -60,8 +60,13 @@ On an `easier` day:
 
 Every adjustment carries a driver-derived reason, rendered quietly under the
 "Adjusted for readiness" label next to the changed numbers on Today. The
-user can always override: steppers and the RIR picker set defaults, never
-limits.
+user can always override: steppers set defaults, never limits.
+
+Today's session preview shows exactly the plan Start will store: the
+carried loads, after any readiness adjustment. Both are computed once,
+by the same `prepareSessionForStart` call (29 Oct, `2f559aa`), so the
+preview can no longer show authored loads while the set screen offers
+carried ones.
 
 ## Persistence
 

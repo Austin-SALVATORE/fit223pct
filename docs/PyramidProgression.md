@@ -1,5 +1,12 @@
 # Pyramid Progression
 
+> **Superseded for progression (note added 29 Oct 2026).** The ladder
+> *shape* below is still how loaded lifts are prescribed. The step-up
+> engine it specifies was retired on 28 Aug (`99f27cf`) in favour of
+> carry-forward: each set starts where it finished at the previous complete
+> exposure. `.claude/rules/architecture.md` (Progression model) is the
+> current summary. Read the rest as history.
+
 **Status: designed, not yet implemented** (Milestone 8 — see Roadmap).
 This brief is the spec the implementation is reviewed against. It is an
 owner-directed pivot (22 Jul, after the first real workout): the app's
