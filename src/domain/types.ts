@@ -375,7 +375,11 @@ export interface LoggedSet {
 export interface SubstituteLoad {
   /** False for a movement that carries no load (bodyweight, band, bars): no weight control, `weightKg: null` is logged. */
   loaded: boolean
-  /** The substitute's own last logged weight; null = no suggestion, the athlete chooses. */
+  /**
+   * The substitute's own last logged weight; null = no suggestion, the athlete
+   * chooses. CQ2 (coach, pending): a single value — "most recent valid" read as
+   * one weight, not one per set position (see `lastLoggedWeightKg`).
+   */
   startWeightKg: number | null
   /** The substitute's own implement increment; null = unknown (the Stepper uses 1). Never the slot's step. */
   stepKg: number | null

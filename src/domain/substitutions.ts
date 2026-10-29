@@ -1,4 +1,4 @@
-import type { Exercise, ExercisePrescription } from './types'
+import type { Exercise, ExercisePrescription, WorkoutExercise } from './types'
 
 /**
  * The single merge of program-defined and Library substitutions — nothing
@@ -21,3 +21,25 @@ export function effectiveSubstitutions(
   }
   return result
 }
+
+/**
+ * Whether the "⇄ each side" pill is shown for the exercise on screen. The one
+ * place that decides it — the Set screen's caption and the Rest screen's
+ * new-exercise caption both read it, so they cannot disagree.
+ *
+ * The pill is a claim about how the reps are counted, made by the slot's
+ * prescription (`perSide`). A swap changes the exercise but keeps the
+ * prescription, so on a substitute that claim holds only if the substitute is
+ * itself unilateral in the Library: **a swap may hide the pill, never add it.**
+ * A unilateral substitute of a bilateral slot (goblet squat -> split squat,
+ * plank -> dead bug) does not make the reps per side — what the reps mean is
+ * not ours to decide (Phase 2 plan, DD-A3d) — so the slot's silence stands.
+ */
+export function showsPerSidePill(
+  workoutExercise: Pick<WorkoutExercise, 'prescription' | 'substitutedForId'>,
+  exercise: Pick<Exercise, 'isUnilateral'>,
+): boolean {
+  if (!workoutExercise.prescription.perSide) return false
+  return workoutExercise.substitutedForId === undefined || exercise.isUnilateral
+}
+

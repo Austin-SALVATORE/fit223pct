@@ -9,6 +9,7 @@ import {
   useExerciseTeachingConcept,
 } from '@/i18n/seedExercise'
 import { nextSetTarget, type NextSetTarget } from '@/domain/nextSetTarget'
+import { showsPerSidePill } from '@/domain/substitutions'
 import { plannedSetIndices, type WorkoutPosition } from '@/domain/workout'
 import { exerciseAsset, exerciseAssetThumbnailFrame } from '@/lib/exerciseAsset'
 import type { Exercise, ExercisePrescription, Workout } from '@/domain/types'
@@ -135,6 +136,11 @@ export function RestScreen({
         totalPlannedSets={totalPlannedSets}
         isNewExercise={exerciseChanged}
         isLastSet={isLastSet}
+        // The same rule the set screen uses. A swapped slot can reach the
+        // new-exercise card (swap on the set screen, undo back into the
+        // previous exercise, log again), and the slot's per-side claim must
+        // not follow it onto a bilateral exercise.
+        showPerSide={showsPerSidePill(nextWorkoutExercise, exercise)}
       />
 
       <CoachingCard exercise={exercise} setIndex={position.setIndex} isNew={exerciseChanged} />
@@ -165,6 +171,8 @@ interface NextUpCardProps {
   totalPlannedSets: number
   isNewExercise: boolean
   isLastSet: boolean
+  /** Whether the "⇄ each side" pill is shown on the next-exercise card (`showsPerSidePill`). */
+  showPerSide: boolean
 }
 
 /**
@@ -195,6 +203,7 @@ function NextUpCard({
   totalPlannedSets,
   isNewExercise,
   isLastSet,
+  showPerSide,
 }: NextUpCardProps) {
   const { t } = useTranslation('workout')
 
@@ -231,6 +240,7 @@ function NextUpCard({
       exerciseName={exerciseName}
       prescription={prescription}
       target={target}
+      showPerSide={showPerSide}
     />
   )
 }
@@ -263,12 +273,14 @@ function NewExerciseCard({
   exerciseName,
   prescription,
   target,
+  showPerSide,
 }: {
   id: string
   exercise: Exercise
   exerciseName: string
   prescription: ExercisePrescription
   target: NextSetTarget
+  showPerSide: boolean
 }) {
   const { t } = useTranslation('workout')
   const [artFailed, setArtFailed] = useState(false)
@@ -308,7 +320,7 @@ function NewExerciseCard({
         )}
       </div>
       <HeroNumbers prescription={prescription} target={target} className="mt-3" />
-      <NewExerciseCaption prescription={prescription} target={target} />
+      <NewExerciseCaption prescription={prescription} target={target} showPerSide={showPerSide} />
     </div>
   )
 }
@@ -322,9 +334,11 @@ function NewExerciseCard({
 function NewExerciseCaption({
   prescription,
   target,
+  showPerSide,
 }: {
   prescription: ExercisePrescription
   target: NextSetTarget
+  showPerSide: boolean
 }) {
   const { t } = useTranslation('workout')
   const { t: tCommon } = useTranslation('common')
@@ -332,7 +346,6 @@ function NewExerciseCaption({
   // A ladder's number already is the exact target — no range to show. Only
   // rep-range work has a range wider than the single value on screen.
   const showRange = !prescription.setPlan
-  const showPerSide = prescription.perSide
 
   // MAX / TECHNIQUE pills removed, 28 Aug 2026 (Phase 3) — see SetScreen's
   // TargetCaption for the full reasoning; both read `progressionType`,

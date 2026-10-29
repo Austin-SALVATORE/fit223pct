@@ -197,6 +197,10 @@ export function nextSetTarget(
   */
   const isRung = prescription.setPlan !== undefined && !isCustomSlot
   const carriedEffort = carried ? ((isSeconds ? carried.seconds : carried.reps) ?? 0) : null
+  // CQ2 (coach, pending): one start value (`substitute.startWeightKg`, from
+  // `lastLoggedWeightKg`), then the weight just lifted carries to later sets.
+  // A per-position reading would replace the start with the substitute's own
+  // set `setIndex` here.
   const weightKg = substitute
     ? substitute.loaded
       ? (carried?.weightKg ?? substitute.startWeightKg)

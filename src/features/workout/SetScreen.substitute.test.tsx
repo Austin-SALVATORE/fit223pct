@@ -47,11 +47,30 @@ import { WorkoutPage } from './WorkoutPage'
  *                                         nextSetTarget unit tests (not T20)
  *   `nextSetTarget` ignores the weight just lifted (later sets)
  *                                      -> T20 (set 2), and the unit test
+ *   the `weightKg` branch of `nextSetTarget` dropped (the rung is offered)
+ *                                      -> T19b (Rest screen: "12 kg × 10 ↑ 12 kg
+ *                                         heavier"), remounts, T20-T22, T26, and
+ *                                         five nextSetTarget unit tests — NOT T19
  *   `target.loaded` gate reverted to `weightKg !== null`
  *                                      -> remounts, T20, T23, T26, increment
  *   every swap treated as incompatible -> T24 and the unit test
- *   per-side pill from the slot, not the substitute
- *                                      -> T19 and T23
+ *   the per-side pill — the rule is `showsPerSidePill`: the slot's claim, which a
+ *   swap may hide but never add (the first 2.3 build also added it; the
+ *   independent check found it)
+ *     the old expression `substitutedForId === undefined ? prescription.perSide
+ *       : exercise.isUnilateral` in SetScreen
+ *                                      -> T23 and "goblet squat -> split squat"
+ *     the same old rule inside the helper
+ *                                      -> the helper's "does NOT add it" row, T23,
+ *                                         and "goblet squat -> split squat"
+ *     the slot's raw `prescription.perSide` in SetScreen (a swap never hides it)
+ *                                      -> T19 only
+ *     the helper never hiding (`return true`)
+ *                                      -> the helper's "hides it" row, T19, and
+ *                                         the Rest screen test
+ *     the Rest screen reading the raw `prescription.perSide`
+ *                                      -> "does not put 'each side' on an inverted
+ *                                         row ..." (the Rest screen test) only
  *   step from the slot, not the substitute
  *                                      -> T23 and increment
  *   fr: raw number in the caption      -> both T27 tests
@@ -64,11 +83,18 @@ import { WorkoutPage } from './WorkoutPage'
  * **A prescribed control that stayed green, and why.** The plan prescribed,
  * for T19, "drop the `substitute` branch in `nextSetTarget` -> `10kg` shown ->
  * red". Dropping the branch that decides the offered *weight* leaves T19 GREEN:
- * the weight control is gated on the separate `loaded` flag, which is still
- * false for a bodyweight substitute, so no weight is ever shown or logged on
- * it. The weight expression is what the loaded-substitute tests see (remounts,
- * T20-T22, T26 and five unit tests all went red). The control that does reach
- * T19 is the one above: stop passing the substitute load at all.
+ * the Set screen's weight control is gated on the separate `loaded` flag, which
+ * is still false for a bodyweight substitute, so the Set screen shows and logs
+ * no weight. It is NOT harmless on the Rest screen, which reads
+ * `target.weightKg` directly: under this mutation it showed "Inverted row 12 kg
+ * × 10 ↑ 12 kg heavier than the set you just did" where it should say "10
+ * reps". The independent check of 34bec42 found nothing but a unit test
+ * guarding that, so T19b now does (it went red under this mutation, on its
+ * first assertion, "10 reps"; the "no kg" and "heavier" lines are behind it).
+ * The weight expression is also what the
+ * loaded-substitute tests see (remounts, T20-T22, T26 and five unit tests went
+ * red). The control that reaches T19 itself is the one above: stop passing the
+ * substitute load at all.
  */
 
 beforeAll(async () => {
@@ -153,6 +179,27 @@ async function start(item: LadderPrescription, programId: string = mesocycle2Bui
   )
 }
 
+/** Two slots, so there is a "next exercise" for the Rest screen to introduce. */
+async function startTwo(first: LadderPrescription, second: LadderPrescription) {
+  await db.workouts.put(
+    createWorkout({
+      id: 'sub',
+      programId: mesocycle2Build.id,
+      session: { id: 's', name: 'S', focus: 'F', items: [first, second] },
+      date: '2026-10-24',
+      startedAt: '2026-10-24T09:00:00.000Z',
+    }),
+  )
+  render(
+    <MemoryRouter initialEntries={['/workout']}>
+      <Routes>
+        <Route path="/" element={<p>TODAY PROBE</p>} />
+        <Route path="/workout" element={<WorkoutPage />} />
+      </Routes>
+    </MemoryRouter>,
+  )
+}
+
 async function swapTo(option: RegExp, heading: string) {
   await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
   await userEvent.click(within(await screen.findByRole('dialog')).getByRole('button', { name: option }))
@@ -220,6 +267,20 @@ describe('a bodyweight substitute (Dumbbell row -> Inverted row)', () => {
     expect(stored.substitutedForId).toBe('single-arm-db-row')
     expect(stored.sets[0].weightKg).toBeNull()
     expect(stored.sets[0].reps).toBe(12)
+  })
+})
+
+describe('the Rest screen after a set on a bodyweight substitute', () => {
+  it('T19b: offers reps only — never the dumbbell row\'s weight, nor a "heavier" delta against nothing', async () => {
+    await start(dumbbellRow())
+    await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
+    await swapTo(/Inverted row/, 'Inverted row')
+    await logCurrentSet()
+
+    // Set 2 of the slot's ladder is 10 reps (and 12 kg on the dumbbell row it replaced).
+    expect(await screen.findByText('10 reps')).toBeInTheDocument()
+    expect(screen.queryByText(/\bkg\b/)).toBeNull()
+    expect(screen.queryByText(/heavier|lighter/)).toBeNull()
   })
 })
 
@@ -310,7 +371,7 @@ describe('a loaded substitute of another implement (Dumbbell row -> Barbell bent
 // ---------------------------------------------------------------------------
 
 describe('an unloaded slot swapped to a loaded exercise (Inverted row -> Dumbbell row)', () => {
-  it('T23: the weight control appears, empty, and the per-side pill follows the exercise now on screen', async () => {
+  it('T23: the weight control appears, empty — and the per-side pill is not added, because the slot never claimed it', async () => {
     await start(invertedRow())
     await screen.findByRole('heading', { name: 'Inverted row' })
     // As authored: no control, no pill.
@@ -320,9 +381,10 @@ describe('an unloaded slot swapped to a loaded exercise (Inverted row -> Dumbbel
     await swapTo(/Single-arm dumbbell row/, 'Single-arm dumbbell row')
 
     expect(weightText()).toBe('—')
-    // The single-arm row is unilateral in the Library, so the pill is true here
-    // even though the slot it was swapped into is not per-side.
-    expect(screen.getByText(/each side/)).toBeInTheDocument()
+    // The single-arm row is unilateral in the Library, but the slot it was
+    // swapped into is not per-side, and a swap may hide that claim, never add
+    // it: what the reps mean is not ours to decide (plan DD-A3d).
+    expect(screen.queryByText(/each side/)).toBeNull()
 
     await typeWeight('12')
     // The program's own prescription of the dumbbell row steps in 2.
@@ -353,6 +415,95 @@ describe('a same-implement substitute (Dumbbell bench -> Incline dumbbell press)
     const stored = await logCurrentSet()
     expect(stored.exerciseId).toBe('incline-dumbbell-press')
     expect(stored.sets[0].weightKg).toBe(12)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// The per-side pill: a swap may hide it, never add it (DD-A3d)
+// ---------------------------------------------------------------------------
+
+describe('the "each side" pill on a substitute', () => {
+  function gobletSquat(): LadderPrescription {
+    return {
+      exerciseId: 'goblet-squat',
+      sets: 3,
+      mode: 'reps',
+      restSeconds: 90,
+      perSide: false,
+      setPlan: [
+        { weightKg: 14, reps: 12 },
+        { weightKg: 16, reps: 10 },
+        { weightKg: 18, reps: 8 },
+      ],
+      maxWeightKg: 38,
+      weightStepKg: 2,
+    }
+  }
+
+  it('is not added by a same-implement swap to a unilateral exercise (goblet squat -> split squat)', async () => {
+    await start(gobletSquat())
+    await screen.findByRole('heading', { name: 'Goblet squat' })
+    expect(screen.queryByText(/each side/)).toBeNull()
+
+    await swapTo(/Split squat/, 'Split squat')
+
+    // Split squat is unilateral in the Library; the slot's reps were never counted per side.
+    expect(screen.queryByText(/each side/)).toBeNull()
+  })
+
+  it('is kept when the slot claimed it and the substitute is unilateral too (lunge -> Bulgarian split squat)', async () => {
+    const lunge: LadderPrescription = {
+      ...gobletSquat(),
+      exerciseId: 'reverse-lunge',
+      perSide: true,
+      // The Library lists no substitutes for the lunge; a program may.
+      substitutionIds: ['bulgarian-split-squat'],
+    }
+    await start(lunge)
+    await screen.findByRole('heading', { name: 'Dumbbell reverse lunge' })
+    expect(screen.getByText(/each side/)).toBeInTheDocument()
+
+    await swapTo(/Bulgarian split squat/, 'Bulgarian split squat')
+
+    expect(screen.getByText(/each side/)).toBeInTheDocument()
+  })
+})
+
+describe('the Rest screen introducing a swapped exercise', () => {
+  // A swapped slot reaches the next-exercise card by this route: swap the second
+  // exercise on its set screen, undo the first exercise's last set to step back
+  // into it, and log it again. The card must not carry the slot's "each side"
+  // onto an exercise that is not unilateral.
+  it('does not put "each side" on an inverted row swapped into the dumbbell row\'s slot', async () => {
+    const goblet: LadderPrescription = {
+      exerciseId: 'goblet-squat',
+      sets: 1,
+      mode: 'reps',
+      restSeconds: 60,
+      perSide: false,
+      setPlan: [{ weightKg: 14, reps: 12 }],
+      maxWeightKg: 38,
+      weightStepKg: 2,
+    }
+    await startTwo(goblet, dumbbellRow())
+    await screen.findByRole('heading', { name: 'Goblet squat' })
+    await logCurrentSet()
+
+    // Unswapped, the next exercise really is per side.
+    expect(await screen.findByText('Single-arm dumbbell row')).toBeInTheDocument()
+    expect(screen.getByText(/each side/)).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Skip' }))
+    await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
+    await swapTo(/Inverted row/, 'Inverted row')
+
+    // Step back into the first exercise and finish it again.
+    await userEvent.click(screen.getByRole('button', { name: /^Undo last set/ }))
+    await screen.findByRole('heading', { name: 'Goblet squat' })
+    await userEvent.click(screen.getByRole('button', { name: 'Log set' }))
+
+    expect(await screen.findByText('Inverted row')).toBeInTheDocument()
+    expect(screen.queryByText(/each side/)).toBeNull()
   })
 })
 

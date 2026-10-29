@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { effectiveSubstitutions } from './substitutions'
-import type { Exercise } from './types'
+import { effectiveSubstitutions, showsPerSidePill } from './substitutions'
+import type { Exercise, LadderPrescription, WorkoutExercise } from './types'
 
 const barbellSquat: Exercise = {
   id: 'barbell-squat',
@@ -48,3 +48,37 @@ describe('effectiveSubstitutions', () => {
     expect(effectiveSubstitutions(undefined, noSubs)).toEqual([])
   })
 })
+
+/**
+ * The per-side pill follows the slot's claim, and a swap may hide it but never
+ * add it (Phase 2 plan, DD-A3d; the independent check of 34bec42 found the first
+ * 2.3 build also *added* it on a unilateral substitute of a bilateral slot).
+ *
+ * Negative control, run 29 Oct: the old rule, `substitutedForId === undefined ?
+ * prescription.perSide : exercise.isUnilateral`, turns "never adds" red (two
+ * rows) — and, on the screens, the goblet -> split squat and inverted row ->
+ * dumbbell row tests (`SetScreen.substitute.test.tsx`) and the Rest screen test.
+ */
+describe('showsPerSidePill', () => {
+  const slot = (perSide: boolean): Pick<WorkoutExercise, 'prescription' | 'substitutedForId'> => ({
+    prescription: { perSide } as LadderPrescription,
+  })
+  const swapped = (perSide: boolean): Pick<WorkoutExercise, 'prescription' | 'substitutedForId'> => ({
+    prescription: { perSide } as LadderPrescription,
+    substitutedForId: 'authored',
+  })
+  const unilateral = { isUnilateral: true }
+  const bilateral = { isUnilateral: false }
+
+  it.each([
+    ['a per-side slot, not swapped', slot(true), bilateral, true],
+    ['a bilateral slot, not swapped', slot(false), unilateral, false],
+    ['a per-side slot swapped to a unilateral exercise keeps the claim', swapped(true), unilateral, true],
+    ['a per-side slot swapped to a bilateral exercise hides it', swapped(true), bilateral, false],
+    ['a bilateral slot swapped to a unilateral exercise does NOT add it', swapped(false), unilateral, false],
+    ['a bilateral slot swapped to a bilateral exercise has none', swapped(false), bilateral, false],
+  ] as const)('%s', (_name, workoutExercise, exercise, expected) => {
+    expect(showsPerSidePill(workoutExercise, exercise)).toBe(expected)
+  })
+})
+

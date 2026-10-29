@@ -67,6 +67,13 @@ export function implementStepKg(
  * that line shows. "Valid" is: a completed workout, and a non-null weight —
  * the last non-null `weightKg` of the most recent exposure. Easier-day and
  * other-program logs count, as they do for "Last time" (CQ3).
+ *
+ * **CQ2 (coach, pending):** "most recent valid logged weight" is read here as
+ * ONE value — the last non-null weight of the latest exposure — and later sets
+ * carry the weight just lifted. If the coach means a weight per set position
+ * (rung i starts from the substitute's own set i), this function, the
+ * `carried ?? startWeightKg` branch in `nextSetTarget`, and the shape of
+ * `SubstituteLoad.startWeightKg` change together.
  */
 export function lastLoggedWeightKg(history: readonly Workout[], exerciseId: string): number | null {
   const withWeight = previousSetsFor(history, exerciseId).filter((set) => set.weightKg !== null)

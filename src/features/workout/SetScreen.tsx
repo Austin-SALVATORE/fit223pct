@@ -8,6 +8,7 @@ import { warmupById } from '@/data/seed/warmups'
 import { ConfirmAction } from '@/ui/ConfirmAction'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { nextSetTarget } from '@/domain/nextSetTarget'
+import { showsPerSidePill } from '@/domain/substitutions'
 import { plannedSetIndices } from '@/domain/workout'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { usePrescriptionNote } from '@/i18n/seedProgram'
@@ -306,12 +307,9 @@ export function SetScreen({
           setIndex={setIndex}
           isCustomSlot={isCustomSlot}
           showAssisted={assistable}
-          // On a substitute the per-side claim is the substitute's own: the
-          // slot's `perSide` describes the exercise that was swapped out
-          // ("⇄ each side" under an inverted row is false).
-          showPerSide={
-            workoutExercise.substitutedForId === undefined ? prescription.perSide : exercise.isUnilateral
-          }
+          // The slot's per-side claim, which a swap may hide (an inverted row
+          // is not "each side") but never add (goblet squat -> split squat).
+          showPerSide={showsPerSidePill(workoutExercise, exercise)}
         />
 
         {/*
