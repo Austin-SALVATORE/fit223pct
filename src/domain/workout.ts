@@ -1,6 +1,7 @@
 import type {
   LoggedSet,
   SessionTemplate,
+  SubstituteLoad,
   UserSettings,
   Workout,
   WorkoutExercise,
@@ -222,18 +223,29 @@ export function undoLastSet(workout: Workout): UndoResult {
  * performed stay attributed to nothing further (the model has one
  * exerciseId per slot, so mid-session provenance beyond
  * `substitutedForId` isn't representable) rather than silently misattributed.
+ *
+ * `substituteLoad` is what a **cross-implement** substitute starts from
+ * (`substituteLoad.ts`, coach Q4); it is stored on the slot, and a swap
+ * always replaces whatever an earlier swap stored — so passing none (a
+ * same-implement swap, or a swap back to the authored exercise) clears it
+ * rather than leaving the previous substitute's load on this one.
  */
 export function swapExercise(
   workout: Workout,
   exerciseIndex: number,
   newExerciseId: string,
+  substituteLoad?: SubstituteLoad,
 ): Workout {
-  return updateExercise(workout, exerciseIndex, (exercise) => ({
-    ...exercise,
-    exerciseId: newExerciseId,
-    substitutedForId: exercise.substitutedForId ?? exercise.exerciseId,
-    sets: [],
-  }))
+  return updateExercise(workout, exerciseIndex, (exercise) => {
+    const { substituteLoad: _previous, ...rest } = exercise
+    return {
+      ...rest,
+      exerciseId: newExerciseId,
+      substitutedForId: exercise.substitutedForId ?? exercise.exerciseId,
+      sets: [],
+      ...(substituteLoad ? { substituteLoad } : {}),
+    }
+  })
 }
 
 export function completeWorkout(workout: Workout, completedAt: string): Workout {

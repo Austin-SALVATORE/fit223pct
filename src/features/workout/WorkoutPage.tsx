@@ -21,6 +21,7 @@ import { PRODUCT_NAME } from '@/lib/brand'
 import type { LoggedSet, Workout } from '@/domain/types'
 import { SessionSheet } from './SessionSheet'
 import { SetScreen } from './SetScreen'
+import { substituteLoadFor } from '@/domain/substituteLoad'
 import { UndoLastSetButton } from './UndoLastSetButton'
 import { UndoRemovalButton } from './UndoRemovalButton'
 import { RestScreen } from './RestScreen'
@@ -68,15 +69,17 @@ export function WorkoutPage() {
       exerciseRepo.getAll(),
       workoutRepo.getCompleted(),
     ])
-    // Only origin is needed here (note resolution) — the rest of the
-    // program record isn't; Workout is already the source of truth for
-    // everything else Workout Mode renders.
+    // Origin is needed for note resolution; the program itself only for a
+    // cross-implement swap (`substituteLoadFor` reads its prescriptions for the
+    // substitute's increment). Workout is the source of truth for everything
+    // else Workout Mode renders.
     const program = workout ? await programRepo.getById(workout.programId) : undefined
     return {
       workout,
       exerciseById: new Map(exercises.map((e) => [e.id, e])),
       completed,
       programOrigin: program?.origin,
+      program,
     }
   }, [])
 
@@ -84,7 +87,7 @@ export function WorkoutPage() {
   const [finished, setFinished] = useState<Workout | null>(null)
 
   if (!data) return null
-  const { workout, exerciseById, completed, programOrigin } = data
+  const { workout, exerciseById, completed, programOrigin, program } = data
 
   if (phase.kind === 'summary' && finished) {
     return <SessionSummary workout={finished} exerciseById={exerciseById} history={completed} />
@@ -162,7 +165,17 @@ export function WorkoutPage() {
   async function handleSwap(newExerciseId: string) {
     if (!workout || position === 'complete') return
     setLastRemoval(null)
-    await workoutRepo.put(swapExercise(workout, position.exerciseIndex, newExerciseId))
+    // The prescription's loads belong to the exercise the slot was *authored*
+    // for, however many swaps have happened since, so compatibility is judged
+    // against that one (`substitutedForId` once swapped).
+    const slot = workout.exercises[position.exerciseIndex]
+    const authored = exerciseById.get(slot.substitutedForId ?? slot.exerciseId)
+    const substitute = exerciseById.get(newExerciseId)
+    const load =
+      authored && substitute
+        ? substituteLoadFor({ authored, substitute, program, exerciseById, history: completed })
+        : undefined
+    await workoutRepo.put(swapExercise(workout, position.exerciseIndex, newExerciseId, load))
   }
 
   async function handleUndo() {
@@ -358,9 +371,21 @@ export function WorkoutPage() {
           memoising SetScreen, silently re-introduces the stale prefill;
           WorkoutPage.undo.test.tsx's "re-offers the ladder rung" test is
           what catches that, and nothing else in the suite would.
+
+          **The exercise id is part of the key, for the same reason in the
+          other direction.** A swap before the first set changes neither the
+          exercise index nor the set index, so on position alone the screen
+          survives it and the *pre-swap weight survives into the substitute*:
+          measured, a bodyweight inverted row stored the dumbbell row's 10 kg.
+          Keying on the exercise remounts it, so the substitute is offered its
+          own starting weight (`substituteLoad`), not the one it replaced.
         */}
         <motion.div
-          key={phase.kind === 'resting' ? 'rest' : `set-${position.exerciseIndex}-${position.setIndex}`}
+          key={
+            phase.kind === 'resting'
+              ? 'rest'
+              : `set-${position.exerciseIndex}-${position.setIndex}-${workoutExercise.exerciseId}`
+          }
           className="flex flex-1 flex-col"
           initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

@@ -305,3 +305,91 @@ describe('variantKey — how a rung differs from the default form', () => {
     expect(target.variantKey).toBe('slow')
   })
 })
+
+/**
+ * A cross-implement substitute (coach Q4, option b). The slot's prescription
+ * belongs to the exercise that was swapped out, so no weight in it is offered;
+ * reps, sets and rest still follow the slot. Negative controls, run 29 Oct:
+ *   drop the `substitute` branch of the offered weight (the rung is offered
+ *     again)                      -> the first five tests below (not the sixth)
+ *   offer the rung as the start   -> "no history still has the control", "with
+ *                                    history is offered its own last weight",
+ *                                    "later sets ...", "a set logged with no
+ *                                    weight falls back to the start"
+ *   ignore the weight just lifted -> "later sets offer the weight just lifted"
+ *   `loaded` always `weightKg !== null`
+ *                                 -> "a loaded substitute with no history still
+ *                                    has the control"
+ */
+describe('a cross-implement substitute', () => {
+  // The slot: a dumbbell ladder, 10/12/14 kg per hand.
+  const slot: LadderPrescription = {
+    exerciseId: 'single-arm-db-row',
+    sets: 3,
+    mode: 'reps',
+    setPlan: [
+      { weightKg: 10, reps: 12 },
+      { weightKg: 12, reps: 10 },
+      { weightKg: 14, reps: 8 },
+    ],
+    restSeconds: 90,
+    perSide: true,
+    maxWeightKg: 38,
+    weightStepKg: 2,
+  }
+
+  it('an unloaded substitute is offered no weight, and no weight control, whatever the rung says', () => {
+    const target = nextSetTarget(slot, [], 0, { loaded: false, startWeightKg: null })
+
+    expect(target.loaded).toBe(false)
+    expect(target.weightKg).toBeNull()
+    expect(target.prescribed.weightKg).toBeNull()
+    // The reps are still the slot's.
+    expect(target.reps).toBe(12)
+  })
+
+  it('a loaded substitute with no history still has the control, and nothing to put in it', () => {
+    const target = nextSetTarget(slot, [], 0, { loaded: true, startWeightKg: null })
+
+    expect(target.loaded).toBe(true)
+    expect(target.weightKg).toBeNull()
+    expect(target.prescribed.weightKg).toBeNull()
+    expect(target.reps).toBe(12)
+  })
+
+  it("a loaded substitute with history is offered its own last weight, never the slot's rung", () => {
+    const target = nextSetTarget(slot, [], 0, { loaded: true, startWeightKg: 29.75 })
+
+    expect(target.weightKg).toBe(29.75)
+    expect(target.weightKg).not.toBe(10)
+  })
+
+  it('later sets offer the weight just lifted, because the rung weights mean nothing on this implement', () => {
+    const lifted = [set({ weightKg: 41.75, reps: 12 })]
+
+    expect(nextSetTarget(slot, lifted, 1, { loaded: true, startWeightKg: 29.75 }).weightKg).toBe(41.75)
+    // ...and not the rung (12) or the start (29.75).
+  })
+
+  it('a set logged with no weight falls back to the start, not to the rung', () => {
+    const noWeight = [set({ weightKg: null, reps: 12 })]
+    expect(nextSetTarget(slot, noWeight, 1, { loaded: true, startWeightKg: 29.75 }).weightKg).toBe(29.75)
+    expect(nextSetTarget(slot, noWeight, 1, { loaded: true, startWeightKg: null }).weightKg).toBeNull()
+  })
+
+  it('without a substitute, `loaded` is exactly "there is a weight" — today\'s rule, unchanged', () => {
+    expect(nextSetTarget(slot, [], 0).loaded).toBe(true)
+    expect(nextSetTarget(slot, [], 0).weightKg).toBe(10)
+
+    const bodyweight: LadderPrescription = {
+      ...slot,
+      exerciseId: 'inverted-row',
+      setPlan: slot.setPlan.map((rung) => ({ ...rung, weightKg: null })),
+      maxWeightKg: null,
+      weightStepKg: null,
+    }
+    expect(nextSetTarget(bodyweight, [], 0).loaded).toBe(false)
+    expect(nextSetTarget(bodyweight, [], 0).weightKg).toBeNull()
+  })
+})
+

@@ -77,7 +77,11 @@ export const seedExercises: Exercise[] = [
     // 'chest-supported-row' added per spec v2.7 §17's reverse row
     // ("Single-arm Dumbbell Row | Chest-supported Dumbbell Row | Torso
     // support is needed"), now resolvable now that it exists.
-    substitutionIds: ['bent-over-row', 'band-row', 'chest-supported-row'],
+    // 'inverted-row' added 29 Oct 2026 (coach Q1): the athlete tried it in
+    // Full Body B on 24 Oct and prefers having it. Its own list already
+    // names this exercise back. A bodyweight substitute, so a swap to it
+    // starts with no weight at all (`substituteLoad.ts`, coach Q4).
+    substitutionIds: ['bent-over-row', 'band-row', 'chest-supported-row', 'inverted-row'],
     isUnilateral: true,
   },
   {

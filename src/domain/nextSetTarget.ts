@@ -1,4 +1,4 @@
-import type { ExercisePrescription, LoggedSet, SetVariant } from './types'
+import type { ExercisePrescription, LoggedSet, SetVariant, SubstituteLoad } from './types'
 
 /**
  * The numbers the user is about to be offered for one set — resolved **once**,
@@ -60,7 +60,16 @@ import type { ExercisePrescription, LoggedSet, SetVariant } from './types'
  * UI's job, from those discriminants.
  */
 export interface NextSetTarget {
-  /** Null when the prescription carries no load — bodyweight work. */
+  /**
+   * Whether the weight control is offered at all. Without a substitute this
+   * is exactly `weightKg !== null` (today's rule: bodyweight work has no
+   * control). A substitute breaks that equivalence, which is why it is its own
+   * field: a **loaded substitute with no history** has no weight to offer yet
+   * (`weightKg` null) and still needs the control, so the athlete can enter
+   * one; an unloaded substitute has neither.
+   */
+  loaded: boolean
+  /** Null when the prescription carries no load — bodyweight work — or a substitute has none to offer. */
   weightKg: number | null
   /** Null in seconds mode. */
   reps: number | null
@@ -135,11 +144,18 @@ export interface NextSetTarget {
  *   still). This function reads it; it computes nothing from history.
  * @param setsThisSession sets already logged for this exercise, this session
  * @param setIndex        0-based position of the set being resolved
+ * @param substitute      set only for a **cross-implement** substitute
+ *   (`SubstituteLoad`, coach Q4). The slot's prescription belongs to the
+ *   exercise that was swapped out, so none of its weights apply: the weight
+ *   offered is the weight just lifted this session, else the substitute's own
+ *   last logged weight, else none — and none at all for an unloaded movement.
+ *   Reps, sets and rest still follow the slot (the coach's swap ruling).
  */
 export function nextSetTarget(
   prescription: ExercisePrescription,
   setsThisSession: readonly LoggedSet[],
   setIndex: number,
+  substitute?: Pick<SubstituteLoad, 'loaded' | 'startWeightKg'>,
 ): NextSetTarget {
   const isSeconds = prescription.mode === 'seconds'
   const carried = setsThisSession.at(-1) ?? null
@@ -181,7 +197,13 @@ export function nextSetTarget(
   */
   const isRung = prescription.setPlan !== undefined && !isCustomSlot
   const carriedEffort = carried ? ((isSeconds ? carried.seconds : carried.reps) ?? 0) : null
-  const weightKg = isRung ? prescribedWeight : (carried?.weightKg ?? prescribedWeight)
+  const weightKg = substitute
+    ? substitute.loaded
+      ? (carried?.weightKg ?? substitute.startWeightKg)
+      : null
+    : isRung
+      ? prescribedWeight
+      : (carried?.weightKg ?? prescribedWeight)
   const effort = isRung ? prescribedEffort : (carriedEffort ?? prescribedEffort)
 
   const assisted = isRung ? rung?.assisted : carried?.assisted
@@ -206,8 +228,10 @@ export function nextSetTarget(
       : null
 
   return {
+    loaded: substitute ? substitute.loaded : weightKg !== null,
     prescribed: {
-      weightKg: prescribedWeight,
+      // A substitute is not "told" another implement's rung weight.
+      weightKg: substitute ? null : prescribedWeight,
       reps: isSeconds ? null : prescribedEffort,
       seconds: isSeconds ? prescribedEffort : null,
       ...(!isCustomSlot && rung?.assisted ? { assisted: true as const } : {}),

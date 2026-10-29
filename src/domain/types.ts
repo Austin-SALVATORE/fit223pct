@@ -358,12 +358,42 @@ export interface LoggedSet {
   assisted?: true
 }
 
+/**
+ * What a **cross-implement** substitute starts from — coach Q4 (29 Oct 2026,
+ * option b): the substitute's own most recent logged weight, otherwise no
+ * suggestion; never a load copied between incompatible implements, and never
+ * a weight at all for a bodyweight movement. `swapExercise` keeps the slot's
+ * prescription, so without this the substitute would inherit the authored
+ * exercise's rung weights, step and ceiling (a per-dumbbell 10 kg offered on
+ * a total-load barbell, dumbbell weights shown for an inverted row).
+ *
+ * Computed once, at swap time (`substituteLoad.ts`), and stored on the slot —
+ * the same reason carry is stored at Start: the Set screen and the Rest
+ * screen read one snapshot and cannot disagree. Absent for a same-implement
+ * swap, where the slot's own loads still apply (CQ4).
+ */
+export interface SubstituteLoad {
+  /** False for a movement that carries no load (bodyweight, band, bars): no weight control, `weightKg: null` is logged. */
+  loaded: boolean
+  /** The substitute's own last logged weight; null = no suggestion, the athlete chooses. */
+  startWeightKg: number | null
+  /** The substitute's own implement increment; null = unknown (the Stepper uses 1). Never the slot's step. */
+  stepKg: number | null
+}
+
 export interface WorkoutExercise {
   exerciseId: string
   /** Snapshot of the prescription at workout time, so history survives program edits */
   prescription: ExercisePrescription
   sets: LoggedSet[]
   substitutedForId?: string
+  /**
+   * Set only by a cross-implement swap (`SubstituteLoad`). Additive and
+   * optional, like `LoggedSet.assisted` and `skippedLevels` before it: no
+   * Dexie version, no migration, an older record simply has none. (v7 is
+   * reserved for nutrition, `db.ts`.)
+   */
+  substituteLoad?: SubstituteLoad
   /**
    * Prescribed level indices removed this session (coach spec §4, "Skipped
    * this session"). Audit and display only — nothing in the progression

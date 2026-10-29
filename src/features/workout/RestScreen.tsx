@@ -63,9 +63,17 @@ export function RestScreen({
    * while the set screen offers the weight you just lifted — see
    * `nextSetTarget`. Carry-forward is already baked into the stored
    * prescription at workout start (`carrySessionForward`), so this only reads.
+   * A cross-implement substitute's own starting load rides along
+   * (`substituteLoad`), for the same reason: this screen must offer the number
+   * the set screen will.
    */
   const prescription = nextWorkoutExercise.prescription
-  const target = nextSetTarget(prescription, nextWorkoutExercise.sets, position.setIndex)
+  const target = nextSetTarget(
+    prescription,
+    nextWorkoutExercise.sets,
+    position.setIndex,
+    nextWorkoutExercise.substituteLoad,
+  )
 
   // Session-aware, coach spec §4 — a skipped level is never counted, an
   // opened custom slot is, same plannedSetIndices SetScreen's own counter

@@ -88,8 +88,13 @@ export function SetScreen({
    * arrives from `WorkoutPage` with carry-forward already applied
    * (`domain/carryForward.ts`), so this call only ever reads it, never
    * computes from history itself.
+   *
+   * `substituteLoad` is set only on a cross-implement substitute (coach Q4,
+   * `substituteLoad.ts`): the slot's rung weights, step and ceiling belong to
+   * the exercise that was swapped out, so none of them is offered.
    */
-  const target = nextSetTarget(prescription, workoutExercise.sets, setIndex)
+  const substituteLoad = workoutExercise.substituteLoad
+  const target = nextSetTarget(prescription, workoutExercise.sets, setIndex, substituteLoad)
   const exerciseWarmup = prescription.warmupId ? warmupById(prescription.warmupId) : undefined
 
   const [weightKg, setWeightKg] = useState(target.weightKg)
@@ -143,7 +148,10 @@ export function SetScreen({
 
   function handleLog() {
     onLog({
-      weightKg,
+      // `target.loaded`, not `weightKg !== null`: an unloaded substitute logs
+      // no weight whatever the Stepper state says, so a weight carried over
+      // from the exercise it replaced can never reach storage.
+      weightKg: target.loaded ? weightKg : null,
       reps: isSeconds ? null : effort,
       seconds: isSeconds ? effort : null,
       completedAt: new Date().toISOString(),
@@ -252,13 +260,15 @@ export function SetScreen({
               <HoldTimer onComplete={setEffort} />
             </div>
           )}
-          {weightKg !== null && (
+          {target.loaded && (
             <div className={isSeconds ? 'pt-3' : undefined}>
               <Stepper
                 size="lg"
                 label={t('setScreen.weightLabel')}
                 value={weightKg}
-                step={prescription.weightStepKg ?? 1}
+                // A substitute steps in its own implement's increment, or in 1
+                // when that is unknown — never the slot's (the other implement's).
+                step={substituteLoad ? (substituteLoad.stepKg ?? 1) : (prescription.weightStepKg ?? 1)}
                 min={0}
                 unit="kg"
                 onChange={setWeightKg}
@@ -267,7 +277,7 @@ export function SetScreen({
           )}
           <div
             className={
-              weightKg !== null ? 'mt-2 border-t border-border pt-2' : isSeconds ? 'pt-3' : undefined
+              target.loaded ? 'mt-2 border-t border-border pt-2' : isSeconds ? 'pt-3' : undefined
             }
           >
             <Stepper
@@ -296,6 +306,12 @@ export function SetScreen({
           setIndex={setIndex}
           isCustomSlot={isCustomSlot}
           showAssisted={assistable}
+          // On a substitute the per-side claim is the substitute's own: the
+          // slot's `perSide` describes the exercise that was swapped out
+          // ("⇄ each side" under an inverted row is false).
+          showPerSide={
+            workoutExercise.substitutedForId === undefined ? prescription.perSide : exercise.isUnilateral
+          }
         />
 
         {/*
@@ -436,7 +452,7 @@ function LastTime({
   sets: readonly LoggedSet[]
   mode: 'reps' | 'seconds'
 }) {
-  const { t } = useTranslation('workout')
+  const { t, i18n } = useTranslation('workout')
   const { t: tCommon } = useTranslation('common')
   if (sets.length === 0) return <>{t('setScreen.lastTimeFirst')}</>
   const parts = sets
@@ -444,7 +460,9 @@ function LastTime({
       const effort = effortValue(set, mode)
       // The seconds marker is keyed: zh-CN writes 秒, not a Latin "s" (I3).
       const suffix = mode === 'seconds' ? tCommon('unitSeconds') : ''
-      return set.weightKg !== null ? `${effort}×${set.weightKg} kg` : `${effort}${suffix}`
+      return set.weightKg !== null
+        ? `${effort}×${formatNumber(set.weightKg, i18n.language)} kg`
+        : `${effort}${suffix}`
     })
     .join(' · ')
   return (
@@ -571,6 +589,7 @@ function TargetCaption({
   setIndex,
   isCustomSlot,
   showAssisted,
+  showPerSide,
 }: {
   id: string
   prescription: ExercisePrescription
@@ -580,8 +599,10 @@ function TargetCaption({
   isCustomSlot: boolean
   /** The "Assisted" tag belongs to the dip's own slot, not to a swapped one (F-P4-1). */
   showAssisted: boolean
+  /** The "⇄ each side" pill: the slot's own claim, or — on a substitute — the substitute's. */
+  showPerSide: boolean
 }) {
-  const { t } = useTranslation('workout')
+  const { t, i18n } = useTranslation('workout')
   const { t: tCommon } = useTranslation('common')
   const isSeconds = prescription.mode === 'seconds'
 
@@ -609,7 +630,9 @@ function TargetCaption({
   // The *advanced* rung, from the same resolution the card used. Reading
   // `prescription.setPlan[setIndex]` here would show the authored ladder
   // and caption "8 kg" under a card offering 10.
-  const weight = target.prescribed.weightKg
+  // Formatted for the language (fr writes 17,75): the raw number reached the
+  // locale string as "17.75" in every language.
+  const weight = target.prescribed.weightKg === null ? null : formatNumber(target.prescribed.weightKg, i18n.language)
   const effort = (isSeconds ? target.prescribed.seconds : target.prescribed.reps) ?? '–'
 
   const targetText = isCustomSlot
@@ -658,7 +681,7 @@ function TargetCaption({
           {tCommon(`setVariant.${target.variantKey}`)}
         </span>
       )}
-      {prescription.perSide && (
+      {showPerSide && (
         <span className="rounded-full border border-border px-2 py-0.5 text-xs">
           ⇄ {t('setScreen.eachSide')}
         </span>

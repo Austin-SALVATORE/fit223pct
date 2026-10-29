@@ -221,6 +221,47 @@ describe('swapExercise', () => {
     expect(swapped.exercises[0].sets).toHaveLength(0)
     expect(workoutPosition(swapped)).toEqual({ exerciseIndex: 0, setIndex: 0 })
   })
+
+  /**
+   * Coach Q4: a cross-implement substitute's starting load is computed at swap
+   * time and stored on the slot (`SubstituteLoad`). Negative control, run
+   * 29 Oct: spreading the old exercise unchanged (not stripping the previous
+   * load) reds "swapping back to a same-implement exercise clears the stored
+   * load" — the only test where a swap passes no load of its own. "A later
+   * swap replaces ..." passes either way, because the new load overwrites the
+   * old one regardless.
+   */
+  const loadedStart = { loaded: true, startWeightKg: 29.75, stepKg: 2.5 }
+
+  it('stores the substitute load it is given, additively — nothing else about the slot changes', () => {
+    const before = makeWorkout()
+    const swapped = swapExercise(before, 0, 'bent-over-row', loadedStart)
+
+    expect(swapped.exercises[0].substituteLoad).toEqual(loadedStart)
+    expect(swapped.exercises[0].prescription).toBe(before.exercises[0].prescription)
+    // Immutable: the original workout is untouched, and so is the other slot.
+    expect(before.exercises[0].substituteLoad).toBeUndefined()
+    expect(swapped.exercises[1]).toBe(before.exercises[1])
+  })
+
+  it('stores nothing for a same-implement swap — the field is absent, not undefined', () => {
+    const swapped = swapExercise(makeWorkout(), 0, 'split-squat')
+    expect('substituteLoad' in swapped.exercises[0]).toBe(false)
+  })
+
+  it('a later swap replaces the earlier substitute\'s load rather than inheriting it', () => {
+    const first = swapExercise(makeWorkout(), 0, 'bent-over-row', loadedStart)
+    const second = swapExercise(first, 0, 'inverted-row', { loaded: false, startWeightKg: null, stepKg: null })
+    expect(second.exercises[0].substituteLoad).toEqual({ loaded: false, startWeightKg: null, stepKg: null })
+    // The authored exercise is still what it was substituted for.
+    expect(second.exercises[0].substitutedForId).toBe('goblet-squat')
+  })
+
+  it('swapping back to a same-implement exercise clears the stored load', () => {
+    const first = swapExercise(makeWorkout(), 0, 'bent-over-row', loadedStart)
+    const back = swapExercise(first, 0, 'goblet-squat')
+    expect('substituteLoad' in back.exercises[0]).toBe(false)
+  })
 })
 
 describe('undoLastSet', () => {
