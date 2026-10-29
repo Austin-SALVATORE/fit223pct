@@ -20,8 +20,15 @@ bottom:
 1. **Phase header** — name, date range, focus, training weekdays, and
    the session rotation stated in a sentence ("A and B alternate,
    Mon / Wed / Fri").
-2. **Day list, grouped by week** — every scheduled day of the phase in
-   chronological order:
+2. **Day list, grouped by month, then by week** — every scheduled day
+   of the phase in chronological order. Each month is a collapsible
+   section whose header shows the month, the year and how many training
+   days it has (Mesocycle 2, for example: "August 2026 · 10 training days"). The current month
+   opens by default and the others start closed. A phase that has not
+   started opens its first month, and one that has finished opens its
+   last. Open state lasts for one visit and is not remembered (athlete
+   feedback, 24 Oct 2026; owner go-ahead 29 Oct). Within a month the
+   days are grouped by week as before:
    - **Past days** state facts only: the session that was completed
      (name, sets, volume one-liner) or a plain em-dash for a scheduled
      day with no workout. No "missed", no streaks, no guilt copy — a
@@ -59,12 +66,14 @@ exist only on the day they're measured.
   date, and today landing in the right bucket.
 - **Data**: `programRepo.getAll()` (ordered by `startDate`) — the only
   repository addition.
-- **UI** (`features/plan/`): `PlanPage` + a week-grouped `GroupedList`
-  reuse. Session names link to nothing in v1 — the Library covers
+- **UI** (`features/plan/`): `PlanPage` + a collapsible `MonthSection`
+  per month, each holding the week-grouped `GroupedList`s. Session names link to nothing in v1 — the Library covers
   exercise detail; a per-workout detail view is explicitly out of
   scope until something proves the need.
 - **A11y**: list semantics; route-change focus and title come free from
-  AppShell's existing handling.
+  AppShell's existing handling. Each month header is a
+  `<button aria-expanded aria-controls>` inside an `<h3>`. A closed
+  month's panel is `hidden`, not unmounted.
 
 ## Amendment (19 Jul): day detail — every row clickable
 
