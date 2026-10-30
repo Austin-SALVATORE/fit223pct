@@ -1,4 +1,5 @@
 import type { EffortMode, ExercisePrescription, LadderPrescription, LoggedSet, SetTarget, WorkoutExercise } from './types'
+import { isSubstitute } from './substitutions'
 import { scopedExposuresFor } from './workout'
 import type { Workout } from './types'
 
@@ -344,10 +345,11 @@ export function isCompleteExposure(exercise: WorkoutExercise): boolean {
  *  1. {@link isCarryBasisWorkout} — a workout started on an easier day is not a
  *     basis (coach Q7: easier-day logs "do not automatically redefine" the
  *     normal prescription).
- *  2. {@link isCarryBasisExposure} — a swapped slot is not a basis (the
+ *  2. {@link isCarryBasisExposure} — a substitute is not a basis (the
  *     coach's swap ruling: a substitute was performed against the *original*
  *     exercise's sets and reps, so it changes the next prescription of neither
- *     exercise; the original resumes from its last real session). Applied
+ *     exercise; the original resumes from its last real session). A slot
+ *     swapped away and back is the original again, not a substitute (CC4). Applied
  *     inside the per-workout `find`, so a workout holding a swapped slot AND a
  *     real slot of the same exercise still counts via the real one.
  *  3. {@link isCompleteExposure} — judged last, on what survived both
@@ -368,16 +370,24 @@ export function mostRecentCompleteExposureFor(
 }
 
 /**
- * Whether one exposure may serve as the carry basis. A swapped slot
- * (`substitutedForId` set) was performed against another exercise's
- * prescription — e.g. push-ups done as the Dip's 2 x 5-8 — and carry is
- * positional, so its logs would land on rungs they were never performed
+ * Whether one exposure may serve as the carry basis. A **substitute**
+ * (`isSubstitute`, `substitutions.ts`) was performed against another
+ * exercise's prescription — e.g. push-ups done as the Dip's 2 x 5-8 — and carry
+ * is positional, so its logs would land on rungs they were never performed
  * against. Excluded at the lookup (addendum 2 §1), so neither the
  * substitute's own slot nor the replaced slot reads it; it stays in history
  * and in "Last time".
+ *
+ * **A genuine swap back is not a substitute (CC4, coach 29 Oct).** A slot that
+ * was swapped away and back is the original exercise, and when it is also
+ * *complete* (`isCompleteExposure`, unchanged: every prescribed level logged or
+ * explicitly skipped, at least one logged) it is a basis like any other. Sets
+ * logged before the swap are not in the slot's `sets` (they sit in
+ * `priorAttempts`, a record only), and a swap resets `skippedLevels`, so
+ * neither can make a partly done original look complete.
  */
 export function isCarryBasisExposure(exercise: WorkoutExercise): boolean {
-  return exercise.substitutedForId === undefined
+  return !isSubstitute(exercise)
 }
 
 /**

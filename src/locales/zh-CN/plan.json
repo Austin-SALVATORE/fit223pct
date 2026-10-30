@@ -33,6 +33,7 @@
     "weightSuffix": " × {{weight}} kg",
     "customSuffix": "{{set}}（加练）",
     "assistedSuffix": "{{set}}（有辅助）",
+    "priorAttempt": "更换前，{{name}}：{{sets}}",
     "skippedLevels_other": "跳过了 {{count}} 级"
   },
   "export": {

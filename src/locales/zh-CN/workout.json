@@ -93,7 +93,7 @@
     "otherNote": "这些不是推荐的替代动作，只是方便你记录实际做了什么。",
     "keep": "保留{{exerciseName}}",
     "confirmHeading": "把{{exerciseName}}换成{{newExerciseName}}？",
-    "confirmWarning_other": "已记录的 {{count}} 组将被清除。",
+    "confirmWarning_other": "已记录的 {{count}} 组会保留为记录，不计入新动作。",
     "confirmSwap": "仍然更换",
     "confirmCancel": "取消"
   },

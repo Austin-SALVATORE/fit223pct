@@ -89,7 +89,9 @@ describe('exercise-level warm-up on the set screen', () => {
   })
 
   it('is suppressed on a substitute — a barbell ramp for a swapped movement is a false instruction', async () => {
-    await show(workout((w) => ({ ...w, exercises: w.exercises.map((e) => ({ ...e, substitutedForId: 'goblet-squat' })) })))
+    // A real substitute: the slot was prescribed for another exercise. (The
+    // slot's own id here is not a substitute since CC4 — SetScreen.swapBack.test.tsx.)
+    await show(workout((w) => ({ ...w, exercises: w.exercises.map((e) => ({ ...e, substitutedForId: 'barbell-squat' })) })))
     expect(screen.queryByText(WARMUP_HEADING)).toBeNull()
   })
 

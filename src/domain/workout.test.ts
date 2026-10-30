@@ -262,6 +262,16 @@ describe('swapExercise', () => {
     const back = swapExercise(first, 0, 'goblet-squat')
     expect('substituteLoad' in back.exercises[0]).toBe(false)
   })
+
+  // CC4 (Phase 2b.3): a genuine return is an unswapped slot, not one that is
+  // "substituted for itself". More in swapBack.test.ts.
+  it('swapping back to the authored exercise also clears substitutedForId', () => {
+    const first = swapExercise(makeWorkout(), 0, 'bent-over-row', loadedStart)
+    expect(first.exercises[0].substitutedForId).toBe('goblet-squat')
+    const back = swapExercise(first, 0, 'goblet-squat')
+    expect(back.exercises[0].exerciseId).toBe('goblet-squat')
+    expect('substitutedForId' in back.exercises[0]).toBe(false)
+  })
 })
 
 describe('undoLastSet', () => {

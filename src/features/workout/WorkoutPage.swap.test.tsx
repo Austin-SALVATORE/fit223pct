@@ -129,7 +129,7 @@ describe('SwapSheet confirm-clear step', () => {
     await userEvent.click(within(sheet).getByRole('button', { name: /Split squat/ }))
 
     expect(within(sheet).getByText('Swap Goblet squat for Split squat?')).toBeInTheDocument()
-    expect(within(sheet).getByText('1 logged set will be cleared.')).toBeInTheDocument()
+    expect(within(sheet).getByText("1 logged set is kept as a record. It won't count toward the new exercise.")).toBeInTheDocument()
     // Nothing has actually swapped yet — still on Goblet squat, still 1 set.
     expect(screen.getByRole('heading', { name: 'Goblet squat' })).toBeInTheDocument()
   })
@@ -195,7 +195,7 @@ describe('SwapSheet confirm-clear step', () => {
       // The warning is the heading's description, so it is announced with it
       // rather than left to a live region that fires at mount.
       const warningId = heading.getAttribute('aria-describedby') ?? ''
-      expect(document.getElementById(warningId)).toHaveTextContent('1 logged set will be cleared.')
+      expect(document.getElementById(warningId)).toHaveTextContent("1 logged set is kept as a record. It won't count toward the new exercise.")
     })
 
     it('keeps Escape working once the confirm step has focus', async () => {

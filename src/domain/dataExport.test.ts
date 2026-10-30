@@ -104,3 +104,54 @@ describe('toFullDataExportJson / fullDataExportFilename', () => {
     expect(fullDataExportFilename('2026-08-01')).toBe('fit223-export-2026-08-01.json')
   })
 })
+
+/**
+ * Sets a swap cleared are kept as a record on the slot (`priorAttempts`, owner
+ * OD-d, 29 Oct) and travel with the workout in the backup. The export hands over
+ * stored workouts untouched, so this is the guard that stays true if anyone ever
+ * adds a field whitelist or a sanitiser to it.
+ *
+ * Negative control, run 30 Oct: mapping each exercise to drop `priorAttempts`
+ * in `buildFullDataExport` turns both tests red.
+ */
+describe('a workout with sets kept from before a swap', () => {
+  const swapped: Workout = {
+    ...workout,
+    id: 'w-swapped',
+    exercises: [
+      {
+        exerciseId: 'split-squat',
+        prescription: seedProgram.sessions[1].items[0],
+        substitutedForId: 'goblet-squat',
+        sets: [],
+        priorAttempts: [
+          {
+            exerciseId: 'goblet-squat',
+            sets: [{ setIndex: 0, weightKg: 20, reps: 10, seconds: null, completedAt: '2026-07-22T09:10:00.000Z' }],
+          },
+        ],
+      },
+    ],
+  }
+  const build = () =>
+    buildFullDataExport({
+      programs: [],
+      workouts: [swapped],
+      checkins: [],
+      settings: undefined,
+      activityRecords: [],
+      exportedAt: '2026-07-19T12:00:00.000Z',
+    })
+
+  it('exports the record with the workout', () => {
+    expect(build().workouts[0].exercises[0].priorAttempts).toEqual(swapped.exercises[0].priorAttempts)
+  })
+
+  it('and it survives the JSON the backup is written as', () => {
+    const parsed = JSON.parse(toFullDataExportJson(build())) as { workouts: Workout[] }
+    expect(parsed.workouts[0].exercises[0].priorAttempts?.[0]).toMatchObject({
+      exerciseId: 'goblet-squat',
+      sets: [{ weightKg: 20, reps: 10 }],
+    })
+  })
+})

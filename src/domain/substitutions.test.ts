@@ -60,10 +60,12 @@ describe('effectiveSubstitutions', () => {
  * dumbbell row tests (`SetScreen.substitute.test.tsx`) and the Rest screen test.
  */
 describe('showsPerSidePill', () => {
-  const slot = (perSide: boolean): Pick<WorkoutExercise, 'prescription' | 'substitutedForId'> => ({
+  const slot = (perSide: boolean): Pick<WorkoutExercise, 'exerciseId' | 'prescription' | 'substitutedForId'> => ({
+    exerciseId: 'authored',
     prescription: { perSide } as LadderPrescription,
   })
-  const swapped = (perSide: boolean): Pick<WorkoutExercise, 'prescription' | 'substitutedForId'> => ({
+  const swapped = (perSide: boolean): Pick<WorkoutExercise, 'exerciseId' | 'prescription' | 'substitutedForId'> => ({
+    exerciseId: 'substitute',
     prescription: { perSide } as LadderPrescription,
     substitutedForId: 'authored',
   })

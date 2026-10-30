@@ -22,6 +22,7 @@ import type { LoggedSet, Workout } from '@/domain/types'
 import { SessionSheet } from './SessionSheet'
 import { SetScreen } from './SetScreen'
 import { substituteLoadFor } from '@/domain/substituteLoad'
+import { authoredExerciseIdOf } from '@/domain/substitutions'
 import { UndoLastSetButton } from './UndoLastSetButton'
 import { UndoRemovalButton } from './UndoRemovalButton'
 import { RestScreen } from './RestScreen'
@@ -167,9 +168,9 @@ export function WorkoutPage() {
     setLastRemoval(null)
     // The prescription's loads belong to the exercise the slot was *authored*
     // for, however many swaps have happened since, so compatibility is judged
-    // against that one (`substitutedForId` once swapped).
+    // against that one (`authoredExerciseIdOf`).
     const slot = workout.exercises[position.exerciseIndex]
-    const authored = exerciseById.get(slot.substitutedForId ?? slot.exerciseId)
+    const authored = exerciseById.get(authoredExerciseIdOf(slot))
     const substitute = exerciseById.get(newExerciseId)
     const load =
       authored && substitute

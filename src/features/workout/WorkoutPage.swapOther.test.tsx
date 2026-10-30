@@ -313,7 +313,7 @@ describe('picking from Other goes through the same swap', () => {
     expect(
       await screen.findByRole('heading', { name: 'Swap Dumbbell bench press for Barbell bench press?' }),
     ).toBeInTheDocument()
-    expect(screen.getByText('1 logged set will be cleared.')).toBeInTheDocument()
+    expect(screen.getByText("1 logged set is kept as a record. It won't count toward the new exercise.")).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Swap anyway' }))
     expect(await screen.findByRole('heading', { name: 'Barbell bench press' })).toBeInTheDocument()
   })

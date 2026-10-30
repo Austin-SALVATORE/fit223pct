@@ -37,6 +37,7 @@
     "weightSuffix": " × {{weight}} kg",
     "customSuffix": "{{set}} (Ajoutée)",
     "assistedSuffix": "{{set}} (avec assistance)",
+    "priorAttempt": "Avant le remplacement, {{name}} : {{sets}}",
     "skippedLevels_one": "{{count}} palier passé",
     "skippedLevels_other": "{{count}} paliers passés"
   },

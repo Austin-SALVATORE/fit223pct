@@ -15,7 +15,7 @@ interface SwapSheetProps {
   exercise: Exercise
   prescription: Pick<ExercisePrescription, 'substitutionIds'>
   exerciseById: Map<string, Exercise>
-  /** Sets already logged against the exercise being swapped away from — swapExercise (domain/workout.ts) resets them, so a non-zero count needs a chosen, not discovered, confirmation. */
+  /** Sets already logged against the exercise being swapped away from — swapExercise (domain/workout.ts) moves them out of the slot into a record (`priorAttempts`, not counted), so a non-zero count needs a chosen, not discovered, confirmation. */
   loggedSetsCount: number
   onSelect: (exerciseId: string) => void
   onClose: () => void
@@ -50,7 +50,8 @@ export function SwapSheet({
   const [otherOpen, setOtherOpen] = useState(false)
   const otherPanelId = useId()
 
-  // Set only when the tapped option would clear logged sets — the sheet
+  // Set only when the tapped option would take logged sets out of the slot
+  // (they are kept as a record, `priorAttempts`) — the sheet
   // shows a confirm step instead of swapping immediately. Reset whenever
   // the sheet opens/closes so a stale pending choice never survives.
   const [pendingExerciseId, setPendingExerciseId] = useState<string | null>(null)

@@ -95,8 +95,8 @@
     "otherNote": "Ces exercices ne sont pas des substitutions suggérées. Ils sont là pour que tu enregistres ce que tu as vraiment fait.",
     "keep": "Garder {{exerciseName}}",
     "confirmHeading": "Remplacer {{exerciseName}} par {{newExerciseName}} ?",
-    "confirmWarning_one": "{{count}} série enregistrée sera effacée.",
-    "confirmWarning_other": "{{count}} séries enregistrées seront effacées.",
+    "confirmWarning_one": "{{count}} série enregistrée est conservée comme trace. Elle ne comptera pas pour le nouvel exercice.",
+    "confirmWarning_other": "{{count}} séries enregistrées sont conservées comme trace. Elles ne compteront pas pour le nouvel exercice.",
     "confirmSwap": "Remplacer quand même",
     "confirmCancel": "Annuler"
   },

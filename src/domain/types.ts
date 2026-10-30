@@ -398,12 +398,43 @@ export interface SubstituteLoad {
   basis?: { workoutId: string; date: string }
 }
 
+/**
+ * Sets that were logged on a slot before it was swapped to another exercise
+ * (owner OD-d, 29 Oct 17:02: keep them as a record). `exerciseId` is the
+ * exercise they were performed as; `sets` are exactly as logged.
+ *
+ * **A record only.** Nothing that decides position, carry-forward, a weight
+ * suggestion, "Last time", a trend, stagnation or a summary total reads this:
+ * those read `WorkoutExercise.sets`, which a swap empties. It is shown in the
+ * day detail and exported with the workout, so a log still describes what was
+ * actually done.
+ */
+export interface PriorAttempt {
+  exerciseId: string
+  sets: LoggedSet[]
+}
+
 export interface WorkoutExercise {
   exerciseId: string
   /** Snapshot of the prescription at workout time, so history survives program edits */
   prescription: ExercisePrescription
   sets: LoggedSet[]
+  /**
+   * The exercise this slot was prescribed for, written by a swap to a
+   * **different** exercise. Absent on an unswapped slot, and — since CC4,
+   * 29 Oct — on a slot swapped back to its own exercise. Older records can
+   * still hold the id of the exercise itself (swapped away and back); never
+   * compare this field directly: `isSubstitute` and `authoredExerciseIdOf`
+   * (`substitutions.ts`) are the readers, and `substitutions.guard.test.ts`
+   * enforces it.
+   */
   substitutedForId?: string
+  /**
+   * Sets cleared from this slot by each swap, oldest first (`PriorAttempt`).
+   * A record only. Additive and optional like `substituteLoad`: no Dexie
+   * version, no migration, an older record has none.
+   */
+  priorAttempts?: PriorAttempt[]
   /**
    * Set by a swap to a different exercise (`SubstituteLoad`). Additive and
    * optional, like `LoggedSet.assisted` and `skippedLevels` before it: no

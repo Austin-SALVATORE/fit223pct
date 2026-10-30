@@ -225,9 +225,7 @@ function CompletedDetail({
   // zero logged sets, no custom slots) must still appear — coach spec §4:
   // "retain it in the audit history." sets.length alone can be 0 for
   // real, non-empty work.
-  const loggedExercises = workout.exercises.filter(
-    (e) => e.sets.length > 0 || (e.skippedLevels?.length ?? 0) > 0,
-  )
+  const loggedExercises = workout.exercises.filter(hasLoggedRecord)
   const setsPhrase = t('dayDetail.sets', { count: summary.totalSets })
   const minutesPhrase =
     summary.durationMinutes !== null
@@ -306,9 +304,7 @@ function AttemptedDetail({
   const resolvedSessionName = useSessionName(programId, session ?? EMPTY_SESSION, programOrigin)
   const sessionName = session ? resolvedSessionName : t('sessionFallback')
   const summary = summarizeWorkout(workout)
-  const loggedExercises = workout.exercises.filter(
-    (e) => e.sets.length > 0 || (e.skippedLevels?.length ?? 0) > 0,
-  )
+  const loggedExercises = workout.exercises.filter(hasLoggedRecord)
   const setsPhrase = t('dayDetail.sets', { count: summary.totalSets })
 
   return (
@@ -341,6 +337,16 @@ function AttemptedDetail({
   )
 }
 
+/**
+ * Whether a slot belongs in the day's list: it has sets, a skipped level, or
+ * sets that were logged before a swap (`priorAttempts`, a record). The last one
+ * matters on its own — a slot swapped after real work and not yet performed as
+ * the new exercise has no `sets`, but what was done must still be findable.
+ */
+function hasLoggedRecord(e: Workout['exercises'][number]): boolean {
+  return e.sets.length > 0 || (e.skippedLevels?.length ?? 0) > 0 || (e.priorAttempts?.length ?? 0) > 0
+}
+
 function LoggedExerciseRow({
   workoutExercise,
   exercise,
@@ -354,6 +360,21 @@ function LoggedExerciseRow({
 }) {
   const { t: tPlan } = useTranslation('plan')
   const exerciseName = useExerciseName(exercise?.id ?? '')
+  // One formatting of a logged set, for the sets that count and for a record of
+  // sets logged before a swap alike: the slot's prescription mode governs both.
+  function describeSets(sets: readonly LoggedSet[]): string {
+    return sets
+      .map((set) => {
+        const formatted = formatLoggedSet(set, workoutExercise.prescription.mode)
+        // Coach spec §4 — a custom set never reads as a Pyramid level in
+        // history either. Marked inline, not a separate line: it's one
+        // set among several logged, the same granularity the line
+        // already reads at.
+        const marked = set.assisted ? tPlan('dayDetail.assistedSuffix', { set: formatted }) : formatted
+        return set.custom ? tPlan('dayDetail.customSuffix', { set: marked }) : marked
+      })
+      .join(' · ')
+  }
   return (
     <li className="px-4 py-3.5">
       {exercise ? (
@@ -400,19 +421,18 @@ function LoggedExerciseRow({
           "levels skipped" line for no reason. */}
       {workoutExercise.sets.length > 0 && (
         <p className="mt-1 pl-[3.75rem] text-sm text-ink-secondary" data-numeric>
-          {workoutExercise.sets
-            .map((set) => {
-              const formatted = formatLoggedSet(set, workoutExercise.prescription.mode)
-              // Coach spec §4 — a custom set never reads as a Pyramid level in
-              // history either. Marked inline, not a separate line: it's one
-              // set among several logged, the same granularity the line
-              // already reads at.
-              const marked = set.assisted ? tPlan('dayDetail.assistedSuffix', { set: formatted }) : formatted
-              return set.custom ? tPlan('dayDetail.customSuffix', { set: marked }) : marked
-            })
-            .join(' · ')}
+          {describeSets(workoutExercise.sets)}
         </p>
       )}
+      {/*
+        Sets logged before a swap (owner OD-d): a record of what was done, one
+        line per attempt. Not part of the totals above and counted by nothing —
+        they sit below the sets that count, in the quieter ink, so the two never
+        read as one list.
+      */}
+      {workoutExercise.priorAttempts?.map((attempt, index) => (
+        <PriorAttemptLine key={index} exerciseId={attempt.exerciseId} sets={describeSets(attempt.sets)} />
+      ))}
       {/*
         A skipped level has no LoggedSet to append to the line above — it's
         never entered `sets` at all (workout.ts's plannedSetIndices/§3.3:
@@ -425,6 +445,17 @@ function LoggedExerciseRow({
         </p>
       )}
     </li>
+  )
+}
+
+/** One record of sets logged before a swap: which exercise they were, and the sets as logged. */
+function PriorAttemptLine({ exerciseId, sets }: { exerciseId: string; sets: string }) {
+  const { t } = useTranslation('plan')
+  const name = useExerciseName(exerciseId)
+  return (
+    <p className="mt-1 pl-[3.75rem] text-sm text-ink-tertiary" data-numeric>
+      {t('dayDetail.priorAttempt', { name, sets })}
+    </p>
   )
 }
 

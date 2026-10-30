@@ -1,3 +1,4 @@
+import { isSubstitute, type SwapState } from './substitutions'
 import type { Workout, WorkoutExercise } from './types'
 
 /**
@@ -43,21 +44,12 @@ export function isNormalCompletedWorkout(workout: Workout): boolean {
 }
 
 /**
- * TEMPORARY, inline: Phase 2b.3 replaces it with the one `isSubstitute` helper
- * in `substitutions.ts` that every reader of `substitutedForId` will share. It
- * is the same rule: a slot that has been swapped to something other than the
- * exercise it was prescribed for. (A record of the original exercise that was
- * swapped away and back, `substitutedForId === exerciseId`, is not a substitute
- * — CC4.)
+ * L4. `isSubstitute` is the one reader of the swap state (`substitutions.ts`):
+ * a record of the original exercise that was swapped away and back is not a
+ * substitute (CC4), whether it was stored before CC4 as "substituted for
+ * itself" or after, with no swap state at all.
  */
-function isSubstitute(exercise: Pick<WorkoutExercise, 'exerciseId' | 'substitutedForId'>): boolean {
-  return exercise.substitutedForId !== undefined && exercise.substitutedForId !== exercise.exerciseId
-}
-
-/** L4. */
-export function isOwnIdentityRecord(
-  exercise: Pick<WorkoutExercise, 'exerciseId' | 'substitutedForId' | 'substituteLoad'>,
-): boolean {
+export function isOwnIdentityRecord(exercise: SwapState & Pick<WorkoutExercise, 'substituteLoad'>): boolean {
   return !isSubstitute(exercise) || exercise.substituteLoad !== undefined
 }
 

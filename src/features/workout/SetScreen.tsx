@@ -8,7 +8,7 @@ import { warmupById } from '@/data/seed/warmups'
 import { ConfirmAction } from '@/ui/ConfirmAction'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { nextSetTarget, weightPressStartKg } from '@/domain/nextSetTarget'
-import { showsPerSidePill } from '@/domain/substitutions'
+import { isSubstitute, showsPerSidePill } from '@/domain/substitutions'
 import { plannedSetIndices } from '@/domain/workout'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { usePrescriptionNote } from '@/i18n/seedProgram'
@@ -68,7 +68,7 @@ export function SetScreen({
   // A custom slot (Add Set) is never a prescribed level — index at or past
   // prescription.sets, matching workout.ts's plannedSetIndices exactly.
   const isCustomSlot = setIndex >= prescription.sets
-  const showNote = workoutExercise.sets.length === 0 && workoutExercise.substitutedForId === undefined
+  const showNote = workoutExercise.sets.length === 0 && !isSubstitute(workoutExercise)
   const [confirmingSkip, setConfirmingSkip] = useState(false)
   /*
     The progression *reason* is no longer read here — it moves to the rest
@@ -113,7 +113,7 @@ export function SetScreen({
   // Carry needs no change: `carriedRung` still copies the flag, and a swapped
   // exposure is excluded from the carry basis (`isCarryBasisExposure`), so
   // nothing stored under a swap can feed any later prescription.
-  const assistable = prescription.assistable === true && workoutExercise.substitutedForId === undefined
+  const assistable = prescription.assistable === true && !isSubstitute(workoutExercise)
   const [assisted, setAssisted] = useState(assistable && target.assisted === true)
   const [swapOpen, setSwapOpen] = useState(false)
 
@@ -142,7 +142,7 @@ export function SetScreen({
   // screen (the weight control is either there or not, and a substitute stays
   // one), which is what lets it reserve the warning's room — see the slot below.
   const canWarnAboveCeiling =
-    ceilingKg != null && weightKg !== null && workoutExercise.substitutedForId === undefined
+    ceilingKg != null && weightKg !== null && !isSubstitute(workoutExercise)
   const showAboveCeiling = canWarnAboveCeiling && weightKg > ceilingKg
   // The gap above the log action: the reserved slot already supplies most of it.
   const logGapClass = canWarnAboveCeiling ? 'mt-2' : 'mt-8'
@@ -229,7 +229,7 @@ export function SetScreen({
           the prep must still show. Suppressed once the slot is a substitute:
           a barbell ramp for a dumbbell swap is a false instruction.
         */}
-        {exerciseWarmup && workoutExercise.sets.length === 0 && workoutExercise.substitutedForId === undefined && (
+        {exerciseWarmup && workoutExercise.sets.length === 0 && !isSubstitute(workoutExercise) && (
           <div className="mt-3 rounded-card border border-border bg-surface px-4 py-3">
             <p className="text-sm font-medium text-ink-tertiary">{t('setScreen.prepareFirst')}</p>
             <div className="mt-2">

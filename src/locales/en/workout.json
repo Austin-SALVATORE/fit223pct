@@ -95,8 +95,8 @@
     "otherNote": "These aren't suggested substitutes. They're here so you can log what you actually did.",
     "keep": "Keep {{exerciseName}}",
     "confirmHeading": "Swap {{exerciseName}} for {{newExerciseName}}?",
-    "confirmWarning_one": "{{count}} logged set will be cleared.",
-    "confirmWarning_other": "{{count}} logged sets will be cleared.",
+    "confirmWarning_one": "{{count}} logged set is kept as a record. It won't count toward the new exercise.",
+    "confirmWarning_other": "{{count}} logged sets are kept as a record. They won't count toward the new exercise.",
     "confirmSwap": "Swap anyway",
     "confirmCancel": "Cancel"
   },

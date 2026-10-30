@@ -1,3 +1,4 @@
+import { authoredExerciseIdOf, withoutSwapState } from './substitutions'
 import type {
   LoggedSet,
   SessionTemplate,
@@ -215,20 +216,39 @@ export function undoLastSet(workout: Workout): UndoResult {
 }
 
 /**
- * Sets logged so far in this slot belong to the exercise that was actually
- * performed, not the one now replacing it — carrying them over would leave
- * the substitute reading as partially (or fully) done before a single real
- * set of it exists, corrupting both workoutPosition (which set is next) and
- * this slot's own logged history. They reset to empty; the sets already
- * performed stay attributed to nothing further (the model has one
- * exerciseId per slot, so mid-session provenance beyond
- * `substitutedForId` isn't representable) rather than silently misattributed.
+ * Swaps the exercise performed in a slot.
  *
- * `substituteLoad` is what a substitute starts from (`substituteLoad.ts`,
- * coach Q4); it is stored on the slot, and a swap always replaces whatever an
- * earlier swap stored — so passing none (a swap back to the authored
- * exercise) clears it rather than leaving the previous substitute's load on
- * this one.
+ * **What a swap resets (owner OD-f, 29 Oct 17:03).** `sets`, `skippedLevels`
+ * and `customSlots` together. The slot's structure — which levels were logged,
+ * which were skipped, how many extra sets were opened — describes the exercise
+ * that was performed, like the sets themselves. Leaving `skippedLevels` behind
+ * let a level skipped *on the substitute* read as an explicit skip of the
+ * original after a swap back, and so make a partial original look complete.
+ * The cost is that a removal made before a swap is not carried over.
+ *
+ * **What happens to the sets already logged (owner OD-d, 29 Oct 17:02).** They
+ * belong to the exercise that was actually performed, not the one now replacing
+ * it: carrying them over would leave the substitute reading as partly done
+ * before a single real set of it exists, corrupting `workoutPosition` and the
+ * slot's own history. So they leave `sets`, and are appended to `priorAttempts`
+ * as a record (`PriorAttempt`), shown in the day detail and exported, and
+ * counted by nothing.
+ *
+ * **A genuine return to the authored exercise (CC4, coach 29 Oct).** When
+ * `newExerciseId` is the exercise this slot was prescribed for, the result is
+ * an unswapped slot: no `substitutedForId`, no `substituteLoad`. The governing
+ * information is the exercise actually performed and logged, not whether the
+ * swap control was used, so the slot must not stay classified as substituted.
+ * Sets logged before the return are in `priorAttempts`, so they cannot make the
+ * returned slot count as complete: "a partially completed original must not
+ * become eligible merely because the athlete switched back".
+ *
+ * `substituteLoad` is what a substitute starts from (`substituteLoad.ts`, coach
+ * Q4), stored on the slot; a swap always replaces whatever an earlier swap
+ * stored, so passing none clears it.
+ *
+ * Swapping to the exercise already in the slot changes nothing: nothing was
+ * swapped, so nothing is cleared or recorded.
  */
 export function swapExercise(
   workout: Workout,
@@ -237,13 +257,21 @@ export function swapExercise(
   substituteLoad?: SubstituteLoad,
 ): Workout {
   return updateExercise(workout, exerciseIndex, (exercise) => {
-    const { substituteLoad: _previous, ...rest } = exercise
+    if (newExerciseId === exercise.exerciseId) return exercise
+
+    const authoredId = authoredExerciseIdOf(exercise)
+    const { skippedLevels: _skipped, customSlots: _custom, ...rest } = withoutSwapState(exercise)
+    const priorAttempts =
+      exercise.sets.length > 0
+        ? [...(exercise.priorAttempts ?? []), { exerciseId: exercise.exerciseId, sets: exercise.sets }]
+        : exercise.priorAttempts
     return {
       ...rest,
       exerciseId: newExerciseId,
-      substitutedForId: exercise.substitutedForId ?? exercise.exerciseId,
       sets: [],
-      ...(substituteLoad ? { substituteLoad } : {}),
+      ...(priorAttempts ? { priorAttempts } : {}),
+      ...(newExerciseId === authoredId ? {} : { substitutedForId: authoredId }),
+      ...(substituteLoad && newExerciseId !== authoredId ? { substituteLoad } : {}),
     }
   })
 }
