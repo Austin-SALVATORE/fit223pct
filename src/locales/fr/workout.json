@@ -52,7 +52,10 @@
   "holdTimer": {
     "start": "Démarrer le maintien",
     "stopAriaLabel": "Arrêter le maintien",
-    "stopSuffix": "— Arrêter"
+    "stopSuffix": "— Arrêter",
+    "elapsed_one": "{{count}} seconde écoulée",
+    "elapsed_other": "{{count}} secondes écoulées",
+    "startedAnnouncement": "Maintien démarré"
   },
   "setScreen": {
     "assistanceLabel": "Assistance",

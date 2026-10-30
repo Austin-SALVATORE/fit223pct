@@ -52,7 +52,10 @@
   "holdTimer": {
     "start": "Start hold",
     "stopAriaLabel": "Stop hold",
-    "stopSuffix": "— Stop"
+    "stopSuffix": "— Stop",
+    "elapsed_one": "{{count}} second elapsed",
+    "elapsed_other": "{{count}} seconds elapsed",
+    "startedAnnouncement": "Hold started"
   },
   "setScreen": {
     "assistanceLabel": "Assistance",

@@ -50,7 +50,9 @@
   "holdTimer": {
     "start": "开始保持",
     "stopAriaLabel": "停止保持",
-    "stopSuffix": "——停止"
+    "stopSuffix": "——停止",
+    "elapsed_other": "已过 {{count}} 秒",
+    "startedAnnouncement": "已开始保持"
   },
   "setScreen": {
     "assistanceLabel": "辅助",
