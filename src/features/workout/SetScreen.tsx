@@ -783,7 +783,7 @@ function TargetCaption({
       )}
       {showPerSide && (
         <span className="rounded-full border border-border px-2 py-0.5 text-xs">
-          ⇄ {t('setScreen.eachSide')}
+          <span aria-hidden="true">⇄</span> {t('setScreen.eachSide')}
         </span>
       )}
     </p>

@@ -357,3 +357,48 @@ describe('SetScreen captions (A3) — a custom set\'s caption is left exactly as
     expect(caption.querySelector('[aria-hidden]')).toBeNull()
   })
 })
+
+/**
+ * Batch A4 follow-up: the "⇄ each side" pill on the caption of a per-side exercise. The caption is
+ * the heading's `aria-describedby` target, so the pill's glyph was read into the description a user
+ * hears on landing: "SET 1 OF 3 Rung 1 of 3, 12 reps at 10 kg ⇄ each side" (measured in the real tree
+ * on Session B's single-arm row, in all three languages). The words beside the glyph already say it,
+ * so only the glyph is hidden; there is nothing to add and no copy to draft. The same pill on the
+ * rest screen's Next up card was done in the same way in `RestScreen.spoken.test.tsx`.
+ *
+ * Negative controls, run 30 Oct (mutation applied to `SetScreen.tsx`, this file run, restored from a
+ * saved copy, `cmp` clean):
+ *   the glyph loses `aria-hidden`                       -> 6 red: both pill tests, three languages
+ *   the whole pill is hidden, words included            -> 6 red: both pill tests, three languages (the words are lost, which is the
+ *                                                          other way to get this wrong)
+ */
+describe.each([
+  ['en', 'each side'],
+  ['fr', 'de chaque côté'],
+  ['zh-CN', '每侧'],
+] as const)('SetScreen "each side" pill (A4 follow-up) — %s', (locale, words) => {
+  it('hides the glyph only: the words are heard, "⇄" is not, and it is still printed', async () => {
+    await i18n.changeLanguage(locale)
+    await start({ ...ladder([14, 16, 18, 20]), perSide: true }, null)
+    const pill = captionOf().querySelector('span.rounded-full') as HTMLElement
+    expect(pill).not.toBeNull()
+    expect(pill.textContent?.trim()).toBe(`⇄ ${words}`)
+    expect(pill.querySelector('[aria-hidden="true"]')?.textContent).toBe('⇄')
+    expect(heard(pill)).toBe(words)
+  })
+
+  it('the heading is described with the words and without the glyph', async () => {
+    await i18n.changeLanguage(locale)
+    await start({ ...ladder([14, 16, 18, 20]), perSide: true }, null)
+    const heading = screen.getByRole('heading', { level: 1 })
+    expect(heading).toHaveAccessibleDescription(new RegExp(`${escape(words)}$`))
+    expect(heading).not.toHaveAccessibleDescription(/⇄/)
+  })
+})
+
+describe('SetScreen "each side" pill (A4 follow-up) — a ladder that is not per side has none', () => {
+  it('adds no pill', async () => {
+    await start(ladder([14, 16, 18, 20]), null)
+    expect(captionOf().querySelector('span.rounded-full')).toBeNull()
+  })
+})
