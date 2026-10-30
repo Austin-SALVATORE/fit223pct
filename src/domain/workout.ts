@@ -124,7 +124,25 @@ export function logSet(
 ): Workout {
   return updateExercise(workout, exerciseIndex, (exercise) => ({
     ...exercise,
-    sets: [...exercise.sets, { ...set, setIndex }],
+    // **The marker is written here, and nowhere else.** A set at or past
+    // `prescription.sets` is in a slot `Add Set` opened (`plannedSetIndices`
+    // puts custom slots at exactly `prescription.sets + i`), so this is the one
+    // place that knows both the slot and the set. Nothing wrote it before
+    // 30 Oct (QA F1): the type promised it, the History and Summary read it, and
+    // every test built its sets by hand with the flag already on them, so the
+    // "(Custom)" mark and the summary's count never appeared for real data.
+    //
+    // Display only. The engine reads the index, not the marker (`carryForward`'s
+    // `buildSetPlan`, `isCompleteExposure`, `nextSetTarget`), as
+    // docs/design/SessionSetCustomization.md §3.1 requires: "Neither may be
+    // inferred from the other." `customFlag.displayOnly.test.ts` pins that a
+    // flagged exposure carries, suggests and trends exactly as an unflagged one.
+    //
+    // Only ever added: a marker the caller passed is kept, never removed.
+    sets: [
+      ...exercise.sets,
+      { ...set, setIndex, ...(setIndex >= exercise.prescription.sets ? { custom: true as const } : {}) },
+    ],
   }))
 }
 

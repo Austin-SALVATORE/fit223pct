@@ -346,6 +346,14 @@ export interface LoggedSet {
    * custom added set cannot affect progression." So a completed custom set
    * DOES become a permanent working set at the next exposure — see
    * `carryForward.ts`'s `buildSetPlan` for the mechanism.
+   *
+   * **Written by `logSet`**, for every set at `setIndex >= prescription.sets`
+   * (QA F1, 30 Oct; before that nothing wrote it). **Display only:** History's
+   * "(Custom)" mark, the summary's count and the export read it. The engine
+   * reads the index, never this (`buildSetPlan`, `isCompleteExposure`), so a
+   * set stored without it, which is every set logged before 30 Oct, is
+   * treated exactly as one stored with it. No migration, and old sets stay
+   * unmarked.
    */
   custom?: true
   /**
@@ -444,14 +452,17 @@ export interface WorkoutExercise {
   substituteLoad?: SubstituteLoad
   /**
    * Prescribed level indices removed this session (coach spec §4, "Skipped
-   * this session"). Audit and display only — nothing in the progression
-   * engine reads it; the prescription itself is retained, not erased.
-   * Storage only for now: nothing writes this yet.
+   * this session"). Written by `skipPrescribedLevel` and `undoSkip`; the
+   * prescription itself is retained, not erased. Read by carry-forward
+   * (`buildSetPlan` falls back to the authored rung for a skipped level,
+   * `isCompleteExposure` counts a skip as accounted for) as well as by the
+   * summary and History.
    */
   skippedLevels?: number[]
   /**
-   * Extra set slots opened by `Add Set`, 0-2 (coach spec §4). Storage only
-   * for now: nothing writes this yet.
+   * Extra set slots opened by `Add Set`, 0-2 (coach spec §4). Written by
+   * `addCustomSlot` and `undoCustomSlot`; read by `plannedSetIndices` and the
+   * Add Set gate. The sets logged into those slots carry `LoggedSet.custom`.
    */
   customSlots?: number
 }
