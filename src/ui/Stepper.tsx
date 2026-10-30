@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useTranslation } from 'react-i18next'
+import { CELL_EM, valueEm } from './stepperFit'
 
 /**
  * Press-and-hold repeat, and the ramp that keeps a long hold usable.
@@ -55,24 +56,68 @@ function intervalForTick(tick: number): number {
 }
 
 /**
- * The value cell's width, fixed (not a minimum), per size — see the comment on
- * the row in `Stepper`. Measured in Chromium at 375px, tabular figures: every
- * digit is the same width, so the cell is sized for the widest ordinary value,
- * "00.00kg" (and "000.0cm"):
+ * The value slot: the one box the display button and the editor both live in.
+ * Its width is fixed (never a minimum, never content-sized) and the same for
+ * "—" and "41.75kg", so the step buttons beside it cannot move — see the
+ * comment on the row in `Stepper`. It can only get *narrower*, when the
+ * container is narrower than the row's design width (`shrink`, `min-w-0`, on a
+ * row capped by `max-w-full`): the cell gives way, the 44px buttons never do.
  *
- *   lg    194px = 12.125rem   ("41.75kg", "100.5kg"; 155.8 for "9.75kg")
- *   form  112px = 7rem        ("102.5cm" 111.6, "100.5kg" 106.2)
+ * Sized in Chromium at 375px with tabular figures — every digit is the same
+ * width, so the design width is the widest ordinary value, "00.00kg" (and
+ * "000.0cm"):
  *
- * `editor` is the display plus the display button's 4px padding each side
- * (202px, 120px): the same width as the button it replaces, so opening or
- * committing the editor moves nothing. A value wider than the cell (three
- * integer digits and two decimals at lg) spills out of it, centred, rather than
- * pushing the buttons: the layout is the same for every value.
+ *   lg    cell 194px = 12.125rem   ("41.75kg", "100.5kg"; 155.8 for "9.75kg")
+ *   form  cell 112px = 7rem        ("102.5cm" 111.6, "100.5kg" 106.2)
+ *
+ * The slot is the cell plus the display button's 4px padding each side (202px,
+ * 120px). The editor is `w-full` in the same slot, so opening or committing it
+ * moves nothing — by construction, not because two numbers happen to differ by
+ * 0.5rem.
+ *
+ * **The text is sized from the slot, not from a fixed class.** The slot is a
+ * size container (`@container`), and the value's `font-size` (`fit`, below) is
+ * `min(base, (100cqw - 0.5rem) / var(--stepper-em))`: the cell width divided by
+ * the width, in em, of the text that has to fit. At full width and for any
+ * ordinary value that is exactly `base` (60px / 30px), the size this control
+ * always had; on a 238px-wide container (320px phone) the cell is 134px and the
+ * same text is 41px, so "41.75kg" fills the cell instead of spilling 22px into
+ * each button. `--stepper-em` is `CELL_EM` for anything up to the reference
+ * width and grows by the excess for a longer number (`valueEm`; both in
+ * `stepperFit.ts`), so a number the editor accepts that is wider than "00.00"
+ * shrinks to fit rather than spilling (QA F-C: 12345.67 widened the page by 32px
+ * at 360). The unit never enters it: the cell was sized with the unit in.
+ *
+ * The formula is a static class and the per-render number is a custom property,
+ * and the split is deliberate: jsdom drops an inline `font-size` it cannot
+ * parse but keeps `--stepper-em`, so a test can see which number each element
+ * was given and that the class consumes it.
+ *
+ * `fit`'s base size, `box` and `unit` are the old `text-6xl` / `text-3xl` values
+ * (3.75rem / 1.875rem, line-height 1 / 1.2) and the unit's old `text-2xl` /
+ * `text-lg` (24px / 18px) written as 0.4em / 0.6em of the value, so they scale
+ * with it. `box` is a fixed height so a smaller font never changes the row's
+ * height, and so the editor and the display occupy the same rectangle.
  */
 const VALUE_SLOT = {
-  lg: { display: 'w-[12.125rem]', editor: 'w-[12.625rem]' },
-  form: { display: 'w-[7rem]', editor: 'w-[7.5rem]' },
+  lg: {
+    slot: 'w-[12.625rem]',
+    box: 'h-[3.75rem] leading-none',
+    fit: '[font-size:min(3.75rem,calc((100cqw_-_0.5rem)/var(--stepper-em)))]',
+    unit: 'text-[0.4em]',
+  },
+  form: {
+    slot: 'w-[7.5rem]',
+    box: 'h-[2.25rem] leading-[1.2]',
+    fit: '[font-size:min(1.875rem,calc((100cqw_-_0.5rem)/var(--stepper-em)))]',
+    unit: 'text-[0.6em]',
+  },
 } as const
+
+/** The custom property the `fit` class divides the slot by. */
+function fitVars(em: number): CSSProperties {
+  return { '--stepper-em': em.toFixed(4) } as CSSProperties
+}
 
 interface StepperProps {
   label: string
@@ -189,7 +234,10 @@ export function Stepper({
 }: StepperProps) {
   const { t, i18n } = useTranslation('common')
   const form = variant === 'form'
-  const lg = size === 'lg'
+  const slotKind = size === 'lg' ? 'lg' : 'form'
+  const slot = VALUE_SLOT[slotKind]
+  // The number as shown, once: the display renders it and `valueEm` measures it.
+  const shown = value === null ? null : formatNumber(value, i18n.language)
   /**
    * Direct entry. Reaching 82.5 from 70 at `step={0.1}` is ~125 taps, which
    * is what the buttons alone asked of anyone with a real number in mind.
@@ -294,11 +342,15 @@ export function Stepper({
         whatever is under the finger when it lifts. With a value cell that grew
         with its content ("—" to "41.75kg" widened the row by 33px) the "+" slid
         out from under the thumb and its click landed on the display, opening the
-        editor with the soft keyboard. So the value cell has one fixed width
-        (`VALUE_SLOT`, below) whatever it shows, and the editor takes the same
-        width, so opening or committing it cannot shift the buttons either. The
-        row is capped at its container and the cell may shrink, so a narrow
-        screen compresses the cell, not the buttons.
+        editor with the soft keyboard. So the value lives in one slot with one
+        fixed width (`VALUE_SLOT`, above) whatever it shows, and the editor fills
+        the same slot, so opening or committing it cannot shift the buttons
+        either. The row is capped at its container and the slot may shrink, so a
+        narrow screen compresses the slot, not the buttons — and the text is
+        sized from the slot, so it never spills into them. That the width is
+        content-independent is what keeps the buttons still; how narrow it gets,
+        and that the text fits, are measured in a browser (see
+        Stepper.test.tsx), not by jsdom.
       */}
       <div className="flex max-w-full items-center gap-1">
         <StepButton
@@ -307,76 +359,95 @@ export function Stepper({
           onPress={() => startRepeat(-1)}
           onRelease={stopRepeat}
         />
-        {editing ? (
-          <input
-            ref={inputRef}
-            type="text"
-            /*
-              `type="text"` rather than `type="number"`, because a French user
-              on a decimal keypad types `82,5` and `type="number"` rejects the
-              comma outright — yielding an empty value, so their weight would
-              silently fail to save. parseDecimal accepts both separators.
+        <div className={`${slot.slot} min-w-0 shrink @container`}>
+          {editing ? (
+            <input
+              ref={inputRef}
+              type="text"
+              /*
+                `type="text"` rather than `type="number"`, because a French user
+                on a decimal keypad types `82,5` and `type="number"` rejects the
+                comma outright — yielding an empty value, so their weight would
+                silently fail to save. parseDecimal accepts both separators.
 
-              The keypad defaults to `decimal` and only integral fields opt
-              out — see `integer` above for why that asymmetry is deliberate.
+                The keypad defaults to `decimal` and only integral fields opt
+                out — see `integer` above for why that asymmetry is deliberate.
 
-              appearance-none / min-w-0 / box-border from the start — the iOS
-              width class we already met on the date input.
-            */
-            inputMode={integer ? 'numeric' : 'decimal'}
-            aria-label={label}
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
-            onBlur={commit}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                event.preventDefault()
-                commit()
-              }
-              if (event.key === 'Escape') {
-                event.preventDefault()
-                setDraft(null)
-              }
-            }}
-            className={`box-border min-w-0 appearance-none rounded-card border border-amber bg-raised text-center font-semibold text-ink ${lg ? `${VALUE_SLOT.lg.editor} text-6xl` : `${VALUE_SLOT.form.editor} text-3xl`}`}
-          />
-        ) : (
-          <button
-            type="button"
-            aria-label={t('stepper.edit', { label })}
-            onClick={() => setDraft(value === null ? '' : formatNumber(value, i18n.language))}
-            className="flex min-w-0 shrink justify-center rounded-card px-1 transition-colors hover:bg-raised"
-          >
-            {/*
-              The value keeps its own `role="status"` so a change made with the
-              buttons is still announced. The button around it carries a
-              separate name for the edit affordance, so the two never compete:
-              only one of them is ever the control being described.
-            */}
-            <output
-              data-numeric
+                appearance-none / min-w-0 / box-border from the start — the iOS
+                width class we already met on the date input.
+              */
+              inputMode={integer ? 'numeric' : 'decimal'}
               aria-label={label}
-              // Silent, the same way TimerRing's `<time>` is: visually live,
-              // and announced only by the debounced region below.
-              aria-live="off"
-              className={`block shrink-0 text-center font-semibold text-ink ${lg ? `${VALUE_SLOT.lg.display} text-6xl` : `${VALUE_SLOT.form.display} text-3xl`}`}
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              onBlur={commit}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault()
+                  commit()
+                }
+                if (event.key === 'Escape') {
+                  event.preventDefault()
+                  setDraft(null)
+                }
+              }}
+              // The editor's text is sized as the display's is for an ordinary
+              // value, so the digits keep their size when the editor opens. A long
+              // draft scrolls inside the input; it cannot widen the slot.
+              style={fitVars(CELL_EM[slotKind])}
+              className={`box-border w-full min-w-0 appearance-none rounded-card border border-amber bg-raised text-center font-semibold text-ink ${slot.box} ${slot.fit}`}
+            />
+          ) : (
+            <button
+              type="button"
+              aria-label={t('stepper.edit', { label })}
+              onClick={() => setDraft(value === null ? '' : formatNumber(value, i18n.language))}
+              className="flex w-full min-w-0 justify-center rounded-card transition-colors hover:bg-raised"
             >
-              {value === null ? (
-                // Visibly not a number. The test is whether someone could
-                // mistake it for a measurement — a plausible figure here is
-                // the same defect as the one this replaced, in a new costume.
-                <span className="text-ink-tertiary">—</span>
-              ) : (
-                <>
-                  {formatNumber(value, i18n.language)}
-                  {unit && (
-                    <span className={`ml-0.5 font-normal text-ink-tertiary ${lg ? 'text-2xl' : 'text-lg'}`}>{unit}</span>
-                  )}
-                </>
-              )}
-            </output>
-          </button>
-        )}
+              {/*
+                The value keeps its own `role="status"` so a change made with the
+                buttons is still announced. The button around it carries a
+                separate name for the edit affordance, so the two never compete:
+                only one of them is ever the control being described.
+
+                `overflow-x-clip` is the last line of defence, not the mechanism:
+                the font shrinks to fit (`valueEm`), and only a number so long
+                that even the browser's smallest text would not fit (hundreds of
+                digits) is cut off rather than allowed to widen the page. `clip`
+                rather than `hidden` so a descender is not cropped vertically.
+
+                The 4px of padding (`px-1`) is on the output, not the button, so
+                the clip edge sits 4px outside the cell the font is fitted to:
+                Chromium's advances at ~40px come out ~2% wider than a linear
+                scale predicts (136px of text in a 134px cell), and that overshoot
+                lands in the padding instead of being shaved off the last glyph.
+              */}
+              <output
+                data-numeric
+                aria-label={label}
+                // Silent, the same way TimerRing's `<time>` is: visually live,
+                // and announced only by the debounced region below.
+                aria-live="off"
+                // The size an ordinary value (and the "—") takes in this slot;
+                // a longer number overrides it on the span inside.
+                style={fitVars(CELL_EM[slotKind])}
+                className={`flex w-full items-center justify-center overflow-x-clip px-1 text-center font-semibold text-ink ${slot.box} ${slot.fit}`}
+              >
+                {shown === null ? (
+                  // Visibly not a number. The test is whether someone could
+                  // mistake it for a measurement — a plausible figure here is
+                  // the same defect as the one this replaced, in a new costume.
+                  <span className="text-ink-tertiary">—</span>
+                ) : (
+                  <span className={`whitespace-nowrap ${slot.fit}`} style={fitVars(valueEm(slotKind, shown))}>
+                    {shown}
+                    {unit && <span className={`ml-0.5 font-normal text-ink-tertiary ${slot.unit}`}>{unit}</span>}
+                  </span>
+                )}
+              </output>
+            </button>
+          )}
+        </div>
         {/*
           The announcement, separated from the number on screen so the two can
           run at different rates: the display updates every tick, this one

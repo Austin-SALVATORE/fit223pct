@@ -4,6 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import i18n from '@/i18n/i18next'
 import { Stepper, formatNumber } from './Stepper'
+import { valueEm } from './stepperFit'
 
 /**
  * Direct numeric entry. Owner-reported: reaching 82.5 from a 70 default at
@@ -732,6 +733,12 @@ describe('an absent value renders as nothing, and a press supplies one', () => {
   })
 })
 
+/** Both value sizes: `lg` is Workout Mode's 60px set entry, `form` the 30px field in a card. */
+const KINDS = [
+  ['lg', { size: 'lg' as const }],
+  ['form', { variant: 'form' as const }],
+] as const
+
 /**
  * **The buttons never move** (QA F1 on 47821a0, Medium). On a touch screen the
  * click that follows a press is delivered to whatever is under the finger when
@@ -741,85 +748,142 @@ describe('an absent value renders as nothing, and a press supplies one', () => {
  * the editor opened with the soft keyboard. Every barbell load on this hardware
  * ends in .75, so it hit the owner's exact case.
  *
- * **What this test can and cannot see.** jsdom has no layout. It sees class
- * tokens, no pixels: it pins the *cause* not coming back (a content-sized,
- * minimum-width value cell), that the editor's width token is the display's plus
- * 0.5rem, that the step buttons carry `shrink-0`, and that the row carries
- * `max-w-full`. It cannot see the widths being right, the font, wrapping, whether
- * those classes actually keep a narrow row from squeezing or moving the buttons,
- * or the retargeted click itself. Those were measured in a browser (below), and
- * QA's F1 repro is the check that counts.
+ * **Batch S1 (30 Oct) added the second half: the value must not overlap the
+ * buttons either, and no typed number may widen the page.** eb14b08 fixed the
+ * slot's width but the cell was `shrink-0` inside a row capped at its container,
+ * so on a narrow screen the row shrank the *button* around the cell, not the
+ * cell: "41.75kg" spilled 22px into each button at 320px and 2px at 360px. And a
+ * typed 12345.67 (QA F-C) spilled the same way, wide enough to scroll the page.
  *
- * **Measured**, Chromium with touch emulation, 375x812, a tap at the "+" or "−"
- * centre as it was before the press. x is the button's centre in px; "47821a0"
- * is the Stepper before the fix, "fix" is this change. Every button is 44x44
- * after the fix; the page is 375px wide in every row.
+ * The slot is now the one fixed-width box both the display and the editor sit in
+ * (it can only shrink, never grow, so the buttons still cannot move), and the
+ * text is sized from it: a size container whose width, minus the button's 4px of
+ * padding, is divided by the em the text needs. See `VALUE_SLOT` in `Stepper`.
  *
- *   case (value)                     | 47821a0: + x        − x           | fix: + x      − x
- *   weight "—" -> 41.75 (+)          | 281.5 -> 293.5   93.5 -> 81.5 (*) | 312 -> 312   63 -> 63
- *   weight "—" -> 41.75 (−)          | 281.5 -> 293.5   93.5 -> 81.5 (*) | 312 -> 312   63 -> 63
- *   fr weight "—" -> 41,75 (+)       | 281.5 -> 293.5   93.5 -> 81.5 (*) | 312 -> 312   63 -> 63
- *   weight 9.75 -> 11.75 (+)         | 295.4 -> 314.5   79.6 -> 60.5     | 312 -> 312   63 -> 63
- *   weight 11.75 -> 9.75 (−)         | 314.5 -> 295.4   60.5 -> 79.6     | 312 -> 312   63 -> 63
- *   weight 38 -> 40, 41.75 -> 43.75  | no movement (281.5 / 314.5)       | 312 -> 312   63 -> 63
- *   reps 9 -> 10 (+), 10 -> 9 (−)    | 281.5 -> 281.5   93.5 -> 93.5     | 312 -> 312   63 -> 63
- *   editor closed vs open (weight)   | 93.5 / 281.5 vs 81.5 / 293.5      | 63 / 312 both
- *   form weight "—" -> 70 (+)        | 179 -> 183.1     63 -> 63         | 235 -> 235   63 -> 63
- *   form weight 99.9 -> 100 (+)      | 209.8 -> 202.5   63 -> 63         | 235 -> 235   63 -> 63
- *   form waist 99.5 -> 100 (+)       | 215.3 -> 207.9   63 -> 63         | 235 -> 235   63 -> 63
+ * **What these tests can and cannot see.** jsdom has no layout. Every test in
+ * this file pins *structure*: class tokens, the number given to `--stepper-em`
+ * (jsdom keeps a custom property but drops an inline `font-size` it cannot
+ * parse, which is why the number is passed that way), and the pure arithmetic of
+ * `valueEm`. It cannot see a width, a font size in pixels, whether the text
+ * overlaps a button, whether the page scrolls sideways, or the retargeted click.
+ * **The browser numbers below are the evidence.** A green run here proves the
+ * wiring is in place, not that the layout is right.
  *
- *   (*) at 47821a0 the press did not apply: the click landed on the display and
- *   the editor opened with 41.75 selected (so these x are the editor's). Under
- *   the fix the same tap applies 41.75 and no editor opens, in en and in fr.
+ * **Measured**, Chromium 151.0.7922.34 (playwright-core 1.62.1), headless, touch
+ * emulation, `isMobile`, deviceScaleFactor 2, on the real set screen (first
+ * launch, "Start session"), 30 Oct. Container = the width SetScreen gives the
+ * stepper (238 / 278 / 293 / 298px at 320 / 360 / 375 / 390+). "Gap" is from the
+ * value's text to the nearer 44px button, in px (negative = overlap); "overflow"
+ * is `documentElement.scrollWidth` minus the configured viewport width, NOT
+ * `innerWidth` (an `isMobile` Chromium widens its layout viewport to fit
+ * overflowing content, so `innerWidth` grows with `scrollWidth` and reads 0 for a
+ * page that does scroll sideways). Weight "41.75kg", lg; identical in en, fr and
+ * zh-CN:
  *
- * Negative controls, run 29 Oct (mutation applied, this describe run, restored):
- *   `w-[12.125rem]` back to `min-w-32` on the lg output -> the lg "fixed width" and "editor" tests
- *   `w-[7rem]` back to `min-w-14` on the form output   -> the form "fixed width" and "editor" tests
- *   the editor back to `w-40`                          -> "the editor takes the display's width"
- *   `shrink-0` removed from the step buttons           -> "step buttons carry h-11, w-11 and shrink-0"
- *   `max-w-full` removed from the row                  -> "the row carries max-w-full"
- * Measured in the browser against the same mutations: the cell back to a minimum
- * moves "+" 281.5 -> 314.5 and opens the editor; the narrower editor shifts both
- * buttons 12px when it opens; without `shrink-0` the buttons render 43px wide at
- * 375. (`max-w-full` removed was not measured in the browser.)
+ *   viewport | cell  | gap before -> after | font after
+ *   320      | 134px | -22   -> +6.8       | 41.4px
+ *   360      | 174px | -2    -> +7.6       | 53.8px
+ *   375      | 189px | +5.5  -> +7.9       | 58.5px
+ *   390-430  | 194px | +8    -> +8         | 60px  (rows for 14, 9.75, 41.75, 100.5, 1000 identical)
+ *
+ * F-C, typed "12345.67" (page overflow before -> after, then gap):
+ *   320: 52px -> 0 (-136.7 -> +9.9);  360: 32px -> 0 (-116.7 -> +10.7);
+ *   375: 24px -> 0 (-109.2 -> +11.3).  30 digits, 360: 935px -> 0 (+11.1).
+ *   300 digits (still finite, so accepted): 0 with the clip in place.
+ * The step buttons: 44x44 in all 165 cases (5 widths x 3 languages x 11 values),
+ * and none moved horizontally in any of them or while the editor was open
+ * (150 editor-open checks). Form size, on /settings (45 states, 3 widths x 3
+ * languages): 18 overlaps and 395px of overflow before, 0 and 0 after.
+ * Opening the editor also used to push the buttons down 6.5px (row 73px vs 60px);
+ * both are 60px now.
+ *
+ * **Instrument notes**, because three readings were wrong before they were right:
+ * `innerWidth` hides overflow under `isMobile` (above); `Range.getBoundingClientRect`
+ * reports unclipped text boxes, so once the output clips on x the visible ink is
+ * the range intersected with the output; and the set screen scrolls inside an inner
+ * container, so a vertical position is only comparable relative to its own Stepper
+ * (a Playwright `click()` scrolls it, which read as a 20px "shift" in French at 320).
+ *
+ * Negative controls, run 30 Oct (mutation applied to `Stepper.tsx`, or to
+ * `stepperFit.ts` where marked, this file run, restored, `cmp` clean; the
+ * arithmetic ones were re-run after it moved into `stepperFit.ts`, which a lint
+ * rule asked for, and the results below are from the final code). jsdom, red
+ * tests named:
+ *   lg slot `w-[12.625rem]` -> `min-w-32`            -> "lg: the value slot has one fixed width"
+ *   form slot `w-[7.5rem]` -> `min-w-20`             -> "form: the value slot has one fixed width"
+ *   slot `shrink` -> `shrink-0`                      -> "the slot may shrink" (lg, form)
+ *   editor loses `w-full`                            -> "the editor fills the same slot" (lg, form)
+ *   slot loses `@container`                          -> "the slot is a size container" (lg, form)
+ *   `valueEm` excess multiplied by 0 (stepperFit.ts) -> "a number wider than 00.00" (lg, form), "grows with every digit"
+ *                                                       (lg, form), "charges a separator less than a digit"
+ *   `DIGIT_EM = 0` (stepperFit.ts)                   -> the same five
+ *   `CELL_EM.lg` 3.233 -> 3.0 (stepperFit.ts)        -> 5: "ordinary value" (lg), French comma, "a number wider" (lg),
+ *                                                       "the editor is fitted" (lg), "valueEm is the design width" (lg)
+ *   value span handed the cell em, not `valueEm`     -> "a number wider than 00.00" (lg, form) ONLY. The pure `valueEm`
+ *                                                       tests stay green: this is the wiring break, and the DOM test
+ *                                                       is the only thing that sees it
+ *   value span loses the `fit` class                 -> "the slot is a size container" (lg, form)
+ *   output loses `overflow-x-clip`                   -> "the display clips on x"
+ *   unit appended to the string `valueEm` measures   -> 7 red: ordinary values (lg, form, French), F-C (lg, form), unit (lg, form)
+ *   `px-1` moved back onto the button                -> "the display clips on x"
+ *   editor given the draft's em                      -> "the editor is fitted as an ordinary value is" (lg, form)
+ *   StepButton `shrink-0` removed                    -> "step buttons carry h-11, w-11 and shrink-0"
+ *   row `max-w-full` removed                         -> "the row carries max-w-full"
+ * Browser, the same harness as the table above, because jsdom cannot see these:
+ *   B1 slot `shrink` -> `shrink-0`: at 320 the "+" sits at x 295..339 instead of 235..279, outside its own row, and the
+ *      page scrolls 19px; at 360 it is 20px out (295 vs 275).
+ *   B2 the fit replaced by a fixed 60px (`text-6xl`), clip kept: the page stays at 0 and a 4px gap holds, but "41.75kg"
+ *      is cut by 52px at 320 and 12px at 360, and "12345.67kg" by 166.7px / 126.7px. The clip alone keeps the page
+ *      still and the number unreadable; the fit is what keeps it whole.
+ *   B3 the fit and the clip both removed: "41.75kg" overlaps the buttons by 22px at 320 and 2px at 360, which is the
+ *      defect as it was. At 30 digits, 360px: page overflow 407px, against 0 with the clip kept (B2, 992px cut).
+ *   And `px-1` on the button rather than the output (before it moved): "41.75kg" at 320 was clipped by 2.3px, 136.3px
+ *   of text in a 134px cell, a rounding overshoot that now lands in the padding.
  */
 describe('the step buttons do not move when the value changes width', () => {
   const widthRem = (classes: string): number | null => {
     const match = /(?:^|\s)w-\[([\d.]+)rem\]/.exec(classes)
     return match ? Number(match[1]) : null
   }
+  /** The slot: the one box the display button and the editor sit in. */
+  const slotOfDisplay = () => screen.getByRole('button', { name: 'Edit Weight' }).parentElement as HTMLElement
 
-  it.each([
-    ['lg', 'lg' as const],
-    ['form', 'form' as const],
-  ])('%s: the value cell has a fixed width, never a minimum, whatever it shows', (_name, kind) => {
-    const props = kind === 'lg' ? { size: 'lg' as const } : { variant: 'form' as const }
+  it.each(KINDS)('%s: the value slot has one fixed width, never a minimum, whatever the value shows', (_name, props) => {
     const { unmount } = render(<Stepper label="Weight" value={null} step={2} min={0} unit="kg" onChange={() => {}} {...props} />)
-    const blank = screen.getByLabelText('Weight', { selector: 'output' }).className
+    const blank = slotOfDisplay().className
     unmount()
     render(<Stepper label="Weight" value={41.75} step={2} min={0} unit="kg" onChange={() => {}} {...props} />)
-    const filled = screen.getByLabelText('Weight', { selector: 'output' }).className
+    const filled = slotOfDisplay().className
 
     expect(widthRem(blank)).not.toBeNull()
-    // The same cell for "—" and for "41.75kg".
+    // The same slot for "—" and for "41.75kg".
     expect(widthRem(filled)).toBe(widthRem(blank))
-    expect(blank).not.toMatch(/min-w-/)
-    expect(filled).not.toMatch(/min-w-/)
-    expect(filled).toMatch(/\bshrink-0\b/)
+    // `min-w-0` is allowed (and required, below); any other minimum is the old bug.
+    expect(blank).not.toMatch(/\bmin-w-(?!0\b)/)
+    expect(filled).not.toMatch(/\bmin-w-(?!0\b)/)
   })
 
-  it.each([
-    ['lg', { size: 'lg' as const }],
-    ['form', { variant: 'form' as const }],
-  ])("%s: the editor takes the display's width (the cell plus the button's 4px padding each side)", async (_name, props) => {
+  it.each(KINDS)('%s: the slot may shrink on a narrow screen, so the cell gives way and the buttons do not', (_name, props) => {
     render(<Stepper label="Weight" value={41.75} step={2} min={0} unit="kg" onChange={() => {}} {...props} />)
-    const display = widthRem(screen.getByLabelText('Weight', { selector: 'output' }).className)
+    const slot = slotOfDisplay().className
 
-    await userEvent.click(screen.getByRole('button', { name: 'Edit Weight' }))
-    const editor = widthRem(screen.getByRole('textbox', { name: 'Weight' }).className)
+    expect(slot).toMatch(/\bmin-w-0\b/)
+    expect(slot).not.toMatch(/\bshrink-0\b/)
+  })
 
-    expect(display).not.toBeNull()
-    expect(editor).toBe((display ?? 0) + 0.5)
+  it.each(KINDS)("%s: the editor fills the same slot the display sat in (so opening it moves nothing)", async (_name, props) => {
+    render(<Stepper label="Weight" value={41.75} step={2} min={0} unit="kg" onChange={() => {}} {...props} />)
+    const edit = screen.getByRole('button', { name: 'Edit Weight' })
+    const slot = edit.parentElement
+    expect(edit.className).toMatch(/\bw-full\b/)
+
+    await userEvent.click(edit)
+    const editor = screen.getByRole('textbox', { name: 'Weight' })
+
+    // The very same element, and the editor has no width of its own to disagree with it.
+    expect(editor.parentElement).toBe(slot)
+    expect(editor.className).toMatch(/\bw-full\b/)
+    expect(widthRem(editor.className)).toBeNull()
   })
 
   it('step buttons carry h-11, w-11 and shrink-0 (that a narrow row cannot squeeze them is measured in a browser, not here)', () => {
@@ -839,3 +903,114 @@ describe('the step buttons do not move when the value changes width', () => {
   })
 })
 
+/**
+ * **The value is fitted to its slot** (batch S1, items 1 and 2). The layout
+ * proof is in the browser (see the numbers above). What jsdom can pin is the
+ * wiring that makes the browser do it: the slot is a size container, the text
+ * carries the class that divides the slot by `--stepper-em`, and each element is
+ * given the right number. The test that matters most is the F-C one: a long
+ * number must be handed *more* em than an ordinary one, on the span that
+ * actually holds the text.
+ */
+describe('the value is fitted to its slot, so it cannot overlap the buttons or widen the page', () => {
+  /** The em width each size was designed for: 194px / 60px and 112px / 30px, measured. */
+  const CELL_EM = { lg: 12.125 / 3.75, form: 7 / 1.875 } as const
+  const FIT_CAP = { lg: '3.75rem', form: '1.875rem' } as const
+  const emOf = (el: Element | null | undefined) =>
+    Number((el as HTMLElement | undefined)?.style.getPropertyValue('--stepper-em'))
+  const outputOf = () => screen.getByLabelText('Weight', { selector: 'output' })
+  const slotOfDisplay = () => screen.getByRole('button', { name: 'Edit Weight' }).parentElement as HTMLElement
+  const renderKind = (props: object, value: number | null, unit: string | undefined = 'kg') =>
+    render(<Stepper label="Weight" value={value} step={2} min={0} unit={unit} onChange={() => {}} {...props} />)
+
+  it.each(KINDS)('%s: the slot is a size container, and the text size is the cap over (slot - 0.5rem) / --stepper-em', (name, props) => {
+    renderKind(props, 41.75)
+    expect(slotOfDisplay().className).toMatch(/(?:^|\s)@container(?:\s|$)/)
+
+    const fit = `min(${FIT_CAP[name]},calc((100cqw_-_0.5rem)/var(--stepper-em)))`
+    expect(outputOf().className).toContain(fit)
+    expect(outputOf().firstElementChild?.className).toContain(fit)
+  })
+
+  it.each(KINDS)('%s: the placeholder and every ordinary value take the cell\'s design width, so they keep the size this control always had', (name, props) => {
+    for (const value of [null, 0, 9.75, 41.75, 99.99, 100.5, 1000]) {
+      const { unmount } = renderKind(props, value)
+      expect(emOf(outputOf())).toBeCloseTo(CELL_EM[name], 4)
+      if (value !== null) expect(emOf(outputOf().firstElementChild)).toBeCloseTo(CELL_EM[name], 4)
+      unmount()
+    }
+  })
+
+  it('a French comma value is just as ordinary as the dot one', async () => {
+    await i18n.changeLanguage('fr')
+    renderKind({ size: 'lg' as const }, 41.75)
+    expect(outputOf()).toHaveTextContent('41,75')
+    expect(emOf(outputOf().firstElementChild)).toBeCloseTo(CELL_EM.lg, 4)
+  })
+
+  it.each(KINDS)('%s: a number wider than "00.00" is given more room, digit by digit (QA F-C)', (name, props) => {
+    const seen: number[] = []
+    for (const value of [99.99, 100.25, 1234.56, 12345.67, 1234567.89, 1e30]) {
+      const { unmount } = renderKind(props, value)
+      seen.push(emOf(outputOf().firstElementChild))
+      unmount()
+    }
+    // 99.99 is the widest ordinary value; everything after it asks for more, and more each time.
+    expect(seen[0]).toBeCloseTo(CELL_EM[name], 4)
+    for (let i = 1; i < seen.length; i++) expect(seen[i]).toBeGreaterThan(seen[i - 1])
+    expect(seen[3]).toBeGreaterThan(CELL_EM[name]) // 12345.67, the QA F-C value
+  })
+
+  it.each(KINDS)('%s: the unit never counts toward the room asked for (the cell was sized with it in)', (_name, props) => {
+    const { unmount } = renderKind(props, 12345.67, 'kg')
+    const withKg = emOf(outputOf().firstElementChild)
+    unmount()
+    renderKind(props, 12345.67, 'min')
+    expect(emOf(outputOf().firstElementChild)).toBe(withKg)
+  })
+
+  it.each(KINDS)('%s: the editor is fitted as an ordinary value is, however long the draft', async (name, props) => {
+    renderKind(props, 41.75)
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Weight' }))
+    const editor = screen.getByRole('textbox', { name: 'Weight' })
+    await userEvent.clear(editor)
+    await userEvent.type(editor, '123456789012345678901234567890')
+
+    // The editor's box is the slot's, so a long draft scrolls inside it and cannot widen anything.
+    expect(emOf(editor)).toBeCloseTo(CELL_EM[name], 4)
+    expect(editor.className).toContain(`min(${FIT_CAP[name]},calc((100cqw_-_0.5rem)/var(--stepper-em)))`)
+  })
+
+  it('the display clips on x as a last line of defence, 4px outside the cell it is fitted to', () => {
+    renderKind({ size: 'lg' as const }, 41.75)
+    // Clips (does not just hide), so a descender is not cropped vertically.
+    expect(outputOf().className).toMatch(/\boverflow-x-clip\b/)
+    // The padding is on the output, so the clip edge is outside the cell: a ~2% advance
+    // overshoot lands in the padding instead of being shaved off the last glyph.
+    expect(outputOf().className).toMatch(/\bpx-1\b/)
+    expect(screen.getByRole('button', { name: 'Edit Weight' }).className).not.toMatch(/\bpx-/)
+  })
+
+  describe('valueEm', () => {
+    it.each(KINDS)('%s: is the cell\'s design width for anything up to "00.00", in either separator, and never less', (name) => {
+      for (const text of ['0', '5', '14', '9.75', '9,75', '41.75', '41,75', '99.99', '100.5', '1000', '9999']) {
+        expect(valueEm(name, text)).toBeCloseTo(CELL_EM[name], 4)
+      }
+    })
+
+    it.each(KINDS)('%s: grows with every digit past that, with no gaps in the sequence up to 40 digits', (name) => {
+      let previous = valueEm(name, '9999')
+      for (let digits = 5; digits <= 40; digits++) {
+        const next = valueEm(name, '9'.repeat(digits))
+        expect(next).toBeGreaterThan(previous)
+        previous = next
+      }
+    })
+
+    it('charges a separator less than a digit, and a sign as a digit', () => {
+      // Seven characters each: a separator in place of a digit is narrower.
+      expect(valueEm('lg', '12345.6')).toBeLessThan(valueEm('lg', '1234567'))
+      expect(valueEm('lg', '-12345')).toBeGreaterThan(valueEm('lg', '12345'))
+    })
+  })
+})
