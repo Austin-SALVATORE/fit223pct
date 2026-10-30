@@ -1015,6 +1015,21 @@ function Header({ date }: { date: Date }) {
   )
 }
 
+/**
+ * The Today heading. 48px (`text-5xl`) from 360px up; 40px below that.
+ *
+ * Why a step and not hyphenation: French Sunday's "Sortie dédiée et bilan
+ * hebdomadaire" has one unbreakable word, "hebdomadaire", 327px wide at 48px
+ * in the display face. In a 280px column (320px viewport, 20px padding) it
+ * pushed the page 27px sideways. `hyphens: auto` fixed that but re-broke the
+ * heading at 360 and 375 too ("et bilan hebdo-/madaire" in WebKit), which
+ * changes what the owner sees on the phones the app is used on. 40px is the
+ * largest size on the rem grid at which that word fits 280px (272.5px); the
+ * next longest ones ("Construction", "récupération") shrink with it. 360px
+ * and above are untouched, so the heading looks exactly as before there.
+ */
+const HERO_TITLE_CLASS = 'text-display mt-2 text-[2.5rem] text-ink min-[360px]:text-5xl'
+
 interface HeroProps {
   eyebrow: string
   title: string
@@ -1025,7 +1040,7 @@ function Hero({ eyebrow, title, subtitle }: HeroProps) {
   return (
     <div className="mt-8">
       <p className="text-sm font-medium text-amber">{eyebrow}</p>
-      <h1 className="text-display mt-2 text-5xl text-ink">{title}</h1>
+      <h1 className={HERO_TITLE_CLASS}>{title}</h1>
       <p className="mt-4 max-w-[34ch] leading-relaxed text-ink-secondary">{subtitle}</p>
     </div>
   )
@@ -1060,7 +1075,7 @@ function ActivityHero({
   return (
     <div className="mt-8">
       <p className="text-sm font-medium text-amber">{kindLabel}</p>
-      <h1 className="text-display mt-2 text-5xl text-ink">{localized.title}</h1>
+      <h1 className={HERO_TITLE_CLASS}>{localized.title}</h1>
       <ActivityItemList items={localized.items} />
       {recordable && <RideRecordCard dateKey={todayKey} programId={programId} existing={rideRecord} />}
     </div>
