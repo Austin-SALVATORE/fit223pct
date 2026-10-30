@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { motion, useReducedMotion } from 'motion/react'
 import { summarizeWorkout } from '@/domain/workout'
 import { coachInsight, workoutHighlights, type Highlight } from '@/domain/highlights'
+import { formatVolume } from '@/lib/formatVolume'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { useExerciseName } from '@/i18n/seedExercise'
@@ -16,7 +17,7 @@ interface SessionSummaryProps {
 }
 
 export function SessionSummary({ workout, exerciseById, history }: SessionSummaryProps) {
-  const { t } = useTranslation('workout')
+  const { t, i18n } = useTranslation('workout')
   const { t: tCommon } = useTranslation('common')
   const reducedMotion = useReducedMotion()
   const headingRef = useFocusOnMount<HTMLHeadingElement>()
@@ -38,12 +39,13 @@ export function SessionSummary({ workout, exerciseById, history }: SessionSummar
       </h1>
       <p className="mt-4 max-w-[36ch] leading-relaxed text-ink-secondary">{insight}</p>
 
-      <dl className="mt-8 flex gap-8">
+      {/* `flex-wrap`: see WeeklyReviewCard — a tile that does not fit at 320px moves to the next row whole. */}
+      <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-4">
         {summary.durationMinutes !== null && (
           <Stat label={t('sessionSummary.statMinutes')} value={String(summary.durationMinutes)} />
         )}
         <Stat label={t('sessionSummary.statSets')} value={String(summary.totalSets)} />
-        <Stat label={t('sessionSummary.statVolume')} value={`${formatVolume(summary.volumeKg)} kg`} />
+        <Stat label={t('sessionSummary.statVolume')} value={`${formatVolume(summary.volumeKg, i18n.language)} kg`} />
       </dl>
 
       <ul className="mt-10 space-y-4">
@@ -158,8 +160,4 @@ function useTopSetLabel(workoutExercise: WorkoutExercise): string | null {
     countPhrase,
     detail: best.assisted ? t('sessionSummary.assistedDetail', { detail }) : detail,
   })
-}
-
-function formatVolume(volume: number): string {
-  return volume >= 1000 ? `${(volume / 1000).toFixed(1)}k` : String(Math.round(volume))
 }
