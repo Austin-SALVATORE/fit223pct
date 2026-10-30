@@ -72,6 +72,34 @@ export function HoldTimer({ onComplete }: HoldTimerProps) {
       ? t('holdTimer.elapsed', { count: Math.floor(elapsed / ANNOUNCE_EVERY_SECONDS) * ANNOUNCE_EVERY_SECONDS })
       : t('holdTimer.startedAnnouncement')
 
+  // **The button is the same width in every state (batch A2, QA).** The two states
+  // print different words ("Démarrer le maintien" idle, "12s — Arrêter" running), so
+  // the pill used to change width the instant it was pressed: fr 172 -> 124px, en
+  // 99 -> 107, zh 91 -> 113. Nothing around it moved, but the target the thumb had
+  // just pressed changed size under it, and, on the running side, again at 10 s and
+  // at 100 s when the count gained a digit. The cure is to size the pill by what it
+  // *could* say, not by what it says: both states carry the same two invisible
+  // lines, the idle label and the longest running label with its count reserved at
+  // three digits, stacked in one grid cell, so the width is the widest of them in
+  // whichever language this is, with no per-language number to keep right. They are
+  // `aria-hidden`, so the accessible name is untouched, and `font-semibold`, the
+  // heavier weight, so the reserved width is the same whichever state is drawn.
+  const sizing = (
+    <>
+      <span aria-hidden="true" className="invisible col-start-1 row-start-1 font-semibold">
+        {t('holdTimer.start')}
+      </span>
+      {/* The same inline structure as the real running label (a `<time>`, a space, the suffix), not one text run:
+          measured, a single run was 0.03px narrower than the real label at 100s, from how the text is shaped.
+          Even so, "100s" came out one layout unit (1/64px) wider than "000s". `pr-px` is 1px of slack on the widest
+          line, so the real label can never exceed it and the button's width is exactly the ghost's in every state. */}
+      <span aria-hidden="true" className="invisible col-start-1 row-start-1 pr-px font-semibold">
+        <time data-numeric>000s</time>{' '}
+        {t('holdTimer.stopSuffix')}
+      </span>
+    </>
+  )
+
   return (
     <>
       {running && (
@@ -88,12 +116,16 @@ export function HoldTimer({ onComplete }: HoldTimerProps) {
           }}
           // Stable while running, deliberately; the time is in the timer above.
           aria-label={t('holdTimer.stopAriaLabel')}
-          className="inline-flex min-h-11 items-center rounded-full border border-amber bg-amber/10 px-4 text-sm font-semibold text-amber transition-colors"
+          className="inline-grid min-h-11 place-items-center rounded-full border border-amber bg-amber/10 px-4 text-sm font-semibold text-amber transition-colors"
         >
-          <time aria-hidden="true" data-numeric>
-            {elapsed}s
-          </time>{' '}
-          {t('holdTimer.stopSuffix')}
+          {/* The real label first: tests and readers take the first `<time>` in the button as the count. */}
+          <span className="col-start-1 row-start-1">
+            <time aria-hidden="true" data-numeric>
+              {elapsed}s
+            </time>{' '}
+            {t('holdTimer.stopSuffix')}
+          </span>
+          {sizing}
         </button>
       ) : (
         <button
@@ -102,9 +134,10 @@ export function HoldTimer({ onComplete }: HoldTimerProps) {
             setElapsed(0)
             setStartedAt(Date.now())
           }}
-          className="inline-flex min-h-11 items-center rounded-full border border-border px-4 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
+          className="inline-grid min-h-11 place-items-center rounded-full border border-border px-4 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
         >
-          {t('holdTimer.start')}
+          <span className="col-start-1 row-start-1">{t('holdTimer.start')}</span>
+          {sizing}
         </button>
       )}
       <span role="status" className="sr-only">

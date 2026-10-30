@@ -56,8 +56,10 @@ describe('no control in Workout Mode falls below 44px', () => {
     const floors: [string, RegExp][] = [
       ['session options', /-mr-2 flex h-11 w-11 shrink-0/],
       ['rest +30s / Skip', /inline-flex min-h-11 items-center rounded-full border border-border px-5/],
-      ['hold timer start', /inline-flex min-h-11 items-center rounded-full border border-border px-4/],
-      ['hold timer stop', /inline-flex min-h-11 items-center rounded-full border border-amber/],
+      // Batch A2: the hold button became an `inline-grid` (so its width is the same in every
+      // state; see HoldTimer.tsx). The floor it states, `min-h-11`, is unchanged.
+      ['hold timer start', /inline-grid min-h-11 place-items-center rounded-full border border-border px-4/],
+      ['hold timer stop', /inline-grid min-h-11 place-items-center rounded-full border border-amber/],
       ['undo last set', /inline-flex min-h-11 shrink-0 items-center rounded-full px-2/],
     ]
     const sources = FILES.map(read).join('\n')

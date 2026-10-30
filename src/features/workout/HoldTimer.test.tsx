@@ -226,3 +226,123 @@ describe('HoldTimer — the elapsed time is reachable without a flood', () => {
  *   `aria-live="assertive"` on the status span        -> "keeps the status region polite" ONLY; the other 11 green
  *   `aria-live="off"` on the status span              -> the same one test (it would silence the region)
  */
+
+/**
+ * **The hold button is the same width in every state** (batch A2, QA). The pill
+ * printed different words idle ("Démarrer le maintien") and running ("12s —
+ * Arrêter"), so it changed width the moment it was pressed, and again at 10 s and
+ * 100 s when the count gained a digit: the target under the thumb moved, which is
+ * the F1 lesson (a press must never land on a moved target) in a new place. Now
+ * both states carry the same two hidden sizing lines in one grid cell, so the width
+ * is the widest of them by construction, in any language.
+ *
+ * jsdom has no layout. This file pins the structure that produces the width: the
+ * two sizing lines, identical in both states, stacked in one cell, at the heavier
+ * weight, hidden from assistive technology. **The evidence is the rects**,
+ * Chromium 151.0.7922.34 (playwright-core 1.62.1), touch, `isMobile`, the real
+ * Plank screen, a fake clock. The button's width, before -> after, through idle,
+ * running at 0 / 9 / 10 / 99 / 100 s, and stopped (x and height also compared):
+ *
+ *   en 320 / 375   99.06, 98.19, 107.25, 116.31, 99.06    -> 120.88 in every state
+ *   fr 320 / 375   171.97, 114.98, 124.05, 133.11, 171.97 -> 175.3 in every state
+ *   zh 320 / 375   91.13, 104.16, 113.22, 122.28, 91.13   -> 126.84 in every state
+ *   x, before: fr 74.02 idle -> 102.5 running (a 28px jump), then 97.97 at 10 s and
+ *   93.44 at 100 s; after: one x per language and width. Height 44 throughout.
+ *
+ * And the consequence, not only the geometry: tap the idle button 6px in from its
+ * left edge, then tap the same point again. Before, in French at 320 and at 375, the
+ * second tap missed the moved button and **the hold kept running**; English and
+ * Chinese survived that point by luck of where their edges moved. After, the second
+ * tap stopped the hold in all six cases.
+ *
+ * Two details measured on the way, both in `HoldTimer.tsx`'s comments: a ghost set as
+ * one text run came out 0.03px narrower than the real label at 100 s (the real label
+ * is a `<time>` plus a text node, shaped separately), so the ghost has the same
+ * inline structure; and even then "100s" was one layout unit (1/64px) wider than
+ * "000s", so the widest ghost has `pr-px`, 1px of slack the real label cannot exceed.
+ * The French width went 172 -> 175.3 because the reserved label is semibold, the
+ * heavier weight, whichever state is drawn.
+ *
+ * Negative controls, run 30 Oct (mutation applied to `HoldTimer.tsx`, this file run,
+ * restored from a saved copy, `cmp` clean), red tests named:
+ *   the idle button loses its sizing lines           -> 4: "idle and running carry the same two ...", "stacks the
+ *                                                       real label ...", and "<lang>: the sizing lines use the language's
+ *                                                       own labels" (fr, zh-CN)
+ *   the running button loses its sizing lines        -> 3: "idle and running carry the same ...", fr, zh-CN
+ *   the reserved count "000s" -> "00s"               -> the same 3
+ *   a sizing line not `aria-hidden`                  -> 17 across the workout suite (16 here and the old
+ *                                                       SetScreen.holdTimer test): the accessible name becomes
+ *                                                       "Start holdStart hold", so every role query by name fails
+ *   `inline-grid` -> `inline-flex` on the idle button -> "stacks the real label ..." and the touch-target guard
+ *                                                       (which now states `inline-grid min-h-11`)
+ *   the 1px slack `pr-px` removed                    -> "stacks the real label ..."
+ *   the sizing weight `font-semibold` -> `font-medium` -> "stacks the real label ..."
+ * Browser: with both sizing lines removed the old behaviour returns, the BEFORE numbers above
+ * (the rects script counted 8 unstable: all 6 width cases and both French edge taps). Without `pr-px`
+ * the width differed by 0.01 to 0.02px (one layout unit) at 100 s in en and zh-CN.
+ */
+describe('HoldTimer — the button is the same width in every state', () => {
+  /** The hidden sizing lines inside a button. */
+  const sizingOf = (button: HTMLElement) =>
+    Array.from(button.querySelectorAll<HTMLElement>('[aria-hidden="true"].invisible'))
+
+  it('idle and running carry the same two hidden sizing lines: the idle label, and the longest running label', () => {
+    render(<HoldTimer onComplete={onComplete} />)
+    const idle = screen.getByRole('button', { name: 'Start hold' })
+    const idleLines = sizingOf(idle)
+    expect(idleLines).toHaveLength(2)
+    expect(idleLines[0]).toHaveTextContent(/^Start hold$/)
+    // The count is reserved at three digits ("000s"): a hold gaining a digit at 10 s and 100 s moves nothing.
+    expect(idleLines[1]).toHaveTextContent(/^000s — Stop$/)
+
+    fireEvent.click(idle)
+    runFor(12)
+    const running = screen.getByRole('button', { name: 'Stop hold' })
+    // Byte for byte the same markup, so the reserved width cannot differ between states.
+    expect(sizingOf(running).map((el) => el.outerHTML)).toEqual(idleLines.map((el) => el.outerHTML))
+  })
+
+  it('stacks the real label and the sizing lines in one grid cell, the sizing at the heavier weight', () => {
+    render(<HoldTimer onComplete={onComplete} />)
+    const idle = screen.getByRole('button', { name: 'Start hold' })
+    expect(idle.className).toMatch(/\binline-grid\b/)
+    expect(idle.className).toMatch(/\bmin-h-11\b/)
+    for (const child of Array.from(idle.children)) {
+      expect(child.className, child.outerHTML).toMatch(/\bcol-start-1\b/)
+      expect(child.className, child.outerHTML).toMatch(/\brow-start-1\b/)
+    }
+    for (const line of sizingOf(idle)) {
+      // semibold is the heavier of the two states' weights, so the reserved width holds whichever is drawn.
+      expect(line.className).toMatch(/\bfont-semibold\b/)
+      expect(line.className).toMatch(/\binvisible\b/)
+    }
+    // 1px of slack on the widest line: the real label has measured one layout unit wider than its ghost.
+    expect(sizingOf(idle)[1].className).toMatch(/\bpr-px\b/)
+  })
+
+  it('does not change the accessible name: the sizing lines are hidden from assistive technology', () => {
+    render(<HoldTimer onComplete={onComplete} />)
+    expect(screen.getByRole('button', { name: 'Start hold' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Start hold' }))
+    runFor(3)
+    expect(screen.getByRole('button', { name: 'Stop hold' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /000s/ })).toBeNull()
+  })
+
+  it.each([
+    ['fr', 'Démarrer le maintien', 'Arrêter le maintien', /^000s — Arrêter$/],
+    ['zh-CN', '开始保持', '停止保持', /^000s ——停止$/],
+  ])('%s: the sizing lines use the language\'s own labels', async (language, start, stop, longest) => {
+    await i18n.changeLanguage(language)
+    render(<HoldTimer onComplete={onComplete} />)
+    const idle = screen.getByRole('button', { name: start })
+    const lines = sizingOf(idle)
+    expect(lines[0]).toHaveTextContent(start)
+    expect(lines[1]).toHaveTextContent(longest)
+    fireEvent.click(idle)
+    runFor(2)
+    expect(sizingOf(screen.getByRole('button', { name: stop })).map((el) => el.outerHTML)).toEqual(
+      lines.map((el) => el.outerHTML),
+    )
+  })
+})
