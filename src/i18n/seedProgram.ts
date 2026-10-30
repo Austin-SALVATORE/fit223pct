@@ -7,6 +7,7 @@ import type {
   Program,
   SessionTemplate,
 } from '@/domain/types'
+import type { ResolvedActivityItem } from '@/domain/sessionCooldown'
 import type { IsoWeekday } from '@/lib/dates'
 
 /**
@@ -145,9 +146,15 @@ export function useLocalizedActivity(
   if (programId === '' || activity.title === '' || programOrigin === 'imported') return activity
   const base = `program.${programId}.activity.${weekday}`
   const title = t(`${base}.title`, { defaultValue: activity.title })
-  const items = activity.items.map((item, index) => {
-    const labelKey = `${base}.item.${index}.label`
-    const detailKey = `${base}.item.${index}.detail`
+  const items = activity.items.map((item, position) => {
+    // An item swapped in from another weekday (a session's own cooldown,
+    // `domain/sessionCooldown.ts`) carries where it was authored, and its text
+    // translates under THAT weekday and index, not under the activity's.
+    const { source } = item as ResolvedActivityItem
+    const itemBase = source ? `program.${programId}.activity.${source.weekday}` : base
+    const index = source ? source.index : position
+    const labelKey = `${itemBase}.item.${index}.label`
+    const detailKey = `${itemBase}.item.${index}.detail`
     return {
       label: i18n.exists(`seed:${labelKey}`) ? t(labelKey) : item.label,
       ...(item.detail !== undefined

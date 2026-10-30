@@ -253,7 +253,13 @@ function TodayBody({
           {program && (
             <DoneTodayActivities
               program={program}
-              {...resolveActivityForDate(program, todayKey, scheduleShift)}
+              {...resolveActivityForDate(
+                program,
+                todayKey,
+                scheduleShift,
+                // The session that was trained, so its own cooldown shows (QA Q34).
+                program.sessions.find((s) => s.id === todayWorkout.sessionTemplateId) ?? null,
+              )}
               todayKey={todayKey}
               todayActivityRecords={todayActivityRecords}
             />

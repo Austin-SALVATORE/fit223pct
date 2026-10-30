@@ -1,6 +1,7 @@
 import { addDays, isoWeekday, parseDateKey, toDateKey, type IsoWeekday } from '@/lib/dates'
 import type { MessageDescriptor } from './message'
-import type { ActivityTemplate, Program, ScheduleShift } from './types'
+import { activityForSession } from './sessionCooldown'
+import type { ActivityTemplate, Program, ScheduleShift, SessionTemplate } from './types'
 
 /**
  * Postpone semantics for one athlete-initiated shift within its own ISO
@@ -180,6 +181,7 @@ export function resolveActivityForDate(
   program: Program,
   dateKey: string,
   shift: ScheduleShift | null,
+  session: SessionTemplate | null = null,
 ): { activity: ActivityTemplate | null; activityWeekday: IsoWeekday } {
   const resolution = resolveShiftForDate(program, dateKey, shift)
   const dateWeekday = isoWeekday(parseDateKey(dateKey))
@@ -190,5 +192,13 @@ export function resolveActivityForDate(
 
   const sourceDate = resolution?.role === 'training' ? resolution.sourceDate : dateKey
   const activityWeekday = isoWeekday(parseDateKey(sourceDate))
-  return { activity: program.weekdayActivities?.[activityWeekday] ?? null, activityWeekday }
+  const weekdayActivity = program.weekdayActivities?.[activityWeekday] ?? null
+  // The session's own cooldown, not the weekday's (`sessionCooldown.ts`) — on an
+  // ordinary day only: a day a postpone shifted a session INTO still carries its
+  // source weekday's content untouched, pending the lead's ruling (QA Q34).
+  const activity =
+    weekdayActivity !== null && session !== null && sourceDate === dateKey
+      ? activityForSession(program, weekdayActivity, session)
+      : weekdayActivity
+  return { activity, activityWeekday }
 }

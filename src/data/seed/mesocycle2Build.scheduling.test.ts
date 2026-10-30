@@ -37,13 +37,27 @@ describe('mesocycle2Build scheduling — identity follows completed count, not t
     expect(got).toEqual(['mesocycle2-fullbody-squat', 'mesocycle2-fullbody-hinge', 'mesocycle2-fullbody-hipext-shoulder'])
   })
 
-  it('an activity is fixed to its weekday, not to session identity', () => {
+  /**
+   * Was "an activity is fixed to its weekday, not to session identity", which
+   * asserted the very behaviour QA Q34 found wrong for one item: the stretching.
+   * The ride is the weekday's and stays fixed; each session's own cooldown
+   * travels with the session (the coach's ruling), so a Wednesday that rotation
+   * makes session A lists A's stretching, not the B the weekday authored. See
+   * `src/domain/sessionCooldown.ts` and its test.
+   */
+  it('the ride is fixed to its weekday; the stretching follows the session', () => {
     const a = resolveDayPlan(mesocycle2Build, new Date('2026-08-12T12:00:00'), 0)
     const b = resolveDayPlan(mesocycle2Build, new Date('2026-08-12T12:00:00'), 7)
-    if (a.kind === 'training' && b.kind === 'training') {
-      expect(a.activity).toEqual(b.activity)
-      expect(a.session.id).not.toBe(b.session.id)
-    }
+    expect(a.kind).toBe('training')
+    expect(b.kind).toBe('training')
+    if (a.kind !== 'training' || b.kind !== 'training') return
+    expect(a.session.id).toBe('mesocycle2-fullbody-squat')
+    expect(b.session.id).toBe('mesocycle2-fullbody-hinge')
+
+    const notStretching = (items: { label: string }[]) => items.filter((item) => !item.label.endsWith(' Stretching'))
+    expect(notStretching(a.activity!.items)).toEqual(notStretching(b.activity!.items))
+    expect(a.activity!.items.map((i) => i.label)).toContain('Full Body A Stretching')
+    expect(b.activity!.items.map((i) => i.label)).toContain('Full Body B Stretching')
   })
 })
 

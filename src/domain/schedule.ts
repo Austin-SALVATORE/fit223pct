@@ -73,10 +73,11 @@ export function resolveDayPlan(
   const shiftResolution = resolveShiftForDate(program, dateKey, shift ?? null)
 
   if (shiftResolution?.role === 'training') {
-    const { activity, activityWeekday } = resolveActivityForDate(program, dateKey, shift ?? null)
+    const session = sessionForDay(program, date, completedCount)
+    const { activity, activityWeekday } = resolveActivityForDate(program, dateKey, shift ?? null, session)
     return {
       kind: 'training',
-      session: sessionForDay(program, date, completedCount),
+      session,
       activity,
       activation: program.morningActivation ?? null,
       activityWeekday,
@@ -218,7 +219,12 @@ export function projectSchedule(
     // ActivityPrescriptionPhaseA.md §1) — a training day's entry is its
     // post-strength cardio, display only; import validation used to
     // reject a weekday claimed by both, but that guard is gone.
-    const { activity, activityWeekday } = resolveActivityForDate(program, date, shift ?? null)
+    const { activity: weekdayActivity, activityWeekday } = resolveActivityForDate(program, date, shift ?? null)
+    // The weekday's activity, with the session's own cooldown where the session is
+    // known (`sessionCooldown.ts`): a Monday that rotation makes session C must not
+    // list A's stretching.
+    const activityFor = (session: SessionTemplate | null): ActivityTemplate | null =>
+      session === null ? weekdayActivity : resolveActivityForDate(program, date, shift ?? null, session).activity
     const shiftedFrom =
       shiftResolution?.role === 'training' && shiftResolution.sourceDate !== date
         ? shiftResolution.sourceDate
@@ -227,26 +233,27 @@ export function projectSchedule(
 
     if (workout && workout.completedAt !== null) {
       const session = program.sessions.find((s) => s.id === workout.sessionTemplateId) ?? null
-      return { date, isToday, isTrainingDay, workout, session, projected: false, activity, activityWeekday, shiftedFrom, postponedTo }
+      return { date, isToday, isTrainingDay, workout, session, projected: false, activity: activityFor(session), activityWeekday, shiftedFrom, postponedTo }
     }
 
     if (date > todayKey) {
       const session = isTrainingDay ? sessionForDay(program, parseDateKey(date), completedCount + futureIndex) : null
       if (isTrainingDay) futureIndex += 1
-      return { date, isToday, isTrainingDay, workout: null, session, projected: true, activity, activityWeekday, shiftedFrom, postponedTo }
+      return { date, isToday, isTrainingDay, workout: null, session, projected: true, activity: activityFor(session), activityWeekday, shiftedFrom, postponedTo }
     }
 
     // Today (not yet trained) is deterministic, not projected — there is
     // nothing between now and today to assume completion of.
     if (isToday && isTrainingDay) {
+      const session = sessionForDay(program, parseDateKey(date), completedCount)
       return {
         date,
         isToday,
         isTrainingDay,
         workout: null,
-        session: sessionForDay(program, parseDateKey(date), completedCount),
+        session,
         projected: false,
-        activity,
+        activity: activityFor(session),
         activityWeekday,
         shiftedFrom,
         postponedTo,
@@ -263,7 +270,7 @@ export function projectSchedule(
     // promising logged work that doesn't exist.
     if (workout && workout.exercises.some((exercise) => exercise.sets.length > 0)) {
       const session = program.sessions.find((s) => s.id === workout.sessionTemplateId) ?? null
-      return { date, isToday, isTrainingDay, workout, session, projected: false, activity, activityWeekday, shiftedFrom, postponedTo }
+      return { date, isToday, isTrainingDay, workout, session, projected: false, activity: activityFor(session), activityWeekday, shiftedFrom, postponedTo }
     }
 
     // A genuine skip — no workout row, or one with nothing logged — and a
@@ -272,7 +279,7 @@ export function projectSchedule(
     // answer to what would have happened. A non-training day still
     // carries its activity, if any — there is no "skipped" state for an
     // activity, since there's nothing to complete.
-    return { date, isToday, isTrainingDay, workout: null, session: null, projected: false, activity, activityWeekday, shiftedFrom, postponedTo }
+    return { date, isToday, isTrainingDay, workout: null, session: null, projected: false, activity: weekdayActivity, activityWeekday, shiftedFrom, postponedTo }
   })
 }
 
