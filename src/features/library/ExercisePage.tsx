@@ -105,7 +105,7 @@ function SubstitutionLink({ exercise, origin }: { exercise: Exercise; origin: Or
       <Link
         to={`/library/${exercise.id}`}
         state={{ from: origin.from, date: origin.date }}
-        className="inline-block rounded-full border border-border bg-surface px-4 py-2 text-sm text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
+        className="inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 text-sm text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
       >
         {name}
       </Link>

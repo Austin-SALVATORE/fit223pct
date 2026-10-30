@@ -160,7 +160,7 @@ function AllBands({ ree }: { ree: number }) {
       */}
       <a
         href={`#${PROFILE_ANCHOR_ID}`}
-        className="mt-3 inline-block rounded-full border border-border px-4 py-2 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
+        className="mt-3 inline-flex min-h-11 items-center rounded-full border border-border px-4 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink"
       >
         {t('baseline.choosePal')}
       </a>

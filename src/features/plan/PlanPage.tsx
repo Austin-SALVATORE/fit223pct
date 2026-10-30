@@ -513,13 +513,17 @@ function PhaseNav({
   const previousName = useProgramName(previous ?? EMPTY_PROGRAM)
   const nextName = useProgramName(next ?? EMPTY_PROGRAM)
   if (!previous && !next) return null
+  // Each button is a 44px hit area (`min-h-11`) around 20px of text. `-my-3`
+  // takes the 12px above and below back out of the layout, so the row stays
+  // 20px tall and nothing on the page moves; the extra hit area sits in the
+  // 16px above the row and the gap below it.
   return (
     <nav className="mt-4 flex items-center justify-between text-sm">
       {previous ? (
         <button
           type="button"
           onClick={() => onSelect(previous.id)}
-          className="text-ink-secondary transition-colors hover:text-ink"
+          className="-my-3 inline-flex min-h-11 items-center text-ink-secondary transition-colors hover:text-ink"
         >
           ← {previousName}
         </button>
@@ -530,7 +534,7 @@ function PhaseNav({
         <button
           type="button"
           onClick={() => onSelect(next.id)}
-          className="text-ink-secondary transition-colors hover:text-ink"
+          className="-my-3 inline-flex min-h-11 items-center text-ink-secondary transition-colors hover:text-ink"
         >
           {nextName} →
         </button>

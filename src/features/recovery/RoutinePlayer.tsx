@@ -392,7 +392,7 @@ function PlayerButton({
       // relabelling itself in place announces nothing, and re-introducing
       // that here for pause would be the same defect in a new costume.
       aria-pressed={pressed}
-      className="rounded-full border border-border px-5 py-2.5 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink disabled:opacity-40"
+      className="inline-flex min-h-11 items-center rounded-full border border-border px-5 text-sm font-medium text-ink-secondary transition-colors hover:border-border-strong hover:text-ink disabled:opacity-40"
     >
       {label}
     </button>
