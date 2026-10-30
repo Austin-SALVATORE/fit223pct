@@ -681,10 +681,14 @@ function BackToPlan() {
 }
 
 function useFormatLoggedSet(): (set: LoggedSet, mode: 'reps' | 'seconds') => string {
-  const { t } = useTranslation('plan')
+  const { t, i18n } = useTranslation('plan')
   return (set, mode) => {
     const effort = mode === 'seconds' ? t('dayDetail.secondsEffort', { seconds: set.seconds }) : String(set.reps)
-    const weight = set.weightKg !== null ? t('dayDetail.weightSuffix', { weight: set.weightKg }) : ''
+    // The weight as the language writes it (fr "17,75"), like the spoken line below.
+    const weight =
+      set.weightKg !== null
+        ? t('dayDetail.weightSuffix', { weight: formatNumber(set.weightKg, i18n.language) })
+        : ''
     return `${effort}${weight}`
   }
 }
@@ -694,7 +698,7 @@ function useFormatLoggedSet(): (set: LoggedSet, mode: 'reps' | 'seconds') => str
  * "12 × 14 kg" and "50s", which a reader voices as "12 times 14 kilograms" and "50 s".
  * "12 reps at 14 kg" and "50 seconds" are said instead, the same words `spokenSet`
  * gives every other screen. The weight is written as the language writes it (fr
- * "17,75"); the printed line shows the raw number.
+ * "17,75"), exactly as the printed line writes it.
  */
 function useSpokenLoggedSet(): (set: LoggedSet, mode: 'reps' | 'seconds') => string {
   const { t, i18n } = useTranslation('plan')

@@ -18,8 +18,9 @@ import { PlanDayPage } from './PlanDayPage'
  * "(assisted)" and "(Custom)" marks: "10 reps at 20 kg, then 9 reps at 20 kg". A record of
  * sets logged before a swap gets the same treatment inside its own sentence.
  *
- * The weight is spoken as the language writes it; the printed line shows the raw number
- * (a pre-existing French "17.75"), which this batch does not touch.
+ * The weight is spoken as the language writes it. Since T2 (30 Oct) the printed line writes
+ * it the same way (French "17,75"; it used to print the raw "17.75"). The printed line has
+ * its own file, `PlanDayPage.loggedWeight.test.tsx`.
  *
  * Negative controls, run 30 Oct (mutation applied to `PlanDayPage.tsx`, this file run,
  * restored from a saved copy, `cmp` clean):
@@ -185,11 +186,11 @@ describe.each([
 })
 
 describe('PlanDayPage logged sets, spoken — the weight is spoken as the language writes it', () => {
-  it('fr: 17,75 kg and not 17.75 kg (the printed line shows the raw number)', async () => {
+  it('fr: 17,75 kg and not 17.75 kg, in the printed line and in the spoken one', async () => {
     await i18n.changeLanguage('fr')
     await db.workouts.put(workoutOf(0, [reps(17.75, 8)]))
     renderDay()
-    const line = await screen.findByText('8 × 17.75 kg')
+    const line = await screen.findByText('8 × 17,75 kg')
     expect(heard(line.nextElementSibling as HTMLElement)).toBe('8 répétitions à 17,75 kg')
   })
 })
