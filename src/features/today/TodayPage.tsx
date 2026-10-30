@@ -967,11 +967,21 @@ function Header({ date }: { date: Date }) {
   const { t } = useTranslation('common')
   const locale = useLocale()
   return (
-    <header className="flex items-baseline justify-between gap-2">
-      <p className="eyebrow">
+    // The date takes the row's slack (`flex-1`: a zero flex basis, so when
+    // deciding whether the nav fits beside it the date counts as its longest
+    // word), and the nav group drops under it only when it cannot. No `min-w-0`
+    // on the date, on purpose: it would clamp that size to 0, the wrap would
+    // never trigger, and the nav would overlap the date. French on a Sunday
+    // needs the wrap: "dimanche" is the widest word and the three links are
+    // 214px, so at 320px the row needed 332px in a 280px header and the
+    // Settings link ran 47px past the screen; at 360px, 6px. English and Chinese
+    // fit in one row and do not move. Measured in a browser, not by jsdom: see
+    // TodayPage.header.test.tsx.
+    <header className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+      <p className="eyebrow flex-1">
         <time dateTime={toDateKey(date)}>{formatLongDate(date, locale)}</time>
       </p>
-      <div className="flex items-center gap-3">
+      <div className="ml-auto flex items-center gap-3">
         <nav className="flex gap-3">
           <Link
             to="/plan"
