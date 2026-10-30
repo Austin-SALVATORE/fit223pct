@@ -6,7 +6,7 @@ Claims are verified by running commands, not by reading reports.
 
 | Purpose | Command | Notes |
 |---|---|---|
-| Install | `npm install` | |
+| Install | `pnpm install --frozen-lockfile` | The only lockfile is `pnpm-lock.yaml`; `npm ci` fails (EUSAGE) and `npm install` resolves without the lock. Scripts still run via `npm run`/`npm test` |
 | Test (all) | `npm test` (`vitest run`) | Baseline is stated as *N tests / M files* — compare both |
 | Test (single file) | `npx vitest run <path>` | |
 | Lint | `npm run lint` (`oxlint`) | |
@@ -108,6 +108,23 @@ and the whole team keeps reaching for it until it is written down.
   everywhere and settles correctly everywhere is a property of your timing.
   (28 Aug: investigated, closed as an artifact; independently re-reported as a
   defect hours later; closed again with the interpolation curve measured.)
+
+- **Three layout instruments in this project are blind in ways that look like
+  a pass.** The browser harness here runs Chromium with `isMobile` and touch.
+  - Under `isMobile`, `window.innerWidth` grows with the content, so a page
+    that scrolls sideways can still report its configured width. Measure
+    overflow as `document.documentElement.scrollWidth` against the configured
+    viewport width.
+  - `Range.getBoundingClientRect()` reports the unclipped text box. A
+    truncated or clipped string measures as if it fit, so measure the
+    clipping element's rect, or compare `scrollWidth` with `clientWidth`.
+  - The set screen scrolls inside an inner container, not the document, so
+    "the page did not scroll" on that screen says nothing about whether Log
+    set moved below the fold. Read element rects.
+
+  (30 Oct: found by the dev on the narrow-screen batch. Its first header fix
+  passed the overflow number while overlapping the date by 44 px, and only
+  the rects showed it.)
 
 - **A guard is not evidence until it has been made to fail on purpose.**
   A test written for a bug and never seen red is indistinguishable from

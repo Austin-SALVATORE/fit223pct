@@ -75,6 +75,29 @@ ceiling. Carry-forward copies it and never clamps a logged load to it.
 The old engines that stepped ladders up and reported `at-equipment-max`
 were deleted in `99f27cf`.
 
+**Swaps (30 Oct, `c731222` and `02761fe`).** Swap state (`substitutedForId`,
+`substituteLoad`) is read only through `isSubstitute`,
+`authoredExerciseIdOf` and `withoutSwapState` in
+`src/domain/substitutions.ts`. `substitutions.guard.test.ts` fails any
+other module that reads the field, including through a string literal
+naming it (since `aaee85b`). It still cannot see a name built at
+runtime, or a read that never names the field (`Object.keys`, JSON).
+Two rules about the swap itself:
+
+- A genuine swap back to the authored exercise clears the swap state, so
+  the slot is the original again and is a carry basis if complete (coach
+  CC4).
+- Every swap resets `sets`, `skippedLevels` and `customSlots`.
+
+The sets a swap clears are kept in `priorAttempts`, as a record only. It
+is shown in the day detail and carried in the export, and never read by
+carry, suggestions, "Last time", trend or stagnation.
+
+A loaded swap suggests the substitute's own most recent eligible
+exposure, matched by set position. A position with no history stays
+blank (`substituteLoad.ts`, `historyEligibility.ts`; coach CQ2,
+CC1–CC3).
+
 RIR no longer exists anywhere — UI, schema, or stored data.
 
 ## Scheduling

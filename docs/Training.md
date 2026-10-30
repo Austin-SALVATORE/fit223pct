@@ -42,8 +42,17 @@ Rungs that were skipped or never logged fall back to the authored rung.
 Swapped and easier-day exposures are never a carry basis. The step-up
 engines this section used to describe were retired in that commit;
 `.claude/rules/architecture.md` (Progression model) is the current
-summary. A swapped exercise starts with a blank weight until the coach's
-set-by-set rule is built (CC3, 29 Oct).
+summary.
+
+**A swapped exercise suggests its own weights** (since 30 Oct, `c731222`;
+coach CQ2, CC1–CC3). Each set starts from the weight logged at the same set
+position in that exercise's most recent eligible exposure. An exposure is
+eligible when it is in the same program, was not on an easier day, and is not
+a substitute record logged before this rule. Weights always come from that
+one exposure and are never mixed with older ones. A position with no such
+history starts blank; pressing + or − there starts from the last weight
+logged this session (owner OD-e, 29 Oct). The "Last time" line still shows
+the most recent exposure, easier days included (CQ3), so the two can differ.
 
 A loaded isolation movement may be either shape, and **the exercise does
 not tell you which** — only the presence of `setPlan` does. Since 31 Jul
