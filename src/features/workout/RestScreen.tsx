@@ -266,23 +266,23 @@ function NextSetDelta({ target }: { target: NextSetTarget }) {
   const { t, i18n } = useTranslation('workout')
   if (!target.delta || target.delta.weightKg === 0) return null
   const heavier = target.delta.weightKg > 0
-  const delta = Math.abs(target.delta.weightKg)
+  // Written as the language writes it (fr "2,5"), once, and used by the visible line and
+  // the spoken one so the two cannot disagree. Interpolating the number printed a point.
+  const delta = formatNumber(Math.abs(target.delta.weightKg), i18n.language)
   return (
     <>
       {/*
         A14 leftover (batch A3): the line opens with "↑" or "↓", which a reader voices
         as "upwards arrow" before the amount. The line stays, hidden from assistive
         technology, and the same sentence without the arrow follows. The word
-        "heavier" / "lighter" already says what the arrow says. The spoken number is
-        written as the language writes it (fr "1,5"); the visible one is printed raw.
+        "heavier" / "lighter" already says what the arrow says. Both numbers are written
+        as the language writes them (fr "1,5").
       */}
       <p className="mt-2 text-sm text-amber" aria-hidden="true">
         {t(heavier ? 'resting.nextSet.heavier' : 'resting.nextSet.lighter', { delta })}
       </p>
       <p className="sr-only">
-        {t(heavier ? 'resting.nextSet.heavierSpoken' : 'resting.nextSet.lighterSpoken', {
-          delta: formatNumber(delta, i18n.language),
-        })}
+        {t(heavier ? 'resting.nextSet.heavierSpoken' : 'resting.nextSet.lighterSpoken', { delta })}
       </p>
     </>
   )

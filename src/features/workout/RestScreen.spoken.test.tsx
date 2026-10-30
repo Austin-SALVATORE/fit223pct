@@ -162,6 +162,7 @@ describe('RestScreen hero, spoken — a hero with no multiplication is left alon
  *   the delta line loses `aria-hidden`                  -> 6 red: all six delta rows (two directions, three languages)
  *   the delta spoken sentence removed                   -> 7 red: the six delta rows and the French decimal row
  *   the spoken delta left as the raw number             -> 1 red: the French decimal row (1,5 spoken as 1.5); en and zh-CN print a point
+ *                                                          (since T2 the printed delta is formatted too; see `RestScreen.deltaFormat.test.tsx`)
  */
 function withLoggedSet(workout: Workout, weightKg: number, reps = 12): Workout {
   return {
@@ -232,10 +233,10 @@ describe.each([
 })
 
 describe('RestScreen delta line, spoken (A3) — the number is spoken as the language writes it', () => {
-  it('fr: 1,5 kg and not 1.5 kg (the printed line shows the raw number)', async () => {
+  it('fr: 1,5 kg and not 1.5 kg, in the printed line and in the spoken one', async () => {
     await i18n.changeLanguage('fr')
     renderWith(withLoggedSet(baseWorkout, 12.5), 0, 1)
-    const line = screen.getByText('↑ 1.5 kg de plus que la série que tu viens de faire')
+    const line = screen.getByText('↑ 1,5 kg de plus que la série que tu viens de faire')
     expect(heard(line.nextElementSibling as HTMLElement)).toBe('1,5 kg de plus que la série que tu viens de faire')
   })
 
