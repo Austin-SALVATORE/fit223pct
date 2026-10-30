@@ -126,6 +126,16 @@ and the whole team keeps reaching for it until it is written down.
   passed the overflow number while overlapping the date by 44 px, and only
   the rects showed it.)
 
+- **The production bundle writes string literals as template literals.**
+  The minifier emits `` style:`percent` ``, not `style:"percent"`. So a
+  deploy marker grepped with double quotes reads 0 on a bundle that
+  contains it, and that zero looks exactly like a deploy that did not
+  land. Grep the bare token, or allow every quote form
+  (``["'`]percent["'`]``), and always take the count on the bundle from
+  *before* the push as well as after. (30 Oct: the `4f9b8ef` deploy check
+  read 0 for `style:"percent"` before and after the push; the bare-token
+  grep showed `` style:`percent` `` present only after.)
+
 - **A guard is not evidence until it has been made to fail on purpose.**
   A test written for a bug and never seen red is indistinguishable from
   a test that checks nothing, and it is worse than no test because it
