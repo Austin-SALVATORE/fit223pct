@@ -16,9 +16,10 @@ import type { Exercise, LoggedSet, Program, WorkoutExercise } from '@/domain/typ
 import { exerciseAsset, exerciseAssetThumbnailFrame } from '@/lib/exerciseAsset'
 import type { NextSetTarget } from '@/domain/nextSetTarget'
 import type { ExercisePrescription } from '@/domain/types'
-import { spokenQuantity, spokenSequence, spokenSpan } from '@/features/today/spokenPrescription'
+import { spokenSequence } from '@/features/today/spokenPrescription'
 import { spokenSet } from '@/features/today/spokenSet'
 import { HoldTimer } from './HoldTimer'
+import { spokenTargetRange } from './spokenTarget'
 import { SwapSheet } from './SwapSheet'
 
 interface SetScreenProps {
@@ -740,14 +741,7 @@ function TargetCaption({
   const targetSpoken = isCustomSlot
     ? null
     : !prescription.setPlan
-      ? t('setScreen.targetRangeSpoken', {
-          what: spokenQuantity(
-            t,
-            mode,
-            spokenSpan(t, prescription.range.min, prescription.range.max),
-            prescription.range.max,
-          ),
-        })
+      ? spokenTargetRange(t, mode, prescription.range.min, prescription.range.max)
       : rungSet === ''
         ? null
         : t('setScreen.targetRungSpoken', { rung, total, set: rungSet })

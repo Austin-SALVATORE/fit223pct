@@ -46,7 +46,9 @@
     "nextUp": {
       "label": "Next up",
       "meta_one": "{{count}} set · rest {{restSeconds}}s",
-      "meta_other": "{{count}} sets · rest {{restSeconds}}s"
+      "meta_other": "{{count}} sets · rest {{restSeconds}}s",
+      "metaSpoken_one": "{{count}} set, rest {{rest}}",
+      "metaSpoken_other": "{{count}} sets, rest {{rest}}"
     },
     "numbers": {
       "weightReps": "{{weight}} kg × {{reps}}",

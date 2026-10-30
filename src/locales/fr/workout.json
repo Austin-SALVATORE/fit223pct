@@ -46,7 +46,9 @@
     "nextUp": {
       "label": "À suivre",
       "meta_one": "{{count}} série · repos {{restSeconds}}s",
-      "meta_other": "{{count}} séries · repos {{restSeconds}}s"
+      "meta_other": "{{count}} séries · repos {{restSeconds}}s",
+      "metaSpoken_one": "{{count}} série, repos de {{rest}}",
+      "metaSpoken_other": "{{count}} séries, repos de {{rest}}"
     },
     "numbers": {
       "weightReps": "{{weight}} kg × {{reps}}",

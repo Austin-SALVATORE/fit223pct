@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { seedExercises } from '@/data/seed/exercises'
 import { seedProgram } from '@/data/seed/program'
 import { createWorkout } from '@/domain/workout'
-import type { Workout } from '@/domain/types'
+import type { ExercisePrescription, Workout } from '@/domain/types'
 import i18n from '@/i18n/i18next'
 import { heard } from '@/test/heard'
 import { RestScreen } from './RestScreen'
@@ -243,5 +243,193 @@ describe('RestScreen delta line, spoken (A3) — the number is spoken as the lan
   it('no delta, no line: a card with nothing logged adds nothing', () => {
     renderRest(0, 1)
     expect(screen.queryByText(/heavier than|lighter than/)).toBeNull()
+  })
+})
+
+/**
+ * Batch A4 (QA F2): the "Next up" card, shown after the last set of an exercise that has
+ * another one after it. It is the Rest heading's `aria-describedby` target, and its lines still
+ * spoke their glyphs: "2 sets · rest 120s" (a middle dot and a bare "120s") and "Target ·
+ * 5–8 reps" (a dot and an en dash, so the range read "5 8"), so the heading's description read
+ * "NEXT UP Parallel bar dip 2 sets · rest 120s 5 reps Target · 5–8 reps".
+ *
+ *   - **The meta line** stays on screen, hidden from assistive technology, with "2 sets, rest
+ *     120 seconds" beside it (the seconds as words, from the same `seconds` keys as every other
+ *     spoken quantity).
+ *   - **The range caption** is the set screen's, from the same two keys, and its sentence is
+ *     built in one place (`spokenTargetRange`), so the two screens cannot say it differently.
+ *   - **The "⇄ each side" pill**: only the glyph is hidden. The words beside it already say
+ *     "each side", so there is nothing to add and no copy to draft.
+ *   - **The hero seconds ("50s")** is not changed here: it is the bare-unit family ("50 s" on the
+ *     set screen's stepper, "8 s" on a warm-up), a decision of its own.
+ *
+ * Fixtures are the 'chest-back' session's own items, with `exerciseChanged` set the way the page
+ * sets it after an exercise's last set; rest seconds are read off the fixture, since the number
+ * is data and the words are the copy under test.
+ *
+ * Negative controls, run 30 Oct (mutation applied to `RestScreen.tsx` or `spokenTarget.ts`,
+ * this file run, restored from a saved copy, `cmp` clean):
+ *   the meta line loses `aria-hidden`                   -> 12 red: the nine meta rows (3 fixtures x 3 languages) and the three heading-description rows
+ *   the meta spoken sentence removed                    -> 12 red: the same twelve
+ *   the rest spoken as a bare "120s" (`+ "s"`)          -> 12 red: the same twelve
+ *   the range caption loses `aria-hidden`               -> 12 red: the nine range rows and the three heading-description rows
+ *   the range spoken sentence removed                   -> 12 red: the same twelve
+ *   the pill's glyph is no longer hidden                -> 6 red: the three pill rows and the three heading-description rows
+ *   the shared helper speaks the en dash                -> 30 red across two files: 12 here (the nine range rows and the three description rows)
+ *                                                          and 18 in SetScreen.spoken.test.tsx (the three range rows, both tests, three languages).
+ *                                                          One defect in `spokenTarget.ts` is seen from both screens, which is what sharing it is for
+ *   the card ignores seconds mode (`'reps'` always)     -> 3 red: "a seconds range", three languages
+ *   the sets' count fixed at 2                          -> 6 red: the ladder (3 sets) and the singular fixtures, three languages; the 2-set
+ *                                                          rep-range fixture stays green, as it must, since 2 is the right answer there
+ *
+ * jsdom has no layout. The caption row is a flex container, so a real browser puts a space between the range sentence and the
+ * pill, and jsdom does not (see the regexes in the last block); the heading description in the real tree is in the report.
+ */
+function renderNew(workout: Workout, exerciseIndex: number) {
+  return render(
+    <RestScreen
+      endsAt={Date.now() + 60_000}
+      totalSeconds={60}
+      exerciseChanged
+      workout={workout}
+      position={{ exerciseIndex, setIndex: 0 }}
+      exerciseById={exerciseById}
+      onDone={() => {}}
+    />,
+  )
+}
+
+function withPrescription(index: number, patch: Record<string, unknown>): Workout {
+  return {
+    ...baseWorkout,
+    exercises: baseWorkout.exercises.map((e, i) =>
+      i === index ? { ...e, prescription: { ...e.prescription, ...patch } as ExercisePrescription } : e,
+    ),
+  }
+}
+
+const restOf = (index: number) => baseWorkout.exercises[index].prescription.restSeconds
+
+// [name, workout, index, [en visible meta, en spoken meta], [fr ...], [zh ...]]
+const metaCases: [string, Workout, number, [string, string], [string, string], [string, string]][] = [
+  [
+    'a ladder (3 sets)',
+    baseWorkout,
+    1,
+    [`3 sets · rest ${restOf(1)}s`, `3 sets, rest ${restOf(1)} seconds`],
+    [`3 séries · repos ${restOf(1)}s`, `3 séries, repos de ${restOf(1)} secondes`],
+    [`3 组 · 休息 ${restOf(1)} 秒`, `3 组，休息${restOf(1)} 秒`],
+  ],
+  [
+    'a rep range (2 sets)',
+    baseWorkout,
+    3,
+    [`2 sets · rest ${restOf(3)}s`, `2 sets, rest ${restOf(3)} seconds`],
+    [`2 séries · repos ${restOf(3)}s`, `2 séries, repos de ${restOf(3)} secondes`],
+    [`2 组 · 休息 ${restOf(3)} 秒`, `2 组，休息${restOf(3)} 秒`],
+  ],
+  [
+    // Not the session's last exercise: with one set left on it the app shows the "Last set" card instead.
+    'a single set (the singular)',
+    withPrescription(3, { sets: 1 }),
+    3,
+    [`1 set · rest ${restOf(3)}s`, `1 set, rest ${restOf(3)} seconds`],
+    [`1 série · repos ${restOf(3)}s`, `1 série, repos de ${restOf(3)} secondes`],
+    [`1 组 · 休息 ${restOf(3)} 秒`, `1 组，休息${restOf(3)} 秒`],
+  ],
+]
+
+describe.each([
+  ['en', 3],
+  ['fr', 4],
+  ['zh-CN', 5],
+] as const)('RestScreen next-up meta line, spoken (A4) — %s', (locale, column) => {
+  it.each(metaCases)('is hidden as printed and heard as a sentence: %s', async (...row) => {
+    const [, workout, index] = row
+    const [visible, spoken] = row[column] as [string, string]
+    await i18n.changeLanguage(locale)
+    renderNew(workout, index)
+    const line = screen.getByText(visible)
+    expect(line).toHaveAttribute('aria-hidden', 'true')
+    expect(heard(line.nextElementSibling as HTMLElement)).toBe(spoken)
+    // No middle dot, and no bare unit letter after a number ("120s", "120 s"): "seconds" is a word here.
+    // (`\b` would call the "é" of "séries" a boundary, so the letter class is spelled out.)
+    expect(heard(line.nextElementSibling as HTMLElement)).not.toMatch(/·|\d\s?s(?![\p{L}])/u)
+  })
+})
+
+// [name, workout, index, [en visible, en spoken], [fr ...], [zh ...]]
+const rangeCases: [string, Workout, number, [string, string], [string, string], [string, string]][] = [
+  [
+    'a rep range',
+    baseWorkout,
+    3,
+    ['Target · 12–15 reps', 'Target, 12 to 15 reps'],
+    ['Objectif · 12 à 15 répétitions', 'Objectif, 12 à 15 répétitions'],
+    ['目标 · 12–15 次', '目标，12到15 次'],
+  ],
+  [
+    'a range whose ends are equal (one number, not "10 to 10")',
+    baseWorkout,
+    4,
+    ['Target · 10–10 reps', 'Target, 10 reps'],
+    ['Objectif · 10 à 10 répétitions', 'Objectif, 10 répétitions'],
+    ['目标 · 10–10 次', '目标，10 次'],
+  ],
+  [
+    'a seconds range',
+    withPrescription(3, { mode: 'seconds', range: { min: 30, max: 45 } }),
+    3,
+    ['Target · 30–45 s', 'Target, 30 to 45 seconds'],
+    ['Objectif · 30 à 45 s', 'Objectif, 30 à 45 secondes'],
+    ['目标 · 30–45 秒', '目标，30到45 秒'],
+  ],
+]
+
+describe.each([
+  ['en', 3],
+  ['fr', 4],
+  ['zh-CN', 5],
+] as const)('RestScreen next-up range caption, spoken (A4) — %s', (locale, column) => {
+  it.each(rangeCases)('is hidden as printed and heard as a sentence: %s', async (...row) => {
+    const [, workout, index] = row
+    const [visible, spoken] = row[column] as [string, string]
+    await i18n.changeLanguage(locale)
+    renderNew(workout, index)
+    const line = screen.getByText(visible)
+    expect(line).toHaveAttribute('aria-hidden', 'true')
+    expect(heard(line.nextElementSibling as HTMLElement)).toBe(spoken)
+  })
+})
+
+describe.each([
+  ['en', 'each side'],
+  ['fr', 'de chaque côté'],
+  ['zh-CN', '每侧'],
+] as const)('RestScreen next-up "each side" pill (A4) — %s', (locale, words) => {
+  it('hides the glyph only: the words are heard, "⇄" is not, and it is still printed', async () => {
+    await i18n.changeLanguage(locale)
+    renderNew(baseWorkout, 2)
+    const pill = screen.getByText(new RegExp(words))
+    expect(pill.textContent?.trim()).toBe(`⇄ ${words}`)
+    expect(pill.querySelector('[aria-hidden="true"]')?.textContent).toBe('⇄')
+    expect(heard(pill)).toBe(words)
+  })
+})
+
+// The caption row is a flex container: a real browser separates its items with a space, but jsdom has no layout and
+// joins adjacent spans ("repseach side"), so a space before the pill's words is optional here (`\s?`). The real tree,
+// with the space, is in the report.
+describe.each([
+  ['en', 'Next up', /^Next up Dead bug 2 sets, rest \d+ seconds 10 reps Target, 10 reps\s?each side$/],
+  ['fr', 'À suivre', /^À suivre Dead bug 2 séries, repos de \d+ secondes 10 reps Objectif, 10 répétitions\s?de chaque côté$/],
+  ['zh-CN', '接下来', /^接下来 .+ 2 组，休息\d+ 秒 10 次 目标，10 次\s?每侧$/],
+] as const)('RestScreen next-up card, as the heading\'s description (A4) — %s', (locale, _label, expected) => {
+  it('is the sentences, with none of the dot, the en dash or the arrow glyph', async () => {
+    await i18n.changeLanguage(locale)
+    renderNew(baseWorkout, 4)
+    const heading = screen.getByRole('heading', { level: 2 })
+    expect(heading).toHaveAccessibleDescription(expected)
+    expect(heading).not.toHaveAccessibleDescription(/[·–⇄]/)
   })
 })

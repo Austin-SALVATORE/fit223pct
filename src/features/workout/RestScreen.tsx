@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { TimerRing } from '@/ui/TimerRing'
 import { formatNumber } from '@/ui/Stepper'
+import { spokenQuantity } from '@/features/today/spokenPrescription'
 import { spokenSet } from '@/features/today/spokenSet'
+import { spokenTargetRange } from './spokenTarget'
 import {
   useExerciseCues,
   useExerciseName,
@@ -317,8 +319,21 @@ function NewExerciseCard({
         <div className="min-w-0 flex-1">
           <p className="eyebrow">{t('resting.nextUp.label')}</p>
           <p className="text-display mt-1 text-xl text-ink">{exerciseName}</p>
-          <p className="mt-1 text-[13px] text-ink-tertiary">
+          {/*
+            A14 leftover (batch A4, QA F2). "2 sets · rest 120s" is read "2 sets, middle dot,
+            rest 120 s". The line stays on screen, hidden from assistive technology, with "2
+            sets, rest 120 seconds" beside it. This card is the Rest heading's description
+            after the last set of an exercise that has another one after it, so this is what
+            the user hears on landing; the card's other lines are spoken below.
+          */}
+          <p className="mt-1 text-[13px] text-ink-tertiary" aria-hidden="true">
             {t('resting.nextUp.meta', { count: prescription.sets, restSeconds: prescription.restSeconds })}
+          </p>
+          <p className="sr-only">
+            {t('resting.nextUp.metaSpoken', {
+              count: prescription.sets,
+              rest: spokenQuantity(t, 'seconds', String(prescription.restSeconds), prescription.restSeconds),
+            })}
           </p>
         </div>
         {/*
@@ -377,12 +392,19 @@ function NewExerciseCaption({
   return (
     <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-tertiary">
       {showRange && (
-        <span>
-          {t(isSeconds ? 'setScreen.targetSecondsRange' : 'setScreen.targetRepRange', {
-            min: prescription.range?.min,
-            max: prescription.range?.max,
-          })}
-        </span>
+        <>
+          {/* A14 leftover (batch A4, QA F2): "Target · 5–8 reps" is read "Target, middle dot, 5 8 reps" (the en dash is skipped or read as "minus").
+              The same two keys and the same sentence as the set screen's caption, built in one place (`spokenTargetRange`). */}
+          <span aria-hidden="true">
+            {t(isSeconds ? 'setScreen.targetSecondsRange' : 'setScreen.targetRepRange', {
+              min: prescription.range?.min,
+              max: prescription.range?.max,
+            })}
+          </span>
+          <span className="sr-only">
+            {spokenTargetRange(t, isSeconds ? 'seconds' : 'reps', prescription.range?.min ?? 0, prescription.range?.max ?? 0)}
+          </span>
+        </>
       )}
       {/* See SetScreen's TargetCaption for the full reasoning — reused
           here so the two screens render the same variant, never a
@@ -394,7 +416,8 @@ function NewExerciseCaption({
       )}
       {showPerSide && (
         <span className="rounded-full border border-border px-2 py-0.5 text-xs">
-          ⇄ {t('setScreen.eachSide')}
+          {/* The glyph is decoration and the words beside it say it all ("each side"), so only the glyph is hidden: nothing to add, no copy to draft. */}
+          <span aria-hidden="true">⇄</span> {t('setScreen.eachSide')}
         </span>
       )}
     </p>

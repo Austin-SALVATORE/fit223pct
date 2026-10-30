@@ -44,7 +44,8 @@
     },
     "nextUp": {
       "label": "接下来",
-      "meta_other": "{{count}} 组 · 休息 {{restSeconds}} 秒"
+      "meta_other": "{{count}} 组 · 休息 {{restSeconds}} 秒",
+      "metaSpoken_other": "{{count}} 组，休息{{rest}}"
     },
     "numbers": {
       "weightReps": "{{weight}} 公斤 × {{reps}}",
