@@ -76,6 +76,37 @@ delivers.
 
 ## A stated bound on the no-tracking guards
 
+**Update 30 Oct (`838981f`): the hole below is closed for the cases that
+can be checked.** The guard now covers the other half.
+
+- **No props.** `RoutinePlayer`, and everything its file exports, takes
+  no parameters, and every place that renders it passes no props and no
+  spread.
+- **Importer walk.** It walks from the player up through its importers to
+  the file that renders its `<Route>` (`App.tsx`). It fails on an import of
+  the write layer (`db.ts` or `repositories.ts`), on a called hook or
+  helper that can reach the write layer, and on a loader, action or lazy
+  on that `<Route>`.
+- **Proof.** Six planted violations each went red while the old outbound
+  guard and `routineNoTracking.write.test.tsx` stayed green: a parent
+  writes on completion, the player accepts `onComplete`, the route file
+  imports `db`, the route calls a writing hook, a usage passes a prop, and
+  the route has an action.
+
+**What the guard still cannot see**, copied from its docblock:
+
+- anything above the route file (`main.tsx` writes at boot by design);
+- a write reached with no import link from the chain: a context or
+  provider installed elsewhere, a global listener, or a store module;
+- a component that only observes the player finishing, such as a write on
+  route unmount or a "done" URL;
+- a persistence module other than `db.ts` or `repositories.ts`, until it
+  is added to `WRITE_LAYER`.
+
+The original 27 Aug account follows, kept as the record of why this was
+built.
+
+
 `routineNoTracking.guard.test.ts` walks an **outbound** module closure
 rooted at `RoutinePlayer` and never enumerates importers. A completion
 write *requested* by the player and *performed* by a component above it

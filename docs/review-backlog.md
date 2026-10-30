@@ -160,6 +160,14 @@ the check-in selection is hard or impossible to see. `aria-pressed`
 covers screen readers; this is the visual channel only.
 *Fix:* add a non-colour cue (solid fill or weight), not just hue.
 
+**Measured 30 Oct (architect, forced-colors plan §0.3):** the fixed picker's
+own comments say the choice "survives forced-colours mode". It does not.
+On a fresh reload in Chromium with forced colours on, the selected and
+unselected pills have the same fill and border, and differ only in font
+weight (700 against 500). The same false claim is at `RatingPicker.tsx:50-56`,
+`ProfileCard.tsx:319-321` and `:373-375`, and `RatingPicker.test.tsx:8`. See
+A15.
+
 ### A7 — Technique photo strip unreachable by keyboard
 `src/ui/FrameStepper.tsx:55-59`. `overflow-x-auto` with no `tabIndex`
 and no controls; Safari/Firefox (iOS-first PWA) can't focus a bare
@@ -314,6 +322,23 @@ nobody has looked, not that the item is fine.
   and **must be keyed** — zh-CN takes `_other` only or
   `localeParity.test.ts:59` fails, and its seconds wording must come
   from `topSeconds`, not the I3-broken keys.
+- **A15 — Buttons and the switch under forced colours (Windows high
+  contrast). Open, planned 30 Oct.** All measurements are headless
+  Chromium at `daf25c0`.
+  - **Defects measured.**
+    - Every amber primary (9 controls, plus SessionSummary's "Done" link)
+      has a fill and no border, so forced colours leaves its edge at
+      contrast 1.0, which is invisible.
+    - The switch's ON and OFF render identically (0 changed pixels in
+      the pill). Its focus ring merges into its 1px border.
+    - Rating and profile pills differ only by font weight (see A6).
+  - **Scope.** WebKit does not force colours, so none of this shows on an
+    iPhone. The owner's own setting there is Increase Contrast
+    (`prefers-contrast: more`), which the app ignores.
+  - **Plan.** `scratchpad/plan-forced-colors-button.md`, 7 phases: one
+    `Button` primitive and a recipe file (`buttonClasses.ts`), with the
+    forced-colors layer landing in that one file. The owner's 22:07
+    ruling: "Fix it properly — one shared button component."
 
 ---
 
