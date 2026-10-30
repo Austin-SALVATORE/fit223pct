@@ -9,6 +9,7 @@ import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { useWakeLock } from '@/lib/useWakeLock'
 import { routineStepAsset } from '@/lib/routineAsset'
 import { useRoutineName, useRoutineStepCue, useRoutineStepName } from '@/i18n/seedRoutine'
+import { Main } from '@/ui/Main'
 import { TimerRing } from '@/ui/TimerRing'
 
 /**
@@ -43,7 +44,21 @@ import { TimerRing } from '@/ui/TimerRing'
  */
 const LEAD_IN_SECONDS = 8
 
+/**
+ * The routine player is a takeover outside `AppShell` (`App.tsx`), the same as
+ * Workout Mode, so it carries its own `<main>` landmark through `Main`: exactly one
+ * whether it renders alone or inside the shell's. Every return of the screen below
+ * (not found, ready, playing, finished) is inside it.
+ */
 export function RoutinePlayer() {
+  return (
+    <Main>
+      <RoutinePlayerScreen />
+    </Main>
+  )
+}
+
+function RoutinePlayerScreen() {
   const { t } = useTranslation('recovery')
   const { t: tCommon, i18n } = useTranslation('common')
   const { routineId } = useParams()
