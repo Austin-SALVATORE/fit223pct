@@ -84,6 +84,20 @@ describe('HoldTimer — the elapsed time is reachable without a flood', () => {
     expect(screen.queryByRole('timer')).toBeNull()
   })
 
+  it('keeps the status region polite, before and during the hold: never assertive, never off', async () => {
+    // `role="status"` is polite on its own, so the attribute is normally absent. What must never be
+    // there is "assertive" (it interrupts whatever the reader is saying, every 10 seconds) or "off"
+    // (it would silence the region, so nothing is ever announced).
+    const politeness = () => screen.getByRole('status').getAttribute('aria-live')
+    render(<HoldTimer onComplete={onComplete} />)
+    expect([null, 'polite']).toContain(politeness())
+
+    fireEvent.click(screen.getByRole('button', { name: 'Start hold' }))
+    runFor(12)
+    expect(statusText()).toBe('10 seconds elapsed')
+    expect([null, 'polite']).toContain(politeness())
+  })
+
   it('carries the time in words on a timer that updates every second and is not live', async () => {
     await startHold()
     runFor(3)
@@ -206,4 +220,9 @@ describe('HoldTimer — the elapsed time is reachable without a flood', () => {
  *   `aria-live="polite"` added to the timer           -> "carries the time in words on a timer ... not live"
  *   the timer moved after the button                  -> "puts the timer before the Stop button"
  *   `elapsed_one` in en given the plural wording      -> "uses the singular for one second" (en/workout.json)
+ * Added after the independent check, which found that none of the first eleven tests
+ * could see the politeness of the status region (it put `aria-live="assertive"` on
+ * the span and all eleven stayed green):
+ *   `aria-live="assertive"` on the status span        -> "keeps the status region polite" ONLY; the other 11 green
+ *   `aria-live="off"` on the status span              -> the same one test (it would silence the region)
  */

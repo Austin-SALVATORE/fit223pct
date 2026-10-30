@@ -22,7 +22,10 @@ import { SessionPreview } from './SessionPreview'
  *
  * Negative controls, run 30 Oct (mutation applied to `SessionPreview.tsx`, this
  * file run, restored, `cmp` clean):
- *   `aria-hidden` removed from the visible line   -> "hides the visible glyph line" and the name test (glyphs back in the name)
+ *   `aria-hidden` removed from the visible line   -> 6 red: "<lang>: the visible line is unchanged and hidden from
+ *                                                    assistive technology" (en, fr, zh-CN) and "<lang>: each row's
+ *                                                    accessible name carries the sentence and no glyph" (en, fr,
+ *                                                    zh-CN), the glyphs being back in the name
  *   the `sr-only` sentence removed                -> the name test, all three languages
  *   the sentence built for another item           -> the name test (wrong numbers)
  */
