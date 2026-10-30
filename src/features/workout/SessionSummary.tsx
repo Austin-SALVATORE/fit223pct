@@ -160,9 +160,13 @@ function useTopSetLabel(workoutExercise: WorkoutExercise): { visible: string; sp
     return effort > topEffort ? set : top
   })
   const countPhrase = t('sessionSummary.setCount', { count: sets.length })
+  // The weight as the language writes it ("17,75" in French), formatted once and used
+  // by the visible line and the spoken one, so the two cannot disagree. Interpolating
+  // the number itself printed a point in every language.
+  const weightText = best.weightKg !== null ? formatNumber(best.weightKg, i18n.language) : null
   const detail =
-    best.weightKg !== null && best.reps !== null
-      ? t('sessionSummary.topWeightReps', { reps: best.reps, weight: best.weightKg })
+    weightText !== null && best.reps !== null
+      ? t('sessionSummary.topWeightReps', { reps: best.reps, weight: weightText })
       : best.seconds !== null
         ? t('sessionSummary.topSeconds', { seconds: best.seconds })
         : t('sessionSummary.topReps', { reps: best.reps ?? 0 })
@@ -171,9 +175,9 @@ function useTopSetLabel(workoutExercise: WorkoutExercise): { visible: string; sp
   // the "·" before "top" becomes a comma. Seconds and bare-reps details are words
   // already and are reused as they are.
   const detailSpoken =
-    best.weightKg !== null && best.reps !== null
+    weightText !== null && best.reps !== null
       ? spokenSet(t, {
-          weight: formatNumber(best.weightKg, i18n.language),
+          weight: weightText,
           effort: String(best.reps),
           effortCount: best.reps,
           mode: 'reps',
