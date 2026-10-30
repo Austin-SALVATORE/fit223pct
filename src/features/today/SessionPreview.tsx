@@ -8,6 +8,7 @@ import { useExerciseName } from '@/i18n/seedExercise'
 import { useSessionName, usePrescriptionNote } from '@/i18n/seedProgram'
 import type { OriginState } from '@/lib/navigationOrigin'
 import { WarmupStepList } from './WarmupSection'
+import { spokenPrescription } from './spokenPrescription'
 import { warmupById } from '@/data/seed/warmups'
 import type { Warmup } from '@/domain/warmup'
 import type { Exercise, ExercisePrescription, Program, SessionTemplate } from '@/domain/types'
@@ -193,9 +194,19 @@ function ItemRow({
         <div className="min-w-0">
           <p className="truncate font-medium text-ink">{exerciseName}</p>
           {note && <p className="mt-0.5 text-sm text-ink-tertiary">{note}</p>}
-          <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
+          {/*
+            A14. The visible line is glyphs ("60→65→70 kg · 12/10/8") that a
+            screen reader reads as "right arrow" and bare digits, so it is hidden
+            from assistive technology and the sentence it stands for follows in a
+            visually hidden sibling. A sibling, not a wrapper: the visible `<p>`
+            keeps its text, its classes and its place next to the name, which the
+            layout tests above pin. An `aria-label` on the paragraph would not do:
+            a paragraph is not a role that takes a name, so readers ignore it.
+          */}
+          <p className="mt-0.5 text-sm text-ink-secondary" data-numeric aria-hidden="true">
             {formatPrescription(tCommon, i18n.language, item, perSideSuffix)}
           </p>
+          <p className="sr-only">{spokenPrescription(t, i18n.language, item)}</p>
         </div>
       </div>
     </GroupedRow>
@@ -205,8 +216,11 @@ function ItemRow({
 /**
  * I7 only: the two ` · ` joins become the locale's own middot form. The
  * arrows, en-dash and × stay as they are — i18n correctly ruled those
- * locale-neutral, and rewriting them for screen readers is A14, a separate
- * defect on the same line that ships independently.
+ * locale-neutral. What a screen reader says for them is A14, a separate defect
+ * on the same line, fixed beside this rather than in it: the glyphs stay visible
+ * and are hidden from assistive technology, and `spokenPrescription.ts` builds
+ * the sentence they stand for (it mirrors this function branch for branch, so a
+ * new shape here needs a new branch there).
  *
  * Owner-reported, 12 Aug 2026: a null-weight ladder (bicycle-crunch,
  * plank, the retired dead-bug family) rendered a dash per rung plus a

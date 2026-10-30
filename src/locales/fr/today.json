@@ -2,7 +2,24 @@
   "sessionPreview": {
     "exerciseWarmupHeading": "Échauffement pour cet exercice",
     "perSideSuffix": " /côté",
-    "rehearsalWeightReps": "Série technique · {{weight}} kg × {{reps}}"
+    "rehearsalWeightReps": "Série technique · {{weight}} kg × {{reps}}",
+    "spoken": {
+      "listSeparator": ", ",
+      "sequence": "{{items}}, puis {{last}}",
+      "range": "{{min}} à {{max}}",
+      "kilograms": "{{list}} kg",
+      "reps_one": "{{list}} répétition",
+      "reps_other": "{{list}} répétitions",
+      "seconds_one": "{{list}} seconde",
+      "seconds_other": "{{list}} secondes",
+      "perSide": "{{what}} par côté",
+      "setsOf_one": "{{count}} série de {{what}}",
+      "setsOf_other": "{{count}} séries de {{what}}",
+      "ladder": "{{weights}}, pour {{reps}}",
+      "noWeight": "sans charge",
+      "startingAt": "à partir de {{weight}}",
+      "join": "{{a}}, {{b}}"
+    }
   },
   "trainingDay": {
     "easedSubtitle": "On lève un peu le pied aujourd'hui — $t({{driversKey}}). Se présenter un jour comme celui-ci compte double.",

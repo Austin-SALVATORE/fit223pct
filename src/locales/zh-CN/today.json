@@ -2,7 +2,21 @@
   "sessionPreview": {
     "exerciseWarmupHeading": "本动作的热身",
     "perSideSuffix": " /侧",
-    "rehearsalWeightReps": "技术组 · {{weight}} kg × {{reps}}"
+    "rehearsalWeightReps": "技术组 · {{weight}} kg × {{reps}}",
+    "spoken": {
+      "listSeparator": "、",
+      "sequence": "{{items}}、{{last}}",
+      "range": "{{min}}到{{max}}",
+      "kilograms": "{{list}} kg",
+      "reps_other": "{{list}} 次",
+      "seconds_other": "{{list}} 秒",
+      "perSide": "每侧{{what}}",
+      "setsOf_other": "{{count}} 组，每组{{what}}",
+      "ladder": "{{weights}}，分别对应{{reps}}",
+      "noWeight": "无负重",
+      "startingAt": "起始 {{weight}}",
+      "join": "{{a}}，{{b}}"
+    }
   },
   "trainingDay": {
     "easedSubtitle": "今天练轻松一点——$t({{driversKey}})。像这样的日子还坚持训练，价值翻倍。",

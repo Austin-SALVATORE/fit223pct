@@ -2,7 +2,24 @@
   "sessionPreview": {
     "exerciseWarmupHeading": "Warm up for this exercise",
     "perSideSuffix": " /side",
-    "rehearsalWeightReps": "Rehearsal · {{weight}} kg × {{reps}}"
+    "rehearsalWeightReps": "Rehearsal · {{weight}} kg × {{reps}}",
+    "spoken": {
+      "listSeparator": ", ",
+      "sequence": "{{items}}, then {{last}}",
+      "range": "{{min}} to {{max}}",
+      "kilograms": "{{list}} kg",
+      "reps_one": "{{list}} rep",
+      "reps_other": "{{list}} reps",
+      "seconds_one": "{{list}} second",
+      "seconds_other": "{{list}} seconds",
+      "perSide": "{{what}} per side",
+      "setsOf_one": "{{count}} set of {{what}}",
+      "setsOf_other": "{{count}} sets of {{what}}",
+      "ladder": "{{weights}}, for {{reps}}",
+      "noWeight": "no weight",
+      "startingAt": "starting at {{weight}}",
+      "join": "{{a}}, {{b}}"
+    }
   },
   "trainingDay": {
     "easedSubtitle": "Eased back a touch today — $t({{driversKey}}). Showing up on a day like this counts double.",
