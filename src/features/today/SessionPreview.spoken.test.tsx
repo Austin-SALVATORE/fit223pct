@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import i18n from '@/i18n/i18next'
 import type { Exercise, LadderPrescription, RepRangePrescription, SessionTemplate } from '@/domain/types'
+import { heard } from '@/test/heard'
 import { SessionPreview } from './SessionPreview'
 
 /**
@@ -137,6 +138,67 @@ describe('SessionPreview — prescriptions are spoken, not spelled', () => {
       expect(line).toHaveAttribute('aria-hidden', 'true')
       expect(line.textContent).toBe(visible)
     }
+  })
+})
+
+/**
+ * Backlog A14's remainder (batch A2): the technique-rehearsal row above a first
+ * working set. Its visible line is "Rehearsal · 7.75 kg × 8", read aloud as "7.75
+ * kilograms times 8". The row is not a link, so there is no accessible name to
+ * ask for; `heard()` takes what assistive technology would read out of the row
+ * and skips `aria-hidden`.
+ *
+ * Negative controls, run 30 Oct (mutation applied to `SessionPreview.tsx`, this
+ * file run, restored from a saved copy, `cmp` clean):
+ *   `aria-hidden` removed from the rehearsal line       -> 6 red: the hidden test and the no-glyph test, all three languages
+ *   the rehearsal `sr-only` sentence removed            -> 6 red: the sentence test and the no-glyph test (which also asserts the sentence), all three languages
+ *   the rehearsal weight left unformatted               -> 2 red: both French tests (7,75 spoken as 7.75); en and zh-CN print a point and cannot see it
+ */
+describe('SessionPreview — the rehearsal row is spoken, not spelled', () => {
+  const withRehearsal: LadderPrescription = { ...ladder, rehearsal: { weightKg: 7.75, reps: 8 } }
+  const rehearsalSession: SessionTemplate = { id: 'A', name: 'Session A', focus: 'Squat', items: [withRehearsal] }
+
+  function renderRehearsal() {
+    return render(
+      <MemoryRouter>
+        <SessionPreview
+          session={rehearsalSession}
+          programId="phase-1-home"
+          exerciseById={new Map([['goblet-squat', exercise('goblet-squat')]])}
+          heading="Today"
+        />
+      </MemoryRouter>,
+    )
+  }
+
+  const rows = [
+    ['en', 'Rehearsal · 7.75 kg × 8', 'Rehearsal, 8 reps at 7.75 kg'],
+    ['fr', 'Série technique · 7,75 kg × 8', 'Série technique, 8 répétitions à 7,75 kg'],
+    ['zh-CN', '技术组 · 7.75 kg × 8', '技术组，7.75 kg做8 次'],
+  ] as const
+
+  it.each(rows)('%s: the row is heard as a sentence', async (locale, visible, spoken) => {
+    await i18n.changeLanguage(locale)
+    renderRehearsal()
+    const row = (await screen.findByText(visible)).parentElement as HTMLElement
+    expect(heard(row)).toContain(spoken)
+  })
+
+  it.each(rows)('%s: the row is heard with no glyph', async (locale, visible, spoken) => {
+    await i18n.changeLanguage(locale)
+    renderRehearsal()
+    const row = (await screen.findByText(visible)).parentElement as HTMLElement
+    const said = heard(row)
+    expect(said).not.toMatch(/[→×–·/]/)
+    expect(said).toContain(spoken)
+  })
+
+  it.each(rows)('%s: the visible line is unchanged and hidden from assistive technology', async (locale, visible) => {
+    await i18n.changeLanguage(locale)
+    renderRehearsal()
+    const line = await screen.findByText(visible)
+    expect(line).toHaveAttribute('aria-hidden', 'true')
+    expect(line.textContent).toBe(visible)
   })
 })
 

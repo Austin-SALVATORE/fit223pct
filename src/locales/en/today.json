@@ -18,7 +18,11 @@
       "ladder": "{{weights}}, for {{reps}}",
       "noWeight": "no weight",
       "startingAt": "starting at {{weight}}",
-      "join": "{{a}}, {{b}}"
+      "join": "{{a}}, {{b}}",
+      "weightedSet": "{{effort}} at {{weight}}",
+      "perDumbbell": "{{weight}} per dumbbell",
+      "barbellTotal": "{{weight}} total",
+      "rehearsal": "Rehearsal, {{set}}"
     }
   },
   "trainingDay": {

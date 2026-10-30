@@ -9,6 +9,7 @@ import { useSessionName, usePrescriptionNote } from '@/i18n/seedProgram'
 import type { OriginState } from '@/lib/navigationOrigin'
 import { WarmupStepList } from './WarmupSection'
 import { spokenPrescription } from './spokenPrescription'
+import { spokenSet } from './spokenSet'
 import { warmupById } from '@/data/seed/warmups'
 import type { Warmup } from '@/domain/warmup'
 import type { Exercise, ExercisePrescription, Program, SessionTemplate } from '@/domain/types'
@@ -132,10 +133,21 @@ function RehearsalRow({ exercise, rehearsal }: { exercise: Exercise; rehearsal: 
         <ExerciseThumbnail exerciseId={exercise.id} />
         <div className="min-w-0">
           <p className="truncate font-medium text-ink">{exerciseName}</p>
-          <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
+          {/* A14 remainder (batch A2): "Rehearsal · 7.75 kg × 8" is read "7.75 kilograms times 8"; same treatment as the prescription line below. */}
+          <p className="mt-0.5 text-sm text-ink-secondary" data-numeric aria-hidden="true">
             {t('sessionPreview.rehearsalWeightReps', {
               weight: formatNumber(rehearsal.weightKg, i18n.language),
               reps: rehearsal.reps,
+            })}
+          </p>
+          <p className="sr-only">
+            {t('sessionPreview.spoken.rehearsal', {
+              set: spokenSet(t, {
+                weight: formatNumber(rehearsal.weightKg, i18n.language),
+                effort: String(rehearsal.reps),
+                effortCount: rehearsal.reps,
+                mode: 'reps',
+              }),
             })}
           </p>
         </div>

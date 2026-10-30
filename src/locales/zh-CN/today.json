@@ -15,7 +15,11 @@
       "ladder": "{{weights}}，分别对应{{reps}}",
       "noWeight": "无负重",
       "startingAt": "起始 {{weight}}",
-      "join": "{{a}}，{{b}}"
+      "join": "{{a}}，{{b}}",
+      "weightedSet": "{{weight}}做{{effort}}",
+      "perDumbbell": "每只哑铃 {{weight}}",
+      "barbellTotal": "杠铃总重 {{weight}}",
+      "rehearsal": "技术组，{{set}}"
     }
   },
   "trainingDay": {

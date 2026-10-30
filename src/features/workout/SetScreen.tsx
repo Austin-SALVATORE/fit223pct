@@ -16,6 +16,8 @@ import type { Exercise, LoggedSet, Program, WorkoutExercise } from '@/domain/typ
 import { exerciseAsset, exerciseAssetThumbnailFrame } from '@/lib/exerciseAsset'
 import type { NextSetTarget } from '@/domain/nextSetTarget'
 import type { ExercisePrescription } from '@/domain/types'
+import { spokenSequence } from '@/features/today/spokenPrescription'
+import { spokenSet } from '@/features/today/spokenSet'
 import { HoldTimer } from './HoldTimer'
 import { SwapSheet } from './SwapSheet'
 
@@ -486,9 +488,30 @@ function LastTime({
     // The dot stays with the entry before it (no-break space), so a wrapped line
     // never starts with "·".
     .join('\u00a0· ')
+  // A14 remainder (batch A2): "12×14 kg · 10×14 kg" is read "12 times 14 kilograms,
+  // middle dot ...", and the order (reps first here, weight first on the rung
+  // caption) is lost. The visible entries stay and are hidden from assistive
+  // technology; "12 reps at 14 kg, then 10 reps at 14 kg" follows, in order, which
+  // is what the position-by-position carry-forward is about.
+  const spoken = spokenSequence(
+    t,
+    sets.map((set) => {
+      const effort = effortValue(set, mode)
+      return spokenSet(t, {
+        weight: set.weightKg !== null ? formatNumber(set.weightKg, i18n.language) : null,
+        effort: String(effort),
+        effortCount: effort,
+        mode,
+      })
+    }),
+  )
   return (
     <>
-      {t('setScreen.lastTimePrefix')} <span data-numeric>{parts}</span>
+      {t('setScreen.lastTimePrefix')}{' '}
+      <span data-numeric aria-hidden="true">
+        {parts}
+      </span>
+      <span className="sr-only">{spoken}</span>
     </>
   )
 }
@@ -679,12 +702,32 @@ function TargetCaption({
           ? t('setScreen.targetRungSeconds', { rung, total, seconds: effort })
           : t('setScreen.targetRungReps', { rung, total, reps: effort })
 
+  // A14 remainder (batch A2): only the two weighted rung captions carry "×"
+  // ("Rung 1 of 4 · 14 kg × 12"), read "14 kilograms times 12". Those show as
+  // before, hidden from assistive technology, with "Rung 1 of 4, 12 reps at 14 kg"
+  // beside them. The paragraph is also the heading's description, which now takes
+  // the spoken text, since a description skips what is `aria-hidden`.
+  const targetSpoken =
+    !isCustomSlot && prescription.setPlan && weight !== null
+      ? t('setScreen.targetRungWeightedSpoken', {
+          rung,
+          total,
+          set: spokenSet(t, {
+            weight,
+            effort: effort === '–' ? null : String(effort),
+            effortCount: typeof effort === 'number' ? effort : 0,
+            mode: isSeconds ? 'seconds' : 'reps',
+          }),
+        })
+      : null
+
   return (
     <p
       id={id}
       className={`mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-ink-tertiary${replaced ? ' invisible' : ''}`}
     >
-      <span>{targetText}</span>
+      <span aria-hidden={targetSpoken !== null ? 'true' : undefined}>{targetText}</span>
+      {targetSpoken !== null && <span className="sr-only">{targetSpoken}</span>}
       {showAssisted && target.prescribed.assisted && <span>{t('setScreen.assisted')}</span>}
       {/*
         MAX / TECHNIQUE / "+2 kg" pills removed, 28 Aug 2026 (Phase 3,

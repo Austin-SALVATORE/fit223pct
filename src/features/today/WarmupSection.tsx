@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
 import { formatNumber } from '@/ui/Stepper'
+import { spokenSet } from './spokenSet'
 import type { OriginState } from '@/lib/navigationOrigin'
 import type { Warmup, WarmupStep } from '@/domain/warmup'
 
@@ -161,16 +162,30 @@ function RampRow({ step, origin }: { step: Extract<WarmupStep, { kind: 'ramp' }>
   // because this row makes a prose claim about what weight means, unlike
   // a bare setPlan number.
   const key = step.implement === 'barbell' ? 'warmup.rampWeightRepsBarbell' : 'warmup.rampWeightRepsDumbbell'
+  const rampSet = spokenSet(t, {
+    weight: formatNumber(step.weightKg, i18n.language),
+    effort: String(step.reps),
+    effortCount: step.reps,
+    mode: 'reps',
+    weightKind: step.implement === 'barbell' ? 'barbell' : 'dumbbell',
+  })
+  const spoken = step.perSide ? t('today:sessionPreview.spoken.perSide', { what: rampSet }) : rampSet
   return (
     <Link to={`/library/${step.exerciseId}`} state={origin} className={rowLinkClassName()}>
       <ExerciseThumbnail exerciseId={step.exerciseId} />
       <div className="min-w-0">
         <p className="truncate font-medium text-ink">{name}</p>
-        <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
+        {/*
+          A14 remainder (batch A2): "8 kg per dumbbell × 5" is read "8 kilograms per
+          dumbbell times 5". Unchanged on screen and hidden from assistive technology,
+          with "5 reps at 8 kg per dumbbell" beside it (and "per side" when it is).
+        */}
+        <p className="mt-0.5 text-sm text-ink-secondary" data-numeric aria-hidden="true">
           {/* Formatted for the language, like every other load on screen: French writes 7,75. */}
           {t(key, { weight: formatNumber(step.weightKg, i18n.language), reps: step.reps })}
           {suffix}
         </p>
+        <p className="sr-only">{spoken}</p>
       </div>
     </Link>
   )

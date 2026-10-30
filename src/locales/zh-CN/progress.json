@@ -19,6 +19,7 @@
       "noIncreasePrefix": "没有增长，已持续",
       "sessionCount_other": "{{count}} 次训练",
       "excluded_other": "（{{count}} 次调整日未计入）",
+      "spokenEvidence": "：{{list}}",
       "worthChange": "值得换个刺激方式了——",
       "trySubstitution": "试试{{name}}"
     }

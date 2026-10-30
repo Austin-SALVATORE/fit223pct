@@ -7,7 +7,9 @@ import type { Exercise } from '@/domain/types'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { useExerciseName } from '@/i18n/seedExercise'
 import type { TFunction } from 'i18next'
-import { formatValue, useDirectionPhrase } from './formatTrend'
+import { spokenSequence } from '@/features/today/spokenPrescription'
+import { spokenSet } from '@/features/today/spokenSet'
+import { formatNumber, formatValue, useDirectionPhrase } from './formatTrend'
 
 interface StrengthCardProps {
   exercise: Exercise
@@ -47,8 +49,21 @@ export function StrengthCard({ exercise, trend, stagnation, substitution }: Stre
             <span data-numeric>
               {t('strength.stagnation.sessionCount', { count: stagnation.evidence.length })}
             </span>
-            {' — '}
-            {stagnation.evidence.map((point) => formatEvidence(t, point)).join(' → ')}
+            {/*
+              A14 remainder (batch A2). The evidence is "16 kg × 10 reps → 16 kg × 10
+              reps → 16 kg × 9 reps", which a reader voices as "times" and "right
+              arrow", and the dash before it as a pause or the word "dash". It stays on
+              screen, hidden from assistive technology, and the sentence it stands for
+              follows in a visually hidden span: "10 reps at 16 kg, 10 reps at 16 kg,
+              then 9 reps at 16 kg". Inline, so the sentence still reads as one.
+            */}
+            <span aria-hidden="true">
+              {' — '}
+              {stagnation.evidence.map((point) => formatEvidence(t, point)).join(' → ')}
+            </span>
+            <span className="sr-only">
+              {t('strength.stagnation.spokenEvidence', { list: spokenEvidence(t, stagnation.evidence) })}
+            </span>
             {stagnation.excludedForReadiness > 0 &&
               t('strength.stagnation.excluded', { count: stagnation.excludedForReadiness })}
             .
@@ -74,6 +89,25 @@ export function StrengthCard({ exercise, trend, stagnation, substitution }: Stre
 
 function InsufficientTrend({ reason }: { reason: MessageDescriptor }) {
   return <p className="mt-1.5 text-sm text-ink-tertiary">{useTranslatedMessage(reason)}</p>
+}
+
+/**
+ * The evidence as a sentence: each session's best set as "10 reps at 16 kg", in
+ * order, joined "a, b, then c". The numbers go through the same formatter
+ * as the visible line (`formatNumber`), so the two never disagree.
+ */
+function spokenEvidence(t: TFunction, evidence: readonly StagnationEvidencePoint[]): string {
+  return spokenSequence(
+    t,
+    evidence.map((point) =>
+      spokenSet(t, {
+        weight: point.weightKg !== null ? formatNumber(t, point.weightKg) : null,
+        effort: formatNumber(t, point.effort),
+        effortCount: point.effort,
+        mode: point.effortMode,
+      }),
+    ),
+  )
 }
 
 /** Shows both dimensions when weight is present — a session's reps still

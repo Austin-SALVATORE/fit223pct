@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { TimerRing } from '@/ui/TimerRing'
 import { formatNumber } from '@/ui/Stepper'
+import { spokenSet } from '@/features/today/spokenSet'
 import {
   useExerciseCues,
   useExerciseName,
@@ -411,10 +412,30 @@ function HeroNumbers({
       : // Unloaded work never renders "× 10" with nothing before it.
         t('resting.numbers.reps', { reps: target.reps ?? '–' })
 
+  // A14 remainder (batch A2): the weighted-reps hero is "14 kg × 12", read "14
+  // kilograms times 12". It stays as it is, hidden from assistive technology, with
+  // "12 reps at 14 kg" beside it. The other shapes carry no "×" and are left alone.
+  const spoken =
+    !isSeconds && target.weightKg !== null
+      ? spokenSet(t, {
+          weight: formatNumber(target.weightKg, i18n.language),
+          effort: target.reps !== null ? String(target.reps) : null,
+          effortCount: target.reps ?? 0,
+          mode: 'reps',
+        })
+      : null
+
   return (
-    <p data-numeric className={`text-[2.5rem] font-semibold leading-none text-ink ${className}`}>
-      {value}
-    </p>
+    <>
+      <p
+        data-numeric
+        aria-hidden={spoken !== null ? 'true' : undefined}
+        className={`text-[2.5rem] font-semibold leading-none text-ink ${className}`}
+      >
+        {value}
+      </p>
+      {spoken !== null && <p className="sr-only">{spoken}</p>}
+    </>
   )
 }
 

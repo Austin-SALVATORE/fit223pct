@@ -24,7 +24,8 @@ export function formatValue(t: TFunction, value: number, unit: TrendUnit): strin
   return t(UNIT_KEY[unit], { count: value, value: formatNumber(t, value) })
 }
 
-function formatNumber(t: TFunction, value: number): string {
+/** Exported so the spoken evidence (`StrengthCard`) prints a number exactly as the visible line does. */
+export function formatNumber(t: TFunction, value: number): string {
   return new Intl.NumberFormat(t('common:intlLocale')).format(value)
 }
 

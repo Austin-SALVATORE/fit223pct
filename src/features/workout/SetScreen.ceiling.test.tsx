@@ -356,7 +356,9 @@ describe('what a screen reader hears on landing', () => {
 describe('the warning takes the caption\'s place and moves nothing (QA F-A, then F-B/F-D)', () => {
   /** The box the target caption and the warning share, and Log set under it. */
   function slot() {
-    const caption = screen.getByText(/^Rung 1 of/).closest('p') as HTMLElement
+    // The visible caption ("Rung 1 of 4 · 14 kg × 12"), not its spoken twin ("Rung 1 of 4, 12 reps at
+    // 14 kg", batch A2): both start "Rung 1 of", so the middot is what tells them apart.
+    const caption = screen.getByText(/^Rung 1 of \d+ ·/).closest('p') as HTMLElement
     const box = caption.parentElement as HTMLElement
     const logSet = screen.getByRole('button', { name: 'Log set' })
     return { caption, box, logSet }

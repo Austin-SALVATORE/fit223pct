@@ -76,6 +76,7 @@
     "targetRungReps": "第 {{rung}} / {{total}} 级 · {{reps}} 次",
     "targetRungSeconds": "第 {{rung}} / {{total}} 级 · {{seconds}} 秒",
     "targetRungWeightedSeconds": "第 {{rung}} / {{total}} 级 · {{weight}} 公斤 × {{seconds}} 秒",
+    "targetRungWeightedSpoken": "第 {{rung}} 级，共 {{total}} 级，{{set}}",
     "targetRepRange": "目标 · {{min}}–{{max}} 次",
     "targetSecondsRange": "目标 · {{min}}–{{max}} 秒",
     "addSet": "加一组",
@@ -112,6 +113,7 @@
     "topSeconds": "{{seconds}}秒保持",
     "topReps": "{{reps}} 次",
     "topSetLine": "{{countPhrase}} · 最佳 {{detail}}",
+    "topSetLineSpoken": "{{countPhrase}}，最佳：{{detail}}",
     "customCount_other": "{{count}} 组加练",
     "skippedCount_other": "跳过了 {{count}} 级"
   }

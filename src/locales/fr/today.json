@@ -18,7 +18,11 @@
       "ladder": "{{weights}}, pour {{reps}}",
       "noWeight": "sans charge",
       "startingAt": "à partir de {{weight}}",
-      "join": "{{a}}, {{b}}"
+      "join": "{{a}}, {{b}}",
+      "weightedSet": "{{effort}} à {{weight}}",
+      "perDumbbell": "{{weight}} par haltère",
+      "barbellTotal": "{{weight}} au total",
+      "rehearsal": "Série technique, {{set}}"
     }
   },
   "trainingDay": {

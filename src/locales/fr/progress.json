@@ -21,6 +21,7 @@
       "sessionCount_other": "{{count}} séances",
       "excluded_one": " ({{count}} jour plus facile non compté)",
       "excluded_other": " ({{count}} jours plus faciles non comptés)",
+      "spokenEvidence": " : {{list}}",
       "worthChange": "Ça vaut le coup de changer de stimulus —",
       "trySubstitution": "essaie {{name}}"
     }

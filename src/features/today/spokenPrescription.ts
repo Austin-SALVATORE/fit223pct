@@ -1,6 +1,14 @@
-import type { TFunction } from 'i18next'
 import { formatNumber } from '@/ui/Stepper'
 import type { ExercisePrescription } from '@/domain/types'
+
+/**
+ * A translate function that is not tied to one namespace. The spoken vocabulary
+ * lives in `today:sessionPreview.spoken` and is read from the workout, progress
+ * and warm-up screens too, so every key here carries its namespace explicitly
+ * (`today:...`), as `formatTrend.ts` does for `common:intlLocale`. Any
+ * `useTranslation(...)`'s `t` is assignable to this.
+ */
+export type Translate = (key: string, options?: Record<string, unknown>) => string
 
 /**
  * What a screen reader should say for a prescription (batch A1, backlog A14).
@@ -27,57 +35,67 @@ import type { ExercisePrescription } from '@/domain/types'
  *
  * It lives in its own module, not in the component file, so it can be exported
  * and tested directly without a component file exporting a non-component.
+ *
+ * **Batch A2** exports the three pieces a set shares with a prescription
+ * (`spokenSequence`, `spokenQuantity`, `spokenKilograms`) so `spokenSet.ts` and the
+ * workout, progress and warm-up screens say "12 reps", "14 kg" and "a, then b"
+ * the same way and from the same keys, in place of a second vocabulary.
  */
-export function spokenPrescription(
-  t: TFunction<'today'>,
-  locale: string,
-  item: ExercisePrescription,
-): string {
-  const quantity = (list: string, count: number): string =>
-    item.mode === 'seconds'
-      ? t('sessionPreview.spoken.seconds', { list, count })
-      : t('sessionPreview.spoken.reps', { list, count })
+export function spokenPrescription(t: Translate, locale: string, item: ExercisePrescription): string {
+  const quantity = (list: string, count: number): string => spokenQuantity(t, item.mode, list, count)
   const perSide = (what: string): string =>
-    item.perSide ? t('sessionPreview.spoken.perSide', { what }) : what
-  const kilograms = (list: string): string => t('sessionPreview.spoken.kilograms', { list })
+    item.perSide ? t('today:sessionPreview.spoken.perSide', { what }) : what
 
   if (item.setPlan) {
     const rungs = item.setPlan
     const reps = perSide(
-      quantity(sequence(t, rungs.map((rung) => String(rung.reps))), rungs[rungs.length - 1].reps),
+      quantity(spokenSequence(t, rungs.map((rung) => String(rung.reps))), rungs[rungs.length - 1].reps),
     )
     if (!rungs.some((rung) => rung.weightKg !== null)) return reps
 
-    const weights = kilograms(
-      sequence(
+    const weights = spokenKilograms(
+      t,
+      spokenSequence(
         t,
         rungs.map((rung) =>
           rung.weightKg !== null
             ? formatNumber(rung.weightKg, locale)
-            : t('sessionPreview.spoken.noWeight'),
+            : t('today:sessionPreview.spoken.noWeight'),
         ),
       ),
     )
-    return t('sessionPreview.spoken.ladder', { weights, reps })
+    return t('today:sessionPreview.spoken.ladder', { weights, reps })
   }
 
   const { min, max } = item.range
-  const span = min === max ? String(min) : t('sessionPreview.spoken.range', { min, max })
-  const sets = t('sessionPreview.spoken.setsOf', { count: item.sets, what: perSide(quantity(span, max)) })
+  const span = min === max ? String(min) : t('today:sessionPreview.spoken.range', { min, max })
+  const sets = t('today:sessionPreview.spoken.setsOf', { count: item.sets, what: perSide(quantity(span, max)) })
   if (item.startWeightKg === null) return sets
-  return t('sessionPreview.spoken.join', {
+  return t('today:sessionPreview.spoken.join', {
     a: sets,
-    b: t('sessionPreview.spoken.startingAt', {
-      weight: kilograms(formatNumber(item.startWeightKg, locale)),
+    b: t('today:sessionPreview.spoken.startingAt', {
+      weight: spokenKilograms(t, formatNumber(item.startWeightKg, locale)),
     }),
   })
 }
 
 /** "a", "a, then b", "a, b, then c" — in the locale's own list shape. */
-function sequence(t: TFunction<'today'>, items: readonly string[]): string {
+export function spokenSequence(t: Translate, items: readonly string[]): string {
   if (items.length === 1) return items[0]
-  return t('sessionPreview.spoken.sequence', {
-    items: items.slice(0, -1).join(t('sessionPreview.spoken.listSeparator')),
+  return t('today:sessionPreview.spoken.sequence', {
+    items: items.slice(0, -1).join(t('today:sessionPreview.spoken.listSeparator')),
     last: items[items.length - 1],
   })
+}
+
+/** "12 reps" / "40 seconds" — `list` is the number(s) as printed, `count` drives the plural. */
+export function spokenQuantity(t: Translate, mode: 'reps' | 'seconds', list: string, count: number): string {
+  return mode === 'seconds'
+    ? t('today:sessionPreview.spoken.seconds', { list, count })
+    : t('today:sessionPreview.spoken.reps', { list, count })
+}
+
+/** "14 kg" — `list` is the number(s) as printed. */
+export function spokenKilograms(t: Translate, list: string): string {
+  return t('today:sessionPreview.spoken.kilograms', { list })
 }

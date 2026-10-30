@@ -4,6 +4,8 @@ import { motion, useReducedMotion } from 'motion/react'
 import { summarizeWorkout } from '@/domain/workout'
 import { coachInsight, workoutHighlights, type Highlight } from '@/domain/highlights'
 import { formatVolume } from '@/lib/formatVolume'
+import { formatNumber } from '@/ui/Stepper'
+import { spokenSet } from '@/features/today/spokenSet'
 import { useFocusOnMount } from '@/lib/useFocusOnMount'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { useExerciseName } from '@/i18n/seedExercise'
@@ -106,9 +108,17 @@ function ExerciseLine({
       <div className="min-w-0">
         <p className="text-ink">{exercise ? exerciseName : workoutExercise.exerciseId}</p>
         {topSet !== null && (
-          <p className="mt-0.5 text-sm text-ink-tertiary" data-numeric>
-            {topSet}
-          </p>
+          <>
+            {/*
+              A14 remainder (batch A2): "4 sets · top 12 × 14 kg" is read "...middle
+              dot ... 12 times 14 kilograms". Visible text unchanged and hidden from
+              assistive technology; "4 sets, top set: 12 reps at 14 kg" follows.
+            */}
+            <p className="mt-0.5 text-sm text-ink-tertiary" data-numeric aria-hidden="true">
+              {topSet.visible}
+            </p>
+            <p className="sr-only">{topSet.spoken}</p>
+          </>
         )}
         {/*
           Coach spec §4, "surfaces in four places" — this is the summary's.
@@ -140,8 +150,8 @@ function ExerciseLine({
 }
 
 /** Null for a fully-skipped exercise — zero logged sets means no "top set" to report. */
-function useTopSetLabel(workoutExercise: WorkoutExercise): string | null {
-  const { t } = useTranslation('workout')
+function useTopSetLabel(workoutExercise: WorkoutExercise): { visible: string; spoken: string } | null {
+  const { t, i18n } = useTranslation('workout')
   const sets = workoutExercise.sets
   if (sets.length === 0) return null
   const best = sets.reduce((top, set) => {
@@ -156,8 +166,27 @@ function useTopSetLabel(workoutExercise: WorkoutExercise): string | null {
       : best.seconds !== null
         ? t('sessionSummary.topSeconds', { seconds: best.seconds })
         : t('sessionSummary.topReps', { reps: best.reps ?? 0 })
-  return t('sessionSummary.topSetLine', {
-    countPhrase,
-    detail: best.assisted ? t('sessionSummary.assistedDetail', { detail }) : detail,
-  })
+  // The spoken line differs from the visible one only where the visible has a
+  // glyph: the weighted-reps detail ("12 × 14 kg") becomes "12 reps at 14 kg", and
+  // the "·" before "top" becomes a comma. Seconds and bare-reps details are words
+  // already and are reused as they are.
+  const detailSpoken =
+    best.weightKg !== null && best.reps !== null
+      ? spokenSet(t, {
+          weight: formatNumber(best.weightKg, i18n.language),
+          effort: String(best.reps),
+          effortCount: best.reps,
+          mode: 'reps',
+        })
+      : detail
+  return {
+    visible: t('sessionSummary.topSetLine', {
+      countPhrase,
+      detail: best.assisted ? t('sessionSummary.assistedDetail', { detail }) : detail,
+    }),
+    spoken: t('sessionSummary.topSetLineSpoken', {
+      countPhrase,
+      detail: best.assisted ? t('sessionSummary.assistedDetail', { detail: detailSpoken }) : detailSpoken,
+    }),
+  }
 }

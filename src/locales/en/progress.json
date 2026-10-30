@@ -21,6 +21,7 @@
       "sessionCount_other": "{{count}} sessions",
       "excluded_one": " ({{count}} easier day not counted)",
       "excluded_other": " ({{count}} easier days not counted)",
+      "spokenEvidence": ": {{list}}",
       "worthChange": "Worth a change of stimulus —",
       "trySubstitution": "try {{name}}"
     }
