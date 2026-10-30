@@ -17,18 +17,22 @@ import { describe, expect, it } from 'vitest'
  * leaves the database byte-identical; this guard is the other half: the three
  * files that make up the recovery import nothing that could write.
  *
- * What counts: an import from the data layer or Dexie (`@/data/*`, `dexie`,
- * `dexie-react-hooks`), and any use of a storage, cache or network API by name
+ * What counts: an import of the data layer, Dexie or a storage library (`@/data/*`,
+ * `dexie`, `dexie-react-hooks`, `idb`, `idb-keyval`, `localforage`, `store2`,
+ * `js-cookie`), in any form: a static `import`, a re-export (`export ... from`), or a
+ * dynamic `import('...')` (one whose specifier is not a string literal fails too, since
+ * it cannot be checked); and any use of a storage, cache or network API by name
  * (`localStorage`, `sessionStorage`, `indexedDB`, `caches`, `fetch`,
  * `XMLHttpRequest`, `WebSocket`, `EventSource`, `sendBeacon`, `.serviceWorker`,
  * `.storage`). Syntax, not types, so a comment or a string that merely mentions
  * one does not trip it.
  *
  * **What it cannot see**, stated so nobody mistakes it for more:
- *   - code the three files call that lives elsewhere: they import only React,
- *     react-router, react-i18next, `@/ui/Main` and each other, and this guard
- *     fails on any other import being added from the data layer, but it does not
- *     follow `@/ui/Main` or the i18n setup to read THEIR imports;
+ *   - code the four files call that lives elsewhere: they import only React,
+ *     react-router, react-i18next and each other (`ui/Main.tsx`, which the fallbacks
+ *     render, is one of the four), and this guard fails on any import added from the
+ *     data layer or a storage library, but it does not follow the i18n setup or
+ *     react-router to read THEIR imports;
  *   - an API reached by a name this list does not hold (a new storage API), or
  *     through an alias (`const s = window['local' + 'Storage']`);
  *   - any other file: a future caller that wraps a boundary around a write.
@@ -37,6 +41,11 @@ import { describe, expect, it } from 'vitest'
  *
  * Negative controls, run 30 Oct (mutation applied, the whole suite run, restored and
  * `cmp`ed):
+ *   the retry handler reaches the data layer through a dynamic import,
+ *   `import('@/data/db').then((m) => m.db.workouts.clear())`: the independent check's
+ *   mutation. Against the guard as first written it was GREEN, and only App.crash's
+ *   byte-identical-database test caught it (1 red); the guard now fails too, naming
+ *   `src/app/CrashFallback.tsx:<line> dynamically imports @/data/db` (2 red).
  *   `import { db } from '@/data/db'` added to CrashFallback.tsx
  *                         -> "no recovery file imports the data layer" (1 red), naming
  *                            the file, the line and the module
@@ -54,9 +63,9 @@ import { describe, expect, it } from 'vitest'
 
 const REPO_ROOT = path.resolve(import.meta.dirname, '../..')
 
-const FILES = ['src/ui/ErrorBoundary.tsx', 'src/app/CrashFallback.tsx', 'src/app/boundaries.tsx']
+const FILES = ['src/ui/ErrorBoundary.tsx', 'src/app/CrashFallback.tsx', 'src/app/boundaries.tsx', 'src/ui/Main.tsx']
 
-const FORBIDDEN_MODULES = [/^@\/data(\/|$)/, /^dexie(-react-hooks)?$/]
+const FORBIDDEN_MODULES = [/^@\/data(\/|$)/, /^dexie(-react-hooks)?$/, /^(idb|idb-keyval|localforage|store2|js-cookie)$/]
 const FORBIDDEN_GLOBALS = new Set([
   'localStorage',
   'sessionStorage',
@@ -72,21 +81,36 @@ const FORBIDDEN_PROPERTIES = new Set(['sendBeacon', 'serviceWorker', 'storage', 
 interface Finding {
   line: number
   what: string
+  kind: 'import' | 'api'
 }
 
 function findings(sourceFile: ts.SourceFile): Finding[] {
   const found: Finding[] = []
-  const record = (node: ts.Node, what: string) => {
-    found.push({ line: sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1, what })
+  const record = (node: ts.Node, what: string, kind: Finding['kind']) => {
+    found.push({ line: sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1, what, kind })
   }
+  const forbidden = (module: string) => FORBIDDEN_MODULES.some((pattern) => pattern.test(module))
   const visit = (node: ts.Node): void => {
     if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
-      const module = node.moduleSpecifier.text
-      if (FORBIDDEN_MODULES.some((pattern) => pattern.test(module))) record(node, `imports ${module}`)
+      if (forbidden(node.moduleSpecifier.text)) record(node, `imports ${node.moduleSpecifier.text}`, 'import')
+    } else if (ts.isExportDeclaration(node) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
+      // A re-export is an import by another name.
+      if (forbidden(node.moduleSpecifier.text)) record(node, `re-exports ${node.moduleSpecifier.text}`, 'import')
+    } else if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
+      // `import('@/data/db')`: a statement-level scan misses it entirely, and it is how a
+      // handler would reach the data layer without a visible import line. A specifier that
+      // is not a string literal cannot be checked, so it fails too: unresolvable means
+      // uncleared, and uncleared must be loud.
+      const [specifier] = node.arguments
+      if (specifier === undefined || !ts.isStringLiteralLike(specifier)) {
+        record(node, 'has a dynamic import with a computed specifier', 'import')
+      } else if (forbidden(specifier.text)) {
+        record(node, `dynamically imports ${specifier.text}`, 'import')
+      }
     } else if (ts.isIdentifier(node) && FORBIDDEN_GLOBALS.has(node.text) && isReference(node)) {
-      record(node, `uses ${node.text}`)
+      record(node, `uses ${node.text}`, 'api')
     } else if (ts.isPropertyAccessExpression(node) && FORBIDDEN_PROPERTIES.has(node.name.text)) {
-      record(node, `uses .${node.name.text}`)
+      record(node, `uses .${node.name.text}`, 'api')
     }
     ts.forEachChild(node, visit)
   }
@@ -109,7 +133,7 @@ function scan(file: string, only: 'import' | 'api'): string[] {
   const text = ts.sys.readFile(path.join(REPO_ROOT, file))
   if (text === undefined) throw new Error(`${file} is missing`)
   return findings(parse(file, text))
-    .filter((finding) => (only === 'import') === finding.what.startsWith('imports'))
+    .filter((finding) => finding.kind === only)
     .map((finding) => `${file}:${finding.line} ${finding.what}`)
 }
 
@@ -134,6 +158,17 @@ describe('the crash recovery cannot touch data or phone home', () => {
       ['a repository import', "import { workoutRepo } from '@/data/repositories'", ['imports @/data/repositories']],
       ['a Dexie import', "import Dexie from 'dexie'", ['imports dexie']],
       ['a live query import', "import { useLiveQuery } from 'dexie-react-hooks'", ['imports dexie-react-hooks']],
+      ['a storage library', "import localforage from 'localforage'", ['imports localforage']],
+      ['a re-export of the data layer', "export { db } from '@/data/db'", ['re-exports @/data/db']],
+      ['a dynamic import of the data layer', "const m = await import('@/data/db')", ['dynamically imports @/data/db']],
+      [
+        'the dynamic form of the retry-handler write',
+        "void import('@/data/db').then((m) => m.db.workouts.clear())",
+        ['dynamically imports @/data/db'],
+      ],
+      ['a dynamic import of Dexie', "await import('dexie')", ['dynamically imports dexie']],
+      ['a dynamic import of a storage library', "await import('idb-keyval')", ['dynamically imports idb-keyval']],
+      ['a dynamic import with a computed specifier', 'await import(path)', ['has a dynamic import with a computed specifier']],
       ['localStorage', 'localStorage.clear()', ['uses localStorage']],
       ['window.localStorage', 'window.localStorage.setItem("a", "b")', ['uses .localStorage']],
       ['indexedDB', 'indexedDB.deleteDatabase("fit223pct")', ['uses indexedDB']],
@@ -148,6 +183,7 @@ describe('the crash recovery cannot touch data or phone home', () => {
 
     it.each([
       ['an ordinary import', "import { Link } from 'react-router'"],
+      ['a dynamic import of a local module', "const m = await import('./CrashFallback')"],
       ['a comment naming one', '// never calls localStorage or fetch'],
       ['a string naming one', "const note = 'localStorage is not touched'"],
       ['an object key of the same name', 'const options = { fetch: true }'],

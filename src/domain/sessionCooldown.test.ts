@@ -24,7 +24,8 @@ import type { ActivityTemplate, Program, ScheduleShift, SessionTemplate, Workout
  *                            green: the case that always worked), "the detail is the
  *                            session's own text", the three Plan cases, the seed
  *                            scheduling test, two Plan screen tests and four Today
- *                            screen tests (17 red)
+ *                            screen tests (21 red at the tip: 17 when this was written,
+ *                            plus the four postponed-receiving-day tests of 2c8d0ae)
  *   `resolveDayPlan` does not pass the session
  *                         -> the six off-diagonal cells, "the detail ...", the seed
  *                            scheduling test and the three Today screen tests (11 red;

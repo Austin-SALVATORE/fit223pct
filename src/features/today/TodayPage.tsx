@@ -345,11 +345,12 @@ function PlannedDay({
     `upcoming` when the precondition below holds. A malformed successor
     (no training weekdays, or weekday-pinned with no session for the
     weekday `nextTrainingDateOnOrAfter` lands on) would throw inside
-    `resolveDayPlan` — there is no error boundary anywhere in `src/` — so
-    this precondition is what keeps a bad future program from blanking
-    today's screen; residual risk on the second throw site is unchanged
-    from what the `upcoming` branch already accepts for the current
-    program.
+    `resolveDayPlan` — the shell's error boundary (`app/boundaries.tsx`)
+    would catch it and show the recovery screen in Today's place, not a
+    blank page, but still not Today — so this precondition is what keeps a
+    bad future program from taking today's screen away; residual risk on the
+    second throw site is unchanged from what the `upcoming` branch already
+    accepts for the current program.
   */
   const nextPhaseUsable =
     nextProgram !== undefined &&
