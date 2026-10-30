@@ -108,6 +108,47 @@ describe('inverted-row bar-stability note (Full Body C)', () => {
     expect(screen.getByText(NOTES.en)).toBeInTheDocument()
   })
 
+  /**
+   * Q31: the note belongs to the first set offered and is gone from set 2 on
+   * (`SetScreen`'s `showNote` requires `sets.length === 0`). Nothing pinned
+   * the second half: the set 1 cases above would stay green if the note were
+   * shown on every set. A stored workout with sets already logged resumes on
+   * the next set, so the slot is rendered as the athlete sees it mid-exercise.
+   *
+   * Controls, 30 Oct, each seen red and restored:
+   * - `showNote` reduced to `!isSubstitute(workoutExercise)` (the
+   *   `sets.length === 0` clause removed): both rows red on "expected <p> to
+   *   be null" (the note is rendered on set 2 and 3), the "Set n of 3" label
+   *   found, and the 10 other tests in this file green;
+   * - the stored sets changed to all three logged: both rows red on "Unable
+   *   to find an element with the text: Set 2 of 3". With the label assertion
+   *   removed the same state PASSES, so the absence check alone cannot tell
+   *   "no note on set 2" from "no set screen at all"; the label is what ties
+   *   the absence to the screen the athlete is looking at.
+   *
+   * What it cannot see: it renders a rep-range, bodyweight prescription, so
+   * it does not exercise a ladder slot's note (the `showNote` expression is
+   * shared by both shapes); and it starts from stored sets rather than
+   * tapping through Log set.
+   */
+  it.each([
+    [1, 'Set 2 of 3'],
+    [2, 'Set 3 of 3'],
+  ])('is gone once %i set(s) are logged (%s)', async (logged, label) => {
+    await showWith((e) => ({
+      ...e,
+      sets: Array.from({ length: logged }, (_, i) => ({
+        setIndex: i,
+        weightKg: null,
+        reps: 10,
+        seconds: null,
+        completedAt: `2026-10-23T09:0${i + 1}:00.000Z`,
+      })),
+    }))
+    expect(screen.getByText(label)).toBeInTheDocument()
+    expect(screen.queryByText(NOTES.en)).toBeNull()
+  })
+
   it('does not show on a substitute exercise', async () => {
     await showWith((e) => ({ ...e, exerciseId: 'single-arm-db-row', substitutedForId: 'inverted-row' }))
     expect(screen.getByRole('heading', { level: 1, name: /single-arm/i })).toBeInTheDocument()
