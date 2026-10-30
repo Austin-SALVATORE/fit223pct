@@ -2,7 +2,8 @@ import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { checkinRepo } from '@/data/repositories'
 import { CARD_SECTION } from '@/ui/cardSection'
-import { Stepper } from '@/ui/Stepper'
+import { formatPercent } from '@/lib/formatPercent'
+import { Stepper, formatNumber } from '@/ui/Stepper'
 import type { CheckIn } from '@/domain/types'
 
 interface MeasurementCardProps {
@@ -32,7 +33,7 @@ const START_BODY_FAT_PERCENT = 20
  * save step, and nothing here tracks whether "today's" checkpoint was done.
  */
 export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
-  const { t } = useTranslation('checkin')
+  const { t, i18n } = useTranslation('checkin')
   const { t: tCommon } = useTranslation('common')
   const [editing, setEditing] = useState(false)
   /**
@@ -90,9 +91,13 @@ export function MeasurementCard({ dateKey, checkIn }: MeasurementCardProps) {
           onClick={() => setEditing(true)}
           className="flex w-full items-baseline justify-between gap-4 text-left"
         >
+          {/*
+            Each number in the language's own notation (T3): French "84,2 kg · 85,5 cm · 18,5 %".
+            The stored numbers were interpolated as they came, a point in every language.
+          */}
           <p className="mt-2 text-ink" data-numeric>
-            {checkIn!.weightKg} kg · {checkIn!.waistCm} cm
-            {checkIn!.bodyFatPercent != null && ` · ${checkIn!.bodyFatPercent}%`}
+            {formatNumber(checkIn!.weightKg!, i18n.language)} kg · {formatNumber(checkIn!.waistCm!, i18n.language)} cm
+            {checkIn!.bodyFatPercent != null && ` · ${formatPercent(checkIn!.bodyFatPercent, i18n.language)}`}
           </p>
           <span className="shrink-0 text-sm text-ink-tertiary">{tCommon('edit')}</span>
         </button>

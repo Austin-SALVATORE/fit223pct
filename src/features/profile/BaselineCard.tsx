@@ -12,6 +12,7 @@ import { weightGoalProgress, type GoalProgress } from '@/domain/goals'
 import { weightTrend } from '@/domain/trends'
 import { useTranslatedMessage } from '@/i18n/useTranslatedMessage'
 import { CARD_SECTION } from '@/ui/cardSection'
+import { formatNumber } from '@/ui/Stepper'
 import { PROFILE_ANCHOR_ID } from './ProfileCard'
 
 /**
@@ -170,7 +171,7 @@ function AllBands({ ree }: { ree: number }) {
 
 /** Names what is missing rather than showing a figure built from defaults. */
 function Missing({ profile }: { profile: ReturnType<typeof resolveProfile> }) {
-  const { t } = useTranslation('profile')
+  const { t, i18n } = useTranslation('profile')
   const missing = [
     profile.currentWeightKg === null ? t('baseline.missingWeight') : null,
     profile.heightCm === null ? t('baseline.missingHeight') : null,
@@ -192,11 +193,25 @@ function Missing({ profile }: { profile: ReturnType<typeof resolveProfile> }) {
           figure, not a blank screen. */}
       {profile.currentWeightKg !== null && (
         <p className="mt-3 text-ink" data-numeric>
-          {t('baseline.currentWeight', { weightKg: profile.currentWeightKg })}
+          {t('baseline.currentWeight', { weightKg: formatNumber(profile.currentWeightKg, i18n.language) })}
         </p>
       )}
     </>
   )
+}
+
+/**
+ * The distance to the goal: one decimal, always, written the way the language writes
+ * it ("5,7" in French). It used to be `.toFixed(1)`, which fixes the digit count and
+ * also fixes the point. The rounding is still `toFixed(1)`'s, so English and Chinese
+ * print exactly what they did; only the separator is the language's.
+ */
+function formatRemainingKg(kg: number, locale: string): string {
+  return new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+    useGrouping: false,
+  }).format(Number(kg.toFixed(1)))
 }
 
 /**
@@ -205,7 +220,7 @@ function Missing({ profile }: { profile: ReturnType<typeof resolveProfile> }) {
  * forbids, smuggled in as encouragement.
  */
 function GoalDistance({ goal, trend }: { goal: GoalProgress; trend: ReturnType<typeof weightTrend> }) {
-  const { t } = useTranslation('profile')
+  const { t, i18n } = useTranslation('profile')
   const insufficient = useTranslatedMessage(
     trend.status === 'insufficient-data' ? trend.reason : { key: 'domain:trends.needMoreWeightData' },
   )
@@ -215,8 +230,8 @@ function GoalDistance({ goal, trend }: { goal: GoalProgress; trend: ReturnType<t
       <h3 className="eyebrow">{t('goal.heading')}</h3>
       <p className="mt-2 text-ink" data-numeric>
         {t('goal.distance', {
-          remaining: Math.abs(goal.remaining).toFixed(1),
-          target: goal.target,
+          remaining: formatRemainingKg(Math.abs(goal.remaining), i18n.language),
+          target: formatNumber(goal.target, i18n.language),
         })}
       </p>
       <p className="mt-1 text-sm text-ink-tertiary">

@@ -6,7 +6,7 @@ import { PAL_ORDER, type PhysicalActivityLevel } from '@/domain/energyReference'
 import { resolveProfile, type Sex } from '@/domain/profile'
 import { toDateKey } from '@/lib/dates'
 import { CARD_SECTION } from '@/ui/cardSection'
-import { Stepper } from '@/ui/Stepper'
+import { Stepper, formatNumber } from '@/ui/Stepper'
 
 /**
  * The profile: height, birth date, sex, and optional targets.
@@ -433,7 +433,7 @@ function Summary({
   targetWeightKg: number | null
   onEdit: () => void
 }) {
-  const { t } = useTranslation('profile')
+  const { t, i18n } = useTranslation('profile')
   const { t: tCommon } = useTranslation('common')
   const facts = [
     heightCm !== null ? t('heightValue', { heightCm }) : null,
@@ -468,7 +468,7 @@ function Summary({
       */}
       <p className="mt-2 text-ink">{facts.join(' · ')}</p>
       {targetWeightKg !== null && (
-        <p className="mt-1 text-sm text-ink-tertiary">{t('targetWeightValue', { targetWeightKg })}</p>
+        <p className="mt-1 text-sm text-ink-tertiary">{t('targetWeightValue', { targetWeightKg: formatNumber(targetWeightKg, i18n.language) })}</p>
       )}
     </section>
   )
