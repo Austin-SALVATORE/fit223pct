@@ -32,11 +32,15 @@
     "skip": "Passer",
     "nextSet": {
       "label": "Série suivante · {{setIndex}} sur {{totalSets}}",
+      "labelSpoken": "Série suivante, {{setIndex}} sur {{totalSets}}",
       "heavier": "↑ {{delta}} kg de plus que la série que tu viens de faire",
-      "lighter": "↓ {{delta}} kg de moins que la série que tu viens de faire"
+      "heavierSpoken": "{{delta}} kg de plus que la série que tu viens de faire",
+      "lighter": "↓ {{delta}} kg de moins que la série que tu viens de faire",
+      "lighterSpoken": "{{delta}} kg de moins que la série que tu viens de faire"
     },
     "lastSet": {
       "label": "Dernière série · {{setIndex}} sur {{totalSets}}",
+      "labelSpoken": "Dernière série, {{setIndex}} sur {{totalSets}}",
       "sessionDone": "Ensuite, la séance est terminée."
     },
     "nextUp": {
@@ -63,6 +67,7 @@
     "assisted": "Avec assistance",
     "prepareFirst": "Avant ta première série",
     "setProgress": "Série {{setIndex}} sur {{totalSets}}",
+    "setProgressSpoken": "Série {{setIndex}} sur {{totalSets}}",
     "eachSide": "de chaque côté",
     "lastTimeFirst": "Première fois — les chiffres ci-dessous sont ton point de départ.",
     "lastTimePrefix": "La dernière fois",
@@ -79,9 +84,10 @@
     "targetRungReps": "Palier {{rung}} sur {{total}} · {{reps}} répétitions",
     "targetRungSeconds": "Palier {{rung}} sur {{total}} · {{seconds}} s",
     "targetRungWeightedSeconds": "Palier {{rung}} sur {{total}} · {{weight}} kg × {{seconds}} s",
-    "targetRungWeightedSpoken": "Palier {{rung}} sur {{total}}, {{set}}",
+    "targetRungSpoken": "Palier {{rung}} sur {{total}}, {{set}}",
     "targetRepRange": "Objectif · {{min}} à {{max}} répétitions",
     "targetSecondsRange": "Objectif · {{min}} à {{max}} s",
+    "targetRangeSpoken": "Objectif, {{what}}",
     "addSet": "Ajouter une série",
     "removeSet": "Retirer cette série",
     "customSet": "Série ajoutée — ne compte pas dans la pyramide",

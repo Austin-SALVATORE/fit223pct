@@ -43,8 +43,7 @@ export type Translate = (key: string, options?: Record<string, unknown>) => stri
  */
 export function spokenPrescription(t: Translate, locale: string, item: ExercisePrescription): string {
   const quantity = (list: string, count: number): string => spokenQuantity(t, item.mode, list, count)
-  const perSide = (what: string): string =>
-    item.perSide ? t('today:sessionPreview.spoken.perSide', { what }) : what
+  const perSide = (what: string): string => (item.perSide ? spokenPerSide(t, what) : what)
 
   if (item.setPlan) {
     const rungs = item.setPlan
@@ -68,8 +67,8 @@ export function spokenPrescription(t: Translate, locale: string, item: ExerciseP
   }
 
   const { min, max } = item.range
-  const span = min === max ? String(min) : t('today:sessionPreview.spoken.range', { min, max })
-  const sets = t('today:sessionPreview.spoken.setsOf', { count: item.sets, what: perSide(quantity(span, max)) })
+  const span = spokenSpan(t, min, max)
+  const sets =t('today:sessionPreview.spoken.setsOf', { count: item.sets, what: perSide(quantity(span, max)) })
   if (item.startWeightKg === null) return sets
   return t('today:sessionPreview.spoken.join', {
     a: sets,
@@ -98,4 +97,19 @@ export function spokenQuantity(t: Translate, mode: 'reps' | 'seconds', list: str
 /** "14 kg" — `list` is the number(s) as printed. */
 export function spokenKilograms(t: Translate, list: string): string {
   return t('today:sessionPreview.spoken.kilograms', { list })
+}
+
+/**
+ * "8 to 12", or just "8" when the ends are equal — a range's span, before its unit.
+ * The visible "8–12" is a dash a reader may skip or voice as "minus"; a range whose
+ * ends are equal is one number, not "10 to 10". Batch A3 shares it with the set
+ * screen's range caption and the daily routine's rounds line (A1 had it inline).
+ */
+export function spokenSpan(t: Translate, min: number, max: number): string {
+  return min === max ? String(min) : t('today:sessionPreview.spoken.range', { min, max })
+}
+
+/** "… per side" — `what` is the spoken quantity it qualifies. */
+export function spokenPerSide(t: Translate, what: string): string {
+  return t('today:sessionPreview.spoken.perSide', { what })
 }

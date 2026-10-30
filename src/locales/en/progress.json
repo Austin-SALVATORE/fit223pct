@@ -28,7 +28,8 @@
   },
   "waist": {
     "sectionLabel": "Waist",
-    "rangeLine": "{{firstValue}} on {{firstDate}} → {{lastValue}} on {{lastDate}}"
+    "rangeLine": "{{firstValue}} on {{firstDate}} → {{lastValue}} on {{lastDate}}",
+    "rangeLineSpoken": "From {{firstValue}} on {{firstDate}} to {{lastValue}} on {{lastDate}}"
   },
   "unit": {
     "kg": "{{value}} kg",

@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useExerciseName } from '@/i18n/seedExercise'
+import { spokenPerSide, spokenQuantity, spokenSpan } from '@/features/today/spokenPrescription'
 import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
 import type { DailyRoutineStep } from '@/domain/dailyRoutine'
 
@@ -47,12 +48,22 @@ function MovementDetail({ step }: { step: Extract<DailyRoutineStep, { kind: 'mov
   const { t } = useTranslation('today')
   const key = step.repsMax !== undefined ? 'morning.roundsRepsRange' : 'morning.roundsReps'
   const suffix = step.perSide ? t('sessionPreview.perSideSuffix') : ''
+  // A14 leftover (batch A3): "2 rounds × 8–10 /side" is read "2 rounds times 8 10
+  // slash side". The line stays, hidden from assistive technology, and "2 rounds of
+  // 8 to 10 reps per side" follows. The plural follows the larger end, as the
+  // prescription sentence does.
+  const reps = spokenQuantity(t, 'reps', spokenSpan(t, step.reps, step.repsMax ?? step.reps), step.repsMax ?? step.reps)
+  const spoken = t('morning.roundsRepsSpoken', {
+    count: step.rounds,
+    what: step.perSide ? spokenPerSide(t, reps) : reps,
+  })
   return (
     <>
-      <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
+      <p className="mt-0.5 text-sm text-ink-secondary" data-numeric aria-hidden="true">
         {t(key, { count: step.rounds, reps: step.reps, repsMax: step.repsMax })}
         {suffix}
       </p>
+      <p className="sr-only">{spoken}</p>
       {step.holdSecondsPerRep !== undefined ? (
         <p className="mt-0.5 text-sm text-ink-secondary" data-numeric>
           {t('morning.holdPerRep', { seconds: step.holdSecondsPerRep })}

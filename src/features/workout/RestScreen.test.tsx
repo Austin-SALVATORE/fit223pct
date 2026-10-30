@@ -159,7 +159,8 @@ describe('next set, same exercise — the compact card', () => {
   it('renders the rung as the hero number, with no illustration', async () => {
     renderRest()
 
-    expect(await screen.findByText(/Next set/)).toBeInTheDocument()
+    // " ·" keeps the query on the printed eyebrow: batch A3 added a spoken sibling, "Next set, 2 of 3".
+    expect(await screen.findByText(/Next set ·/)).toBeInTheDocument()
     expect(screen.getByText('Incline dumbbell press')).toBeInTheDocument()
     expect(screen.getByText('14 kg × 10')).toBeInTheDocument()
     // The next-up card renders no <img> when the same exercise continues —
@@ -282,7 +283,7 @@ describe('the last-set state', () => {
       position: { exerciseIndex: 4, setIndex: 1 },
     })
 
-    expect(await screen.findByText(/Last set/)).toBeInTheDocument()
+    expect(await screen.findByText(/Last set ·/)).toBeInTheDocument()
     expect(screen.getByText('Then the session is done.')).toBeInTheDocument()
     expect(screen.queryByText(/heavier than|lighter than/)).toBeNull()
   })
@@ -295,7 +296,7 @@ describe('the last-set state', () => {
       position: { exerciseIndex: 4, setIndex: 1 },
     })
 
-    expect(await screen.findByText(/Last set/)).toBeInTheDocument()
+    expect(await screen.findByText(/Last set ·/)).toBeInTheDocument()
     expect(screen.queryByText('Next up')).toBeNull()
   })
 
@@ -309,7 +310,7 @@ describe('the last-set state', () => {
     }
     renderRest({ workout, position: { exerciseIndex: 4, setIndex: 2 } })
 
-    expect(screen.getByText(/Last set/)).toBeInTheDocument()
+    expect(screen.getByText(/Last set ·/)).toBeInTheDocument()
     expect(screen.getByText('Then the session is done.')).toBeInTheDocument()
   })
 })

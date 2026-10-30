@@ -14,7 +14,10 @@ import { WarmupSection } from '@/features/today/WarmupSection'
 import { warmupById } from '@/data/seed/warmups'
 import type { ActivityTemplate, Exercise, LoggedSet, Program, SessionTemplate, Workout } from '@/domain/types'
 import { ActivityItemList } from '@/features/recovery/ActivityItemList'
+import { spokenSequence } from '@/features/today/spokenPrescription'
+import { spokenSet } from '@/features/today/spokenSet'
 import { ExerciseThumbnail } from '@/ui/ExerciseThumbnail'
+import { formatNumber } from '@/ui/Stepper'
 
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
@@ -359,22 +362,33 @@ function LoggedExerciseRow({
   formatLoggedSet: (set: LoggedSet, mode: 'reps' | 'seconds') => string
 }) {
   const { t: tPlan } = useTranslation('plan')
+  const spokenLoggedSet = useSpokenLoggedSet()
   const exerciseName = useExerciseName(exercise?.id ?? '')
   // One formatting of a logged set, for the sets that count and for a record of
   // sets logged before a swap alike: the slot's prescription mode governs both.
-  function describeSets(sets: readonly LoggedSet[]): string {
-    return sets
-      .map((set) => {
-        const formatted = formatLoggedSet(set, workoutExercise.prescription.mode)
+  // The printed line and the spoken sentence are built the same way, set by set, with
+  // the same assisted and custom marks; only the set's own words and the joiner differ.
+  function describe(
+    sets: readonly LoggedSet[],
+    formatSet: (set: LoggedSet, mode: 'reps' | 'seconds') => string,
+    join: (parts: string[]) => string,
+  ): string {
+    return join(
+      sets.map((set) => {
+        const formatted = formatSet(set, workoutExercise.prescription.mode)
         // Coach spec §4 — a custom set never reads as a Pyramid level in
         // history either. Marked inline, not a separate line: it's one
         // set among several logged, the same granularity the line
         // already reads at.
         const marked = set.assisted ? tPlan('dayDetail.assistedSuffix', { set: formatted }) : formatted
         return set.custom ? tPlan('dayDetail.customSuffix', { set: marked }) : marked
-      })
-      .join(' · ')
+      }),
+    )
   }
+  const describeSets = (sets: readonly LoggedSet[]): string =>
+    describe(sets, formatLoggedSet, (parts) => parts.join(' · '))
+  const describeSetsSpoken = (sets: readonly LoggedSet[]): string =>
+    describe(sets, spokenLoggedSet, (parts) => (parts.length === 0 ? '' : spokenSequence(tPlan, parts)))
   return (
     <li className="px-4 py-3.5">
       {exercise ? (
@@ -420,9 +434,17 @@ function LoggedExerciseRow({
           means nothing to join, and an empty line would sit above the
           "levels skipped" line for no reason. */}
       {workoutExercise.sets.length > 0 && (
-        <p className="mt-1 pl-[3.75rem] text-sm text-ink-secondary" data-numeric>
-          {describeSets(workoutExercise.sets)}
-        </p>
+        <>
+          {/*
+            A14 leftover (batch A3): "12 × 14 kg · 10 × 16 kg" is read "12 times 14
+            kilograms, middle dot ...". The line stays, hidden from assistive technology,
+            and "12 reps at 14 kg, 10 reps at 16 kg, then ..." follows, in order.
+          */}
+          <p className="mt-1 pl-[3.75rem] text-sm text-ink-secondary" data-numeric aria-hidden="true">
+            {describeSets(workoutExercise.sets)}
+          </p>
+          <p className="sr-only">{describeSetsSpoken(workoutExercise.sets)}</p>
+        </>
       )}
       {/*
         Sets logged before a swap (owner OD-d): a record of what was done, one
@@ -431,7 +453,12 @@ function LoggedExerciseRow({
         read as one list.
       */}
       {workoutExercise.priorAttempts?.map((attempt, index) => (
-        <PriorAttemptLine key={index} exerciseId={attempt.exerciseId} sets={describeSets(attempt.sets)} />
+        <PriorAttemptLine
+          key={index}
+          exerciseId={attempt.exerciseId}
+          sets={describeSets(attempt.sets)}
+          spokenSets={describeSetsSpoken(attempt.sets)}
+        />
       ))}
       {/*
         A skipped level has no LoggedSet to append to the line above — it's
@@ -449,13 +476,24 @@ function LoggedExerciseRow({
 }
 
 /** One record of sets logged before a swap: which exercise they were, and the sets as logged. */
-function PriorAttemptLine({ exerciseId, sets }: { exerciseId: string; sets: string }) {
+function PriorAttemptLine({
+  exerciseId,
+  sets,
+  spokenSets,
+}: {
+  exerciseId: string
+  sets: string
+  spokenSets: string
+}) {
   const { t } = useTranslation('plan')
   const name = useExerciseName(exerciseId)
   return (
-    <p className="mt-1 pl-[3.75rem] text-sm text-ink-tertiary" data-numeric>
-      {t('dayDetail.priorAttempt', { name, sets })}
-    </p>
+    <>
+      <p className="mt-1 pl-[3.75rem] text-sm text-ink-tertiary" data-numeric aria-hidden="true">
+        {t('dayDetail.priorAttempt', { name, sets })}
+      </p>
+      <p className="sr-only">{t('dayDetail.priorAttempt', { name, sets: spokenSets })}</p>
+    </>
   )
 }
 
@@ -648,5 +686,25 @@ function useFormatLoggedSet(): (set: LoggedSet, mode: 'reps' | 'seconds') => str
     const effort = mode === 'seconds' ? t('dayDetail.secondsEffort', { seconds: set.seconds }) : String(set.reps)
     const weight = set.weightKg !== null ? t('dayDetail.weightSuffix', { weight: set.weightKg }) : ''
     return `${effort}${weight}`
+  }
+}
+
+/**
+ * One logged set as a sentence (batch A3, backlog A14's leftovers): the line prints
+ * "12 × 14 kg" and "50s", which a reader voices as "12 times 14 kilograms" and "50 s".
+ * "12 reps at 14 kg" and "50 seconds" are said instead, the same words `spokenSet`
+ * gives every other screen. The weight is written as the language writes it (fr
+ * "17,75"); the printed line shows the raw number.
+ */
+function useSpokenLoggedSet(): (set: LoggedSet, mode: 'reps' | 'seconds') => string {
+  const { t, i18n } = useTranslation('plan')
+  return (set, mode) => {
+    const effort = mode === 'seconds' ? set.seconds : set.reps
+    return spokenSet(t, {
+      weight: set.weightKg !== null ? formatNumber(set.weightKg, i18n.language) : null,
+      effort: effort !== null ? String(effort) : null,
+      effortCount: effort ?? 0,
+      mode,
+    })
   }
 }

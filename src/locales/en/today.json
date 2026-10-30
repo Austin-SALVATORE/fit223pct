@@ -64,6 +64,8 @@
     "roundsReps_other": "{{count}} rounds × {{reps}}",
     "roundsRepsRange_one": "{{count}} round × {{reps}}–{{repsMax}}",
     "roundsRepsRange_other": "{{count}} rounds × {{reps}}–{{repsMax}}",
+    "roundsRepsSpoken_one": "{{count}} round of {{what}}",
+    "roundsRepsSpoken_other": "{{count}} rounds of {{what}}",
     "roundsLabel_one": "{{count}} round",
     "roundsLabel_other": "{{count}} rounds",
     "holdPerRep": "{{seconds}} s hold each rep",

@@ -64,6 +64,8 @@
     "roundsReps_other": "{{count}} tours × {{reps}}",
     "roundsRepsRange_one": "{{count}} tour × {{reps}}–{{repsMax}}",
     "roundsRepsRange_other": "{{count}} tours × {{reps}}–{{repsMax}}",
+    "roundsRepsSpoken_one": "{{count}} tour de {{what}}",
+    "roundsRepsSpoken_other": "{{count}} tours de {{what}}",
     "roundsLabel_one": "{{count}} tour",
     "roundsLabel_other": "{{count}} tours",
     "holdPerRep": "{{seconds}} s de maintien par répétition",

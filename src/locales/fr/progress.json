@@ -28,7 +28,8 @@
   },
   "waist": {
     "sectionLabel": "Tour de taille",
-    "rangeLine": "{{firstValue}} le {{firstDate}} → {{lastValue}} le {{lastDate}}"
+    "rangeLine": "{{firstValue}} le {{firstDate}} → {{lastValue}} le {{lastDate}}",
+    "rangeLineSpoken": "De {{firstValue}} le {{firstDate}} à {{lastValue}} le {{lastDate}}"
   },
   "unit": {
     "kg": "{{value}} kg",

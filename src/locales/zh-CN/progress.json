@@ -26,7 +26,8 @@
   },
   "waist": {
     "sectionLabel": "腰围",
-    "rangeLine": "{{firstDate}}：{{firstValue}} → {{lastDate}}：{{lastValue}}"
+    "rangeLine": "{{firstDate}}：{{firstValue}} → {{lastDate}}：{{lastValue}}",
+    "rangeLineSpoken": "从{{firstDate}}的{{firstValue}}到{{lastDate}}的{{lastValue}}"
   },
   "unit": {
     "kg": "{{value}} kg",

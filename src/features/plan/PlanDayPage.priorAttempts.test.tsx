@@ -112,9 +112,13 @@ describe('PlanDayPage: sets logged before a swap are a record', () => {
     expect(screen.getByText(/0 sets · 0 kg/)).toBeInTheDocument()
   })
 
+  // The printed line, which has " × " between reps and weight. Batch A3 added a spoken
+  // sibling with the same opening ("Avant le remplacement, Goblet squat : 10 répétitions
+  // à 20 kg"), so a pattern of the opening alone matches both; " × " keeps the query on the line it was
+  // written for. The spoken line is pinned in `PlanDayPage.spoken.test.tsx`.
   it.each([
-    ['fr', /^Avant le remplacement, .+ : /],
-    ['zh-CN', /^更换前，.+：/],
+    ['fr', /^Avant le remplacement, .+ : \d+ × /],
+    ['zh-CN', /^更换前，.+：\d+ × /],
   ])('reads in %s, not as a raw key', async (lng, pattern) => {
     await i18n.changeLanguage(lng)
     await db.workouts.put(swappedWorkout([{ kg: 12, reps: 10 }]))

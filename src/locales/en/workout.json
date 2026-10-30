@@ -32,11 +32,15 @@
     "skip": "Skip",
     "nextSet": {
       "label": "Next set · {{setIndex}} of {{totalSets}}",
+      "labelSpoken": "Next set, {{setIndex}} of {{totalSets}}",
       "heavier": "↑ {{delta}} kg heavier than the set you just did",
-      "lighter": "↓ {{delta}} kg lighter than the set you just did"
+      "heavierSpoken": "{{delta}} kg heavier than the set you just did",
+      "lighter": "↓ {{delta}} kg lighter than the set you just did",
+      "lighterSpoken": "{{delta}} kg lighter than the set you just did"
     },
     "lastSet": {
       "label": "Last set · {{setIndex}} of {{totalSets}}",
+      "labelSpoken": "Last set, {{setIndex}} of {{totalSets}}",
       "sessionDone": "Then the session is done."
     },
     "nextUp": {
@@ -63,6 +67,7 @@
     "assisted": "Assisted",
     "prepareFirst": "Before your first set",
     "setProgress": "Set {{setIndex}} of {{totalSets}}",
+    "setProgressSpoken": "Set {{setIndex}} of {{totalSets}}",
     "eachSide": "each side",
     "lastTimeFirst": "First time — the numbers below are your starting point.",
     "lastTimePrefix": "Last time",
@@ -79,9 +84,10 @@
     "targetRungReps": "Rung {{rung}} of {{total}} · {{reps}} reps",
     "targetRungSeconds": "Rung {{rung}} of {{total}} · {{seconds}} s",
     "targetRungWeightedSeconds": "Rung {{rung}} of {{total}} · {{weight}} kg × {{seconds}} s",
-    "targetRungWeightedSpoken": "Rung {{rung}} of {{total}}, {{set}}",
+    "targetRungSpoken": "Rung {{rung}} of {{total}}, {{set}}",
     "targetRepRange": "Target · {{min}}–{{max}} reps",
     "targetSecondsRange": "Target · {{min}}–{{max}} s",
+    "targetRangeSpoken": "Target, {{what}}",
     "addSet": "Add set",
     "removeSet": "Remove this set",
     "customSet": "Custom set — doesn't count toward the pyramid",

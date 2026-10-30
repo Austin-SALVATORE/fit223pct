@@ -211,8 +211,12 @@ function NextUpCard({
   if (isLastSet) {
     return (
       <div id={id} className="mt-8 w-full rounded-card border border-border bg-surface p-5 text-left">
-        <p className="eyebrow text-amber">
+        {/* A14 leftover (batch A3): the "·" (and zh-CN's "/") is read as punctuation; the label stays, hidden, with the sentence beside it. */}
+        <p className="eyebrow text-amber" aria-hidden="true">
           {t('resting.lastSet.label', { setIndex: setPosition, totalSets: totalPlannedSets })}
+        </p>
+        <p className="sr-only">
+          {t('resting.lastSet.labelSpoken', { setIndex: setPosition, totalSets: totalPlannedSets })}
         </p>
         <p className="mt-1 text-sm text-ink-tertiary">{exerciseName}</p>
         <HeroNumbers prescription={prescription} target={target} className="mt-2" />
@@ -224,8 +228,11 @@ function NextUpCard({
   if (!isNewExercise) {
     return (
       <div id={id} className="mt-8 w-full rounded-card border border-border bg-surface p-5 text-left">
-        <p className="eyebrow">
+        <p className="eyebrow" aria-hidden="true">
           {t('resting.nextSet.label', { setIndex: setPosition, totalSets: totalPlannedSets })}
+        </p>
+        <p className="sr-only">
+          {t('resting.nextSet.labelSpoken', { setIndex: setPosition, totalSets: totalPlannedSets })}
         </p>
         <p className="mt-1 text-sm text-ink-tertiary">{exerciseName}</p>
         <HeroNumbers prescription={prescription} target={target} className="mt-2" />
@@ -256,15 +263,28 @@ function NextUpCard({
  * timer-ring size trade already makes.
  */
 function NextSetDelta({ target }: { target: NextSetTarget }) {
-  const { t } = useTranslation('workout')
+  const { t, i18n } = useTranslation('workout')
   if (!target.delta || target.delta.weightKg === 0) return null
   const heavier = target.delta.weightKg > 0
+  const delta = Math.abs(target.delta.weightKg)
   return (
-    <p className="mt-2 text-sm text-amber">
-      {t(heavier ? 'resting.nextSet.heavier' : 'resting.nextSet.lighter', {
-        delta: Math.abs(target.delta.weightKg),
-      })}
-    </p>
+    <>
+      {/*
+        A14 leftover (batch A3): the line opens with "↑" or "↓", which a reader voices
+        as "upwards arrow" before the amount. The line stays, hidden from assistive
+        technology, and the same sentence without the arrow follows. The word
+        "heavier" / "lighter" already says what the arrow says. The spoken number is
+        written as the language writes it (fr "1,5"); the visible one is printed raw.
+      */}
+      <p className="mt-2 text-sm text-amber" aria-hidden="true">
+        {t(heavier ? 'resting.nextSet.heavier' : 'resting.nextSet.lighter', { delta })}
+      </p>
+      <p className="sr-only">
+        {t(heavier ? 'resting.nextSet.heavierSpoken' : 'resting.nextSet.lighterSpoken', {
+          delta: formatNumber(delta, i18n.language),
+        })}
+      </p>
+    </>
   )
 }
 

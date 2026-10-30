@@ -31,11 +31,15 @@
     "skip": "跳过",
     "nextSet": {
       "label": "下一组 · 第 {{setIndex}} / {{totalSets}} 组",
+      "labelSpoken": "下一组，第 {{setIndex}} 组，共 {{totalSets}} 组",
       "heavier": "↑ 比你刚做的那组重 {{delta}} 公斤",
-      "lighter": "↓ 比你刚做的那组轻 {{delta}} 公斤"
+      "heavierSpoken": "比你刚做的那组重 {{delta}} 公斤",
+      "lighter": "↓ 比你刚做的那组轻 {{delta}} 公斤",
+      "lighterSpoken": "比你刚做的那组轻 {{delta}} 公斤"
     },
     "lastSet": {
       "label": "最后一组 · 第 {{setIndex}} / {{totalSets}} 组",
+      "labelSpoken": "最后一组，第 {{setIndex}} 组，共 {{totalSets}} 组",
       "sessionDone": "结束之后这次训练就完成了。"
     },
     "nextUp": {
@@ -60,6 +64,7 @@
     "assisted": "有辅助",
     "prepareFirst": "第一组之前",
     "setProgress": "第 {{setIndex}} / {{totalSets}} 组",
+    "setProgressSpoken": "第 {{setIndex}} 组，共 {{totalSets}} 组",
     "eachSide": "每侧",
     "lastTimeFirst": "第一次——下面的数据是你的起点。",
     "lastTimePrefix": "上次",
@@ -76,9 +81,10 @@
     "targetRungReps": "第 {{rung}} / {{total}} 级 · {{reps}} 次",
     "targetRungSeconds": "第 {{rung}} / {{total}} 级 · {{seconds}} 秒",
     "targetRungWeightedSeconds": "第 {{rung}} / {{total}} 级 · {{weight}} 公斤 × {{seconds}} 秒",
-    "targetRungWeightedSpoken": "第 {{rung}} 级，共 {{total}} 级，{{set}}",
+    "targetRungSpoken": "第 {{rung}} 级，共 {{total}} 级，{{set}}",
     "targetRepRange": "目标 · {{min}}–{{max}} 次",
     "targetSecondsRange": "目标 · {{min}}–{{max}} 秒",
+    "targetRangeSpoken": "目标，{{what}}",
     "addSet": "加一组",
     "removeSet": "移除这组",
     "customSet": "加练的一组——不计入金字塔",

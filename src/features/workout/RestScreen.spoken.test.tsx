@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { seedExercises } from '@/data/seed/exercises'
 import { seedProgram } from '@/data/seed/program'
 import { createWorkout } from '@/domain/workout'
+import type { Workout } from '@/domain/types'
 import i18n from '@/i18n/i18next'
 import { heard } from '@/test/heard'
 import { RestScreen } from './RestScreen'
@@ -138,5 +139,108 @@ describe('RestScreen hero, spoken — a hero with no multiplication is left alon
     expect(el.textContent).toBe('10 reps')
     expect(el).not.toHaveAttribute('aria-hidden')
     expect(el.nextElementSibling?.className ?? '').not.toContain('sr-only')
+  })
+})
+
+/**
+ * Batch A3: the rest card's eyebrow ("Next set · 2 of 3", "Last set · 2 of 2", and zh-CN's
+ * "下一组 · 第 2 / 3 组") and its delta line ("↑ 2 kg heavier than the set you just did").
+ * The dot and the zh slash are punctuation to a reader, and the arrow is voiced as "upwards
+ * arrow" before the amount, which the words "heavier" and "lighter" already carry. Each
+ * stays on screen, hidden from assistive technology, with the sentence beside it.
+ *
+ * The card is the Rest heading's `aria-describedby` target, so the heading's description is
+ * checked too: it is what a user hears on landing.
+ *
+ * Negative controls, run 30 Oct (mutation applied to `RestScreen.tsx`, this file run,
+ * restored from a saved copy, `cmp` clean):
+ *   the next-set eyebrow loses `aria-hidden`            -> 3 red: "next set: the label is hidden ...", one per language
+ *   the next-set spoken sentence removed                -> 3 red: the same three
+ *   the last-set eyebrow loses `aria-hidden`            -> 3 red: "last set: the label is hidden ...", one per language
+ *   the last-set spoken sentence removed                -> 3 red: the same three
+ *   the last-set sentence built from the next-set key   -> 3 red: the last-set rows ("Next set, 2 of 2" for a last set)
+ *   the delta line loses `aria-hidden`                  -> 6 red: all six delta rows (two directions, three languages)
+ *   the delta spoken sentence removed                   -> 7 red: the six delta rows and the French decimal row
+ *   the spoken delta left as the raw number             -> 1 red: the French decimal row (1,5 spoken as 1.5); en and zh-CN print a point
+ */
+function withLoggedSet(workout: Workout, weightKg: number, reps = 12): Workout {
+  return {
+    ...workout,
+    exercises: workout.exercises.map((e, i) =>
+      i === 0
+        ? { ...e, sets: [{ setIndex: 0, weightKg, reps, seconds: null, completedAt: '2026-07-22T09:05:00.000Z' }] }
+        : e,
+    ),
+  }
+}
+
+function renderWith(workout: Workout, exerciseIndex: number, setIndex: number) {
+  return render(
+    <RestScreen
+      endsAt={Date.now() + 60_000}
+      totalSeconds={60}
+      exerciseChanged={false}
+      workout={workout}
+      position={{ exerciseIndex, setIndex }}
+      exerciseById={exerciseById}
+      onDone={() => {}}
+    />,
+  )
+}
+
+const GLYPHS_REST = /[·↑↓×/]/
+
+describe.each([
+  ['en', 'Next set · 2 of 3', 'Next set, 2 of 3', 'Last set · 2 of 2', 'Last set, 2 of 2'],
+  ['fr', 'Série suivante · 2 sur 3', 'Série suivante, 2 sur 3', 'Dernière série · 2 sur 2', 'Dernière série, 2 sur 2'],
+  ['zh-CN', '下一组 · 第 2 / 3 组', '下一组，第 2 组，共 3 组', '最后一组 · 第 2 / 2 组', '最后一组，第 2 组，共 2 组'],
+] as const)('RestScreen eyebrow, spoken (A3) — %s', (locale, nextVisible, nextSpoken, lastVisible, lastSpoken) => {
+  it.each([
+    ['next set', 0, 1, nextVisible, nextSpoken],
+    ['last set', 4, 1, lastVisible, lastSpoken],
+  ] as const)('%s: the label is hidden, the sentence is heard, and the heading is described by it', async (_name, exerciseIndex, setIndex, visible, spoken) => {
+    await i18n.changeLanguage(locale)
+    renderRest(exerciseIndex, setIndex)
+    const label = screen.getByText(visible)
+    expect(label).toHaveAttribute('aria-hidden', 'true')
+    expect(heard(label.nextElementSibling as HTMLElement)).toBe(spoken)
+    const heading = screen.getByRole('heading', { level: 2 })
+    expect(heading).toHaveAccessibleDescription(new RegExp(spoken.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
+    expect(heading).not.toHaveAccessibleDescription(GLYPHS_REST)
+  })
+})
+
+describe.each([
+  ['en', 12, '↑ 2 kg heavier than the set you just did', '2 kg heavier than the set you just did'],
+  ['fr', 12, '↑ 2 kg de plus que la série que tu viens de faire', '2 kg de plus que la série que tu viens de faire'],
+  ['zh-CN', 12, '↑ 比你刚做的那组重 2 公斤', '比你刚做的那组重 2 公斤'],
+  ['en', 20, '↓ 6 kg lighter than the set you just did', '6 kg lighter than the set you just did'],
+  ['fr', 20, '↓ 6 kg de moins que la série que tu viens de faire', '6 kg de moins que la série que tu viens de faire'],
+  ['zh-CN', 20, '↓ 比你刚做的那组轻 6 公斤', '比你刚做的那组轻 6 公斤'],
+] as const)('RestScreen delta line, spoken (A3) — %s, logged %s kg', (locale, logged, visibleText, spoken) => {
+  it('is hidden with its arrow, heard without it, and the heading is described by it', async () => {
+    await i18n.changeLanguage(locale)
+    renderWith(withLoggedSet(baseWorkout, logged), 0, 1)
+    const line = screen.getByText(visibleText)
+    expect(line).toHaveAttribute('aria-hidden', 'true')
+    expect(heard(line.nextElementSibling as HTMLElement)).toBe(spoken)
+    expect(heard(line.parentElement as HTMLElement)).not.toMatch(/[↑↓]/)
+    expect(screen.getByRole('heading', { level: 2 })).toHaveAccessibleDescription(
+      new RegExp(spoken.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+    )
+  })
+})
+
+describe('RestScreen delta line, spoken (A3) — the number is spoken as the language writes it', () => {
+  it('fr: 1,5 kg and not 1.5 kg (the printed line shows the raw number)', async () => {
+    await i18n.changeLanguage('fr')
+    renderWith(withLoggedSet(baseWorkout, 12.5), 0, 1)
+    const line = screen.getByText('↑ 1.5 kg de plus que la série que tu viens de faire')
+    expect(heard(line.nextElementSibling as HTMLElement)).toBe('1,5 kg de plus que la série que tu viens de faire')
+  })
+
+  it('no delta, no line: a card with nothing logged adds nothing', () => {
+    renderRest(0, 1)
+    expect(screen.queryByText(/heavier than|lighter than/)).toBeNull()
   })
 })

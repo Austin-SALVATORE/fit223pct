@@ -56,6 +56,7 @@
     "descriptor": "~10 分钟 · 活动度与动作控制",
     "roundsReps_other": "{{count}} 轮 × {{reps}} 次",
     "roundsRepsRange_other": "{{count}} 轮 × {{reps}}–{{repsMax}} 次",
+    "roundsRepsSpoken_other": "{{count}} 轮，每轮{{what}}",
     "roundsLabel_other": "{{count}} 轮",
     "holdPerRep": "每次保持 {{seconds}} 秒",
     "breathingInstruction_other": "完成{{count}}次有控制的呼吸。每次缓慢呼气大约6秒。"

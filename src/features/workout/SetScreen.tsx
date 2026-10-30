@@ -16,7 +16,7 @@ import type { Exercise, LoggedSet, Program, WorkoutExercise } from '@/domain/typ
 import { exerciseAsset, exerciseAssetThumbnailFrame } from '@/lib/exerciseAsset'
 import type { NextSetTarget } from '@/domain/nextSetTarget'
 import type { ExercisePrescription } from '@/domain/types'
-import { spokenSequence } from '@/features/today/spokenPrescription'
+import { spokenQuantity, spokenSequence, spokenSpan } from '@/features/today/spokenPrescription'
 import { spokenSet } from '@/features/today/spokenSet'
 import { HoldTimer } from './HoldTimer'
 import { SwapSheet } from './SwapSheet'
@@ -169,11 +169,27 @@ export function SetScreen({
   const setPosition = planned.indexOf(setIndex) + 1
   const totalPlannedSets = planned.length
 
+  // A14 leftover (batch A3): zh-CN writes "第 1 / 4 组", whose "/" a reader voices as
+  // "slash". en and fr print words ("Set 1 of 4"), so their spoken text is the same
+  // string and nothing is added; only a language whose spoken text differs gets the
+  // hidden/spoken pair. This paragraph is the heading's `aria-describedby` target, and a
+  // node that is referenced directly is read even when it is `aria-hidden`, so the
+  // paragraph itself stays exposed and the hiding is on a span inside it.
+  const setProgress = t('setScreen.setProgress', { setIndex: setPosition, totalSets: totalPlannedSets })
+  const setProgressSpoken = t('setScreen.setProgressSpoken', { setIndex: setPosition, totalSets: totalPlannedSets })
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="mt-4">
         <p id={setProgressId} className="eyebrow">
-          {t('setScreen.setProgress', { setIndex: setPosition, totalSets: totalPlannedSets })}
+          {setProgressSpoken === setProgress ? (
+            setProgress
+          ) : (
+            <>
+              <span aria-hidden="true">{setProgress}</span>
+              <span className="sr-only">{setProgressSpoken}</span>
+            </>
+          )}
         </p>
         {/*
           Described by the set-progress line above, so landing here — on
@@ -702,24 +718,39 @@ function TargetCaption({
           ? t('setScreen.targetRungSeconds', { rung, total, seconds: effort })
           : t('setScreen.targetRungReps', { rung, total, reps: effort })
 
-  // A14 remainder (batch A2): only the two weighted rung captions carry "×"
-  // ("Rung 1 of 4 · 14 kg × 12"), read "14 kilograms times 12". Those show as
+  // A14 remainder (batch A2): the weighted rung captions carry "×"
+  // ("Rung 1 of 4 · 14 kg × 12"), read "14 kilograms times 12". They show as
   // before, hidden from assistive technology, with "Rung 1 of 4, 12 reps at 14 kg"
-  // beside them. The paragraph is also the heading's description, which now takes
+  // beside them. The paragraph is also the heading's description, which takes
   // the spoken text, since a description skips what is `aria-hidden`.
-  const targetSpoken =
-    !isCustomSlot && prescription.setPlan && weight !== null
-      ? t('setScreen.targetRungWeightedSpoken', {
-          rung,
-          total,
-          set: spokenSet(t, {
-            weight,
-            effort: effort === '–' ? null : String(effort),
-            effortCount: typeof effort === 'number' ? effort : 0,
-            mode: isSeconds ? 'seconds' : 'reps',
-          }),
+  //
+  // **Batch A3** extends the same to the rest of the glyph captions: an unweighted
+  // rung ("Rung 1 of 3 · 16 reps", the "·") and a range ("Target · 5–8 reps", the
+  // en dash) now say "Rung 1 of 3, 16 reps" and "Target, 5 to 8 reps". The one caption
+  // with no glyph, a custom set's, has no sibling and is not hidden: hiding a line that
+  // nothing replaces would silence it. A rung with no number printed for its effort
+  // ("–") and no weight has nothing to say either, and is left as it is.
+  const mode = isSeconds ? 'seconds' : 'reps'
+  const rungSet = spokenSet(t, {
+    weight,
+    effort: effort === '–' ? null : String(effort),
+    effortCount: typeof effort === 'number' ? effort : 0,
+    mode,
+  })
+  const targetSpoken = isCustomSlot
+    ? null
+    : !prescription.setPlan
+      ? t('setScreen.targetRangeSpoken', {
+          what: spokenQuantity(
+            t,
+            mode,
+            spokenSpan(t, prescription.range.min, prescription.range.max),
+            prescription.range.max,
+          ),
         })
-      : null
+      : rungSet === ''
+        ? null
+        : t('setScreen.targetRungSpoken', { rung, total, set: rungSet })
 
   return (
     <p
