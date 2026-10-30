@@ -43,6 +43,15 @@
     "machine": "Machine",
     "parallel-bars": "Barres parallèles"
   },
+  "crash": {
+    "heading": "Cet écran a rencontré un problème",
+    "body": "Tes séances et ton historique sont en sécurité. Rien sur cet écran ne modifie tes données enregistrées.",
+    "tryAgain": "Réessayer",
+    "backToToday": "Retour à Aujourd'hui",
+    "appHeading": "Un problème est survenu",
+    "appBody": "Tes séances et ton historique sont en sécurité. Recharger l'app règle généralement le problème.",
+    "reload": "Recharger l'app"
+  },
   "routeTitle": {
     "today": "{{productName}}",
     "library": "{{productName}} — Bibliothèque",

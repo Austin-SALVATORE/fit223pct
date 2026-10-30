@@ -43,6 +43,15 @@
     "machine": "Machine",
     "parallel-bars": "Parallel bars"
   },
+  "crash": {
+    "heading": "This screen hit a problem",
+    "body": "Your workouts and history are safe. Nothing on this screen changes your saved data.",
+    "tryAgain": "Try again",
+    "backToToday": "Back to Today",
+    "appHeading": "Something went wrong",
+    "appBody": "Your workouts and history are safe. Reloading the app usually fixes this.",
+    "reload": "Reload the app"
+  },
   "routeTitle": {
     "today": "{{productName}}",
     "library": "{{productName}} — Library",

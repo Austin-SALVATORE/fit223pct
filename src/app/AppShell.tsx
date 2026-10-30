@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation } from 'react-router'
 import { PRODUCT_NAME } from '@/lib/brand'
+import { Main } from '@/ui/Main'
+import { RouteErrorBoundary } from './boundaries'
 
 const ROUTE_TITLE_KEYS: Record<string, string> = {
   '/': 'routeTitle.today',
@@ -46,13 +48,16 @@ export function AppShell() {
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <main
+      <Main
         ref={mainRef}
         tabIndex={-1}
         className="min-h-dvh px-5 pb-16 pt-[max(1.5rem,env(safe-area-inset-top))]"
       >
-        <Outlet />
-      </main>
+        {/* One boundary for every shell screen: a failing one shows the recovery screen inside the shell's main, and leaving it recovers. */}
+        <RouteErrorBoundary>
+          <Outlet />
+        </RouteErrorBoundary>
+      </Main>
     </div>
   )
 }

@@ -18,6 +18,7 @@ import {
   workoutPosition,
 } from '@/domain/workout'
 import { PRODUCT_NAME } from '@/lib/brand'
+import { Main } from '@/ui/Main'
 import type { LoggedSet, Workout } from '@/domain/types'
 import { SessionSheet } from './SessionSheet'
 import { SetScreen } from './SetScreen'
@@ -47,7 +48,22 @@ type LastRemoval =
   | { kind: 'skip'; exerciseIndex: number; level: number }
   | { kind: 'customSlot'; exerciseIndex: number }
 
+/**
+ * Workout Mode mounts outside `AppShell` ("full-screen takeover", `App.tsx`), so
+ * it carries its own `<main>` landmark — `Main` makes that one landmark whether
+ * it renders on its own or somewhere inside the shell's. Every return of the
+ * screen below (loading, summary, "no session", the set and rest screens) is
+ * inside it, so there is never a moment without one (QA A13).
+ */
 export function WorkoutPage() {
+  return (
+    <Main>
+      <WorkoutScreen />
+    </Main>
+  )
+}
+
+function WorkoutScreen() {
   const { t } = useTranslation('workout')
   const { t: tCommon, i18n } = useTranslation('common')
   const reducedMotion = useReducedMotion()

@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router'
+import { AppErrorBoundary, RouteErrorBoundary } from './boundaries'
 import { AppShell } from './AppShell'
 import { ServiceWorkerUpdater } from './ServiceWorkerUpdater'
 import { LocaleSync } from '@/i18n/LocaleSync'
@@ -14,14 +15,33 @@ import { SettingsPage } from '@/features/settings/SettingsPage'
 
 export default function App() {
   return (
-    <>
+    <AppErrorBoundary>
       <ServiceWorkerUpdater />
       <LocaleSync />
       <Routes>
-        {/* Workout mode is a full-screen takeover — no shell chrome */}
-        <Route path="workout" element={<WorkoutPage />} />
+        {/*
+          Workout mode is a full-screen takeover — no shell chrome. Each takeover
+          has its own error boundary, so a failure in it shows a recovery screen
+          instead of a blank page and cannot take Today down (and a failing Today
+          cannot take it down). The shell's screens share one, inside `AppShell`.
+        */}
+        <Route
+          path="workout"
+          element={
+            <RouteErrorBoundary>
+              <WorkoutPage />
+            </RouteErrorBoundary>
+          }
+        />
         {/* A routine is the same kind of thing: minutes long, one decision at a time */}
-        <Route path="routine/:routineId" element={<RoutinePlayer />} />
+        <Route
+          path="routine/:routineId"
+          element={
+            <RouteErrorBoundary>
+              <RoutinePlayer />
+            </RouteErrorBoundary>
+          }
+        />
         <Route element={<AppShell />}>
           <Route index element={<TodayPage />} />
           <Route path="library" element={<LibraryPage />} />
@@ -32,6 +52,6 @@ export default function App() {
           <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
-    </>
+    </AppErrorBoundary>
   )
 }

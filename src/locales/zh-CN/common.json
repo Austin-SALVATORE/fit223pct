@@ -43,6 +43,15 @@
     "machine": "器械",
     "parallel-bars": "双杠"
   },
+  "crash": {
+    "heading": "这个页面出了点问题",
+    "body": "你的训练和历史记录都安全，这个页面不会改动你已保存的数据。",
+    "tryAgain": "重试",
+    "backToToday": "返回今天",
+    "appHeading": "出了点问题",
+    "appBody": "你的训练和历史记录都安全。重新加载应用通常能解决。",
+    "reload": "重新加载应用"
+  },
   "routeTitle": {
     "today": "{{productName}}",
     "library": "{{productName}} — 动作库",
