@@ -57,7 +57,12 @@ describe('a shifted-in training day, localized (R1)', () => {
     await i18n.changeLanguage('fr')
     renderApp()
 
-    expect(await screen.findByText('Étirements Corps entier C')).toBeInTheDocument()
+    // The stretching is the cooldown of the session on screen (A: nothing is done yet,
+    // so rotation makes Saturday's session A), not Friday's C: each session's named
+    // cooldown travels with the session. Everything else here, the ride and its
+    // locale keys, still comes from the source weekday (5).
+    expect(await screen.findByText('Étirements Corps entier A')).toBeInTheDocument()
+    expect(screen.queryByText('Étirements Corps entier C')).toBeNull()
 
     // Weekday 6 (Saturday)'s own recovery-day content must never leak in.
     expect(screen.queryByText('Jour de récupération')).toBeNull()
@@ -65,17 +70,19 @@ describe('a shifted-in training day, localized (R1)', () => {
     // English fallback must never leak in either — the defect this test
     // exists to catch is invisible in English, but a passing key check
     // could still be paired with an accidental English literal elsewhere.
-    expect(screen.queryByText('Full Body C Stretching')).toBeNull()
+    expect(screen.queryByText('Full Body A Stretching')).toBeNull()
   })
 
   it('renders weekday 5 (Friday)\'s activity content in zh-CN, never weekday 6\'s', async () => {
     await i18n.changeLanguage('zh-CN')
     renderApp()
 
-    expect(await screen.findByText('全身训练C拉伸')).toBeInTheDocument()
+    // The shown session's own cooldown (A), as above.
+    expect(await screen.findByText('全身训练A拉伸')).toBeInTheDocument()
+    expect(screen.queryByText('全身训练C拉伸')).toBeNull()
 
     expect(screen.queryByText('恢复日')).toBeNull()
     expect(screen.queryByText('正常散步')).toBeNull()
-    expect(screen.queryByText('Full Body C Stretching')).toBeNull()
+    expect(screen.queryByText('Full Body A Stretching')).toBeNull()
   })
 })

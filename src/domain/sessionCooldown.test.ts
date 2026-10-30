@@ -38,10 +38,13 @@ import type { ActivityTemplate, Program, ScheduleShift, SessionTemplate, Workout
  *                            keys, and A's label sits there in every locale
  *   the done-today path does not pass the session (TodayPage)
  *                         -> "Today, after the session is done" (1 red)
- *   the shift gate (`sourceDate === dateKey`) removed
- *                         -> "a day a postpone shifted a session into is left alone" and
- *                            two existing TodayPage.postponeLocale tests that pin a
- *                            shifted-in day's source-weekday content (3 red)
+ *   (first version, a postponed receiving day left alone behind `&& sourceDate ===
+ *     dateKey`: removing that restriction was 3 red; the lead then ruled the receiving
+ *     day follows the same rule, so the restriction is gone and these tests flipped)
+ *   the shift restriction (`&& sourceDate === dateKey`) put back
+ *                         -> both "a day a postpone shifted a session into" tests here
+ *                            (the Today plan and the Plan) and both TodayPage.postponeLocale
+ *                            tests, which now expect the shown session's cooldown (4 red)
  */
 
 const MON = new Date(2026, 10, 2)
@@ -126,7 +129,7 @@ describe('Today: the stretching that belongs to the session shown', () => {
   })
 })
 
-describe('what is left alone', () => {
+describe('what is left alone, and the postponed receiving day', () => {
   it('a rest day: its activity is generic stretching, not any session\'s, and comes back as authored', () => {
     const tuesday = new Date(2026, 10, 3)
     const plan = resolveDayPlan(mesocycle2Build, tuesday, COMPLETED_FOR.C)
@@ -168,9 +171,10 @@ describe('what is left alone', () => {
     expect(JSON.stringify(mesocycle2Build)).toBe(before)
   })
 
-  it('a day a postpone shifted a session into is left alone (deferred: the lead rules on it, QA Q34)', () => {
-    // Monday 2 Nov postponed to Tuesday 3 Nov: Tuesday carries Monday's content,
-    // whichever session rotation makes it. Left exactly as before this change.
+  it('a day a postpone shifted a session into: the stretching is the session shown, and the rest still travels from the source weekday', () => {
+    // Monday 2 Nov postponed to Tuesday 3 Nov, two sessions done, so the session is C.
+    // Tuesday carries Monday's activity (its ride, its title, the locale keys it resolves
+    // under) but the cooldown is C's, not Monday's A. Rotation decides the session.
     const shift: ScheduleShift = {
       programId: mesocycle2Build.id,
       weekStart: '2026-11-02',
@@ -180,7 +184,33 @@ describe('what is left alone', () => {
     }
     const result = resolveActivityForDate(mesocycle2Build, '2026-11-03', shift, SESSION.C)
     expect(result.activityWeekday).toBe(1)
-    expect(result.activity).toBe(authored(1))
+    expect(stretching(result.activity)).toMatchObject({
+      label: 'Full Body C Stretching',
+      detail: stretching(authored(5))?.detail,
+    })
+    expect(rideOf(result.activity)).toEqual(rideOf(authored(1)))
+    expect(result.activity?.title).toBe(authored(1).title)
+
+    // Today's plan says the same, with the receiving day marked as shifted.
+    const plan = resolveDayPlan(mesocycle2Build, new Date(2026, 10, 3), COMPLETED_FOR.C, shift)
+    expect(plan.kind).toBe('training')
+    if (plan.kind !== 'training') return
+    expect(plan.shiftedFrom).toBe('2026-11-02')
+    expect(plan.session.id).toBe(SESSION.C.id)
+    expect(plan.activityWeekday).toBe(1)
+    expect(stretching(plan.activity)?.label).toBe('Full Body C Stretching')
+  })
+
+  it('a shifted-in day whose session already has the right cooldown comes back as authored', () => {
+    const shift: ScheduleShift = {
+      programId: mesocycle2Build.id,
+      weekStart: '2026-11-02',
+      fromDate: '2026-11-02',
+      days: 1,
+      createdAt: '2026-11-01T09:00:00.000Z',
+    }
+    // Nothing done: session A, Monday's own cooldown.
+    expect(resolveActivityForDate(mesocycle2Build, '2026-11-03', shift, SESSION.A).activity).toBe(authored(1))
   })
 })
 
@@ -212,6 +242,22 @@ describe('the Plan: the same rule on past, today and future days', () => {
     expect(stretching(day('2026-11-06').activity)?.label).toBe('Full Body B Stretching')
     expect(day('2026-11-09').session?.id).toBe(SESSION.C.id)
     expect(stretching(day('2026-11-09').activity)?.label).toBe('Full Body C Stretching')
+  })
+
+  it('a day a postpone shifted a session into: the projected session\'s own cooldown', () => {
+    const shift: ScheduleShift = {
+      programId: mesocycle2Build.id,
+      weekStart: '2026-11-02',
+      fromDate: '2026-11-02',
+      days: 1,
+      createdAt: '2026-11-01T09:00:00.000Z',
+    }
+    // Monday is vacated, Tuesday receives it: the next session is C, Monday's content is A's.
+    const shifted = projectSchedule(mesocycle2Build, history, MON, shift).find((d) => d.date === '2026-11-03')!
+    expect(shifted.shiftedFrom).toBe('2026-11-02')
+    expect(shifted.session?.id).toBe(SESSION.C.id)
+    expect(shifted.activityWeekday).toBe(1)
+    expect(stretching(shifted.activity)?.label).toBe('Full Body C Stretching')
   })
 
   it('a completed day: the cooldown of the session that was trained, whatever its weekday', () => {
