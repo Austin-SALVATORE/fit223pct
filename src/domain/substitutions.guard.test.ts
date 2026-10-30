@@ -21,15 +21,33 @@ import { describe, expect, it } from 'vitest'
  * module that reads it.
  *
  * What counts as a read: a property access (`x.substitutedForId`, optional
- * chaining included), an element access with the literal name, a destructured
- * binding, and a shorthand property. What does not: an object literal's key
- * (`swapExercise` WRITES the field), a type member (`types.ts`, the legacy
- * shape in `db.ts`) and a string-literal type (`Pick<..., 'substitutedForId'>`).
+ * chaining included), a destructured binding, a shorthand property, and **any
+ * string literal spelling the name** — which is how `'substitutedForId' in x`,
+ * `x['substitutedForId']`, `Object.prototype.hasOwnProperty.call(x,
+ * 'substitutedForId')` and `Reflect.get(x, 'substitutedForId')` all read it. (The
+ * first version of this guard looked only at property and element accesses; the
+ * independent check of 02761fe planted the `in` and `hasOwnProperty` forms in
+ * `historyEligibility.ts` and it stayed green.) What does not count: an object
+ * literal's key (`swapExercise` WRITES the field), a type member (`types.ts`, the
+ * legacy shape in `db.ts`) and a string-literal TYPE (`Pick<..., 'substitutedForId'>`),
+ * which cannot read anything.
  *
  * Syntax, not types, deliberately: the name is unique in this codebase, so a
- * type checker adds nothing here, and a plain parse is fast. What it cannot see
- * is a computed key built at runtime — nothing here does that, and a test that
- * claimed to see it would be overclaiming.
+ * type checker adds nothing here, and a plain parse is fast.
+ *
+ * **What it still cannot see**, stated so nobody mistakes it for more:
+ *   - a name assembled at runtime: `'substituted' + 'ForId'`, a template literal
+ *     with a substitution, a key looked up in a variable;
+ *   - a read that never names the field: `Object.keys` / `Object.entries` /
+ *     `Object.values` over a slot, spreading one into code that inspects it,
+ *     `JSON.stringify` and a regex over the result;
+ *   - a wrong read inside `substitutions.ts` itself, the one file exempt;
+ *   - files the scan does not parse: `*.test.*`, `scripts/`, and anything that
+ *     is not TypeScript.
+ * Nor does it police `substituteLoad`, deliberately: that field is read in many
+ * places on purpose (`nextSetTarget`, `SetScreen`, the suggestion walk) and has no
+ * CC4 ambiguity to misread; it is `substitutedForId`, whose stored value may be
+ * the slot's own id, that needs one reader.
  *
  * Negative controls, run 30 Oct (mutation applied, the whole suite run, restored
  * and `cmp`ed): a raw `workoutExercise.substitutedForId === undefined` put back
@@ -69,12 +87,8 @@ function readsOfField(sourceFile: ts.SourceFile): Read[] {
   const visit = (node: ts.Node): void => {
     if (ts.isPropertyAccessExpression(node) && node.name.text === FIELD) {
       record(node, 'property access')
-    } else if (
-      ts.isElementAccessExpression(node) &&
-      ts.isStringLiteralLike(node.argumentExpression) &&
-      node.argumentExpression.text === FIELD
-    ) {
-      record(node, 'element access')
+    } else if (ts.isStringLiteralLike(node) && node.text === FIELD && !ts.isLiteralTypeNode(node.parent)) {
+      record(node, 'string literal')
     } else if (ts.isBindingElement(node) && (node.propertyName ?? node.name).getText(sourceFile) === FIELD) {
       record(node, 'destructured binding')
     } else if (ts.isShorthandPropertyAssignment(node) && node.name.text === FIELD) {
@@ -130,7 +144,11 @@ describe('substitutedForId is read only through substitutions.ts', () => {
       ['a comparison', 'if (slot.substitutedForId === undefined) go()', ['property access']],
       ['optional chaining', 'const id = slot?.substitutedForId', ['property access']],
       ['a nullish default', 'const id = slot.substitutedForId ?? slot.exerciseId', ['property access']],
-      ['an element access', "const id = slot['substitutedForId']", ['element access']],
+      ['an element access', "const id = slot['substitutedForId']", ['string literal']],
+      ['an `in` test', "const swapped = 'substitutedForId' in slot", ['string literal']],
+      ['hasOwnProperty', "const has = Object.prototype.hasOwnProperty.call(slot, 'substitutedForId')", ['string literal']],
+      ['Reflect.get', "const id = Reflect.get(slot, 'substitutedForId')", ['string literal']],
+      ['a template literal with no substitution', 'const id = slot[`substitutedForId`]', ['string literal']],
       ['a destructured binding', 'const { substitutedForId } = slot', ['destructured binding']],
       ['a renamed binding', 'const { substitutedForId: from } = slot', ['destructured binding']],
       ['a shorthand property', 'const copy = { substitutedForId }', ['shorthand property']],
@@ -142,6 +160,7 @@ describe('substitutedForId is read only through substitutions.ts', () => {
       ['an object literal key (a write)', 'const slot = { exerciseId: a, substitutedForId: authored }'],
       ['a type member', 'interface Slot { substitutedForId?: string }'],
       ['a string-literal type', "type S = Pick<WorkoutExercise, 'exerciseId' | 'substitutedForId'>"],
+      ['a string that only mentions it', "const note = 'a record with substitutedForId set'"],
       ['a comment', '// slot.substitutedForId === undefined'],
       ['a string', "const note = 'substitutedForId is not read here'"],
     ])('ignores %s', (_name, code) => {

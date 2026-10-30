@@ -133,7 +133,19 @@ import type { Exercise, LadderPrescription, LoggedSet, SubstituteLoad, Workout, 
  *                                         workout.test's reset test and the swap
  *                                         confirm test (4 red)
  *     `previousSetsFor`                -> "is not Last time" (1 red)
- *     `scopedExposuresFor` (carry)     -> "is not a carry basis" (1 red)
+ *     `scopedExposuresFor` (carry), each `priorAttempts` entry expanded into a
+ *       synthetic exposure of the exercise it was performed as
+ *                                      -> "is not a carry basis" (1 red). This is
+ *                                         the only form that goes red. The first
+ *                                         form tried, widening the pre-filter to
+ *                                         `sets.length > 0 || priorAttempts`, stays
+ *                                         fully GREEN (1788/1788; found by the
+ *                                         independent check of 02761fe and
+ *                                         re-run): the swapped slot's `exerciseId`
+ *                                         is the substitute, so it never matches
+ *                                         the original's id, and
+ *                                         `isCompleteExposure` excludes it too. It
+ *                                         is not a control and is not claimed as one.
  *     `hasAWeight` (the suggestion)    -> "is not a weight suggestion" (1 red)
  *     `strengthTrend`                  -> "is not a data point in the strength trend"
  *     `detectStagnation`               -> "is not a data point in stagnation"
