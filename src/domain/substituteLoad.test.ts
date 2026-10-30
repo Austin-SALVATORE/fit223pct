@@ -82,8 +82,21 @@ import type { Exercise, LadderPrescription, Program, SubstituteLoad, Workout } f
  *                                          weights", and on the screen T21,
  *                                          basis, E2, E3 + E13, E5, T26, T24
  *                                          (15 red)
- *   E12: walk back per position, filling a gap from an older exposure
+ *   E12: walk back per position, filling a gap from an older exposure. The count
+ *     depends on WHICH eligibility layers that walk reuses, so it is named (run 30
+ *     Oct, the whole suite; positions 0-3, nearest older exposure first):
+ *       (a) the older exposures are the same program and completed only (the form
+ *           recorded on 29 Oct: no easier-day check, no L4, no L5)
  *                                       -> E12 and "a valid later bench" (2 red)
+ *       (b) L1 in full, L3 and L5 kept, L4 skipped
+ *                                       -> the same two (2 red)
+ *       (c) L1, L3, L4 and L5 all kept (only an own-identity record can fill a gap)
+ *                                       -> E12 only (1 red): the walk then ignores
+ *                                          the excluded legacy bench, so "a valid
+ *                                          later bench" stays green
+ *     Other forms red more or fewer: the independent check of c731222 reported 1,
+ *     2 and 6 for different walks. None of them is the shipped rule; (c) is the
+ *     nearest to it.
  *   `basis` omitted                     -> "basis names the exposure", E7, "with
  *                                          history ... the exposure is recorded",
  *                                          and on the screen the basis test

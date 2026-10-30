@@ -54,10 +54,18 @@ describe('effectiveSubstitutions', () => {
  * add it (Phase 2 plan, DD-A3d; the independent check of 34bec42 found the first
  * 2.3 build also *added* it on a unilateral substitute of a bilateral slot).
  *
- * Negative control, run 29 Oct: the old rule, `substitutedForId === undefined ?
- * prescription.perSide : exercise.isUnilateral`, turns "never adds" red (two
- * rows) — and, on the screens, the goblet -> split squat and inverted row ->
- * dumbbell row tests (`SetScreen.substitute.test.tsx`) and the Rest screen test.
+ * Negative control: the old rule, `substitutedForId === undefined ?
+ * prescription.perSide : exercise.isUnilateral`, in place of the helper's two
+ * lines. Run 30 Oct against the whole suite it is four red, not the "two rows
+ * plus the Rest screen test" this comment recorded on 29 Oct: ONE row here ("a
+ * bilateral slot swapped to a unilateral exercise does NOT add it"); on the
+ * screens T23 (inverted row -> dumbbell row) and "not added by a same-implement
+ * swap to a unilateral exercise" (goblet squat -> split squat) in
+ * `SetScreen.substitute.test.tsx`; and, since 2b.3, "a record stored before CC4
+ * as 'substituted for itself': the pill shows" in `SetScreen.swapBack.test.tsx`
+ * (the old rule reads that stored shape as a substitute). The Rest screen test is
+ * not red under this mutation. The rule that decides the pill is now
+ * `!isSubstitute(workoutExercise) || exercise.isUnilateral`.
  */
 describe('showsPerSidePill', () => {
   const slot = (perSide: boolean): Pick<WorkoutExercise, 'exerciseId' | 'prescription' | 'substitutedForId'> => ({

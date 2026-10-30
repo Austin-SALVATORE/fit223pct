@@ -319,6 +319,50 @@ describe('picking from Other goes through the same swap', () => {
   })
 })
 
+/**
+ * The note under "Other exercises" is balanced (`text-balance`): at 375px the
+ * Chinese note broke 23 + 3 characters, a two-character line and its full stop
+ * on their own (QA, 30 Oct backlog; copy unchanged, CSS only). Measured in
+ * headless Chromium and WebKit, per line: zh-CN 23 + 3 before, 13 + 13 after at
+ * 375, 360 and 320px, and one line at 414px; en 49 + 37 before, 44 + 42 after;
+ * fr 44 + 50 + 24 before, 44 + 35 + 39 after. No language gained a line. jsdom
+ * has no layout, so this pins the class that does it.
+ *
+ * Negative control, run 30 Oct: `text-balance` removed -> all three rows.
+ */
+describe('the note under Other exercises is balanced', () => {
+  it.each([
+    ['en', 'Other exercises', NOTE_EN, 'Dumbbell bench press'],
+    ['fr', 'Autres exercices', NOTE_FR, 'Développé couché aux haltères'],
+    ['zh-CN', '其他动作', NOTE_ZH, '哑铃卧推'],
+  ])('%s', async (lng, toggleName, note, heading) => {
+    await i18n.changeLanguage(lng)
+    await start(dumbbellBench())
+    const sheet = await openSheet(heading)
+    await userEvent.click(otherToggle(sheet, toggleName))
+
+    expect(within(sheet).getByText(note)).toHaveClass('text-balance')
+  })
+})
+
+describe('cancelling the confirm leaves Other exercises where it was', () => {
+  it('the list stays open and focus returns to the row that was tapped (QA, 30 Oct)', async () => {
+    await start(dumbbellBench(), 1)
+    const sheet = await openSheet('Dumbbell bench press')
+    const toggle = otherToggle(sheet)
+    await userEvent.click(toggle)
+    const panel = otherPanel(toggle)
+    await userEvent.click(within(panel).getByRole('button', { name: /Barbell bench press/ }))
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Cancel' }))
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(panel).not.toHaveAttribute('hidden')
+    await waitFor(() =>
+      expect(within(panel).getByRole('button', { name: /Barbell bench press/ })).toHaveFocus(),
+    )
+  })
+})
+
 describe('in French and Chinese', () => {
   it('fr: "Autres exercices", the note in the tu register, and the disclosure works', async () => {
     await i18n.changeLanguage('fr')

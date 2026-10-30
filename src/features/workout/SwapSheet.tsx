@@ -1,9 +1,8 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { otherExercisesFor } from '@/domain/exerciseGroups'
 import { effectiveSubstitutions } from '@/domain/substitutions'
 import { useEquipmentLabel } from '@/lib/equipmentLabel'
-import { useFocusOnChange } from '@/lib/useFocusOnChange'
 import { useExerciseName } from '@/i18n/seedExercise'
 import { useLocale } from '@/i18n/useLocale'
 import { ConfirmAction } from '@/ui/ConfirmAction'
@@ -56,11 +55,19 @@ export function SwapSheet({
   // the sheet opens/closes so a stale pending choice never survives.
   const [pendingExerciseId, setPendingExerciseId] = useState<string | null>(null)
   const pendingExercise = pendingExerciseId ? exerciseById.get(pendingExerciseId) : undefined
-  // Cancelling the confirm step swaps the option list back in, unmounting
-  // the button that was focused. Without a focus move, focus lands on
-  // <body> — outside an aria-modal dialog that has hidden the rest of the
-  // page, with Escape dead because its handler is bound to the panel
-  // (docs/review-backlog.md A1).
+  // The options view stays MOUNTED behind the confirm step (hidden, below), so
+  // cancelling does not rebuild it: the expanded "Other exercises" list keeps its
+  // scroll position and the row that was tapped still exists. Until 30 Oct the
+  // confirm step replaced the options in place, and a cancel put back a fresh
+  // list at the top with focus on its heading — a user 14 rows down "Other
+  // exercises" lost their place.
+  //
+  // Focus still has to move on cancel, because the confirm's buttons unmount
+  // (docs/review-backlog.md A1: without a move, focus falls to <body> — outside
+  // an aria-modal dialog that has hidden the rest of the page, with Escape dead
+  // because its handler is bound to the panel). It goes back to the row that
+  // opened the confirm, the invoker, without scrolling (`preventScroll`), which
+  // is also what a screen reader user expects to hear next.
   //
   // This flag names the *cause* — a cancel — rather than deriving the
   // moment from state. It previously read `open && pendingExerciseId ===
@@ -70,10 +77,14 @@ export function SwapSheet({
   // declaration order of two effects, which is invisible at the call site
   // and survives only until someone moves one of them.
   const [justCancelled, setJustCancelled] = useState(false)
-  const optionsHeadingRef = useFocusOnChange<HTMLHeadingElement>(justCancelled)
+  const optionsRef = useRef<HTMLDivElement>(null)
+  const optionsHeadingRef = useRef<HTMLHeadingElement>(null)
+  const tappedIdRef = useRef<string | null>(null)
 
   function chooseOption(id: string) {
     if (loggedSetsCount > 0) {
+      // Which row was tapped, so a cancel can hand focus back to it.
+      tappedIdRef.current = id
       // Entering the confirm re-arms the flag, so a later cancel is a fresh
       // false→true edge rather than a no-op.
       setJustCancelled(false)
@@ -82,6 +93,20 @@ export function SwapSheet({
       onSelect(id)
     }
   }
+
+  // After a cancel the list is visible again in the same commit, exactly where it
+  // was: a `hidden` element keeps its scroll offset (measured in Chromium and in
+  // WebKit, with and without an explicit restore, so none is written). Hand focus
+  // to the row that was tapped, without scrolling.
+  useLayoutEffect(() => {
+    if (!justCancelled) return
+    const list = optionsRef.current
+    if (!list) return
+    const row = Array.from(list.querySelectorAll<HTMLElement>('[data-option-id]')).find(
+      (el) => el.dataset.optionId === tappedIdRef.current,
+    )
+    ;(row ?? optionsHeadingRef.current)?.focus({ preventScroll: true })
+  }, [justCancelled])
 
   // Resets only this component's own step state; the focus/trap/Escape
   // behaviour that used to sit here is Sheet's now. A stale pending choice
@@ -99,7 +124,7 @@ export function SwapSheet({
       closeLabel={t('swapSheet.closeAriaLabel')}
       onClose={onClose}
     >
-      {pendingExercise ? (
+      {pendingExercise && (
         <ConfirmClear
           exerciseName={exerciseName}
           newExerciseId={pendingExercise.id}
@@ -110,67 +135,79 @@ export function SwapSheet({
             setJustCancelled(true)
           }}
         />
-      ) : (
-        // The sheet has no height of its own, so the whole options view
-        // scrolls inside the viewport: an expanded "Other exercises" is
-        // 7 to 19 rows, and without a cap it ran off the top of the screen.
-        <div className="max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain">
-          <h2 ref={optionsHeadingRef} tabIndex={-1} className="eyebrow">
-            {t('swapSheet.heading', { exerciseName })}
-          </h2>
-          {options.length === 0 ? (
-            <p className="mt-4 text-sm text-ink-secondary">{t('swapSheet.noSubstitutions')}</p>
-          ) : (
-            <ul className="mt-3 divide-y divide-border">
-              {options.map((option) => (
-                <SubstitutionRow key={option.id} option={option} onSelect={chooseOption} />
-              ))}
-            </ul>
-          )}
-          {otherOptions.length > 0 && (
-            /*
-              Collapsed, below the recommendations, under one line that says
-              these are not recommendations (coach Q2 / owner, 29 Oct: the
-              barbell bench press leaves every recommended list but must stay
-              recordable, so there is never a gap where the athlete has to log
-              it as something else). The disclosure is the same button-in-a-
-              heading pattern as the Program page's months; its panel is hidden,
-              never unmounted, so `aria-controls` always resolves.
-            */
-            <section className="mt-4 border-t border-border">
-              <h3>
-                <button
-                  type="button"
-                  aria-expanded={otherOpen}
-                  aria-controls={otherPanelId}
-                  onClick={() => setOtherOpen((value) => !value)}
-                  className="flex min-h-11 w-full items-center justify-between gap-3 text-left text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
-                >
-                  <span>{t('swapSheet.otherHeading')}</span>
-                  <span aria-hidden="true" className="shrink-0 text-ink-tertiary">
-                    {otherOpen ? '⌃' : '⌄'}
-                  </span>
-                </button>
-              </h3>
-              <div id={otherPanelId} hidden={!otherOpen}>
-                <p className="text-sm leading-relaxed text-ink-tertiary">{t('swapSheet.otherNote')}</p>
-                <ul className="mt-1 divide-y divide-border">
-                  {otherOptions.map((option) => (
-                    <SubstitutionRow key={option.id} option={option} onSelect={chooseOption} />
-                  ))}
-                </ul>
-              </div>
-            </section>
-          )}
-          <button
-            type="button"
-            onClick={onClose}
-            className="mt-4 w-full rounded-card border border-border py-3 text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
-          >
-            {t('swapSheet.keep', { exerciseName })}
-          </button>
-        </div>
       )}
+      {/*
+        The sheet has no height of its own, so the whole options view
+        scrolls inside the viewport: an expanded "Other exercises" is
+        7 to 19 rows, and without a cap it ran off the top of the screen.
+        `hidden` while a confirm is pending, never unmounted (see `justCancelled`).
+      */}
+      <div
+        ref={optionsRef}
+        hidden={pendingExercise !== undefined}
+        className="max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain"
+      >
+        <h2 ref={optionsHeadingRef} tabIndex={-1} className="eyebrow">
+          {t('swapSheet.heading', { exerciseName })}
+        </h2>
+        {options.length === 0 ? (
+          <p className="mt-4 text-sm text-ink-secondary">{t('swapSheet.noSubstitutions')}</p>
+        ) : (
+          <ul className="mt-3 divide-y divide-border">
+            {options.map((option) => (
+              <SubstitutionRow key={option.id} option={option} onSelect={chooseOption} />
+            ))}
+          </ul>
+        )}
+        {otherOptions.length > 0 && (
+          /*
+            Collapsed, below the recommendations, under one line that says
+            these are not recommendations (coach Q2 / owner, 29 Oct: the
+            barbell bench press leaves every recommended list but must stay
+            recordable, so there is never a gap where the athlete has to log
+            it as something else). The disclosure is the same button-in-a-
+            heading pattern as the Program page's months; its panel is hidden,
+            never unmounted, so `aria-controls` always resolves.
+          */
+          <section className="mt-4 border-t border-border">
+            <h3>
+              <button
+                type="button"
+                aria-expanded={otherOpen}
+                aria-controls={otherPanelId}
+                onClick={() => setOtherOpen((value) => !value)}
+                className="flex min-h-11 w-full items-center justify-between gap-3 text-left text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
+              >
+                <span>{t('swapSheet.otherHeading')}</span>
+                <span aria-hidden="true" className="shrink-0 text-ink-tertiary">
+                  {otherOpen ? '⌃' : '⌄'}
+                </span>
+              </button>
+            </h3>
+            <div id={otherPanelId} hidden={!otherOpen}>
+              {/*
+                `text-balance`: the Chinese note broke 23 + 3 characters at 375px,
+                a two-character line and its full stop on their own. Balanced, the
+                lines come out about even in every language, and a wider screen
+                that needs one line still gets one.
+              */}
+              <p className="text-sm leading-relaxed text-balance text-ink-tertiary">{t('swapSheet.otherNote')}</p>
+              <ul className="mt-1 divide-y divide-border">
+                {otherOptions.map((option) => (
+                  <SubstitutionRow key={option.id} option={option} onSelect={chooseOption} />
+                ))}
+              </ul>
+            </div>
+          </section>
+        )}
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-4 w-full rounded-card border border-border py-3 text-sm font-medium text-ink-secondary transition-colors hover:text-ink"
+        >
+          {t('swapSheet.keep', { exerciseName })}
+        </button>
+      </div>
     </Sheet>
   )
 }
@@ -218,6 +255,7 @@ function SubstitutionRow({
     <li>
       <button
         type="button"
+        data-option-id={option.id}
         onClick={() => onSelect(option.id)}
         className="flex w-full items-center justify-between gap-4 py-3.5 text-left transition-colors hover:text-amber"
       >

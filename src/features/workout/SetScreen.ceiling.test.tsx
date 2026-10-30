@@ -34,8 +34,9 @@ import { WorkoutPage } from './WorkoutPage'
  *     exercise that was swapped out (T4)
  *   - its `{{max}}` is formatted for the locale (T6)
  *   - the heading is described by it only while it renders (T7)
- *   - it fills room that is already there, so showing and hiding it moves
- *     nothing under the thumb (T9, with the caveat below)
+ *   - it takes the target caption's place, in room that is already there: it
+ *     adds no height, and showing or hiding it moves nothing (T9; structure
+ *     only, the pixels are the browser record below)
  * The carry-forward half (a logged load above the ceiling carries
  * verbatim, and the ceiling stays as authored) is T5, in
  * `domain/carryForward.test.ts`.
@@ -55,9 +56,19 @@ import { WorkoutPage } from './WorkoutPage'
  *   delete the warning's JSX (id still in aria-describedby)
  *                         -> T1, T2, T3, T6 fr, T6 zh-CN, T7 above, T7
  *                            stepping, T9 slot
- *   drop the `substitutedForId === undefined` clause
- *                         -> T4 (warns against the dumbbell's 20) and T9
- *                            substitute (it would also reserve the slot)
+ *   drop the `substitutedForId === undefined` clause (since 2b.3 it is
+ *     `!isSubstitute(workoutExercise)` in `showAboveCeiling`)
+ *                         -> T4 (warns against the dumbbell's 20). Recorded here
+ *                            on 29 Oct as "T4 and T9 substitute", which was true
+ *                            only while a slot existed that a substitute would also
+ *                            have reserved; from 2.3 on it was T4 alone in this
+ *                            file. Re-run 30 Oct against the whole suite it is five
+ *                            red, because later phases added tests that assert the
+ *                            same thing: T4, SetScreen.substitute's T20 and T24,
+ *                            SetScreen.swapBack's "a genuine substitute still shows
+ *                            none of the four", and the 24 Oct end to end in
+ *                            WorkoutPage.swapOther. No T9 test is red: nothing is
+ *                            reserved any more.
  *   remove `{{max}}` from the fr value
  *                         -> T6 fr only
  *   remove `{{max}}` from the zh-CN value
@@ -73,22 +84,61 @@ import { WorkoutPage } from './WorkoutPage'
  * being dropped from a value — it passed 60/60 under the fr mutation above.
  * T6 is the only guard for that.
  *
- * **T9 is a structural proxy, not a measurement.** jsdom has no layout, so
- * it cannot see a 44px jump; it pins the thing that prevents one — the
- * warning is rendered into a slot that already exists directly above Log
- * set, and a slot that cannot warn has none. The pixels were measured in a
- * browser (QA F-A, 29 Oct; re-measured after the fix: "+" and Log set at
- * 0px displacement at 375x812, 740, 701, 667 and 568, en/fr/zh-CN). The
- * 375x812 tap sequence at one fixed point went 38, 40, 40, 40 before the fix
- * and 38, 40, 42, 44 after it. Controls for T9, run 29 Oct:
- *   render the slot only while the warning shows
- *                         -> T9 slot (nothing above Log set to be empty)
- *   drop `min-h-10` from the slot
- *                         -> T9 slot (the reservation is gone)
- *   render the slot for every exercise (ignore canWarnAboveCeiling there)
- *                         -> T9 substitute and T9 no-ceiling
- *   make the gap above Log set `mt-2` for every exercise
- *                         -> T9 substitute and T9 no-ceiling
+ * **T9 is a structural proxy, not a measurement.** jsdom has no layout, so it
+ * cannot see a pixel. It pins what produces the layout: the warning and the
+ * target caption share one box, directly above Log set; the warning is out of flow
+ * (`absolute`); the caption keeps its height (`invisible`, not removed, and still
+ * the heading's description, T7); the box owns the 32px gap above Log set (`pb-8`)
+ * and reserves no height (`min-h-`); Log set carries no margin of its own; and all
+ * of that is identical for an exercise that can warn, one that never can (a
+ * substitute) and one with no ceiling.
+ *
+ * The pixels, measured 30 Oct in headless Chromium and WebKit (`isMobile`, touch,
+ * 375/390px wide, DPR 2; the harness is in the batch's scratchpad). Before this
+ * change a slot (8px margin, `min-h-10`, then Log set's own 8px) took 56px on every
+ * exercise with a ceiling where a plain exercise has a 32px gap: 24px more:
+ *
+ *   viewport   exercise          "+" y   Log set y   page height
+ *   375x667    ceiling, before   225      481         681 (scrolls)
+ *              ceiling, after    225      457         667
+ *              no ceiling        225      457         667
+ *   375x812    ceiling, before   356      612         812
+ *              ceiling, after    380      612         812
+ *              no ceiling        380      612         812
+ *   390x844    ceiling, before   388      644         844
+ *              ceiling, after    412      644         844
+ *              no ceiling        412      644         844
+ *
+ * Under 700px there is no illustration band to absorb the slot, so it pushed Log
+ * set down 24px and made the page scroll; above it the band shrank and "+" sat 24px
+ * higher on every ceiling exercise than on any other. Both are gone: a ceiling
+ * exercise now lays out exactly like one with none, at every size. Same numbers in
+ * en and fr. With the warning showing against not showing, "+", "-", Log set and
+ * the reps "+" are at 0.0px displacement at 375x667, 375x812, 390x844 and 320x568
+ * in en and fr, across ten values that include the boundary (38 no warning,
+ * 38.25 warning, 99, 100.5): one distinct position set each (the F1 invariant of
+ * eb14b08 holds). The warning is two lines at every width in en and zh-CN, and in fr
+ * from 360px; fr takes three lines at 320 and 340px (48px, 4px clear of Log set).
+ *
+ * Controls for T9, run 30 Oct (mutation applied to SetScreen.tsx, the whole suite
+ * run, restored and `cmp`ed):
+ *   the warning rendered in flow (`absolute inset-x-0 top-3` removed)
+ *                         -> T9 box
+ *   the caption not hidden while the warning shows (`replaced={false}`)
+ *                         -> T9 box
+ *   a margin back on Log set (`mt-8`)
+ *                         -> T9 uniform x3
+ *   the box without its `pb-8` gap
+ *                         -> T9 uniform x3
+ *   a reserved height back on the box (`min-h-14`)
+ *                         -> T9 uniform x3
+ *   the whole earlier structure (the file as of 02761fe: a separate `min-h-10`
+ *     slot, `logGapClass`)  -> all four T9 tests, and the nine in
+ *                            SetScreen.lastTime.test (13 red in all)
+ * Not seen by any jsdom control, and measured instead: that the warning does not
+ * overlap Log set (the browser's 4px clearance at three French lines), and that the
+ * hidden caption keeps the box's height (a `display: none` caption would collapse
+ * it and shift Log set by the caption's height: visible only with layout).
  */
 
 const WARNING_STEM = "Above this program's"
@@ -299,48 +349,81 @@ describe('what a screen reader hears on landing', () => {
   })
 })
 
-describe('the warning does not move the controls (QA F-A)', () => {
-  it('T9 slot: the warning fills a slot that is already there, directly above Log set', async () => {
-    await start(goblet([36, 36], 38))
+describe('the warning takes the caption\'s place and moves nothing (QA F-A, then F-B/F-D)', () => {
+  /** The box the target caption and the warning share, and Log set under it. */
+  function slot() {
+    const caption = screen.getByText(/^Rung 1 of/).closest('p') as HTMLElement
+    const box = caption.parentElement as HTMLElement
     const logSet = screen.getByRole('button', { name: 'Log set' })
+    return { caption, box, logSet }
+  }
 
-    // Below the ceiling: the slot exists, reserves room, and is empty.
-    const slot = logSet.previousElementSibling as HTMLElement
-    expect(slot).toBeEmptyDOMElement()
-    expect(slot.className).toMatch(/\bmin-h-/)
+  /**
+   * What decides where Log set sits, as classes: the box owns the 32px gap
+   * above it (`pb-8`) and holds no reserved height of its own; Log set carries no
+   * margin. The same for every exercise, so nothing about the stack depends on
+   * whether a warning can appear.
+   */
+  function expectLayoutIndependentOfWarning() {
+    const { box, logSet } = slot()
+    expect(logSet.previousElementSibling).toBe(box)
+    expect(box.className).toMatch(/\bpb-8\b/)
+    expect(box.className).not.toMatch(/\bmin-h-/)
+    expect(logSet.className).not.toMatch(/\bmt-\d/)
+  }
+
+  it('T9 box: the warning is laid over the caption\'s box, out of flow, and the box does not change', async () => {
+    await start(goblet([36, 36], 38))
+    const { caption, box, logSet } = slot()
+
+    // Below the ceiling: the box holds the caption and nothing else.
+    expect(logSet.previousElementSibling).toBe(box)
+    expect(box.children).toHaveLength(1)
+    expect(caption).not.toHaveClass('invisible')
+    const boxClass = box.className
+    const logClass = logSet.className
 
     await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
     await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
     expect(weightText()).toBe('40kg')
 
-    // Above it: the same node, now holding the warning.
-    expect(logSet.previousElementSibling).toBe(slot)
-    expect(slot).toContainElement(screen.getByText(warningEn('38')))
+    // Above it: the same node now also holds the warning. The warning is out of
+    // flow (`absolute`), so it adds no height; the caption keeps its own height
+    // (`invisible`, not removed) and is still in the DOM as the heading's
+    // description (T7); neither the box nor Log set changed a class.
+    expect(slot().box).toBe(box)
+    expect(box.children).toHaveLength(2)
+    const warning = screen.getByText(warningEn('38'))
+    expect(box).toContainElement(warning)
+    expect(warning).toHaveClass('absolute')
+    expect(caption).toHaveClass('invisible')
+    expect(caption).toBeInTheDocument()
+    expect(box.className).toBe(boxClass)
+    expect(logSet.className).toBe(logClass)
 
     await userEvent.click(screen.getByRole('button', { name: 'Decrease Weight' }))
-    expect(logSet.previousElementSibling).toBe(slot)
-    expect(slot).toBeEmptyDOMElement()
+    expect(box.children).toHaveLength(1)
+    expect(caption).not.toHaveClass('invisible')
+    expect(box.className).toBe(boxClass)
   })
 
-  it('T9 substitute: a slot that can never warn reserves nothing', async () => {
+  it('T9 uniform, ceiling: an exercise that can warn has no reserved slot', async () => {
+    await start(goblet([36, 36], 38))
+    expectLayoutIndependentOfWarning()
+  })
+
+  it('T9 uniform, substitute: nor does one that can never warn', async () => {
     await start(dumbbellRow(), 'Single-arm dumbbell row')
     await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
     await userEvent.click(
       within(await screen.findByRole('dialog')).getByRole('button', { name: /Barbell bent-over row/ }),
     )
     await screen.findByRole('heading', { name: 'Barbell bent-over row' })
-
-    const logSet = screen.getByRole('button', { name: 'Log set' })
-    expect(logSet).toHaveClass('mt-8')
-    // What sits above Log set is the target caption, not an empty slot.
-    expect(logSet.previousElementSibling).not.toBeEmptyDOMElement()
+    expectLayoutIndependentOfWarning()
   })
 
-  it('T9 no-ceiling: nor does an exercise with no ceiling', async () => {
+  it('T9 uniform, no ceiling: nor does an exercise with no ceiling', async () => {
     await start({ ...goblet([36, 36], 38), maxWeightKg: null })
-
-    const logSet = screen.getByRole('button', { name: 'Log set' })
-    expect(logSet).toHaveClass('mt-8')
-    expect(logSet.previousElementSibling).not.toBeEmptyDOMElement()
+    expectLayoutIndependentOfWarning()
   })
 })

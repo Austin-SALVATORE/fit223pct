@@ -217,7 +217,28 @@ describe('SwapSheet confirm-clear step', () => {
       expect(workout.exercises[0].exerciseId).toBe('goblet-squat')
     })
 
-    it('returns focus to the option list heading on cancel', async () => {
+    /**
+     * Cancelling the confirm step used to rebuild the option list: the list
+     * scrolled back to the top and focus landed on its heading, so a user 14 rows
+     * down "Other exercises" lost their place (QA, 30 Oct backlog). The list now
+     * stays mounted behind the confirm (hidden), and focus returns to the row that
+     * was tapped. Measured in a browser (headless Chromium and WebKit, 375x667, en,
+     * fr, zh-CN, the list scrolled to its end before the tap): scrollTop 462, 556
+     * and 462 before the tap, and 0 / 0 / 0 after the cancel before this change,
+     * 462 / 556 / 462 after; focus on the heading before, on the tapped row after.
+     * jsdom has no layout, so these pin the structure that makes it true.
+     *
+     * Negative controls, run 30 Oct: the options view rendered only while no
+     * confirm is pending (the old conditional) -> "keeps the options list mounted"
+     * (the node is rebuilt) and "returns focus to the option that was tapped"
+     * (the tapped row is a new element); focus sent to the heading again, as
+     * before -> "returns focus to the option that was tapped". Two things no
+     * control here can see, and the browser run found: a hidden list keeps its
+     * scroll offset on its own (Chromium and WebKit, with the restore line removed),
+     * so no restore is written; and `preventScroll` on the focus call changes
+     * nothing observable, because the row that was tapped is on screen.
+     */
+    it('returns focus to the option that was tapped on cancel, not to the heading', async () => {
       await insertActiveWorkoutWithOneLoggedSet()
       renderWorkout()
       await screen.findByText(/Set 2 of/)
@@ -227,9 +248,32 @@ describe('SwapSheet confirm-clear step', () => {
       await userEvent.click(within(sheet).getByRole('button', { name: /Split squat/ }))
       await userEvent.click(within(sheet).getByRole('button', { name: 'Cancel' }))
 
-      await waitFor(() =>
-        expect(within(sheet).getByRole('heading', { name: 'Swap Goblet squat for' })).toHaveFocus(),
-      )
+      await waitFor(() => expect(within(sheet).getByRole('button', { name: /Split squat/ })).toHaveFocus())
+      expect(within(sheet).getByRole('heading', { name: 'Swap Goblet squat for' })).not.toHaveFocus()
+    })
+
+    it('keeps the options list mounted behind the confirm, so cancelling does not rebuild it', async () => {
+      await insertActiveWorkoutWithOneLoggedSet()
+      renderWorkout()
+      await screen.findByText(/Set 2 of/)
+
+      await userEvent.click(screen.getByRole('button', { name: 'Swap exercise' }))
+      const sheet = await screen.findByRole('dialog', { name: 'Swap Goblet squat' })
+      const optionsHeading = within(sheet).getByRole('heading', { name: 'Swap Goblet squat for' })
+      const list = optionsHeading.parentElement as HTMLElement
+      // The list that scrolls: its offset is what a rebuild would lose.
+      Object.defineProperty(list, 'scrollTop', { value: 240, writable: true, configurable: true })
+
+      await userEvent.click(within(sheet).getByRole('button', { name: /Split squat/ }))
+      // Behind the confirm: the same node, hidden — not unmounted.
+      expect(list).toBeInTheDocument()
+      expect(list).toHaveAttribute('hidden')
+      expect(list).not.toBeVisible()
+
+      await userEvent.click(within(sheet).getByRole('button', { name: 'Cancel' }))
+      expect(within(sheet).getByRole('heading', { name: 'Swap Goblet squat for' }).parentElement).toBe(list)
+      expect(list).not.toHaveAttribute('hidden')
+      expect(list.scrollTop).toBe(240)
     })
 
     it('still opens onto the first option, not the heading, when the sheet is reopened', async () => {

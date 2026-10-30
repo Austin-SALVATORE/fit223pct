@@ -86,32 +86,44 @@ import { WorkoutPage } from './WorkoutPage'
  *                                         on a bodyweight movement), and the 24
  *                                         Oct end-to-end test
  *
- * Recorded at 2.3 and the stopgap (29 Oct), NOT re-run in 2b.1: the code they
- * touch is unchanged by 2b.1, but several of the tests they name (T21, T24, T25,
- * T25b) have since been rewritten, so read the names as they were then. "Stale
- * key" means `workoutExercise.exerciseId` removed from the Set screen's motion
- * key in WorkoutPage.tsx, so a swap does not remount it.
- *   stale key                          -> remounts, T21, T22, T24, T25, T25b, T26
+ * The 2.3 mechanism, re-run 30 Oct against the WHOLE suite (mutation applied, the
+ * suite run, restored and `cmp`ed). The 29 Oct record ran this file and the domain
+ * tests only, and so missed `WorkoutPage.swapOther.test.tsx`, which most of these
+ * redden (the 24 Oct end-to-end test); it is named below wherever it is red. "Stale
+ * key" means `workoutExercise.exerciseId` removed from the Set screen's motion key in
+ * WorkoutPage.tsx, so a swap does not remount it.
+ *   stale key                          -> 14 red: remounts, T21, T22, T24, T25, T25b,
+ *                                         T26, E2, E3 + E13, E4, E5, E7, the OD-e
+ *                                         "nothing eligible" press, and (swapOther) the
+ *                                         24 Oct end to end
  *   stale key AND the log guard
  *     `weightKg: target.loaded ? weightKg : null` reverted to `weightKg`
- *                                      -> the above AND T19 (10 stored on the
- *                                         inverted row)
- *   the log guard alone                -> NOTHING: all green. With the key in
+ *                                      -> 15 red: the above AND T19 (10 stored on
+ *                                         the inverted row)
+ *   the log guard alone                -> NOTHING: 1803/1803 green. With the key in
  *     place no stale weight can reach it, so it is defence in depth that only
  *     the pair above can see.
- *   the ceiling warning not gated on substitutes
- *                                      -> T24 (22 kg over the slot's 20), T20,
- *                                         ceiling T4, and the 24 Oct case
+ *   the ceiling warning not gated on substitutes (`!isSubstitute` dropped from
+ *     `showAboveCeiling`)              -> 5 red: ceiling T4, T20, T24, (swapBack) "a
+ *                                         genuine substitute still shows none of the
+ *                                         four", and (swapOther) the 24 Oct end to end
  *   `target.loaded` gate reverted to `weightKg !== null`
- *                                      -> remounts, T20, T20b, T21, T23, T24, T25,
- *                                         T25b, T26, and both increment tests
+ *                                      -> 20 red: ceiling T4, the five OD-e presses,
+ *                                         remounts, T20, T20b, T23, E2, E2b, E4, E7,
+ *                                         E15, T25, T25b, both increment tests, and
+ *                                         (swapOther) the 24 Oct end to end
  *   fr: raw number in the caption      -> both T27 tests
  *   fr: raw number in "Last time"      -> the first T27 test only
- *   swapExercise keeps the old substituteLoad
- *                                      -> T26 and the domain test
+ *   swapExercise keeps the old substituteLoad (`withoutSwapState` no longer drops it)
+ *                                      -> 6 red: T26, the `withoutSwapState` unit
+ *                                         test, "a genuine return", workout.test's
+ *                                         "clears the stored load", and (swapBack)
+ *                                         "the ceiling returns" and "stored with no
+ *                                         swap state"
  *   'inverted-row' removed from the single-arm row's list
  *                                      -> T19, T19b, the Rest screen per-side
- *                                         test, and the Library test
+ *                                         test, and the Library test (recorded 29
+ *                                         Oct, NOT re-run: it mutates the Library seed)
  *
  * The first press on a blank weight (OD-e, owner 29 Oct 17:02)
  *   pre-fill `value` with the start instead of passing `startFrom`

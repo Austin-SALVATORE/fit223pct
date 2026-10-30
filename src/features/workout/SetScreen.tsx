@@ -138,14 +138,8 @@ export function SetScreen({
     block and the assistance control above already apply.
   */
   const ceilingKg = prescription.maxWeightKg
-  // Whether this slot can ever show the warning. Stable for the life of the
-  // screen (the weight control is either there or not, and a substitute stays
-  // one), which is what lets it reserve the warning's room — see the slot below.
-  const canWarnAboveCeiling =
-    ceilingKg != null && weightKg !== null && !isSubstitute(workoutExercise)
-  const showAboveCeiling = canWarnAboveCeiling && weightKg > ceilingKg
-  // The gap above the log action: the reserved slot already supplies most of it.
-  const logGapClass = canWarnAboveCeiling ? 'mt-2' : 'mt-8'
+  const showAboveCeiling =
+    ceilingKg != null && weightKg !== null && !isSubstitute(workoutExercise) && weightKg > ceilingKg
 
   function handleLog() {
     onLog({
@@ -208,8 +202,17 @@ export function SetScreen({
         >
           {exerciseName}
         </h1>
-        {/* One line. The full history is a tap away under Technique. */}
-        <p className="mt-2 truncate text-sm text-ink-secondary">
+        {/*
+          Wraps; never truncated. "Last time" is the previous session's sets in
+          order, and under carry-forward the number the card offers for this set is
+          the one at its position in that list — so a line cut at the right edge
+          (QA 2.3 F2, and the "First time" sentence beside it) hid exactly the
+          entries it exists to show. A wrap costs one 20px line, and only when the
+          list does not fit one (four sets in English, three in French at 375px);
+          `LastTime` keeps each entry whole, so it breaks between entries and never
+          inside "12×14 kg".
+        */}
+        <p className="mt-2 text-sm text-ink-secondary">
           <LastTime sets={previousSets} mode={prescription.mode} />
         </p>
         {/*
@@ -305,18 +308,6 @@ export function SetScreen({
           </div>
         </div>
 
-        <TargetCaption
-          id={captionId}
-          prescription={prescription}
-          target={target}
-          setIndex={setIndex}
-          isCustomSlot={isCustomSlot}
-          showAssisted={assistable}
-          // The slot's per-side claim, which a swap may hide (an inverted row
-          // is not "each side") but never add (goblet squat -> split squat).
-          showPerSide={showsPerSidePill(workoutExercise, exercise)}
-        />
-
         {/*
           29 Oct athlete feedback (docs/programs/athlete-feedback-weight-
           cap-dip-station-program-months-2026-10-24.md, §1) supersedes the
@@ -333,41 +324,55 @@ export function SetScreen({
           `TargetCaption`), so the line is reached through the heading's
           `aria-describedby` instead.
 
-          **A reserved slot, not a line that appears.** QA F-A (29 Oct): the
-          line used to render inside the card, and every pixel it added came
-          out of the illustration band above (it is the one flex-1 child, so
-          the stack is bottom-anchored) — "+" jumped 44px up the moment the
-          weight crossed the ceiling, and repeated taps landed on text. Below
-          700px the art is already gone and the same line pushed Log set down
-          instead. Either way the control under the thumb moved. So the room
-          is held whenever this slot can warn, and the line only fills it:
-          two lines of text-sm, which is what all three locales take from
-          360px up (measured; the French wording needs a third at 320px, where
-          the slot grows by one line). It sits between the target and the log
-          action, where its last sentence reads as the confirmation it is,
-          full width rather than inside the card, which is what keeps French
-          at two lines, and it stands in for most of the gap that used to be
-          there (`logGapClass`). Rendered only for a slot that can warn, so a
-          bodyweight, band or substituted exercise keeps exactly the layout it
-          had.
+          **The warning takes the target caption's place, in the room the caption
+          and the gap above Log set already occupy — it adds no height anywhere.**
+          History (QA F-A then F-B/F-D, 29-30 Oct): the line first rendered inside
+          the card and "+" jumped 44px the moment the weight crossed the ceiling,
+          because the illustration band above is the one flex-1 child and gave the
+          height back. A reserved slot of its own fixed that, and cost 24px on
+          every screen with a ceiling: the band shrank on a tall phone, and on a
+          short one (under 700px, no band) Log set was pushed down the page and
+          the page began to scroll. Here nothing is reserved and nothing is added.
+          The caption keeps its place and its height (`invisible`, not removed: it
+          is still the heading's description) and the warning is laid over the same
+          box and the 32px gap beneath it, which is 52px — three lines of French at
+          the 16px leading used here (48px), measured at 320px; two lines at every
+          width from 360. The line is out of flow, so showing and hiding it moves
+          nothing, and the Log button's margin no longer depends on this slot at
+          all. What is lost is the target caption while the weight is over the
+          limit; the card shows the weight, and the caption's number is what the
+          card already offered.
         */}
-        {canWarnAboveCeiling && (
-          <div className="mt-2 flex min-h-10 items-center justify-center">
-            {showAboveCeiling && (
-              <p id={aboveCeilingId} className="text-center text-sm text-ink-secondary">
-                {t('setScreen.aboveEquipmentCeiling', {
-                  max: formatNumber(ceilingKg, i18n.language),
-                })}
-              </p>
-            )}
-          </div>
-        )}
+        <div className="relative flow-root pb-8">
+          <TargetCaption
+            id={captionId}
+            prescription={prescription}
+            target={target}
+            setIndex={setIndex}
+            isCustomSlot={isCustomSlot}
+            showAssisted={assistable}
+            // The slot's per-side claim, which a swap may hide (an inverted row
+            // is not "each side") but never add (goblet squat -> split squat).
+            showPerSide={showsPerSidePill(workoutExercise, exercise)}
+            replaced={showAboveCeiling}
+          />
+          {showAboveCeiling && (
+            <p
+              id={aboveCeilingId}
+              className="absolute inset-x-0 top-3 text-center text-sm leading-4 text-ink-secondary"
+            >
+              {t('setScreen.aboveEquipmentCeiling', {
+                max: formatNumber(ceilingKg, i18n.language),
+              })}
+            </p>
+          )}
+        </div>
 
         {confirmingSkip ? (
           // Replaces the log action in place — same pattern as SwapSheet's
           // ConfirmClear (ConfirmAction's own doc): the control the user
           // just acted on is what claims focus for the confirm step.
-          <div className={logGapClass}>
+          <div>
             <ConfirmAction
               heading={t('setScreen.skipConfirmHeading')}
               warning={t('setScreen.skipConfirmWarning')}
@@ -387,7 +392,7 @@ export function SetScreen({
               onClick={handleLog}
               whileTap={reducedMotion ? undefined : { scale: 0.94 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              className={`${logGapClass} w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg`}
+              className="w-full rounded-card bg-amber py-4 text-center text-lg font-semibold text-bg"
             >
               {isSeconds ? t('setScreen.logHold') : t('setScreen.logSet')}
             </motion.button>
@@ -463,11 +468,14 @@ function LastTime({
       const effort = effortValue(set, mode)
       // The seconds marker is keyed: zh-CN writes 秒, not a Latin "s" (I3).
       const suffix = mode === 'seconds' ? tCommon('unitSeconds') : ''
+      // No-break space before "kg": the line may wrap between entries, never inside one.
       return set.weightKg !== null
-        ? `${effort}×${formatNumber(set.weightKg, i18n.language)} kg`
+        ? `${effort}×${formatNumber(set.weightKg, i18n.language)}\u00a0kg`
         : `${effort}${suffix}`
     })
-    .join(' · ')
+    // The dot stays with the entry before it (no-break space), so a wrapped line
+    // never starts with "·".
+    .join('\u00a0· ')
   return (
     <>
       {t('setScreen.lastTimePrefix')} <span data-numeric>{parts}</span>
@@ -593,6 +601,7 @@ function TargetCaption({
   isCustomSlot,
   showAssisted,
   showPerSide,
+  replaced,
 }: {
   id: string
   prescription: ExercisePrescription
@@ -604,6 +613,12 @@ function TargetCaption({
   showAssisted: boolean
   /** The "⇄ each side" pill: the slot's own claim, or — on a substitute — the substitute's. */
   showPerSide: boolean
+  /**
+   * The above-limit warning is laid over this caption's box. Hidden, not removed:
+   * it keeps its height (the warning takes none of its own) and stays the
+   * heading's description.
+   */
+  replaced: boolean
 }) {
   const { t, i18n } = useTranslation('workout')
   const { t: tCommon } = useTranslation('common')
@@ -654,7 +669,10 @@ function TargetCaption({
           : t('setScreen.targetRungReps', { rung, total, reps: effort })
 
   return (
-    <p id={id} className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-ink-tertiary">
+    <p
+      id={id}
+      className={`mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-ink-tertiary${replaced ? ' invisible' : ''}`}
+    >
       <span>{targetText}</span>
       {showAssisted && target.prescribed.assisted && <span>{t('setScreen.assisted')}</span>}
       {/*
