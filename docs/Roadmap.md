@@ -359,11 +359,22 @@ remembered:
 
 That constraint is the same shape as the stretch-routine no-tracking
 rule, which is enforced by a byte-identical write snapshot rather than
-by intent (`routineNoTracking.write.test.tsx`). Photos have no
-equivalent guard yet. Until they do, this paragraph is the only thing
-standing between the ruling and a well-meaning "just a small flag" —
-which is exactly how the stretching rule would have been lost had
-nobody written a test for it.
+by intent (`routineNoTracking.write.test.tsx`). Since 30 Oct (`f8a3c2f`)
+photos have their own guard, `src/data/progressPhotos.guard.test.ts`, in
+four layers:
+
+1. the persistence files name nothing photo-like;
+2. no capture or image-ingest API, and no file input outside program
+   import;
+3. no write call is handed a photo-like key;
+4. after boot, no stored record holds such a key at any depth.
+
+Its docblock lists what it cannot see: values stored under neutral keys,
+runtime-built names, image bytes in the cache, and a feature that touches
+none of the watched files. Before this guard, this paragraph was the only
+thing standing between the ruling and a well-meaning "just a small flag".
+That is exactly how the stretching rule would have been lost had nobody
+written a test for it.
 
 ## Later (architecture-ready, not scheduled)
 

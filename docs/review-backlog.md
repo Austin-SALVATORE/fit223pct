@@ -19,9 +19,9 @@ instructions to the reviewer.
 > | 1. Blockers (A1, A2, I1, I2) | **all fixed** — `d5fdb34`, `18616d8`, `d034f44` |
 > | 2. Serious (A3, A4, A6, A7, A8, I3, I7, I8, I9) | **all fixed** — `ace867d`, `49007a3`, `7494874`, `abd0c91`, `cdc83be` |
 > | 2. Serious — **A5** | **closed 30 Jul by owner ruling.** See the item. |
-> | 3. Minor (I4, I5, I6, A9–A14) | partially swept; see per-item notes |
+> | 3. Minor (I4, I5, I6, A9–A14) | I4, I5, A9, A10, A12 fixed; I6, A11, A13 fixed and A14 partly fixed on 30 Oct (pending deploy); see per-item notes |
 > | 4. Systemic guard | **landed** — `src/i18n/seedFieldAccess.guard.test.ts`, with `18616d8` |
-> | 7. Dead-code, non-locale scope | **still unaudited** |
+> | 7. Dead-code, non-locale scope | **run 28 Aug (knip): only false positives** — see §7 |
 >
 > Line references throughout have drifted and are no longer reliable —
 > two were measured as stale on 30 Jul (A9, A12). Search for the
@@ -248,8 +248,9 @@ nobody has looked, not that the item is fine.
   locale, so French both accepts and displays `82,5`. Thousands grouping
   is deliberately off — an English comma-as-thousands beside a French
   comma-as-decimal is one glyph with two meanings in one control.
-- **A9 — STILL OPEN**, references stale: `CheckInCard.tsx:126-134` is now
-  `:109`, `MeasurementCard.tsx:48-60` is now `:76`. Both instances exist.
+- **A9 — FIXED 28 Aug, `49a83c2`.** The `<h2>` now sits beside the Edit
+  button in both `CheckInCard` and `MeasurementCard`, with structural
+  tests (`*.heading.test.tsx`). Confirmed in the 30 Oct backlog sort.
 - **A10 — FIXED 30 Jul, `4c8ce88`**, and it had got **worse** before it
   got better. The item measured ~7 announcements/sec at the old fixed
   140ms repeat. Hold-acceleration shipped the same day took the interval
@@ -261,18 +262,21 @@ nobody has looked, not that the item is fine.
   acceleration, and a live region announcing every change — combined
   into a defect, and the accessibility backlog was not consulted when
   the first was ruled. Check this file before changing an interaction.
-- **A12 — STILL OPEN** at all three files; `PlanPage.tsx:112` is now
-  `:118`. There is now a shipped precedent for the fix: `MeasurementCard`
-  uses `aria-labelledby` pointing at its own `<h2>`.
+- **A12 — FIXED 28 Aug, `77ed1e0`.** Each region is named once, by its
+  own heading or list (`aria-labelledby`), with per-file tests. Confirmed
+  in the 30 Oct backlog sort.
 
 - **I4 (original text)** — `src/ui/Stepper.tsx:116` `toFixed(1)` renders `.` in French;
   reached with decimals at `MeasurementCard.tsx:74` (kg) and `:82` (cm).
   French needs `82,5`. The `Intl.NumberFormat` machinery already exists
   (`i18next.ts:72`); the stepper isn't wired to it.
-- **I5** — `fr:workout.json sessionSummary.topSetLine` keeps English
-  "top" (zh-CN localized to `最佳`). Shows after every workout. **Owner
-  call on wording** — see §5.
-- **I6** — Volume "k" abbreviation (`WeeklyReviewCard.tsx:76`,
+- **I5 — FIXED 28 Aug, `646b159`**, with the owner's wording: the
+  French line reads `meilleure série` (§5).
+- **I6 — FIXED 30 Oct, `77b181f`** (pending deploy): volume uses
+  `Intl.NumberFormat` compact notation in the reader's language (en 12.3K,
+  fr 12,3 k, zh-CN 1.2万), and both stats rows wrap whole tiles at 320 px.
+  Whether to show tonnes instead is an open owner card. Original text:
+  Volume "k" abbreviation (`WeeklyReviewCard.tsx:76`,
   `SessionSummary.tsx:138`) is Western; Chinese groups by 万. Use
   `Intl.NumberFormat(locale, {notation:'compact'})` (fixes decimal too).
 - **A9** — `<h2>` inside `<button>`: `CheckInCard.tsx:126-134`,
@@ -281,16 +285,26 @@ nobody has looked, not that the item is fine.
 - **A10** — Stepper `<output>` is a `role="status"` live region;
   press-and-hold repeats at 140 ms (`Stepper.tsx:55,35`) → ~7
   announcements/sec. Debounce or announce on release.
-- **A11** — Hold-timer elapsed count unreachable to SR
+- **A11 — FIXED 30 Oct, `ae8f351` + `2f83c19`** (pending deploy): a
+  silent `role="timer"` the reader can swipe to, plus a polite status that
+  says "Hold started" and then the time every 10 s; the Stop name stays
+  constant. Original text: Hold-timer elapsed count unreachable to SR
   (`HoldTimer.tsx:41-58`); mitigated because the Stepper pre-fills on
   stop.
 - **A12** — Redundant region names duplicate their own heading:
   `ProgressPage.tsx:69/77/135`, `LibraryPage.tsx:59`, `PlanPage.tsx:112`.
   Use `aria-labelledby` or drop the section label.
-- **A13** — Workout Mode has no `main` landmark
+- **A13 — FIXED 30 Oct, `9a4a228` + `b733b5f`** (pending deploy):
+  `ui/Main.tsx` gives Workout Mode and the routine player exactly one
+  `<main>`, never nested twice. The rest-phase headings part (A3) is
+  separate. Original text: Workout Mode has no `main` landmark
   (`WorkoutPage.tsx:129-155`, renders outside AppShell); rest phase has
   zero headings (see A3).
-- **A14** — Prescription strings read as punctuation soup to SR:
+- **A14 — PARTLY FIXED 30 Oct, `35b244e`** (pending deploy): the Today
+  session preview now carries keyed spoken sentences in all three locales,
+  with visible glyphs unchanged. **Still open:** `StrengthCard`, the set
+  screen's `12×14 kg`, and the warm-up ramp row. Original text:
+  Prescription strings read as punctuation soup to SR:
   `SessionPreview.tsx:112-121`, `StrengthCard.tsx:50` — `60→65→70` is
   announced "60 right arrow 65…", `8–10` becomes "8 10". **Distinct from
   I7:** same lines, different defect. i18n correctly ruled these symbols
@@ -370,6 +384,11 @@ folded into I3-adjacent cleanup, no owner call needed.)*
 - **Locale key orphans:** zero (cross-confirmed by two reviewers).
 
 ## 7. Not completed
+
+**Update 30 Oct:** the non-locale dead-code pass was run on 28 Aug with
+knip; all 11 default flags were false positives, 8 of them `scripts/`
+entry-point artefacts (`.claude/rules/verification.md`). The paragraph
+below is kept as the original record.
 
 The dead-code review's **non-locale scope was never delivered** —
 unused exports in `src/domain/`/`src/lib/`, stale docs in `docs/**`
