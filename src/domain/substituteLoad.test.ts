@@ -1,26 +1,122 @@
 import { describe, expect, it } from 'vitest'
 import { seedExercises } from '@/data/seed/exercises'
+import { lastEligibleExposureFor } from './historyEligibility'
 import {
   implementStepKg,
-  lastLoggedWeightKg,
   loadImplementOf,
   substituteLoadFor,
+  suggestedWeightsFor,
   type LoadImplement,
 } from './substituteLoad'
 import { completeWorkout, createWorkout, logSet } from './workout'
-import type { Exercise, LadderPrescription, Program, Workout } from './types'
+import type { Exercise, LadderPrescription, Program, SubstituteLoad, Workout } from './types'
 
 /**
- * Substitution start (coach Q4; Track A Phase 2.3, then the stopgap of 29 Oct
- * 16:53: "every swap starts with a blank weight until the coach's set-by-set
- * rule is built"). A substitute never inherits the slot's load: a loaded one
- * starts empty, whatever the implement and whatever history exists; an unloaded
- * one stays unloaded; both step in their own implement's increment. The only
- * swap with no `SubstituteLoad` is the swap back to the authored exercise. This
- * file is the domain half; `SetScreen.substitute.test.tsx` is the screen half.
+ * Substitution start. Track A Phase 2.3 (coach Q4) made a swap's load its own;
+ * the stopgap of 29 Oct 16:53 blanked it ("every swap starts with a blank weight
+ * until the coach's set-by-set rule is built"); Phase 2b.1 builds that rule
+ * (coach CQ1-CQ4, CC1-CC3). A loaded substitute is offered, per set, the weight
+ * at the same position of **its own** most recent eligible exposure
+ * (`suggestedWeightsFor`, over the layers in `historyEligibility.ts`) and
+ * nothing where there is none: never the slot's rung, never a neighbouring
+ * rung, never the weight just lifted. An unloaded one stays unloaded; both step
+ * in their own implement's increment. The only swap with no `SubstituteLoad` is
+ * the swap back to the authored exercise. This file is the domain half;
+ * `SetScreen.substitute.test.tsx` is the screen half.
  *
- * Negative controls, run 29 Oct (mutation applied, this file and its
- * neighbours run, restored byte-for-byte):
+ * Negative controls, Phase 2b.1, run 29 Oct. Each mutation was applied to the
+ * source, the five files run together (this file, `nextSetTarget.test`,
+ * `workout.test`, `SetScreen.substitute.test`, `WorkoutPage.swapOther.test`:
+ * 224 tests), and the source restored
+ * byte-for-byte (`cmp` against the pre-mutation copy). They ran against the
+ * finished 2b.1 tree, so each is traced through the code as it is after the
+ * change. Test names are shortened to their id; "the screen" is
+ * `SetScreen.substitute.test.tsx`.
+ *
+ * The layers in `historyEligibility.ts`
+ *   L1: drop the easier-day clause (`readiness?.tier !== 'easier'`)
+ *                                       -> E3 and, on the screen, E3 + E13 (2 red)
+ *   L1: drop `completedAt !== null`     -> "L1: an unfinished workout is skipped"
+ *                                          (1 red; no screen test can see it)
+ *   L3: drop `programId === programId`  -> E4, "L3 walks back past another
+ *                                          program", "history of another program
+ *                                          is not eligible (CC2)", and on the
+ *                                          screen E4 and the OD-e "nothing
+ *                                          eligible" test (5 red)
+ *   L4: drop the `substituteLoad` clause (own identity = not a substitute)
+ *                                       -> E5 "a substitute record logged under
+ *                                          the new rules is eligible", "a valid
+ *                                          later bench log builds the bench its
+ *                                          own history", and on the screen E5
+ *                                          (3 red). NOT E6: see "prescribed
+ *                                          control" below.
+ *   L4: Reading A, own identity =
+ *     `substitutedForId === undefined`  -> the E5 eligible case, the E5 stored
+ *                                          swap-back case, "a valid later bench
+ *                                          log", and on the screen E5 (4 red)
+ *   L4: a swap-back record
+ *     (`substitutedForId === exerciseId`) counted as a substitute
+ *                                       -> the E5 stored swap-back case only
+ *                                          (1 red; the F4 shape, which no screen
+ *                                          test reaches)
+ *   L4: drop it altogether              -> E5 "a legacy substitute record is
+ *                                          ineligible", E6 (the 24 Oct bench,
+ *                                          20 kg x 4), "the 24 Oct swapped bench
+ *                                          does not seed the next barbell bench",
+ *                                          and on the screen T25b (4 red)
+ *   L5: drop `hasAWeight`               -> "L5: an exposure with no weight at
+ *                                          all is skipped" (1 red)
+ *   L2: ignore the hook                 -> "a flagged exposure is skipped and the
+ *                                          walk continues" (1 red)
+ *   the date / completion-time sort removed
+ *                                       -> E1, E12, "basis", "newest by date,
+ *                                          then by completion time", and the L2
+ *                                          hook test (5 red)
+ *
+ * `suggestedWeightsFor` and `substituteLoadFor`
+ *   E1b: the last set's weight for every position
+ *                                       -> E1, E12, "a skipped level", "a set
+ *                                          logged with no weight", E3, "a valid
+ *                                          later bench", E7, "a loaded substitute
+ *                                          with history is offered its own
+ *                                          weights", and on the screen T21,
+ *                                          basis, E2, E3 + E13, E5, T26, T24
+ *                                          (15 red)
+ *   E12: walk back per position, filling a gap from an older exposure
+ *                                       -> E12 and "a valid later bench" (2 red)
+ *   `basis` omitted                     -> "basis names the exposure", E7, "with
+ *                                          history ... the exposure is recorded",
+ *                                          and on the screen the basis test
+ *                                          (4 red)
+ *   E7: restore the old `from === to` early return
+ *                                       -> E8, E7, "bodyweight -> bodyweight stays
+ *                                          unloaded", and on the screen T24, E7,
+ *                                          T25, and the same-implement increment
+ *                                          test (7 red)
+ *   E9: drop `authored.id === substitute.id`
+ *                                       -> E9 and, on the screen, T26 (2 red; it
+ *                                          is the only thing that returns
+ *                                          `undefined`)
+ *   `programId` not threaded (`''` in `handleSwap`, WorkoutPage.tsx)
+ *                                       -> on the screen T21, basis, E2,
+ *                                          E3 + E13, E5, T26, T24 (7 red); no
+ *                                          domain test can see it
+ *   E10: the Stepper's `step` read from the slot, not the substitute
+ *                                       -> on the screen T23 and both increment
+ *                                          tests (3 red)
+ *   E13: "Last time" routed through L1  -> on the screen E3 + E13 only (1 red)
+ *
+ * **A prescribed control that could not go red.** Plan rev 2 §7 E5 prescribes
+ * "drop the `substituteLoad` clause -> E6 red". It cannot: dropping that clause
+ * makes MORE records ineligible, and E6 asserts that the legacy 24 Oct bench is
+ * ineligible, so E6 stays green. The defect is real and is seen, by the E5
+ * "eligible" case and by "a valid later bench" (above), which are the tests that
+ * ask for a record to count. The control as written would have read as "no
+ * defect here".
+ *
+ * Recorded at 2.3 / the stopgap (29 Oct), NOT re-run in 2b.1. The code they
+ * touch is unchanged by 2b.1, except the unloaded branch, which now also returns
+ * `startWeightsKg: []`:
  *   pin table
  *     add an unlisted Library entry     -> "classifies every Library exercise,
  *                                          and nothing else" and "<id> is
@@ -38,33 +134,16 @@ import type { Exercise, LadderPrescription, Program, Workout } from './types'
  *     return the dumbbell step (a constant 2) instead of reading the
  *     program                           -> "a barbell substitute steps in the
  *                                          program's barbell increment" and six more
- *   lastLoggedWeightKg
- *     take the first non-null weight    -> "is the last non-null weight ...",
- *                                          "the last non-null weight — not the
- *                                          first, not the heaviest", "skips a
- *                                          trailing set ..."
- *     walk past a null-weight exposure  -> "does not walk past an exposure that
- *                                          logged no weight at all"
- *   substituteLoadFor (stopgap, run 29 Oct against the same files)
- *     restore the old early return for a same-implement swap
- *     (`if (from === to) return undefined`)
- *                                       -> "a same-implement swap starts blank
- *                                          too" and "... with history"
- *     restore the history read
- *     (`startWeightKg: lastLoggedWeightKg(input.history, ...)`)
- *                                       -> "history is not read ...", "a
- *                                          same-implement swap with history",
- *                                          "the 24 Oct swapped bench"
- *     drop the explicit `authored.id === substitute.id` check
- *                                       -> "swapping back to the authored
- *                                          exercise has no substitute load"
- *                                          (it is now the only thing that
- *                                          returns `undefined`)
+ *   substituteLoadFor
  *     the unloaded branch removed       -> "an unloaded substitute ..."
  *   Library lists
  *     remove 'inverted-row' from the
  *     single-arm row's list             -> "single-arm-db-row offers
  *                                          inverted-row ..." (and the screen's T19)
+ *
+ * Tests that guard a function this phase deleted (`lastLoggedWeightKg`: "the
+ * last non-null weight", "does not walk past an exposure that logged no weight")
+ * went with it; `suggestedWeightsFor`'s tests replace them.
  */
 
 // ---------------------------------------------------------------------------
@@ -220,17 +299,31 @@ function program(items: LadderPrescription[]): Program {
   }
 }
 
+const P = 'p1'
+
+interface CompletedOptions {
+  completedAt?: string | null
+  programId?: string
+  /** 'easier' makes it an easier day. */
+  tier?: 'ready' | 'steady' | 'easier'
+  /** As recorded under a swap. */
+  substitutedForId?: string
+  substituteLoad?: SubstituteLoad
+  /** The `setIndex` of each logged weight, for a skipped level (default 0, 1, 2 ...). */
+  setIndexes?: number[]
+}
+
 /** A completed workout that logged `weights` (reps 10 each) against `exerciseId`. */
 function completed(
   id: string,
   date: string,
   exerciseId: string,
   weights: (number | null)[],
-  overrides: { completedAt?: string | null } = {},
+  options: CompletedOptions = {},
 ): Workout {
   let workout = createWorkout({
     id,
-    programId: 'any-program',
+    programId: options.programId ?? P,
     session: { id: 's', name: 'S', focus: 'F', items: [ladder(exerciseId, 2)] },
     date,
     startedAt: `${date}T09:00:00.000Z`,
@@ -240,10 +333,21 @@ function completed(
       workout,
       0,
       { weightKg, reps: 10, seconds: null, completedAt: `${date}T09:1${index}:00.000Z` },
-      index,
+      options.setIndexes?.[index] ?? index,
     )
   })
-  const completedAt = overrides.completedAt === undefined ? `${date}T10:00:00.000Z` : overrides.completedAt
+  if (options.substitutedForId !== undefined || options.substituteLoad !== undefined) {
+    workout = {
+      ...workout,
+      exercises: workout.exercises.map((e) => ({
+        ...e,
+        ...(options.substitutedForId !== undefined ? { substitutedForId: options.substitutedForId } : {}),
+        ...(options.substituteLoad !== undefined ? { substituteLoad: options.substituteLoad } : {}),
+      })),
+    }
+  }
+  if (options.tier !== undefined) workout = { ...workout, readiness: { tier: options.tier, drivers: [] } }
+  const completedAt = options.completedAt === undefined ? `${date}T10:00:00.000Z` : options.completedAt
   return completedAt === null ? workout : completeWorkout(workout, completedAt)
 }
 
@@ -289,52 +393,159 @@ describe('implementStepKg', () => {
 })
 
 // ---------------------------------------------------------------------------
-// lastLoggedWeightKg — the same lookup as "Last time".
+// suggestedWeightsFor — one eligible exposure, positional (CQ2, CQ3, CC1-CC3)
 // ---------------------------------------------------------------------------
 
-describe('lastLoggedWeightKg', () => {
-  it('is the last non-null weight of the most recent completed exposure', () => {
+/** The `SubstituteLoad` an exposure carries once it was logged under the new rules (CC1, Reading B). */
+const LOGGED_UNDER_THE_NEW_RULES: SubstituteLoad = { loaded: true, startWeightsKg: [], stepKg: 2 }
+
+describe('suggestedWeightsFor', () => {
+  it('E1: the weight at each position of the most recent exposure, matched by position', () => {
     const history = [
       completed('old', '2026-10-10', 'bent-over-row', [10, 12]),
       completed('new', '2026-10-17', 'bent-over-row', [17.75, 21.75, 25.75, 29.75]),
     ]
-    expect(lastLoggedWeightKg(history, 'bent-over-row')).toBe(29.75)
+    expect(suggestedWeightsFor(history, P, 'bent-over-row').startWeightsKg).toEqual([17.75, 21.75, 25.75, 29.75])
   })
 
-  it('the last non-null weight — not the first, not the heaviest', () => {
-    const history = [completed('w', '2026-10-17', 'bent-over-row', [29.75, 21.75, 17.75])]
-    expect(lastLoggedWeightKg(history, 'bent-over-row')).toBe(17.75)
-  })
-
-  it('skips a trailing set logged with no weight', () => {
-    const history = [completed('w', '2026-10-17', 'bent-over-row', [21.75, 25.75, null])]
-    expect(lastLoggedWeightKg(history, 'bent-over-row')).toBe(25.75)
-  })
-
-  it('does not walk past an exposure that logged no weight at all — "Last time" would not either', () => {
+  it('E12: one exposure, never a mixture — the newest eligible [12, 14] beats an older [10, 12, 14, 16]', () => {
     const history = [
-      completed('older', '2026-10-10', 'bent-over-row', [20]),
-      completed('latest', '2026-10-17', 'bent-over-row', [null, null]),
+      completed('older', '2026-10-10', 'bent-over-row', [10, 12, 14, 16]),
+      completed('newer', '2026-10-17', 'bent-over-row', [12, 14]),
     ]
-    expect(lastLoggedWeightKg(history, 'bent-over-row')).toBeNull()
+    // Positions 2 and 3 are not borrowed from the older exposure.
+    expect(suggestedWeightsFor(history, P, 'bent-over-row').startWeightsKg).toEqual([12, 14])
   })
 
-  it('ignores an unfinished workout, other exercises, and an empty history', () => {
+  it('a skipped level is a gap in the positions, not a shift of them', () => {
+    // Level 1 skipped: sets 0 and 2 were logged.
+    const history = [completed('h', '2026-10-17', 'bent-over-row', [17.75, 25.75], { setIndexes: [0, 2] })]
+    expect(suggestedWeightsFor(history, P, 'bent-over-row').startWeightsKg).toEqual([17.75, null, 25.75])
+  })
+
+  it('a set logged with no weight is a gap too: no suggestion for that position', () => {
+    const history = [completed('h', '2026-10-17', 'bent-over-row', [17.75, null, 25.75])]
+    expect(suggestedWeightsFor(history, P, 'bent-over-row').startWeightsKg).toEqual([17.75, null, 25.75])
+  })
+
+  it('E3 (L1): a newer easier-day exposure is skipped for the older normal one', () => {
     const history = [
+      completed('normal', '2026-10-10', 'bent-over-row', [17.75, 21.75]),
+      completed('easier', '2026-10-17', 'bent-over-row', [9.75, 11.75], { tier: 'easier' }),
+    ]
+    expect(suggestedWeightsFor(history, P, 'bent-over-row').startWeightsKg).toEqual([17.75, 21.75])
+  })
+
+  it('a ready or steady day is a normal day', () => {
+    const history = [completed('w', '2026-10-17', 'bent-over-row', [17.75], { tier: 'ready' })]
+    expect(suggestedWeightsFor(history, P, 'bent-over-row').startWeightsKg).toEqual([17.75])
+  })
+
+  it('L1: an unfinished workout is skipped', () => {
+    const history = [
+      completed('done', '2026-10-10', 'bent-over-row', [17.75]),
       completed('open', '2026-10-17', 'bent-over-row', [40], { completedAt: null }),
-      completed('other', '2026-10-17', 'overhead-press', [30]),
     ]
-    expect(lastLoggedWeightKg(history, 'bent-over-row')).toBeNull()
-    expect(lastLoggedWeightKg([], 'bent-over-row')).toBeNull()
+    expect(suggestedWeightsFor(history, P, 'bent-over-row').startWeightsKg).toEqual([17.75])
   })
 
-  it('counts a log from another program or an easier day — it is real performance (CQ3)', () => {
-    const otherProgram: Workout = {
-      ...completed('p', '2026-10-17', 'bent-over-row', [27.75]),
-      programId: 'some-other-program',
-      readiness: { tier: 'easier', drivers: [] },
-    }
-    expect(lastLoggedWeightKg([otherProgram], 'bent-over-row')).toBe(27.75)
+  it('E4 (L3): another program\'s history is not used, even the newest and only (Phase 1 only)', () => {
+    const history = [completed('phase1', '2026-10-17', 'bent-over-row', [8, 10, 12], { programId: 'phase-1-home' })]
+    expect(suggestedWeightsFor(history, P, 'bent-over-row')).toEqual({ startWeightsKg: [] })
+  })
+
+  it('L3 walks back past another program to this one', () => {
+    const history = [
+      completed('mine', '2026-10-10', 'bent-over-row', [17.75]),
+      completed('theirs', '2026-10-17', 'bent-over-row', [8], { programId: 'phase-1-home' }),
+    ]
+    expect(suggestedWeightsFor(history, P, 'bent-over-row').startWeightsKg).toEqual([17.75])
+  })
+
+  it('L5: an exposure with no weight at all is skipped for an older one that has some', () => {
+    const history = [
+      completed('older', '2026-10-10', 'bent-over-row', [17.75]),
+      completed('blank', '2026-10-17', 'bent-over-row', [null, null]),
+    ]
+    expect(suggestedWeightsFor(history, P, 'bent-over-row').startWeightsKg).toEqual([17.75])
+  })
+
+  it('ignores another exercise, and no history at all gives nothing and no basis', () => {
+    const history = [completed('other', '2026-10-17', 'overhead-press', [30])]
+    expect(suggestedWeightsFor(history, P, 'bent-over-row')).toEqual({ startWeightsKg: [] })
+    expect(suggestedWeightsFor([], P, 'bent-over-row')).toEqual({ startWeightsKg: [] })
+  })
+
+  describe('L4: an own-identity record (CC1, Reading B)', () => {
+    it('E5: a legacy substitute record is ineligible', () => {
+      const legacy = completed('legacy', '2026-10-17', 'bent-over-row', [30], { substitutedForId: 'single-arm-db-row' })
+      expect(suggestedWeightsFor([legacy], P, 'bent-over-row').startWeightsKg).toEqual([])
+    })
+
+    it('E5: a substitute record logged under the new rules (it carries a substituteLoad) is eligible', () => {
+      const valid = completed('valid', '2026-10-17', 'bent-over-row', [30], {
+        substitutedForId: 'single-arm-db-row',
+        substituteLoad: LOGGED_UNDER_THE_NEW_RULES,
+      })
+      expect(suggestedWeightsFor([valid], P, 'bent-over-row').startWeightsKg).toEqual([30])
+    })
+
+    it("E5: a stored swap-back record (substitutedForId === its own exercise) is the exercise's own", () => {
+      const swappedBack = completed('back', '2026-10-17', 'bent-over-row', [30], { substitutedForId: 'bent-over-row' })
+      expect(suggestedWeightsFor([swappedBack], P, 'bent-over-row').startWeightsKg).toEqual([30])
+    })
+
+    it('E6: the 24 Oct bench (a legacy swapped record, clamped at 20) gives nothing', () => {
+      const oct24 = completed('oct24', '2026-10-24', 'bench-press', [20, 20, 20, 20], { substitutedForId: 'dumbbell-bench-press' })
+      expect(suggestedWeightsFor([oct24], P, 'bench-press')).toEqual({ startWeightsKg: [] })
+    })
+
+    it('a valid later bench log builds the bench its own history, next to the excluded one', () => {
+      const oct24 = completed('oct24', '2026-10-24', 'bench-press', [20, 20, 20, 20], { substitutedForId: 'dumbbell-bench-press' })
+      const later = completed('nov', '2026-11-03', 'bench-press', [27.75, 29.75], {
+        substitutedForId: 'dumbbell-bench-press',
+        substituteLoad: LOGGED_UNDER_THE_NEW_RULES,
+      })
+      expect(suggestedWeightsFor([oct24, later], P, 'bench-press').startWeightsKg).toEqual([27.75, 29.75])
+    })
+  })
+
+  it('basis names the exposure the weights came from', () => {
+    const history = [
+      completed('older', '2026-10-10', 'bent-over-row', [10]),
+      completed('newer', '2026-10-17', 'bent-over-row', [17.75]),
+    ]
+    expect(suggestedWeightsFor(history, P, 'bent-over-row').basis).toEqual({ workoutId: 'newer', date: '2026-10-17' })
+  })
+
+  it('newest by date, then by completion time, whatever order the history arrives in', () => {
+    const early = completed('early', '2026-10-17', 'bent-over-row', [10], { completedAt: '2026-10-17T08:00:00.000Z' })
+    const late = completed('late', '2026-10-17', 'bent-over-row', [20], { completedAt: '2026-10-17T18:00:00.000Z' })
+    expect(suggestedWeightsFor([early, late], P, 'bent-over-row').startWeightsKg).toEqual([20])
+    expect(suggestedWeightsFor([late, early], P, 'bent-over-row').startWeightsKg).toEqual([20])
+  })
+
+  it('does not reorder or mutate the history it is given', () => {
+    const history = [
+      completed('b', '2026-10-17', 'bent-over-row', [20]),
+      completed('a', '2026-10-10', 'bent-over-row', [10]),
+    ]
+    const before = history.map((workout) => workout.id)
+    suggestedWeightsFor(history, P, 'bent-over-row')
+    expect(history.map((workout) => workout.id)).toEqual(before)
+  })
+})
+
+describe('lastEligibleExposureFor: the L2 hook', () => {
+  it('a flagged exposure is skipped and the walk continues to the next eligible one', () => {
+    const history = [
+      completed('older', '2026-10-10', 'bent-over-row', [17.75]),
+      completed('flagged', '2026-10-17', 'bent-over-row', [20]),
+    ]
+    const flagged = (workout: Workout) => workout.id === 'flagged'
+    expect(lastEligibleExposureFor(history, P, 'bent-over-row', (workout) => flagged(workout))?.workout.id).toBe('older')
+    // And with nothing flagged (the default), the newest wins.
+    expect(lastEligibleExposureFor(history, P, 'bent-over-row')?.workout.id).toBe('flagged')
   })
 })
 
@@ -343,75 +554,88 @@ describe('lastLoggedWeightKg', () => {
 // ---------------------------------------------------------------------------
 
 describe('substituteLoadFor', () => {
-  const base = { program: program([ladder('goblet-squat', 2), ladder('bent-over-row', 2.5)]), exerciseById, history: [] }
+  const base = {
+    program: program([ladder('goblet-squat', 2), ladder('bent-over-row', 2.5)]),
+    exerciseById,
+    history: [] as Workout[],
+    programId: P,
+  }
 
-  it("a same-implement swap starts blank too, in the substitute's own increment (CQ4)", () => {
-    // DB bench -> incline DB press: both dumbbell. The slot's rung weights are not
-    // "this exercise's load" merely because the implement matches.
-    expect(
-      substituteLoadFor({ ...base, authored: exercise('dumbbell-bench-press'), substitute: exercise('incline-dumbbell-press') }),
-    ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2 })
-    // Bodyweight -> bodyweight: both unloaded, and it stays that way.
-    expect(
-      substituteLoadFor({ ...base, authored: exercise('parallel-bar-dip'), substitute: exercise('incline-push-up') }),
-    ).toEqual({ loaded: false, startWeightKg: null, stepKg: null })
-  })
-
-  it('a swap to a different movement on the same implement is blank (bench -> lateral raise)', () => {
+  it('E8: a different movement on the same implement with no history of its own starts blank, in its own increment (CQ4)', () => {
     expect(
       substituteLoadFor({ ...base, authored: exercise('dumbbell-bench-press'), substitute: exercise('dumbbell-lateral-raise') }),
-    ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2 })
+    ).toEqual({ loaded: true, startWeightsKg: [], stepKg: 2 })
   })
 
-  it('swapping back to the authored exercise has no substitute load', () => {
+  it("E7: a same-implement swap takes the substitute's OWN history, not the slot's (incline press after the dumbbell bench)", () => {
+    const history = [completed('h', '2026-10-17', 'incline-dumbbell-press', [14, 16, 18])]
+    expect(
+      substituteLoadFor({ ...base, history, authored: exercise('dumbbell-bench-press'), substitute: exercise('incline-dumbbell-press') }),
+    ).toEqual({ loaded: true, startWeightsKg: [14, 16, 18], stepKg: 2, basis: { workoutId: 'h', date: '2026-10-17' } })
+  })
+
+  it('bodyweight -> bodyweight stays unloaded', () => {
+    expect(
+      substituteLoadFor({ ...base, authored: exercise('parallel-bar-dip'), substitute: exercise('incline-push-up') }),
+    ).toEqual({ loaded: false, startWeightsKg: [], stepKg: null })
+  })
+
+  it('E9: swapping back to the authored exercise has no substitute load', () => {
     expect(
       substituteLoadFor({ ...base, authored: exercise('single-arm-db-row'), substitute: exercise('single-arm-db-row') }),
     ).toBeUndefined()
   })
 
-  it('an unloaded substitute of a loaded slot has no weight, no start and no step', () => {
-    // Single-arm DB row -> Inverted row.
+  it('an unloaded substitute of a loaded slot has no weight, no suggestion and no step, whatever history exists', () => {
+    const history = [completed('h', '2026-10-17', 'inverted-row', [5])]
     expect(
-      substituteLoadFor({ ...base, authored: exercise('single-arm-db-row'), substitute: exercise('inverted-row') }),
-    ).toEqual({ loaded: false, startWeightKg: null, stepKg: null })
+      substituteLoadFor({ ...base, history, authored: exercise('single-arm-db-row'), substitute: exercise('inverted-row') }),
+    ).toEqual({ loaded: false, startWeightsKg: [], stepKg: null })
   })
 
   it('a loaded substitute with no history starts from nothing, in its own increment', () => {
     // Single-arm DB row -> barbell bent-over row: the slot's dumbbell step is 2, the barbell's 2.5.
     expect(
       substituteLoadFor({ ...base, authored: exercise('single-arm-db-row'), substitute: exercise('bent-over-row') }),
-    ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2.5 })
+    ).toEqual({ loaded: true, startWeightsKg: [], stepKg: 2.5 })
   })
 
-  it('history is not read: a loaded substitute with history still starts blank (the suggestion is disabled pending Phase 2b.1)', () => {
+  it('a loaded substitute with history is offered its own weights, set by set, and the exposure is recorded', () => {
     const history = [completed('h', '2026-10-17', 'bent-over-row', [17.75, 21.75, 25.75, 29.75])]
     expect(
       substituteLoadFor({ ...base, history, authored: exercise('single-arm-db-row'), substitute: exercise('bent-over-row') }),
-    ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2.5 })
+    ).toEqual({
+      loaded: true,
+      startWeightsKg: [17.75, 21.75, 25.75, 29.75],
+      stepKg: 2.5,
+      basis: { workoutId: 'h', date: '2026-10-17' },
+    })
   })
 
-  it('a same-implement swap with history of the substitute still starts blank (incline press after the dumbbell bench)', () => {
-    const history = [completed('h', '2026-10-17', 'incline-dumbbell-press', [14, 16, 18])]
+  it("history of another program is not eligible: the swap is made in this workout's program (CC2)", () => {
+    const history = [completed('phase1', '2026-10-17', 'bent-over-row', [8, 10, 12], { programId: 'phase-1-home' })]
     expect(
-      substituteLoadFor({ ...base, history, authored: exercise('dumbbell-bench-press'), substitute: exercise('incline-dumbbell-press') }),
-    ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2 })
+      substituteLoadFor({ ...base, history, authored: exercise('single-arm-db-row'), substitute: exercise('bent-over-row') }),
+    ).toEqual({ loaded: true, startWeightsKg: [], stepKg: 2.5 })
   })
 
-  it("the 24 Oct swapped bench (20 kg in history) does not seed the next barbell bench", () => {
-    // Recorded under the swap: exerciseId 'bench-press', substitutedForId the dumbbell bench.
-    const swapped = completed('oct24', '2026-10-24', 'bench-press', [20, 20, 20, 20])
-    const history = [
-      { ...swapped, exercises: swapped.exercises.map((e) => ({ ...e, substitutedForId: 'dumbbell-bench-press' })) },
-    ]
+  it('the 24 Oct swapped bench (20 kg x 4, a legacy record) does not seed the next barbell bench', () => {
+    const oct24 = completed('oct24', '2026-10-24', 'bench-press', [20, 20, 20, 20], { substitutedForId: 'dumbbell-bench-press' })
     expect(
-      substituteLoadFor({ ...base, history, authored: exercise('dumbbell-bench-press'), substitute: exercise('bench-press') }),
-    ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2.5 })
+      substituteLoadFor({ ...base, history: [oct24], authored: exercise('dumbbell-bench-press'), substitute: exercise('bench-press') }),
+    ).toEqual({ loaded: true, startWeightsKg: [], stepKg: 2.5 })
   })
 
-  it('an unloaded slot swapped to a loaded exercise offers the control with no suggestion', () => {
+  it('an unloaded slot swapped to a loaded exercise offers the control, suggesting only from that exercise\'s own history', () => {
     // Inverted row -> single-arm DB row.
     expect(
       substituteLoadFor({ ...base, authored: exercise('inverted-row'), substitute: exercise('single-arm-db-row') }),
-    ).toEqual({ loaded: true, startWeightKg: null, stepKg: 2 })
+    ).toEqual({ loaded: true, startWeightsKg: [], stepKg: 2 })
+  })
+
+  it('never writes the retired single start weight', () => {
+    const history = [completed('h', '2026-10-17', 'bent-over-row', [17.75])]
+    const load = substituteLoadFor({ ...base, history, authored: exercise('single-arm-db-row'), substitute: exercise('bent-over-row') })
+    expect(load).not.toHaveProperty('startWeightKg')
   })
 })

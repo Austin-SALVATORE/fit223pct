@@ -1,5 +1,5 @@
+import { lastEligibleExposureFor } from './historyEligibility'
 import type { Exercise, Program, SubstituteLoad, Workout } from './types'
-import { previousSetsFor } from './workout'
 
 /**
  * The implement a loaded exercise is lifted with. `null` is "unloaded": body
@@ -61,52 +61,63 @@ export function implementStepKg(
 }
 
 /**
- * The last weight the athlete logged for this exercise, from the **same
- * lookup as the "Last time" line** above the weight control
- * (`previousSetsFor`). "Valid" is: a completed workout, and a non-null weight —
- * the last non-null `weightKg` of the most recent exposure; easier-day and
- * other-program logs count, as they do for "Last time".
+ * What a swap suggests for each set: the weight at that position of the
+ * substitute's **most recent eligible exposure** (coach CQ2): "match by set/rung
+ * position ... use only valid historical performance of the substitute exercise
+ * ... do not apply the original exercise's weight or increment".
  *
- * **Not called while the suggestion is disabled** (owner, 29 Oct 16:53: "every
- * swap starts with a blank weight until the coach's set-by-set rule is built").
- * Kept, with its tests, for Phase 2b.1, which replaces it. It reads the
- * readings the coach has since ruled against: CQ2 asks for the weight at the
- * *same rung position*, not one value, and CQ3 excludes easier days and
- * unrelated programs, which this includes. **CQ2 (coach): the suggestion is
- * disabled pending 2b.1**; this function, the substitute branch of
- * `nextSetTarget`, and the shape of `SubstituteLoad.startWeightKg` change
- * together.
+ *   - One exposure, never a mixture. The newest eligible one wins even if it is
+ *     shorter than an older one: [12, 14] beats an older [10, 12, 14, 16], and
+ *     position 2 then has no suggestion rather than borrowing the 14.
+ *   - Eligibility is `historyEligibility.ts`: completed, a normal day, the same
+ *     program as the workout being swapped in, an own-identity record, and at
+ *     least one weight. The walk goes back past anything that fails, so it is not
+ *     "the chronologically newest record".
+ *   - A position the exposure did not log (a skipped level) is `null`, and so is
+ *     one it logged blank.
+ *   - `basis` names the exposure it came from; absent when there was none.
+ *
+ * Not the "Last time" line, which keeps showing the actual most recent
+ * performance whatever it was (CQ3).
  */
-export function lastLoggedWeightKg(history: readonly Workout[], exerciseId: string): number | null {
-  const withWeight = previousSetsFor(history, exerciseId).filter((set) => set.weightKg !== null)
-  return withWeight.at(-1)?.weightKg ?? null
+export function suggestedWeightsFor(
+  history: readonly Workout[],
+  programId: string,
+  exerciseId: string,
+): { startWeightsKg: (number | null)[]; basis?: { workoutId: string; date: string } } {
+  const found = lastEligibleExposureFor(history, programId, exerciseId)
+  if (found === null) return { startWeightsKg: [] }
+
+  const { workout, exposure } = found
+  const size = Math.max(...exposure.sets.map((set) => set.setIndex)) + 1
+  const startWeightsKg = Array.from(
+    { length: size },
+    (_, position) => exposure.sets.find((set) => set.setIndex === position)?.weightKg ?? null,
+  )
+  return { startWeightsKg, basis: { workoutId: workout.id, date: workout.date } }
 }
 
 /**
  * What a swap starts from. **Every swap gets one, except a swap back to the
  * authored exercise** (`undefined`: the slot's own loads apply again).
  *
- * **A stopgap, by the owner's ruling of 29 Oct 16:53:** "deploy now, but every
- * swap starts with a blank weight until the coach's set-by-set rule is built."
- * The coach's CQ2-CQ4 rulings (`docs/programs/coach-rulings-cq1-cq7-2026-10-29.md`)
- * ask for the substitute's own valid history, matched rung by rung, for *every*
- * substitute — same implement included (CQ4: "do not preserve the original
- * slot's load merely because both exercises use dumbbells"). That is Phase
- * 2b.1. Until it exists, the two readings Phase 2.3 shipped would each offer a
- * number the rulings forbid: a single weight from the latest exposure (CQ2),
- * which may be an easier day or another program (CQ3); and the slot's own rung
- * weights on a same-implement swap, which put a bench's 10 kg on a lateral
- * raise (CQ4). So a loaded substitute starts empty ("—", the athlete types
- * it), and history is not read at all.
+ * The coach's CQ4: the governing rule is the substitute's own history,
+ * regardless of whether the implement changes — the slot's rung weights are not
+ * "this exercise's load" merely because both exercises use dumbbells.
  *
+ *   - a **loaded** substitute is offered, set by set, the weight at the same
+ *     position of its own most recent eligible exposure (`suggestedWeightsFor`);
+ *     a position without one is left blank for the athlete to choose (CC3);
  *   - an **unloaded** substitute stays unloaded: no weight control, no weight
  *     stored (the inverted row);
- *   - the **step** is still the substitute's own implement's, never the slot's
- *     (CQ4: "preserve the substitute's load convention and increments");
+ *   - the **step** is the substitute's own implement's, never the slot's (CQ4:
+ *     "preserve the substitute's load convention and increments");
  *   - the ceiling warning stays off every substitute (`SetScreen`).
  *
  * `authored` is the exercise the slot was prescribed for — the prescription's
  * loads belong to it, however many substitutions have happened since.
+ * `programId` is the program of the workout being swapped in: only that
+ * program's history is eligible (CC2).
  */
 export function substituteLoadFor(input: {
   authored: Exercise
@@ -114,6 +125,7 @@ export function substituteLoadFor(input: {
   program: Program | undefined
   exerciseById: ReadonlyMap<string, Exercise>
   history: readonly Workout[]
+  programId: string
 }): SubstituteLoad | undefined {
   const { authored, substitute } = input
 
@@ -121,13 +133,10 @@ export function substituteLoadFor(input: {
   if (authored.id === substitute.id) return undefined
 
   const to = loadImplementOf(substitute)
-  if (to === null) return { loaded: false, startWeightKg: null, stepKg: null }
+  if (to === null) return { loaded: false, startWeightsKg: [], stepKg: null }
   return {
     loaded: true,
-    // CQ2 (coach): the suggestion is disabled pending Phase 2b.1 — blank, never
-    // `lastLoggedWeightKg(input.history, substitute.id)`. `history` stays in the
-    // input for that rework.
-    startWeightKg: null,
+    ...suggestedWeightsFor(input.history, input.programId, substitute.id),
     stepKg: implementStepKg(input.program, input.exerciseById, to, substitute.id),
   }
 }

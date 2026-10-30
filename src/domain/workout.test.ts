@@ -231,7 +231,7 @@ describe('swapExercise', () => {
    * swap replaces ..." passes either way, because the new load overwrites the
    * old one regardless.
    */
-  const loadedStart = { loaded: true, startWeightKg: 29.75, stepKg: 2.5 }
+  const loadedStart = { loaded: true, startWeightsKg: [29.75], stepKg: 2.5 }
 
   it('stores the substitute load it is given, additively — nothing else about the slot changes', () => {
     const before = makeWorkout()
@@ -251,8 +251,8 @@ describe('swapExercise', () => {
 
   it('a later swap replaces the earlier substitute\'s load rather than inheriting it', () => {
     const first = swapExercise(makeWorkout(), 0, 'bent-over-row', loadedStart)
-    const second = swapExercise(first, 0, 'inverted-row', { loaded: false, startWeightKg: null, stepKg: null })
-    expect(second.exercises[0].substituteLoad).toEqual({ loaded: false, startWeightKg: null, stepKg: null })
+    const second = swapExercise(first, 0, 'inverted-row', { loaded: false, startWeightsKg: [], stepKg: null })
+    expect(second.exercises[0].substituteLoad).toEqual({ loaded: false, startWeightsKg: [], stepKg: null })
     // The authored exercise is still what it was substituted for.
     expect(second.exercises[0].substitutedForId).toBe('goblet-squat')
   })

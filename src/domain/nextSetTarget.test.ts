@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { nextSetTarget, weightPressStartKg } from './nextSetTarget'
-import type { LadderPrescription, LoggedSet, RepRangePrescription } from './types'
+import type { LadderPrescription, LoggedSet, RepRangePrescription, SubstituteLoad } from './types'
 
 /**
  * **The correctness trap this function exists to close.** The set screen
@@ -307,28 +307,56 @@ describe('variantKey — how a rung differs from the default form', () => {
 })
 
 /**
- * A substitute (coach Q4, CQ4, CC3). The slot's prescription belongs to the
+ * A substitute (coach Q4, CQ2, CQ4, CC3). The slot's prescription belongs to the
  * exercise that was swapped out, so no weight in it is offered — and neither is
  * the weight the athlete just lifted: "do not automatically reuse the weight
- * from set 3 ... leave the weight for explicit athlete selection" (CC3). A
- * substitute's weight is its own suggested start and nothing else; reps, sets
- * and rest still follow the slot. Negative controls, run 29 Oct (mutation
- * applied, this file and `SetScreen.substitute.test.tsx` run, restored):
- *   drop the `substitute` branch of the offered weight (the rung is offered
- *     again)                      -> the first six tests below (not the last two)
- *   offer the rung as the start   -> "no history still has the control", "a
- *                                    suggested start is offered", "later sets
- *                                    never offer ...", "no weight change to
- *                                    report", "a set logged with no weight"
- *   re-introduce `carried ?? start` (the weight just lifted carries to the next
- *     set)                        -> "later sets never offer the weight just
- *                                    lifted", and the screen's T20b
- *   the delta computed as for an authored exercise (no substitute guard)
- *                                 -> "reports no weight change ...", and T20b
- *                                    (the Rest screen says "41.75 kg lighter")
+ * from set 3 ... leave the weight for explicit athlete selection" (CC3). Set N
+ * is offered `startWeightsKg[N]`, the weight at that position of the
+ * substitute's own most recent eligible exposure, and nothing else; reps, sets
+ * and rest still follow the slot.
+ *
+ * Negative controls, Phase 2b.1, run 29 Oct: each mutation applied to
+ * `nextSetTarget.ts` (or, for the last, `SetScreen.tsx`), this file and the
+ * four neighbours run together (224 tests; `SetScreen.substitute.test.tsx` is
+ * the "screen"), source restored byte-for-byte. "Red" counts are of those 224.
+ *   the substitute branch bypassed (`const weightKg = substitute ?` becomes
+ *     `false ?`, so the slot's rung or the carried weight is offered again)
+ *                                 -> ten of the twelve tests in the next
+ *                                    describe (every one that offers or
+ *                                    withholds a weight; not the last two, which
+ *                                    are about an authored exercise) (32 red in
+ *                                    all: 22 more on the screen and in the 24 Oct
+ *                                    end-to-end test)
+ *   the suggestion replaced by the slot's rung (`prescribedWeight`)
+ *                                 -> nine of them (not "an unloaded
+ *                                    substitute", not the two authored) (30 red)
+ *   `?? carried?.weightKg` put back before the suggestion's `null` (E2: the
+ *     weight just lifted carries to a position with no history)
+ *                                 -> "a position with history ... (CQ2)", "E2",
+ *                                    "reports the real weight change", and on
+ *                                    the screen T20b, T21, E2, E2b and four OD-e
+ *                                    tests (11 red)
+ *   index the suggestion by the wrong position (`[setIndex + 1]`)
+ *                                 -> "a suggestion is offered position by
+ *                                    position", "a position with history", "a
+ *                                    gap", "reports the real weight change", "a
+ *                                    set logged with no weight", and on the
+ *                                    screen T21, E2, E3 + E13, E5, T26, T24
+ *                                    (11 red)
+ *   fall back to the retired single `startWeightKg` (E15)
+ *                                 -> "E15" and, on the screen, E15 (2 red)
+ *   the delta guard removed (a substitute with no weight offered computes
+ *     `0 - lifted`)               -> "reports no weight change ..." and the
+ *                                    screen's T20b (2 red)
  *   `loaded` always `weightKg !== null`
  *                                 -> "a loaded substitute with no history still
- *                                    has the control"
+ *                                    has the control" and "E2" here; 21 red in
+ *                                    all, including T20, T23, E7, T25, T25b, the
+ *                                    OD-e tests and both increment tests
+ *   SetScreen passes no substitute to `nextSetTarget` (the mutation lives in
+ *     SetScreen.tsx)              -> nothing in this file
+ *                                    (24 red in all: 23 on the screen, incl.
+ *                                    T19, and the 24 Oct end-to-end test)
  */
 describe('a substitute', () => {
   // The slot: a dumbbell ladder, 10/12/14 kg per hand.
@@ -346,9 +374,10 @@ describe('a substitute', () => {
     maxWeightKg: 38,
     weightStepKg: 2,
   }
+  const loadedWith = (startWeightsKg?: readonly (number | null)[]) => ({ loaded: true, startWeightsKg })
 
   it('an unloaded substitute is offered no weight, and no weight control, whatever the rung says', () => {
-    const target = nextSetTarget(slot, [], 0, { loaded: false, startWeightKg: null })
+    const target = nextSetTarget(slot, [], 0, { loaded: false, startWeightsKg: [] })
 
     expect(target.loaded).toBe(false)
     expect(target.weightKg).toBeNull()
@@ -358,7 +387,7 @@ describe('a substitute', () => {
   })
 
   it('a loaded substitute with no history still has the control, and nothing to put in it', () => {
-    const target = nextSetTarget(slot, [], 0, { loaded: true, startWeightKg: null })
+    const target = nextSetTarget(slot, [], 0, loadedWith([]))
 
     expect(target.loaded).toBe(true)
     expect(target.weightKg).toBeNull()
@@ -366,33 +395,55 @@ describe('a substitute', () => {
     expect(target.reps).toBe(12)
   })
 
-  it("a loaded substitute with a suggested start is offered that start, never the slot's rung", () => {
-    // (No production path sets one while the suggestion is disabled; Phase 2b.1 will.)
-    const target = nextSetTarget(slot, [], 0, { loaded: true, startWeightKg: 29.75 })
-
-    expect(target.weightKg).toBe(29.75)
-    expect(target.weightKg).not.toBe(10)
+  it("a suggestion is offered position by position — each set its own, never the slot's rung", () => {
+    const suggestion = [17.75, 21.75, 25.75]
+    expect(nextSetTarget(slot, [], 0, loadedWith(suggestion)).weightKg).toBe(17.75)
+    expect(nextSetTarget(slot, [], 1, loadedWith(suggestion)).weightKg).toBe(21.75)
+    expect(nextSetTarget(slot, [], 2, loadedWith(suggestion)).weightKg).toBe(25.75)
+    // The caption is not "told" a kg figure: the slot's rung is another exercise's.
+    expect(nextSetTarget(slot, [], 0, loadedWith(suggestion)).prescribed.weightKg).toBeNull()
   })
 
-  it('later sets never offer the weight just lifted — set 2 is blank after set 1 (CC3)', () => {
-    const lifted = [set({ weightKg: 41.75, reps: 12 })]
+  it('a position with history offers its own weight even after a different lift this session (CQ2)', () => {
+    const lifted = [set({ weightKg: 19.75, reps: 12 })]
+    expect(nextSetTarget(slot, lifted, 1, loadedWith([17.75, 21.75, 25.75])).weightKg).toBe(21.75)
+  })
 
-    expect(nextSetTarget(slot, lifted, 1, { loaded: true, startWeightKg: null }).weightKg).toBeNull()
-    // And with a start, it is the start that returns — not the 41.75 just lifted.
-    expect(nextSetTarget(slot, lifted, 1, { loaded: true, startWeightKg: 29.75 }).weightKg).toBe(29.75)
+  it('E2 (CC3): a position with no history is blank even after lifts — set 3 after sets 1 and 2', () => {
+    const lifted = [set({ weightKg: 17.75, reps: 12, setIndex: 0 }), set({ weightKg: 21.75, reps: 10, setIndex: 1 })]
+    // History had two rungs; the slot has three.
+    const target = nextSetTarget(slot, lifted, 2, loadedWith([17.75, 21.75]))
+    expect(target.weightKg).toBeNull()
+    expect(target.loaded).toBe(true)
+  })
+
+  it('a gap in the suggestion (a skipped or blank rung) is blank, not a neighbour', () => {
+    expect(nextSetTarget(slot, [], 1, loadedWith([17.75, null, 25.75])).weightKg).toBeNull()
+    expect(nextSetTarget(slot, [], 2, loadedWith([17.75, null, 25.75])).weightKg).toBe(25.75)
+  })
+
+  it('E15: a record written before the suggestion existed offers nothing — even one carrying the retired startWeightKg', () => {
+    const legacy = { loaded: true, startWeightKg: 29.75 } as unknown as Pick<SubstituteLoad, 'loaded' | 'startWeightsKg'>
+    expect(nextSetTarget(slot, [], 0, legacy).weightKg).toBeNull()
+    expect(nextSetTarget(slot, [], 0, loadedWith(undefined)).weightKg).toBeNull()
+  })
+
+  it('reports the real weight change when a suggestion differs from the set just lifted', () => {
+    const lifted = [set({ weightKg: 19.75, reps: 12 })]
+    expect(nextSetTarget(slot, lifted, 1, loadedWith([17.75, 21.75])).delta?.weightKg).toBe(2)
   })
 
   it('reports no weight change when there is no weight to offer — the blank is not "lighter than" what was lifted', () => {
     const lifted = [set({ weightKg: 41.75, reps: 12 })]
-    const target = nextSetTarget(slot, lifted, 1, { loaded: true, startWeightKg: null })
+    const target = nextSetTarget(slot, lifted, 1, loadedWith([]))
 
     expect(target.delta?.weightKg ?? 0).toBe(0)
   })
 
-  it('a set logged with no weight changes nothing: the offered weight is the start, whatever was logged', () => {
+  it('a set logged with no weight changes nothing: the offered weight is the suggestion for the position', () => {
     const noWeight = [set({ weightKg: null, reps: 12 })]
-    expect(nextSetTarget(slot, noWeight, 1, { loaded: true, startWeightKg: 29.75 }).weightKg).toBe(29.75)
-    expect(nextSetTarget(slot, noWeight, 1, { loaded: true, startWeightKg: null }).weightKg).toBeNull()
+    expect(nextSetTarget(slot, noWeight, 1, loadedWith([17.75, 21.75])).weightKg).toBe(21.75)
+    expect(nextSetTarget(slot, noWeight, 1, loadedWith([17.75])).weightKg).toBeNull()
   })
 
   it("without a substitute, `loaded` is exactly \"there is a weight\" — today's rule, unchanged", () => {

@@ -8,7 +8,7 @@ import { mesocycle2Build } from '@/data/seed/program'
 import { programRepo } from '@/data/repositories'
 import i18n from '@/i18n/i18next'
 import { completeWorkout, createWorkout, logSet } from '@/domain/workout'
-import type { LadderPrescription, Program, Workout } from '@/domain/types'
+import type { LadderPrescription, Program, SubstituteLoad, Workout } from '@/domain/types'
 import { WorkoutPage } from './WorkoutPage'
 
 /**
@@ -16,50 +16,81 @@ import { WorkoutPage } from './WorkoutPage'
  * read what the Set and Rest screens offer, log, and read what was stored.
  * Track A Phase 2.3 (coach Q4) with A2b ('inverted-row' in the single-arm row's
  * list, which must never ship without this: on its own it measured a dumbbell
- * row's 10 kg stored on a bodyweight row), narrowed to the **stopgap** of the
- * owner's ruling of 29 Oct 16:53: "deploy now, but every swap starts with a
- * blank weight until the coach's set-by-set rule is built."
+ * row's 10 kg stored on a bodyweight row); then the **stopgap** of the owner's
+ * ruling of 29 Oct 16:53 ("every swap starts with a blank weight until the
+ * coach's set-by-set rule is built"); now that rule, Phase 2b.1.
  *
- * What every substitute gets: no weight to start from ("—", the athlete types
- * one) and none offered for the next set either (coach CC3: the weight just
- * lifted is evidence, not a recommendation); its own implement's step, never the
- * slot's; no ceiling warning; reps, sets and rest from the slot. A bodyweight
- * substitute gets no weight control at all. The one swap with no substitute
- * load is the swap back to the authored exercise, which gets the slot's own
- * loads again. These tests are written to the stopgap; Phase 2b.1 (the coach's
- * CQ2-CQ4: the substitute's own valid history, rung by rung) will rewrite T21,
- * T24, T25 and T25b, which pin the blank start.
+ * What a loaded substitute gets: for each set, the weight at that position of
+ * its own most recent eligible exposure (same program, completed, a normal day,
+ * not a pre-fix substitute record: coach CQ1-CQ4, CC1-CC3) and "—" where there
+ * is none. Never the slot's rung, never a neighbouring rung, never the weight
+ * just lifted (CC3): set 3 stays blank after sets 1 and 2 were lifted when the
+ * history has two rungs. A "+" or "−" on a blank starts from the weight last
+ * logged this session (OD-e) — a convenience, not a suggestion. Its own
+ * implement's step, never the slot's; no ceiling warning; reps, sets and rest
+ * from the slot. The slot records the exposure the suggestion came from
+ * (`basis`) and no longer any single start weight. A bodyweight substitute gets
+ * no weight control at all. The one swap with no substitute load is the swap
+ * back to the authored exercise, which gets the slot's own loads again.
  *
- * Negative controls, run 29 Oct (mutation applied, this file and the domain
- * tests run, restored byte-for-byte). Test names are shortened: "remounts" is
- * "the swap remounts the screen ...", "increment" is "the substitute's
- * increment ...". "Stale key" means `workoutExercise.exerciseId` removed from
- * the Set screen's motion key in WorkoutPage.tsx, so a swap does not remount it.
+ * Negative controls, Phase 2b.1, run 29 Oct: each mutation applied to the
+ * source, the five files run together (`substituteLoad.test`,
+ * `nextSetTarget.test`, `workout.test`, this file, `WorkoutPage.swapOther.test`:
+ * 224 tests), source restored byte-for-byte. Each was traced through the code
+ * as it is after the change and run against the finished tree. Only what the
+ * screen sees is listed here; the controls on `historyEligibility.ts` and
+ * `suggestedWeightsFor` are in `substituteLoad.test.ts`, and those on
+ * `nextSetTarget.ts` in `nextSetTarget.test.ts`. Counts are the screen's own.
+ * "OD-e x4" is the four press tests below ("+", "−", the most recent set, a
+ * blank set); "increment x2" is "the substitute's increment ...".
+ *   E1: the session's last weight offered before the suggestion (`carried ??`)
+ *                                      -> T20b, T21, E2, E2b, OD-e x4 (8 red)
+ *   E1: the last set's weight for every position
+ *                                      -> T21, basis, E2, E3 + E13, E5, T26, T24
+ *                                         (7 red)
+ *   E1: the wrong position (`[setIndex + 1]`)
+ *                                      -> T21, E2, E3 + E13, E5, T26, T24 (6 red)
+ *   E2b: the press pre-fills `value` instead of passing `startFrom`
+ *                                      -> OD-e x4, T20b, E2, E2b (7 red)
+ *   E3, E13: L1's easier-day clause dropped
+ *                                      -> E3 + E13 (1 red)
+ *   E13: "Last time" routed through L1 -> E3 + E13 only (1 red)
+ *   E4: L3 dropped                     -> E4 and the OD-e "nothing eligible" test
+ *                                         (2 red)
+ *   E5: the `substituteLoad` clause of L4 dropped, or Reading A
+ *                                      -> E5 (1 red each)
+ *   E6: L4 dropped                     -> T25b (1 red)
+ *   E7: the old `from === to` early return
+ *                                      -> T24, E7, T25, increment (same
+ *                                         implement) (4 red)
+ *   E9: the swap-back check dropped    -> T26 (1 red)
+ *   E10: the Stepper's `step` from the slot
+ *                                      -> T23 and increment x2 (3 red)
+ *   E15: a stored legacy `startWeightKg` honoured
+ *                                      -> E15 (1 red)
+ *   `basis` omitted                    -> the basis test (1 red)
+ *   `programId` not threaded (`''` in `handleSwap`)
+ *                                      -> T21, basis, E2, E3 + E13, E5, T26, T24
+ *                                         (7 red)
+ *   the delta guard removed            -> T20b (1 red)
+ *   the substitute branch of `nextSetTarget` bypassed
+ *                                      -> 21 red, and the 24 Oct end-to-end test
+ *                                         in `WorkoutPage.swapOther.test`: T19b
+ *                                         among them, and NOT T19
+ *   the suggestion replaced by the slot's rung
+ *                                      -> 20 red, and the 24 Oct end-to-end test
+ *   `loaded` always `weightKg !== null`
+ *                                      -> 18 red, and the 24 Oct end-to-end test
+ *   SetScreen passes no substitute load to `nextSetTarget`
+ *                                      -> 23 red, T19 among them ('10kg' offered
+ *                                         on a bodyweight movement), and the 24
+ *                                         Oct end-to-end test
  *
- * The stopgap
- *   restore the old early return in `substituteLoadFor` for a same-implement
- *   swap                               -> T24, T25, "a same-implement substitute
- *                                         steps in its own increment", and three
- *                                         substituteLoad unit tests
- *   restore the history read (`startWeightKg: lastLoggedWeightKg(...)`)
- *                                      -> T21, T24, T25b and three unit tests
- *   drop the `authored.id === substitute.id` check
- *                                      -> T26 and the unit test (it is now the
- *                                         only thing that returns `undefined`)
- *   the unloaded branch removed        -> T19 and two unit tests
- *   re-introduce `carried ?? start` in `nextSetTarget` (the weight just lifted
- *   carries to the next set)           -> T20b and the unit test "later sets
- *                                         never offer the weight just lifted"
- *   the delta guard removed (a substitute with no weight offered computes
- *   `0 - lifted`)                      -> T20b (the Rest screen says "41.75 kg
- *                                         lighter") and the unit test
- *   the ceiling warning not gated on substitutes
- *                                      -> T24 (22 kg over the slot's 20), T20,
- *                                         ceiling T4, and the 24 Oct case
- *   step from the slot, not the substitute
- *                                      -> T23, and both increment tests
- *
- * The 2.3 mechanism
+ * Recorded at 2.3 and the stopgap (29 Oct), NOT re-run in 2b.1: the code they
+ * touch is unchanged by 2b.1, but several of the tests they name (T21, T24, T25,
+ * T25b) have since been rewritten, so read the names as they were then. "Stale
+ * key" means `workoutExercise.exerciseId` removed from the Set screen's motion
+ * key in WorkoutPage.tsx, so a swap does not remount it.
  *   stale key                          -> remounts, T21, T22, T24, T25, T25b, T26
  *   stale key AND the log guard
  *     `weightKg: target.loaded ? weightKg : null` reverted to `weightKg`
@@ -68,21 +99,9 @@ import { WorkoutPage } from './WorkoutPage'
  *   the log guard alone                -> NOTHING: all green. With the key in
  *     place no stale weight can reach it, so it is defence in depth that only
  *     the pair above can see.
- *   SetScreen passes no substituteLoad to nextSetTarget
- *                                      -> T19 ('10kg' offered on a bodyweight
- *                                         movement), remounts, T20, T20b, T21,
- *                                         T22, T23, T24, T25, T25b, T26
- *   `nextSetTarget` offers the slot's rung as the substitute's weight
- *                                      -> remounts, T20b, T21, T22, T24, T25,
- *                                         T25b, T26, and five nextSetTarget
- *                                         unit tests
- *   the `weightKg` branch of `nextSetTarget` dropped (the rung is offered)
- *                                      -> T19b (Rest screen: "12 kg × 10 ↑ 12 kg
- *                                         heavier"), remounts, T20b, T21, T22,
- *                                         T24, T25, T25b, T26, and six
- *                                         nextSetTarget unit tests — NOT T19
- *   `loaded` always `weightKg !== null` -> remounts, T20, T20b, T21, T23, T24,
- *                                         T25, T25b, T26, increment, and a unit test
+ *   the ceiling warning not gated on substitutes
+ *                                      -> T24 (22 kg over the slot's 20), T20,
+ *                                         ceiling T4, and the 24 Oct case
  *   `target.loaded` gate reverted to `weightKg !== null`
  *                                      -> remounts, T20, T20b, T21, T23, T24, T25,
  *                                         T25b, T26, and both increment tests
@@ -98,6 +117,8 @@ import { WorkoutPage } from './WorkoutPage'
  *   pre-fill `value` with the start instead of passing `startFrom`
  *                                      -> the display-is-blank assertion in the
  *                                         first "+" test, and the "−" test
+ *                                         (re-run in 2b.1 as E2b: OD-e x4, T20b,
+ *                                         E2 and E2b, 7 red)
  *   the `startFrom` prop removed       -> every press test (the press gives 0)
  *   the first logged set instead of the most recent (`findLast` -> `find`)
  *                                      -> "the most recent set, not the first"
@@ -154,7 +175,8 @@ import { WorkoutPage } from './WorkoutPage'
  * guarding that, so T19b now does (it went red under this mutation, on its
  * first assertion, "10 reps"; the "no kg" and "heavier" lines are behind it).
  * The control that reaches T19 itself is the one above: stop passing the
- * substitute load at all.
+ * substitute load at all. Re-confirmed in 2b.1: bypassing the substitute branch
+ * reddens T19b and not T19; passing no substitute load reddens T19.
  */
 
 beforeAll(async () => {
@@ -239,6 +261,19 @@ async function start(item: LadderPrescription, programId: string = mesocycle2Bui
   )
 }
 
+/** Render Workout Mode for a workout that is already stored, as it is (a record from an older build, say). */
+async function startWorkout(workout: Workout) {
+  await db.workouts.put(workout)
+  render(
+    <MemoryRouter initialEntries={['/workout']}>
+      <Routes>
+        <Route path="/" element={<p>TODAY PROBE</p>} />
+        <Route path="/workout" element={<WorkoutPage />} />
+      </Routes>
+    </MemoryRouter>,
+  )
+}
+
 /** Two slots, so there is a "next exercise" for the Rest screen to introduce. */
 async function startTwo(first: LadderPrescription, second: LadderPrescription) {
   await db.workouts.put(
@@ -292,16 +327,27 @@ async function logCurrentSet() {
 }
 
 /** A completed workout that logged `weights` against `exerciseId`, 12 reps each. */
+interface HistoryOptions {
+  /** As recorded under a swap: the exercise performed, and the one it replaced. */
+  substitutedForId?: string
+  /** Present on a swap logged under the exercise-specific rules (CC1, Reading B). */
+  substituteLoad?: SubstituteLoad
+  /** Default: the program the tests swap in (Mesocycle 2 Build). */
+  programId?: string
+  /** An easier day. */
+  tier?: 'easier'
+}
+
 async function putHistory(
   exerciseId: string,
   date: string,
   weights: number[],
   item: LadderPrescription,
-  substitutedForId?: string,
+  options: HistoryOptions = {},
 ) {
   let workout: Workout = createWorkout({
     id: `hist-${exerciseId}-${date}`,
-    programId: mesocycle2Build.id,
+    programId: options.programId ?? mesocycle2Build.id,
     session: { id: 'h', name: 'H', focus: 'F', items: [{ ...item, exerciseId }] },
     date,
     startedAt: `${date}T09:00:00.000Z`,
@@ -314,10 +360,17 @@ async function putHistory(
       index,
     )
   })
-  if (substitutedForId !== undefined) {
-    // As recorded under a swap: the exercise performed, and the one it replaced.
-    workout = { ...workout, exercises: workout.exercises.map((e) => ({ ...e, substitutedForId })) }
+  if (options.substitutedForId !== undefined || options.substituteLoad !== undefined) {
+    workout = {
+      ...workout,
+      exercises: workout.exercises.map((e) => ({
+        ...e,
+        ...(options.substitutedForId !== undefined ? { substitutedForId: options.substitutedForId } : {}),
+        ...(options.substituteLoad !== undefined ? { substituteLoad: options.substituteLoad } : {}),
+      })),
+    }
   }
+  if (options.tier !== undefined) workout = { ...workout, readiness: { tier: options.tier, drivers: [] } }
   await db.workouts.put(completeWorkout(workout, `${date}T10:00:00.000Z`))
 }
 
@@ -413,9 +466,11 @@ describe('a "+" or "−" on a blank weight of a substitute (OD-e)', () => {
     expect(weightText()).toBe('41.75kg')
   })
 
-  it('straight after the swap there is nothing to start from, so the press gives 0, as before — no pre-swap weight, no rung, no history', async () => {
-    // History exists for the bent-over row, and the slot's rung is 10: neither is used.
-    await putHistory('bent-over-row', '2026-10-17', [17.75, 21.75, 25.75, 29.75], dumbbellRow())
+  it('with nothing eligible to suggest, the press right after the swap gives 0, as before — no pre-swap weight, no rung, no ineligible history', async () => {
+    // Phase 1 history for the bent-over row (another program: not eligible) and the slot's rung of 10: neither is used.
+    await putHistory('bent-over-row', '2026-10-17', [17.75, 21.75, 25.75, 29.75], dumbbellRow(), {
+      programId: 'phase-1-home',
+    })
     await start(dumbbellRow())
     await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
     await swapTo(/Barbell bent-over row/, 'Barbell bent-over row')
@@ -511,16 +566,137 @@ describe('a loaded substitute of another implement (Dumbbell row -> Barbell bent
     expect(weightText()).not.toBe('41.75kg')
   })
 
-  it('T21 (I1): with history it still starts blank — the suggestion is disabled until the coach\'s set-by-set rule is built (CQ2)', async () => {
+  it("T21 (E1): with history each set starts from its own position of the last eligible exposure, and a different lift does not move the next one", async () => {
     await putHistory('bent-over-row', '2026-10-17', [17.75, 21.75, 25.75, 29.75], dumbbellRow())
     await start(dumbbellRow())
     await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
     await swapTo(/Barbell bent-over row/, 'Barbell bent-over row')
 
-    expect(weightText()).toBe('—')
-    // "Last time" is untouched: it still shows what was actually lifted.
+    // Set 1 is the first position, not the last weight (29.75) and not the slot's rung (10).
+    expect(weightText()).toBe('17.75kg')
+    // "Last time" shows the same exposure as a fact.
     expect(screen.getByText(/12×17\.75 kg/)).toBeInTheDocument()
     expect(screen.getByText('Rung 1 of 3 · 12 reps')).toBeInTheDocument()
+
+    // Log 19.75 instead: set 2 still offers ITS position (21.75), on the Rest screen and the Set screen.
+    await typeWeight('19.75')
+    await logCurrentSet()
+    expect(await screen.findByText('21.75 kg × 10')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Skip' }))
+    await screen.findByText('Set 2 of 3')
+    expect(weightText()).toBe('21.75kg')
+  })
+
+  it('the exposure a suggestion came from is recorded on the slot (basis), and the retired single start weight is not written', async () => {
+    await putHistory('bent-over-row', '2026-10-17', [17.75, 21.75], dumbbellRow())
+    await start(dumbbellRow())
+    await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
+    await swapTo(/Barbell bent-over row/, 'Barbell bent-over row')
+
+    const stored = (await db.workouts.get('sub'))!.exercises[0]
+    expect(stored.substituteLoad).toEqual({
+      loaded: true,
+      startWeightsKg: [17.75, 21.75],
+      stepKg: 2,
+      basis: { workoutId: 'hist-bent-over-row-2026-10-17', date: '2026-10-17' },
+    })
+    expect(stored.substituteLoad).not.toHaveProperty('startWeightKg')
+  })
+
+  it('E2 (CC3): history has 2 rungs and the slot has 3 — set 3 is blank even after sets 1 and 2, on the Set screen and the Rest screen before it', async () => {
+    await putHistory('bent-over-row', '2026-10-17', [17.75, 21.75], dumbbellRow())
+    await start(dumbbellRow())
+    await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
+    await swapTo(/Barbell bent-over row/, 'Barbell bent-over row')
+    expect(weightText()).toBe('17.75kg')
+
+    await logAndSkipRest('Set 2 of 3')
+    expect(weightText()).toBe('21.75kg')
+
+    await logCurrentSet()
+    // Rest before set 3: the slot's reps only — not "21.75 kg × 8", not a delta.
+    expect(await screen.findByText('8 reps')).toBeInTheDocument()
+    expect(screen.queryByText(/\bkg\b/)).toBeNull()
+    expect(screen.queryByText(/heavier|lighter/)).toBeNull()
+    await userEvent.click(screen.getByRole('button', { name: 'Skip' }))
+    await screen.findByText('Set 3 of 3')
+    expect(weightText()).toBe('—')
+  })
+
+  it("E2b: at that blank position a deliberate press starts from the weight last logged this session (OD-e), and the display is blank until it", async () => {
+    await putHistory('bent-over-row', '2026-10-17', [17.75, 21.75], dumbbellRow())
+    await start(dumbbellRow())
+    await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
+    await swapTo(/Barbell bent-over row/, 'Barbell bent-over row')
+
+    await logAndSkipRest('Set 2 of 3')
+    await typeWeight('23.75')
+    await logAndSkipRest('Set 3 of 3')
+
+    expect(weightText()).toBe('—')
+    await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
+    // The set just logged (23.75), not the history's 21.75 for that position.
+    expect(weightText()).toBe('23.75kg')
+  })
+
+  it('E3 + E13: an easier-day exposure is skipped for the suggestion, but "Last time" still shows it as the actual most recent performance', async () => {
+    await putHistory('bent-over-row', '2026-10-10', [17.75, 21.75, 25.75], dumbbellRow())
+    await putHistory('bent-over-row', '2026-10-17', [9.75, 11.75], dumbbellRow(), { tier: 'easier' })
+    await start(dumbbellRow())
+    await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
+    await swapTo(/Barbell bent-over row/, 'Barbell bent-over row')
+
+    // The suggestion walks back to the last normal day ...
+    expect(weightText()).toBe('17.75kg')
+    // ... and "Last time" names the newest actual performance, the easier day.
+    expect(screen.getByText(/12×9\.75 kg/)).toBeInTheDocument()
+    expect(screen.queryByText(/12×17\.75 kg/)).toBeNull()
+  })
+
+  it('E4 (CC2): history from another program (Phase 1) is not used for the suggestion, though "Last time" still shows it', async () => {
+    await putHistory('bent-over-row', '2026-10-17', [8, 10, 12], dumbbellRow(), { programId: 'phase-1-home' })
+    await start(dumbbellRow())
+    await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
+    await swapTo(/Barbell bent-over row/, 'Barbell bent-over row')
+
+    expect(weightText()).toBe('—')
+    expect(screen.getByText(/12×8 kg/)).toBeInTheDocument()
+  })
+
+  it('E5: a substitute log made under the new rules (it carries a substituteLoad) builds the substitute its own history', async () => {
+    await putHistory('bench-press', '2026-11-03', [27.75, 29.75], dumbbellBench(), {
+      substitutedForId: 'dumbbell-bench-press',
+      substituteLoad: { loaded: true, startWeightsKg: [], stepKg: 2 },
+    })
+    await start(dumbbellBench())
+    await screen.findByRole('heading', { name: 'Dumbbell bench press' })
+
+    await swapViaOther(/Barbell bench press/, 'Barbell bench press')
+
+    expect(weightText()).toBe('27.75kg')
+  })
+
+  it('E15: a record stored before the suggestion existed (the retired startWeightKg) offers nothing', async () => {
+    const slot = createWorkout({
+      id: 'sub',
+      programId: mesocycle2Build.id,
+      session: { id: 's', name: 'S', focus: 'F', items: [dumbbellRow()] },
+      date: '2026-10-24',
+      startedAt: '2026-10-24T09:00:00.000Z',
+    })
+    const legacy = { loaded: true, startWeightKg: 29.75, stepKg: 2 } as unknown as SubstituteLoad
+    await startWorkout({
+      ...slot,
+      exercises: slot.exercises.map((e) => ({
+        ...e,
+        exerciseId: 'bent-over-row',
+        substitutedForId: 'single-arm-db-row',
+        substituteLoad: legacy,
+      })),
+    })
+    await screen.findByRole('heading', { name: 'Barbell bent-over row' })
+
+    expect(weightText()).toBe('—')
   })
 
   it('T22: an untouched — is logged as no weight, not as zero and not as the old rung', async () => {
@@ -532,11 +708,12 @@ describe('a loaded substitute of another implement (Dumbbell row -> Barbell bent
     expect(stored.sets[0].weightKg).toBeNull()
   })
 
-  it('swapping back to the authored exercise gives the slot its own loads again (T26)', async () => {
+  it('swapping back to the authored exercise gives the slot its own loads again (T26, E9), whatever the substitute had to suggest', async () => {
+    await putHistory('bent-over-row', '2026-10-17', [17.75, 21.75, 25.75], dumbbellRow())
     await start(dumbbellRow())
     await screen.findByRole('heading', { name: 'Single-arm dumbbell row' })
     await swapTo(/Barbell bent-over row/, 'Barbell bent-over row')
-    expect(weightText()).toBe('—')
+    expect(weightText()).toBe('17.75kg')
 
     await swapTo(/Single-arm dumbbell row/, 'Single-arm dumbbell row')
 
@@ -583,14 +760,15 @@ describe('an unloaded slot swapped to a loaded exercise (Inverted row -> Dumbbel
 // ---------------------------------------------------------------------------
 
 describe('a same-implement substitute (Dumbbell bench -> Incline dumbbell press)', () => {
-  it("T24 (CQ4): starts blank too — it does not keep the slot's rung, and does not read its own history", async () => {
-    // Incline press history exists, and must not be read either.
+  it("T24 (CQ4, E7): takes its OWN history, not the slot's rung — and no ceiling warning, whatever the weight", async () => {
+    // The incline press's own last exposure: 14 / 16 / 18 / 20. The slot's rungs are 10 / 12 / 14 / 16.
     await putHistory('incline-dumbbell-press', '2026-10-17', [14, 16, 18, 20], dumbbellBench())
     await start(dumbbellBench())
     await screen.findByRole('heading', { name: 'Dumbbell bench press' })
     await swapTo(/Incline dumbbell press/, 'Incline dumbbell press')
 
-    expect(weightText()).toBe('—')
+    expect(weightText()).toBe('14kg')
+    // The caption is not "told" the slot's kg figure.
     expect(screen.getByText('Rung 1 of 4 · 10 reps')).toBeInTheDocument()
     expect(screen.getByText(/12×14 kg/)).toBeInTheDocument()
 
@@ -604,6 +782,16 @@ describe('a same-implement substitute (Dumbbell bench -> Incline dumbbell press)
     const stored = await logCurrentSet()
     expect(stored.exerciseId).toBe('incline-dumbbell-press')
     expect(stored.sets[0].weightKg).toBe(24)
+  })
+
+  it("E7: with no history of its own it starts blank — the slot's rung is not inherited because both use dumbbells", async () => {
+    await start(dumbbellBench())
+    await screen.findByRole('heading', { name: 'Dumbbell bench press' })
+    expect(weightText()).toBe('10kg')
+
+    await swapTo(/Incline dumbbell press/, 'Incline dumbbell press')
+
+    expect(weightText()).toBe('—')
   })
 })
 
@@ -624,7 +812,9 @@ describe('a different movement on the same implement (Dumbbell bench -> Other ex
 describe('the barbell bench press reached through Other, after the 24 Oct entries', () => {
   it('T25b (I2): starts blank even with 20 kg x 4 logged under the swap in history', async () => {
     // What 24 Oct left behind: exerciseId 'bench-press', substitutedForId the dumbbell bench, clamped at 20.
-    await putHistory('bench-press', '2026-10-24', [20, 20, 20, 20], dumbbellBench(), 'dumbbell-bench-press')
+    await putHistory('bench-press', '2026-10-24', [20, 20, 20, 20], dumbbellBench(), {
+      substitutedForId: 'dumbbell-bench-press',
+    })
     await start(dumbbellBench())
     await screen.findByRole('heading', { name: 'Dumbbell bench press' })
 

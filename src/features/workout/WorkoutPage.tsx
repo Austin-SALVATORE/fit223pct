@@ -173,7 +173,15 @@ export function WorkoutPage() {
     const substitute = exerciseById.get(newExerciseId)
     const load =
       authored && substitute
-        ? substituteLoadFor({ authored, substitute, program, exerciseById, history: completed })
+        ? substituteLoadFor({
+            authored,
+            substitute,
+            program,
+            exerciseById,
+            history: completed,
+            // Only this program's history is eligible for the suggestion (CC2).
+            programId: workout.programId,
+          })
         : undefined
     await workoutRepo.put(swapExercise(workout, position.exerciseIndex, newExerciseId, load))
   }

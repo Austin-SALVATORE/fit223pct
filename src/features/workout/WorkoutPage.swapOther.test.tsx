@@ -300,7 +300,8 @@ describe('picking from Other goes through the same swap', () => {
     expect(stored.exerciseId).toBe('bench-press')
     expect(stored.substitutedForId).toBe('dumbbell-bench-press')
     expect(stored.sets[0].weightKg).toBe(27.75)
-    expect(stored.substituteLoad).toEqual({ loaded: true, startWeightKg: null, stepKg: 2 })
+    // No bench history to suggest from, so there is no basis either.
+    expect(stored.substituteLoad).toEqual({ loaded: true, startWeightsKg: [], stepKg: 2 })
   })
 
   it('a swap that would clear logged sets still asks first', async () => {

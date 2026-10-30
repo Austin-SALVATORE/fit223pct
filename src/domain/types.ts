@@ -372,23 +372,30 @@ export interface LoggedSet {
  * screen read one snapshot and cannot disagree. Present for every swap except
  * a swap back to the authored exercise, where the slot's own loads apply again.
  *
- * **Stopgap (owner, 29 Oct 16:53):** until the coach's set-by-set rule is built
- * (Phase 2b.1), every loaded substitute starts blank — `startWeightKg` is
- * always null — whatever the implement and whatever history exists.
+ * **The suggestion (coach CQ2, CC1-CC3; Phase 2b.1).** Set N is offered the
+ * weight at position N of the substitute's most recent *eligible* exposure — one
+ * exposure, positional, never a mixture — where eligible means completed, a
+ * normal day, the same program, an own-identity record, and carrying at least
+ * one weight (`historyEligibility.ts`). A position that exposure does not have
+ * is offered **no weight**, even after a lift this session: "do not
+ * automatically reuse the weight from set 3" (CC3). Before this, and under the
+ * owner's stopgap of 29 Oct 16:53, every loaded substitute started blank.
  */
 export interface SubstituteLoad {
   /** False for a movement that carries no load (bodyweight, band, bars): no weight control, `weightKg: null` is logged. */
   loaded: boolean
   /**
-   * The suggested first weight; null = no suggestion, the athlete chooses.
-   * **Always null for now**: CQ2 (coach) asks for the substitute's own valid
-   * weight at the same rung position, and that suggestion is disabled pending
-   * Phase 2b.1, where this becomes one weight per position (see
-   * `lastLoggedWeightKg`).
+   * The weight at each set position of the substitute's most recent eligible
+   * exposure: index = `setIndex`, `null` = that position has no valid weight, so
+   * no suggestion for it (CC3). An empty array = no eligible exposure at all.
+   * Absent on records written before Phase 2b.1 (and ignored if a record carries
+   * the retired `startWeightKg`): those offer nothing.
    */
-  startWeightKg: number | null
+  startWeightsKg?: readonly (number | null)[]
   /** The substitute's own implement increment; null = unknown (the Stepper uses 1). Never the slot's step. */
   stepKg: number | null
+  /** The exposure `startWeightsKg` came from: audit for "relevant, valid exercise-specific evidence". Absent when there was none. */
+  basis?: { workoutId: string; date: string }
 }
 
 export interface WorkoutExercise {
