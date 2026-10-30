@@ -294,13 +294,24 @@ function DayRow({
   // put you into (routed through the URL, not component state).
   const dayHref = `/plan/${day.date}?program=${encodeURIComponent(programId)}`
 
+  // A column that holds a bare activity title is `min-w-0`, not `shrink-0`:
+  // "Sortie dédiée et bilan hebdomadaire" (Sunday) is ~233px, the row is
+  // `overflow-hidden` (GroupedList), and a `shrink-0` column that does not fit is
+  // not squeezed, it is cut off at the card edge. Measured at 320px: 35px of the
+  // French title lost on an ordinary Sunday row, 88px on Sunday's own "Today"
+  // row, and 30px in English; at 375px Sunday's French "Today" row was still cut
+  // by 33px. The column now wraps. Only the title-only columns changed: a column
+  // that holds a session name keeps `shrink-0`, because letting it share the
+  // squeeze made Friday's French "Today" row ("Corps entier A / Sortie Zone 2")
+  // grow from 76px to 111px at 320px, a row that was never clipped.
+  // See PlanPage.dayRow.test.tsx.
   if (day.isToday) {
     return (
       <GroupedRow to="/">
         <span className="font-medium text-ink">
           {label} <span className="text-ink-tertiary">· {tCommon('nav.today')}</span>
         </span>
-        <span className="shrink-0 text-right text-sm text-ink-secondary">
+        <span className={`${day.session ? 'shrink-0' : 'min-w-0'} text-right text-sm text-ink-secondary`}>
           {day.session
             ? resolvedSessionName
             : day.postponedTo !== null
@@ -374,8 +385,9 @@ function DayRow({
   if (day.activity) {
     return (
       <GroupedRow to={dayHref}>
-        <span className="text-ink-secondary">{label}</span>
-        <span className="shrink-0 text-sm text-ink-tertiary">{localizedActivity.title}</span>
+        {/* The date is short and bounded, so it keeps its one line (`shrink-0`) and the title wraps. */}
+        <span className="shrink-0 text-ink-secondary">{label}</span>
+        <span className="min-w-0 text-right text-sm text-ink-tertiary">{localizedActivity.title}</span>
       </GroupedRow>
     )
   }
