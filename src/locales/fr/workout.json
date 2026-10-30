@@ -65,6 +65,7 @@
     "lastTimePrefix": "La dernière fois",
     "weightLabel": "Poids",
     "aboveEquipmentCeiling": "Au-dessus de la limite de matériel du programme ({{max}} kg). La charge sera enregistrée telle quelle.",
+    "aboveEquipmentCeilingPlanned": "Au-dessus de la limite de matériel du programme ({{max}} kg ; prévu : {{planned}} kg). La charge sera enregistrée telle quelle.",
     "holdLabel": "Maintien",
     "repsLabel": "Répétitions",
     "logHold": "Enregistrer le maintien",

@@ -7,7 +7,7 @@ import { seedDatabase } from '@/data/seed'
 import { mesocycle2Build } from '@/data/seed/program'
 import i18n from '@/i18n/i18next'
 import { createWorkout } from '@/domain/workout'
-import type { LadderPrescription } from '@/domain/types'
+import type { LadderPrescription, RepRangePrescription } from '@/domain/types'
 import { WorkoutPage } from './WorkoutPage'
 
 /**
@@ -147,6 +147,10 @@ function warningEn(max: string): string {
   return `${WARNING_STEM} ${max} kg equipment limit. It will be logged as entered.`
 }
 
+function plannedEn(max: string, planned: string): string {
+  return `${WARNING_STEM} ${max} kg equipment limit (planned ${planned} kg). It will be logged as entered.`
+}
+
 function goblet(weights: number[], maxWeightKg: number): LadderPrescription {
   return {
     exerciseId: 'goblet-squat',
@@ -193,7 +197,7 @@ afterEach(async () => {
   await i18n.changeLanguage('en')
 })
 
-async function start(item: LadderPrescription, heading = 'Goblet squat') {
+async function start(item: LadderPrescription | RepRangePrescription, heading = 'Goblet squat') {
   await db.workouts.put(
     createWorkout({
       id: 'ceiling',
@@ -243,7 +247,7 @@ describe('no weight cap', () => {
 
     await typeWeight('45')
     expect(weightText()).toBe('45kg')
-    expect(screen.getByText(warningEn('38'))).toBeInTheDocument()
+    expect(screen.getByText(plannedEn('38', '36'))).toBeInTheDocument()
 
     const stored = await logSet()
     expect(stored.sets[0].weightKg).toBe(45)
@@ -255,7 +259,7 @@ describe('no weight cap', () => {
   it('T2: from a carried rung already above the ceiling, "+" goes up and "−" comes back; the warning is there on landing', async () => {
     await start(goblet([40, 40], 38))
 
-    expect(screen.getByText(warningEn('38'))).toBeInTheDocument()
+    expect(screen.getByText(plannedEn('38', '40'))).toBeInTheDocument()
     expect(weightText()).toBe('40kg')
     await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
     expect(weightText()).toBe('42kg')
@@ -274,7 +278,7 @@ describe('the warning', () => {
     expect(screen.queryByText(new RegExp(WARNING_STEM))).toBeNull()
     await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
     expect(weightText()).toBe('40kg')
-    expect(screen.getByText(warningEn('38'))).toBeInTheDocument()
+    expect(screen.getByText(plannedEn('38', '36'))).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Decrease Weight' }))
     expect(screen.queryByText(new RegExp(WARNING_STEM))).toBeNull()
   })
@@ -303,7 +307,7 @@ describe('the warning', () => {
     await start(goblet([44, 44], 43.75))
     expect(
       screen.getByText(
-        'Au-dessus de la limite de matériel du programme (43,75 kg). La charge sera enregistrée telle quelle.',
+        'Au-dessus de la limite de matériel du programme (43,75 kg ; prévu : 44 kg). La charge sera enregistrée telle quelle.',
       ),
     ).toBeInTheDocument()
   })
@@ -312,7 +316,7 @@ describe('the warning', () => {
     await i18n.changeLanguage('zh-CN')
     await start(goblet([44, 44], 43.75), '高脚杯深蹲')
     expect(
-      screen.getByText('超出本计划的器材上限（43.75 公斤），会按你输入的重量记录。'),
+      screen.getByText('超出本计划的器材上限（43.75 公斤，计划 44 公斤），会按你输入的重量记录。'),
     ).toBeInTheDocument()
   })
 })
@@ -324,7 +328,7 @@ describe('what a screen reader hears on landing', () => {
     const description = headingDescription()
     expect(description.ids).toHaveLength(3)
     expect(description.resolved).toBe(true)
-    expect(description.text).toContain(warningEn('38'))
+    expect(description.text).toContain(plannedEn('38', '40'))
   })
 
   it('T7: below the ceiling the warning is not announced, and no id dangles', async () => {
@@ -341,7 +345,7 @@ describe('what a screen reader hears on landing', () => {
     expect(headingDescription().text).not.toContain(WARNING_STEM)
 
     await userEvent.click(screen.getByRole('button', { name: 'Increase Weight' }))
-    expect(headingDescription().text).toContain(warningEn('38'))
+    expect(headingDescription().text).toContain(plannedEn('38', '38'))
 
     await userEvent.click(screen.getByRole('button', { name: 'Decrease Weight' }))
     expect(headingDescription().ids).toHaveLength(2)
@@ -393,7 +397,7 @@ describe('the warning takes the caption\'s place and moves nothing (QA F-A, then
     // description (T7); neither the box nor Log set changed a class.
     expect(slot().box).toBe(box)
     expect(box.children).toHaveLength(2)
-    const warning = screen.getByText(warningEn('38'))
+    const warning = screen.getByText(plannedEn('38', '36'))
     expect(box).toContainElement(warning)
     expect(warning).toHaveClass('absolute')
     expect(caption).toHaveClass('invisible')
@@ -425,5 +429,120 @@ describe('the warning takes the caption\'s place and moves nothing (QA F-A, then
   it('T9 uniform, no ceiling: nor does an exercise with no ceiling', async () => {
     await start({ ...goblet([36, 36], 38), maxWeightKg: null })
     expectLayoutIndependentOfWarning()
+  })
+})
+
+/**
+ * The warning names the planned weight (owner ruling, board, 30 Oct 13:55). It takes
+ * the target caption's place while it is up, so a typo (140 for 14) would hide the one
+ * number that exposes it; the warning therefore carries it: "Above this program's 38 kg
+ * equipment limit (planned 14 kg). It will be logged as entered."
+ *
+ * The number is the one the caption shows, from the same function (`plannedWeightKg`),
+ * formatted for the locale (fr 41,75). When the caption shows no weight (a rep-range
+ * prescription: "8-12 reps"; a custom set: "Custom set") the clause is omitted, and the
+ * warning reads as before. A substitute never shows the warning (T4).
+ *
+ * Negative controls, run 30 Oct (mutation applied to SetScreen.tsx, the whole suite
+ * run, restored and `cmp`ed):
+ *   the plain warning key always used (the clause dropped)
+ *                         -> 15 red: the four planned tests, eight existing assertions
+ *                            in this file that now expect the planned wording (T1, T2,
+ *                            T3, both T6, both T7, T9 box), and three in
+ *                            SetScreen.swapBack.test
+ *   the TYPED weight offered as "planned" instead of the rung's
+ *                         -> 7 red: "names the rung's planned weight, not the typed
+ *                            one", T1, T3, T7 stepping, T9 box, and the rep-range and
+ *                            custom-set cases (where the typed number fills a clause
+ *                            that should be absent)
+ *   `plannedWeightKg` returns the prescribed weight for a rep range too
+ *                         -> "a rep-range prescription" (1 red)
+ *   `plannedWeightKg` returns it for a custom set too (`isCustomSlot` dropped)
+ *                         -> "a custom set" (1 red)
+ *   the planned number not formatted for the language (`String(plannedKg)`)
+ *                         -> the fr row, "41.75" where fr writes "41,75" (1 red; the
+ *                            fixture's number is 44,75)
+ * Layout, measured in headless Chromium and WebKit with the longer text (the three
+ * lines of the worst case, a 43.75 kg limit and a 41.75 kg rung, in fr at 320, 340,
+ * 360 and 375px, and en at 320 and 340): no line count above three, 4px clear of Log
+ * set, "+" and Log set at 0.00px displacement with the warning showing against not,
+ * en, fr and zh-CN, 320x568 to 390x844. Nothing in the layout changed.
+ */
+describe('the warning names the planned weight', () => {
+  it("names the rung's planned weight, not the typed one", async () => {
+    await start(goblet([36, 36], 38))
+    await typeWeight('45')
+    expect(weightText()).toBe('45kg')
+    expect(screen.getByText(plannedEn('38', '36'))).toBeInTheDocument()
+    // The number is the one the hidden caption would have shown.
+    expect(screen.getByText('Rung 1 of 2 · 36 kg × 6')).toBeInTheDocument()
+  })
+
+  it('on landing, from a carried rung already above the limit: the planned weight is that rung', async () => {
+    await start(goblet([40, 40], 38))
+    expect(screen.getByText(plannedEn('38', '40'))).toBeInTheDocument()
+    expect(headingDescription().text).toContain(plannedEn('38', '40'))
+  })
+
+  it('a rep-range prescription: the caption shows a range, so the warning omits the clause', async () => {
+    const rangeSlot: RepRangePrescription = {
+      exerciseId: 'goblet-squat',
+      sets: 2,
+      mode: 'reps',
+      range: { min: 8, max: 12 },
+      restSeconds: 90,
+      perSide: false,
+      startWeightKg: 20,
+      maxWeightKg: 38,
+      weightStepKg: 2,
+    }
+    await start(rangeSlot)
+    await typeWeight('45')
+    expect(screen.getByText(warningEn('38'))).toBeInTheDocument()
+    expect(screen.queryByText(/planned/)).toBeNull()
+  })
+
+  it('a custom set: its caption says "Custom set", so the warning omits the clause', async () => {
+    const item = goblet([36], 38)
+    let w = createWorkout({
+      id: 'ceiling',
+      programId: mesocycle2Build.id,
+      session: { id: 's', name: 'S', focus: 'F', items: [item] },
+      date: '2026-10-24',
+      startedAt: '2026-10-24T09:00:00.000Z',
+    })
+    w = {
+      ...w,
+      exercises: [
+        {
+          ...w.exercises[0],
+          customSlots: 1,
+          sets: [{ setIndex: 0, weightKg: 36, reps: 6, seconds: null, completedAt: '2026-10-24T09:05:00.000Z' }],
+        },
+      ],
+    }
+    await db.workouts.put(w)
+    render(
+      <MemoryRouter initialEntries={['/workout']}>
+        <Routes>
+          <Route path="/" element={<p>TODAY PROBE</p>} />
+          <Route path="/workout" element={<WorkoutPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    await screen.findByText('Custom set')
+    await typeWeight('45')
+    expect(screen.getByText(warningEn('38'))).toBeInTheDocument()
+    expect(screen.queryByText(/planned/)).toBeNull()
+  })
+
+  it.each([
+    ['fr', 'Au-dessus de la limite de matériel du programme (43,75 kg ; prévu : 44,75 kg). La charge sera enregistrée telle quelle.'],
+    ['zh-CN', '超出本计划的器材上限（43.75 公斤，计划 44.75 公斤），会按你输入的重量记录。'],
+  ])('%s: the planned weight is formatted for the language and the meaning is kept', async (lng, expected) => {
+    await i18n.changeLanguage(lng)
+    // A carried rung above the limit: the warning is up on landing, no typing needed.
+    await start(goblet([44.75, 44.75], 43.75), lng === 'zh-CN' ? '高脚杯深蹲' : 'Goblet squat')
+    expect(screen.getByText(expected)).toBeInTheDocument()
   })
 })

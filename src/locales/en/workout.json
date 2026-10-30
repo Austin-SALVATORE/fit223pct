@@ -65,6 +65,7 @@
     "lastTimePrefix": "Last time",
     "weightLabel": "Weight",
     "aboveEquipmentCeiling": "Above this program's {{max}} kg equipment limit. It will be logged as entered.",
+    "aboveEquipmentCeilingPlanned": "Above this program's {{max}} kg equipment limit (planned {{planned}} kg). It will be logged as entered.",
     "holdLabel": "Hold",
     "repsLabel": "Reps",
     "logHold": "Log hold",

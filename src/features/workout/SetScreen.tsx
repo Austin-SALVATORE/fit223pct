@@ -140,6 +140,11 @@ export function SetScreen({
   const ceilingKg = prescription.maxWeightKg
   const showAboveCeiling =
     ceilingKg != null && weightKg !== null && !isSubstitute(workoutExercise) && weightKg > ceilingKg
+  // The number the target caption shows, which the warning hides while it is up:
+  // a typo (140 for 14) would otherwise lose the one figure that exposes it. The
+  // same value, from the same function, so the two cannot disagree; none when the
+  // caption shows none (a custom set, a rep range), and the warning then omits it.
+  const plannedKg = plannedWeightKg(prescription, target, setIndex >= prescription.sets)
 
   function handleLog() {
     onLog({
@@ -339,9 +344,11 @@ export function SetScreen({
           the 16px leading used here (48px), measured at 320px; two lines at every
           width from 360. The line is out of flow, so showing and hiding it moves
           nothing, and the Log button's margin no longer depends on this slot at
-          all. What is lost is the target caption while the weight is over the
-          limit; the card shows the weight, and the caption's number is what the
-          card already offered.
+          all. What is lost is the target caption's text while the weight is over the
+          limit; its one load-bearing number, the planned weight, is named in the
+          warning ("... limit (planned 14 kg) ..."), so a typo such as 140 for 14
+          still shows what it should have been (owner, 30 Oct). Three lines of
+          French with the longer text still fit the box (measured, 320-390px).
         */}
         <div className="relative flow-root pb-8">
           <TargetCaption
@@ -361,9 +368,12 @@ export function SetScreen({
               id={aboveCeilingId}
               className="absolute inset-x-0 top-3 text-center text-sm leading-4 text-ink-secondary"
             >
-              {t('setScreen.aboveEquipmentCeiling', {
-                max: formatNumber(ceilingKg, i18n.language),
-              })}
+              {plannedKg === null
+                ? t('setScreen.aboveEquipmentCeiling', { max: formatNumber(ceilingKg, i18n.language) })
+                : t('setScreen.aboveEquipmentCeilingPlanned', {
+                    max: formatNumber(ceilingKg, i18n.language),
+                    planned: formatNumber(plannedKg, i18n.language),
+                  })}
             </p>
           )}
         </div>
@@ -650,7 +660,8 @@ function TargetCaption({
   // and caption "8 kg" under a card offering 10.
   // Formatted for the language (fr writes 17,75): the raw number reached the
   // locale string as "17.75" in every language.
-  const weight = target.prescribed.weightKg === null ? null : formatNumber(target.prescribed.weightKg, i18n.language)
+  const plannedKg = plannedWeightKg(prescription, target, isCustomSlot)
+  const weight = plannedKg === null ? null : formatNumber(plannedKg, i18n.language)
   const effort = (isSeconds ? target.prescribed.seconds : target.prescribed.reps) ?? '–'
 
   const targetText = isCustomSlot
@@ -709,6 +720,23 @@ function TargetCaption({
       )}
     </p>
   )
+}
+
+/**
+ * The weight the target caption shows ("Rung 1 of 4 · 14 kg × 12"): the rung's
+ * planned weight, for a prescribed level of a ladder that carries one. None for a
+ * custom set (its caption says "Custom set"), for a rep-range prescription (its
+ * caption is a range), and for a weightless ladder. One definition, used by the
+ * caption and by the above-limit warning that takes its place, so what the warning
+ * names as "planned" is exactly what the athlete was about to read.
+ */
+function plannedWeightKg(
+  prescription: ExercisePrescription,
+  target: NextSetTarget,
+  isCustomSlot: boolean,
+): number | null {
+  if (isCustomSlot || !prescription.setPlan) return null
+  return target.prescribed.weightKg
 }
 
 function effortValue(set: LoggedSet, mode: 'reps' | 'seconds'): number {

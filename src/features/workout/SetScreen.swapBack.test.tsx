@@ -70,7 +70,7 @@ const A = 'goblet-squat'
 const B = 'split-squat'
 const NOTE = 'Keep the load close to your chest.'
 const WARMUP_HEADING = 'Before your first set'
-const CEILING_WARNING = "Above this program's 20 kg equipment limit. It will be logged as entered."
+const CEILING_WARNING = "Above this program's 20 kg equipment limit (planned 22 kg). It will be logged as entered."
 
 /** One slot carrying all five things a substitute must not inherit. */
 const slotPrescription: LadderPrescription = {
